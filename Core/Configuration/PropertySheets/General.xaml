@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Rule
+    Name="ConfigurationGeneral"
+    DisplayName="Allgemein"
+    PageTemplate="generic"
+    xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+  <Rule.Categories>
+    <Category Name="General" DisplayName="Allgemein" />
+  </Rule.Categories>
+
+  <Rule.DataSource>
+    <DataSource Persistence="ProjectFile" />
+  </Rule.DataSource>
+
+  <StringProperty Name="ProjectGuid" DisplayName="Guid" Category="General" />
+  <StringProperty Name="OutDir" DisplayName="Ausgabeverzeichnis" Category="General" />
+  <StringProperty Name="IntDir" DisplayName="Zwischenverzeichnis" Category="General" />
+  <StringProperty Name="TargetName" DisplayName="Name Ausgabedatei" Category="General" />
+  <StringProperty Name="TargetExt" DisplayName="Erweiterung Ausgabedatei" Category="General" />
+  <StringProperty Name="TargetType" DisplayName="Typ Ausgabedatei" Category="General" />
+
+</Rule>

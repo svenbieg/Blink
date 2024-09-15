@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="OpenOcdSetup" DependsOnTargets="InstallOpenOcd">
+    <MakeDir Directories="$(SolutionDir)\.vscode" />
+    <ItemGroup>
+      <OpenOcdLines Include="source [find interface/cmsis-dap.cfg]" />
+      <OpenOcdLines Include="source [find target/rp2040.cfg]" Condition="'$(Platform)'=='Pico'" />
+      <OpenOcdLines Include="source [find target/bcm2712.cfg]" Condition="'$(Platform)'=='Rpi5'" />
+      <OpenOcdLines Include="init" />
+      <OpenOcdLines Include="reset halt" />
+    </ItemGroup>
+    <WriteLinesToFile File="$(SolutionDir)\.vscode\openocd.cfg" Lines="@(OpenOcdLines)" Overwrite="true" />
+  </Target>
+
+  <Target Name="VsCodeSetup" DependsOnTargets="OpenOcdSetup;NinjaSetup;InstallVsCode">
+    <ItemGroup>
+      <ForcedIncludeList Include="$(NMakeForcedIncludes)" />
+    </ItemGroup>
+    <PropertyGroup>
+      <ElfFile>$(OutDir)$(ProjectName).elf</ElfFile>
+      <ElfFile>$([System.String]::Copy('$(ElfFile)').Replace('$(SolutionDir)', './'))</ElfFile>
+      <ElfFile>$([System.String]::Copy('$(ElfFile)').Replace('\', '/'))</ElfFile>
+      <GdbExePath>$(CompilerPath)bin\$(CompilerPrefix)gdb.exe</GdbExePath>
+      <GdbExePath>$([System.String]::Copy('$(GdbExePath)').Replace('\', '/'))</GdbExePath>
+      <ForcedIncludes>@(ForcedIncludeList->'%22%(Identity)%22', ', ')</ForcedIncludes>
+      <ForcedIncludes>$([System.String]::Copy('$(ForcedIncludes)').Replace('$(SolutionDir)', '${workspaceFolder}/'))</ForcedIncludes>
+      <ForcedIncludes>$([System.String]::Copy('$(ForcedIncludes)').Replace('\', '/'))</ForcedIncludes>
+      <IncludeDirs Condition="'@(IncludeList)'!=''">@(IncludeList->'%22%(Identity)%22', ', ')</IncludeDirs>
+      <IncludeDirs>$([System.String]::Copy('$(IncludeDirs)').Replace('$(SolutionDir)', '${workspaceFolder}/'))</IncludeDirs>
+      <IncludeDirs>$([System.String]::Copy('$(IncludeDirs)').Replace('\', '/'))</IncludeDirs>
+      <OpenOcdExePath>$(OpenOcdExe)</OpenOcdExePath>
+      <OpenOcdExePath>$([System.String]::Copy('$(OpenOcdExePath)').Replace('\', '/'))</OpenOcdExePath>
+      <PreprocessorDefs Condition="'@(PreprocessorList)'!=''">@(PreprocessorList->'%22%(Identity)%22', ', ')</PreprocessorDefs>
+    </PropertyGroup>
+    <ItemGroup>
+      <CppPropLines Include="{" />
+      <CppPropLines Include="%22configurations%22: [" />
+      <CppPropLines Include="%09{" />
+      <CppPropLines Include="%09%22name%22: %22$(Platform)%22," />
+      <CppPropLines Include="%09%22includePath%22: [ $(IncludeDirs) ]," />
+      <CppPropLines Include="%09%22defines%22: [ $(PreprocessorDefs) ]," />
+      <CppPropLines Include="%09%22cStandard%22: %22c17%22," />
+      <CppPropLines Include="%09%22cppStandard%22: %22c++17%22," />
+      <CppPropLines Include="%09%22forcedInclude%22: [ $(ForcedIncludes) ]," />
+      <CppPropLines Include="%09%22configurationProvider%22: %22ms-vscode.cmake-tools%22" />
+      <CppPropLines Include="%09}]" />
+      <CppPropLines Include="}" />
+    </ItemGroup>
+    <WriteLinesToFile File="$(SolutionDir)\.vscode\c_cpp_properties.json" Lines="@(CppPropLines)" Overwrite="true" />
+    <ItemGroup>
+      <LaunchLines Include="{" />
+      <LaunchLines Include="%22version%22: %220.2.0%22," />
+      <LaunchLines Include="%22configurations%22: [" />
+      <LaunchLines Include="%09{" />
+      <LaunchLines Include="%09%22cwd%22: %22${workspaceRoot}%22," />
+      <LaunchLines Include="%09%22executable%22: %22$(ElfFile)%22," />
+      <LaunchLines Include="%09%22name%22: %22Debug with OpenOCD%22," />
+      <LaunchLines Include="%09%22request%22: %22launch%22," />
+      <LaunchLines Include="%09%22type%22: %22cortex-debug%22," />
+      <LaunchLines Include="%09%22servertype%22: %22openocd%22," />
+      <LaunchLines Include="%09%22configFiles%22: [ %22${workspaceRoot}/.vscode/openocd.cfg%22 ]," />
+      <LaunchLines Include="%09%22runToEntryPoint%22: %22start%22," />
+      <LaunchLines Include="%09%22showDevDebugOutput%22: %22none%22" />
+      <LaunchLines Include="%09}]" />
+      <LaunchLines Include="}" />
+    </ItemGroup>
+    <WriteLinesToFile File="$(SolutionDir)\.vscode\launch.json" Lines="@(LaunchLines)" Overwrite="true" />
+    <ItemGroup>
+      <SettingsLines Include="{" />
+      <SettingsLines Include="%22cortex-debug.openocdPath%22: %22$(OpenOcdExePath)%22," />
+      <SettingsLines Include="%22cortex-debug.gdbPath%22: %22$(GdbExePath)%22" />
+      <SettingsLines Include="}" />
+    </ItemGroup>
+    <WriteLinesToFile File="$(SolutionDir)\.vscode\settings.json" Lines="@(SettingsLines)" Overwrite="true" />
+  </Target>
+
+</Project>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="NinjaSetup">
+    <ItemGroup>
+      <IncludeList Include="$(NMakeIncludeSearchPath)" />
+      <PreprocessorList Include="$(NMakePreprocessorDefinitions)" />
+      <SourceListC Include="@(ClCompile)" Condition="'%(Extension)'=='.c'">
+        <InputFileName>$([System.String]::Copy('%(FullPath)').Replace(':', '$:'))</InputFileName>
+        <OutputFileName>obj\$([System.String]::Copy('%(Directory)').Replace('\', '.'))%(FileName)%(Extension).o</OutputFileName>
+      </SourceListC>
+      <SourceListCpp Include="@(ClCompile)" Condition="'%(Extension)'=='.cpp'">
+        <InputFileName>$([System.String]::Copy('%(FullPath)').Replace(':', '$:'))</InputFileName>
+        <OutputFileName>obj\$([System.String]::Copy('%(Directory)').Replace('\', '.'))%(FileName)%(Extension).o</OutputFileName>
+      </SourceListCpp>
+      <SourceListIn Include="@(ClCompile)" Condition="'%(Extension)'=='.in'">
+        <InputFileName>$([System.String]::Copy('%(FullPath)').Replace(':', '$:'))</InputFileName>
+        <OutputFileName>obj\$([System.String]::Copy('%(Directory)').Replace('\', '.'))%(FileName)%(Extension).o</OutputFileName>
+      </SourceListIn>
+      <SourceListS Include="@(ClCompile)" Condition="'%(Extension)'=='.S'">
+        <InputFileName>$([System.String]::Copy('%(FullPath)').Replace(':', '$:'))</InputFileName>
+        <OutputFileName>obj\$([System.String]::Copy('%(Directory)').Replace('\', '.'))%(FileName)%(Extension).o</OutputFileName>
+      </SourceListS>
+    </ItemGroup>
+    <PropertyGroup>
+      <ExecPath>$(ExecPath);$(CompilerPath)bin;"$(NinjaPath)"</ExecPath>
+      <ExecPath>$([System.String]::Copy('$(ExecPath)').Replace(';', '%3B'))</ExecPath>
+      <IncludeArg Condition="'@(IncludeList)'!=''">-I@(IncludeList->'%(Identity)', ' -I')</IncludeArg>
+      <PreprocessorArg Condition="'@(PreprocessorList)'!=''">-D@(PreprocessorList->'%(Identity)', ' -D')</PreprocessorArg>
+      <PreprocessorArg>$([System.String]::Copy('$(PreprocessorArg)').Replace('"', '\"'))</PreprocessorArg>
+      <LinkerScriptArg Condition="'@(SourceListIn)'!=''">-T@(SourceListIn->'%(OutputFileName)', ' -T')</LinkerScriptArg>
+      <NinjaCompileC Condition="'@(SourceListC)'!=''">@(SourceListC->'build %(OutputFileName): .c.o %(InputFileName)', '%0D%0A')</NinjaCompileC>
+      <NinjaCompileCpp Condition="'@(SourceListCpp)'!=''">@(SourceListCpp->'build %(OutputFileName): .cpp.o %(InputFileName)', '%0D%0A')</NinjaCompileCpp>
+      <NinjaCompileIn Condition="'@(SourceListIn)'!=''">@(SourceListIn->'build %(OutputFileName): .ld %(InputFileName)', '%0D%0A')</NinjaCompileIn>
+      <NinjaCompileS Condition="'@(SourceListS)'!=''">@(SourceListS->'build %(OutputFileName): .s.o %(InputFileName)', '%0D%0A')</NinjaCompileS>
+      <NinjaLink Condition="'@(ClCompile)'!=''">%0D%0Abuild $(TargetName).elf: .elf $%0D%0A</NinjaLink>
+      <NinjaLink Condition="'@(SourceListS)'!=''">$(NinjaLink)@(SourceListS->'%(OutputFileName) ', '$%0D%0A')</NinjaLink>
+      <NinjaLink Condition="'@(SourceListC)'!=''">$(NinjaLink)@(SourceListC->'%(OutputFileName) ', '$%0D%0A')</NinjaLink>
+      <NinjaLink Condition="'@(SourceListCpp)'!=''">$(NinjaLink)@(SourceListCpp->'%(OutputFileName) ', '$%0D%0A')</NinjaLink>
+      <NinjaLink Condition="'@(SourceListIn)'!=''">$(NinjaLink)$%0D%0A|@(SourceListIn->'%(OutputFileName) ', '$%0D%0A')</NinjaLink>
+      <NinjaLink Condition="'@(ClCompile)'!=''">$(NinjaLink)%0D%0A%0D%0A</NinjaLink>
+      <NinjaHeaders Condition="'$(Configuration)'=='Debug'">build $(TargetName).elf.txt: .elf.txt $(TargetName).elf%0D%0A</NinjaHeaders>
+      <NinjaBinary Condition="'$(TargetType)'=='Binary'">build $(TargetName)$(TargetExt): .bin $(TargetName).elf%0D%0A</NinjaBinary>
+    </PropertyGroup>
+    <ItemGroup>
+      <NinjaRules Include=".s.o" Condition="'$(NinjaCompileS)'!=''">
+        <Command>$(CompilerPrefix)gcc -MD -MF $out.d -c $FLAGS $FLAGS_S $PREPROC $INCLUDE -o $out $in</Command>
+        <Dependency>$out.d</Dependency>
+      </NinjaRules>
+      <NinjaRules Include=".c.o" Condition="'$(NinjaCompileC)'!=''">
+        <Command>$(CompilerPrefix)gcc -MD -MF $out.d -c $FLAGS $FLAGS_C $PREPROC $INCLUDE -o $out $in</Command>
+        <Dependency>$out.d</Dependency>
+      </NinjaRules>
+      <NinjaRules Include=".cpp.o" Condition="'$(NinjaCompileCpp)'!=''">
+        <Command>$(CompilerPrefix)g++ -MD -MF $out.d -c $FLAGS $FLAGS_CPP $PREPROC $INCLUDE -o $out $in</Command>
+        <Dependency>$out.d</Dependency>
+      </NinjaRules>
+      <NinjaRules Include=".ld" Condition="'$(NinjaCompileIn)'!=''">
+        <Command>$(CompilerPrefix)gcc -MD -MF $out.d -MT $out -E -P -x c -D__ASSEMBLER__ -D__LINKER__ $PREPROC $INCLUDE -o $out $in</Command>
+        <Dependency>$out.d</Dependency>
+      </NinjaRules>
+      <NinjaRules Include=".elf" Condition="'$(NinjaLink)'!=''">
+        <Command Condition="'$(LibPath)'!=''">$(CompilerPrefix)ld -o $out $FLAGS_LD $SCRIPTS $CRTBEGIN $in --start-group $LIBS --end-group $CRTEND</Command>
+        <Command Condition="'$(LibPath)'==''">$(CompilerPrefix)ld -o $out $FLAGS_LD $SCRIPTS $in</Command>
+      </NinjaRules>
+      <NinjaRules Include=".elf.txt" Condition="'$(NinjaHeaders)'!=''">
+        <Command>cmd /c $(CompilerPrefix)objdump -h $in > $out</Command>
+      </NinjaRules>
+      <NinjaRules Include=".bin" Condition="'$(NinjaBinary)'!=''">
+        <Command>$(CompilerPrefix)objcopy -O binary $in $out</Command>
+      </NinjaRules>
+    </ItemGroup>
+    <MakeDir Directories="$(OutDir)" />
+    <Copy SourceFiles="$(CopyToOutDir)" DestinationFolder="$(OutDir)" />
+  </Target>
+
+  <Target Name="NinjaCompile" DependsOnTargets="InstallCompiler;NinjaSetup">
+    <ItemGroup>
+      <NinjaLines Include="FLAGS=$(CompilerFlags)" Condition="'$(CompilerFlags)'!=''"/>
+      <NinjaLines Include="FLAGS_C=$(CompilerFlagsC)" Condition="'$(CompilerFlagsC)'!=''"/>
+      <NinjaLines Include="FLAGS_CPP=$(CompilerFlagsCpp)" Condition="'$(CompilerFlagsCpp)'!=''"/>
+      <NinjaLines Include="FLAGS_LD=$(LinkerFlags)" Condition="'$(LinkerFlags)'!=''"/>
+      <NinjaLines Include="FLAGS_S=$(CompilerFlagsS)" Condition="'$(CompilerFlagsS)'!=''"/>
+      <NinjaLines Include="PREPROC=$(PreprocessorArg)" Condition="'$(PreprocessorArg)'!=''"/>
+      <NinjaLines Include="INCLUDE=$(IncludeArg)" Condition="'$(IncludeArg)'!=''"/>
+      <NinjaLines Include="SCRIPTS=$(LinkerScriptArg)" Condition="'$(LinkerScriptArg)'!=''"/>
+      <NinjaLines Include="LIBS=$(AdditionalLinkerFlags)" Condition="'$(AdditionalLinkerFlags)'!=''"/>
+      <NinjaLines Include="CRTBEGIN=$(LibPath)crtbegin.o" Condition="'$(LibPath)'!=''" />
+      <NinjaLines Include="CRTEND=$(LibPath)crtend.o" Condition="'$(LibPath)'!=''" />
+      <NinjaLines Include="%0D%0A" />
+    </ItemGroup>
+    <ItemGroup>
+      <NinjaLines Include="@(NinjaRules->'rule %(Identity)%0D%0A%20%20depfile=%(Dependency)%0D%0A%20%20command=%(Command)', '%0D%0A%0D%0A')" />
+      <NinjaLines Include="%0D%0A" />
+    </ItemGroup>
+    <ItemGroup>
+      <NinjaLines Include="$(NinjaCompileS)" Condition="'$(NinjaCompileS)'!=''" />
+      <NinjaLines Include="$(NinjaCompileC)" Condition="'$(NinjaCompileC)'!=''" />
+      <NinjaLines Include="$(NinjaCompileCpp)" Condition="'$(NinjaCompileCpp)'!=''" />
+      <NinjaLines Include="$(NinjaCompileIn)" Condition="'$(NinjaCompileIn)'!=''" />
+      <NinjaLines Include="$(NinjaLink)" Condition="'$(NinjaLink)'!=''" />
+      <NinjaLines Include="$(NinjaHeaders)" Condition="'$(NinjaHeaders)'!=''" />
+      <NinjaLines Include="$(NinjaBinary)" Condition="'$(NinjaBinary)'!=''" />
+      <NinjaLines Include="@(NinjaCommands)" Condition="'@(NinjaCommands)'!=''" />
+    </ItemGroup>
+    <WriteLinesToFile File="$(OutDir)build.ninja" Lines="@(NinjaLines)" Overwrite="true" />
+    <ItemGroup>
+      <BuildLines Include="set PATH=%%PATH%%%3B$(ExecPath)" />
+      <BuildLines Include="ninja" />
+    </ItemGroup>
+    <Exec Condition="'$(NinjaLink)'!=''" Command="@(BuildLines->'%(Identity)&amp;')" WorkingDirectory="$(OutDir)" />
+  </Target>
+
+  <Import Project="$(SolutionDir)Core.$(Platform)\Configuration\Compiler.targets" Condition="Exists('$(SolutionDir)Core.$(Platform)\Configuration\Compiler.targets')" />
+
+  <Import Project="$(ProjectDir)Configuration\Compiler.targets" Condition="Exists('$(ProjectDir)Configuration\Compiler.targets')" />
+
+</Project>

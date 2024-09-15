@@ -1,0 +1,68 @@
+//=======
+// mutex
+//=======
+
+#pragma once
+
+
+//=======
+// Using
+//=======
+
+#include "Concurrency/ScopedLock.h"
+
+
+//===========
+// Namespace
+//===========
+
+namespace std {
+
+
+//======================
+// Forward-Declarations
+//======================
+
+class condition_variable;
+
+
+//=======
+// Mutex
+//=======
+
+class mutex: private Concurrency::Mutex
+{
+public:
+	// Friends
+	template <class _mutex_t> friend class unique_lock;
+
+	// Con-/Destructors
+	inline mutex() {}
+
+	// Common
+	void lock() { Lock(); }
+	bool try_lock() { return TryLock(); }
+	void unlock() { Unlock(); }
+};
+
+
+//=============
+// Unique-Lock
+//=============
+
+template <class _mutex_t> class unique_lock: private Concurrency::ScopedLock
+{
+public:
+	// Friends
+	friend condition_variable;
+
+	// Con-/Destructors
+	inline unique_lock(_mutex_t& mutex): ScopedLock(mutex) {}
+
+	// Common
+	inline void lock() { Lock(); }
+	inline void release() { Release(); }
+	inline void unlock() { Unlock(); }
+};
+
+}

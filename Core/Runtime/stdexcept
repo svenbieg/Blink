@@ -1,0 +1,33 @@
+//===========
+// stdexcept
+//===========
+
+#pragma once
+
+
+//=======
+// Using
+//=======
+
+#include "Default/TypeHelper.h"
+#include "ErrorHelper.h"
+
+
+//===========
+// Namespace
+//===========
+
+namespace std {
+
+
+//============
+// Exceptions
+//============
+
+class out_of_range: public OutOfRangeException
+{
+public:
+	out_of_range(LPCSTR message) {}
+};
+
+}

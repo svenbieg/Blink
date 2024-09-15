@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Rpi5">
+      <Configuration>Debug</Configuration>
+      <Platform>Rpi5</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Rpi5">
+      <Configuration>Release</Configuration>
+      <Platform>Rpi5</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(Platform)'=='Rpi5'">
+    <NMakePreprocessorDefinitions>_RPI5</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+
+</Project>

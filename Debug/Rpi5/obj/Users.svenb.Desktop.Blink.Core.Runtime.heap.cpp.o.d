@@ -1,0 +1,26 @@
+obj\Users.svenb.Desktop.Blink.Core.Runtime.heap.cpp.o: \
+ C:\Users\svenb\Desktop\Blink\Core\Runtime\heap.cpp \
+ C:/Users/svenb/gcc/arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-aarch64-none-elf/aarch64-none-elf/include/assert.h \
+ C:/Users/svenb/gcc/arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-aarch64-none-elf/aarch64-none-elf/include/_ansi.h \
+ C:/Users/svenb/gcc/arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-aarch64-none-elf/aarch64-none-elf/include/newlib.h \
+ C:/Users/svenb/gcc/arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-aarch64-none-elf/aarch64-none-elf/include/_newlib_version.h \
+ C:/Users/svenb/gcc/arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-aarch64-none-elf/aarch64-none-elf/include/sys/config.h \
+ C:/Users/svenb/gcc/arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-aarch64-none-elf/aarch64-none-elf/include/machine/ieeefp.h \
+ C:/Users/svenb/gcc/arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-aarch64-none-elf/aarch64-none-elf/include/sys/features.h \
+ C:/Users/svenb/gcc/arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-aarch64-none-elf/lib/gcc/aarch64-none-elf/13.2.1/include/stdbool.h \
+ C:/Users/svenb/gcc/arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-aarch64-none-elf/lib/gcc/aarch64-none-elf/13.2.1/include/stddef.h \
+ C:/Users/svenb/gcc/arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-aarch64-none-elf/lib/gcc/aarch64-none-elf/13.2.1/include/stdint.h \
+ C:/Users/svenb/gcc/arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-aarch64-none-elf/lib/gcc/aarch64-none-elf/13.2.1/include/stdint-gcc.h \
+ C:/Users/svenb/gcc/arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-aarch64-none-elf/aarch64-none-elf/include/string.h \
+ C:/Users/svenb/gcc/arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-aarch64-none-elf/aarch64-none-elf/include/sys/reent.h \
+ C:/Users/svenb/gcc/arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-aarch64-none-elf/aarch64-none-elf/include/_ansi.h \
+ C:/Users/svenb/gcc/arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-aarch64-none-elf/aarch64-none-elf/include/sys/cdefs.h \
+ C:/Users/svenb/gcc/arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-aarch64-none-elf/aarch64-none-elf/include/machine/_default_types.h \
+ C:/Users/svenb/gcc/arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-aarch64-none-elf/aarch64-none-elf/include/sys/_types.h \
+ C:/Users/svenb/gcc/arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-aarch64-none-elf/aarch64-none-elf/include/machine/_types.h \
+ C:/Users/svenb/gcc/arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-aarch64-none-elf/aarch64-none-elf/include/sys/lock.h \
+ C:/Users/svenb/gcc/arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-aarch64-none-elf/aarch64-none-elf/include/sys/string.h \
+ C:\Users\svenb\Desktop\Blink\Core/Concurrency/TaskLock.h \
+ C:\Users\svenb\Desktop\Blink\Core/Concurrency/Mutex.h \
+ C:\Users\svenb\Desktop\Blink\Default/TypeHelper.h \
+ C:\Users\svenb\Desktop\Blink\Core\Runtime\heap.h

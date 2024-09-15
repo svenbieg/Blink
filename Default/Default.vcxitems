@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{E356BD3B-D09B-4FDA-ACD2-403372FCEAC1}</ItemsProjectGuid>
+    <ItemsSccProjectName>$/Shared/Default</ItemsSccProjectName>
+    <ItemsSccAuxPath>https://svenbieg.visualstudio.com</ItemsSccAuxPath>
+    <ItemsSccLocalPath>.</ItemsSccLocalPath>
+    <ItemsSccProvider>{4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}</ItemsSccProvider>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(MSBuildThisFileDirectory)</NMakeIncludeSearchPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)CharHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Clusters\cluster.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Clusters\index.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Clusters\list.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Clusters\map.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Clusters\shared_cluster.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Clusters\shared_index.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Clusters\shared_list.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Clusters\shared_map.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\Container.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\Index.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\List.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\Map.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\Node.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\StringList.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\Vector.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Core\Application.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Core\DispatchedHandler.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)DynamicHandle.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)DynamicPointer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Event.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)EventHandler.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)FlagHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Function.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Handle.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HandleHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MemoryHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Object.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)PathHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Property.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StatusClass.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Buffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Directory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\File.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Intermediate.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Seekable.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\DynamicBuffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\StaticBuffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\CharHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\InputStream.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\OutputStream.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\RandomAccessStream.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\Stream.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamReader.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamWriter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Volume.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StringClass.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StringHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)TypeHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)UnknownClass.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VariableArguments.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)CharHelper.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Collections\Node.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Collections\StringList.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Core\Application.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Core\DispatchedHandler.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)MemoryHelper.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Object.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)PathHelper.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Buffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Directory.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\File.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\DynamicBuffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Intermediate.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\StaticBuffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamHelper.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamReader.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamWriter.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)StringClass.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)StringHelper.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)UnknownClass.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)Clusters\Readme.md" />
+  </ItemGroup>
+</Project>

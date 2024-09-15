@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <CompilerName>aarch64-none-elf</CompilerName>
+    <CompilerPath>$(HomePath)gcc\arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-aarch64-none-elf\</CompilerPath>
+    <CompilerPrefix>aarch64-none-elf-</CompilerPrefix>
+    <CompilerVersion>13.2.1</CompilerVersion>
+  </PropertyGroup>
+
+</Project>
