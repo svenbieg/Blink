@@ -1,7 +1,7 @@
 <h1>Blink</h1>
 
 <p>
-Bare metal Blink example for Raspberry Pi 5 using <a href="https://github.com/svenbieg/Core">Core</a>.
+Bare metal Blink example for Raspberry Pi 5 using my <a href="https://github.com/svenbieg/Core">kernel</a>.
 </p>
 <br />
 
