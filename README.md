@@ -5,5 +5,5 @@ Bare metal Blink example for Raspberry Pi 5 using <a href="https://github.com/sv
 </p>
 <br />
 
-<img src="https://github.com/user-attachments/assets/daad9ffc-8526-44d4-94a4-03ab14b95738" /><br />
+<img src="https://github.com/user-attachments/assets/d6a96592-7131-46cd-b393-7d10fd25c553" /><br />
 <br />
