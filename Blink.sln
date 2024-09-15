@@ -29,6 +29,7 @@ Global
 		SolutionGuid = {C03CAE64-5A0E-44BD-B0F9-D3442844954E}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Core.Rpi5\Core.Rpi5.vcxitems*{0a8c397a-db1a-41fa-966b-358ce4352eb4}*SharedItemsImports = 4
 		Core\Core.vcxitems*{0a8c397a-db1a-41fa-966b-358ce4352eb4}*SharedItemsImports = 4
 		Default\Default.vcxitems*{0a8c397a-db1a-41fa-966b-358ce4352eb4}*SharedItemsImports = 4
 		Core.Rpi5\Core.Rpi5.vcxitems*{4422a24d-5f09-491b-b4f1-48433b26ed3d}*SharedItemsImports = 9

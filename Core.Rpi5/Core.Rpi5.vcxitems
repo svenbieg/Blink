@@ -25,12 +25,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Arm\MailBox.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Arm\Gpio.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\DeviceTree.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Emmc\EmmcDevice.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Emmc\EmmcRegisters.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\Gpio.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pcie\PcieHost.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pcie\PcieRegisters.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pcie\SouthBridge.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialPort.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Exceptions.h" />
@@ -40,7 +35,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\System.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Tasks.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Settings.h" />
@@ -49,10 +43,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Arm\MailBox.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Arm\Gpio.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\DeviceTree.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Emmc\EmmcDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\Gpio.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Pcie\PcieHost.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Pcie\SouthBridge.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialPort.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.S" />
@@ -63,7 +54,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\System.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Tasks.S" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiAdapter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)linker.ld.in" />
     <ClCompile Include="$(MSBuildThisFileDirectory)start.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)start.S" />

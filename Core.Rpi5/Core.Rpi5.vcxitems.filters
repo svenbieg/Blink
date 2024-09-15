@@ -12,26 +12,14 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\Gpio.h">
       <Filter>Devices\Gpio</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pcie\PcieHost.h">
-      <Filter>Devices\Pcie</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.h">
       <Filter>Devices\Timers</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\System.h">
       <Filter>Devices\System</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiAdapter.h">
-      <Filter>Devices\Wifi</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Arm\Gpio.h">
       <Filter>Devices\Arm</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Emmc\EmmcRegisters.h">
-      <Filter>Devices\Emmc</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Emmc\EmmcDevice.h">
-      <Filter>Devices\Emmc</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Settings.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Interrupts.h">
@@ -39,12 +27,6 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\DeviceTree.h">
       <Filter>Devices</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pcie\PcieRegisters.h">
-      <Filter>Devices\Pcie</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pcie\SouthBridge.h">
-      <Filter>Devices\Pcie</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.h">
       <Filter>Devices\System</Filter>
@@ -78,20 +60,11 @@
     <Filter Include="Devices\Arm">
       <UniqueIdentifier>{2f72221a-c31d-438a-ae3c-240d2ed1282b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Devices\Pcie">
-      <UniqueIdentifier>{67eea1ee-9396-4fd5-af0f-0e5c10b9e1d4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Devices\Timers">
       <UniqueIdentifier>{4e75c07d-adf1-42c7-82a6-1cfa2cf7b35b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Devices\System">
       <UniqueIdentifier>{18aeb9f7-bb20-4dd2-b627-eb5e5216577f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Devices\Wifi">
-      <UniqueIdentifier>{e88ddb52-d012-45d7-82a1-fe29b2dbfeac}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Devices\Emmc">
-      <UniqueIdentifier>{5d72db0a-7631-4e80-bc8f-cdf1742698f5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -127,32 +100,20 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\Gpio.cpp">
       <Filter>Devices\Gpio</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Pcie\PcieHost.cpp">
-      <Filter>Devices\Pcie</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.cpp">
       <Filter>Devices\Timers</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\System.cpp">
       <Filter>Devices\System</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiAdapter.cpp">
-      <Filter>Devices\Wifi</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Arm\Gpio.cpp">
       <Filter>Devices\Arm</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Emmc\EmmcDevice.cpp">
-      <Filter>Devices\Emmc</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Interrupts.cpp">
       <Filter>Devices\System</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\DeviceTree.cpp">
       <Filter>Devices</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Pcie\SouthBridge.cpp">
-      <Filter>Devices\Pcie</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.cpp">
       <Filter>Devices\System</Filter>

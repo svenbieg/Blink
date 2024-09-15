@@ -10,13 +10,11 @@
 //=======
 
 #include "Devices/Gpio/Gpio.h"
-#include "Devices/Pcie/SouthBridge.h"
 #include "Devices/System/Interrupts.h"
 #include "Devices/System/Peripherals.h"
 #include "SerialPort.h"
 
 using namespace Devices::Gpio;
-using namespace Devices::Pcie;
 using namespace Devices::System;
 
 
@@ -141,12 +139,12 @@ Handle<SerialPort> SerialPort::Open(UArtDevice device, BaudRate baud)
 UINT id=(UINT)device;
 if(g_SerialPort[id])
 	return g_SerialPort[id];
-if(device!=UArtDevice::UArt10)
+/*if(device!=UArtDevice::UArt10)
 	{
 	auto rp1=SouthBridge::Open();
 	if(!rp1)
 		return nullptr;
-	}
+	}*/
 g_SerialPort[id]=new SerialPort(device, baud);
 return g_SerialPort[id];
 }
