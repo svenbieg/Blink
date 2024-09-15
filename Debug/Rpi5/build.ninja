@@ -1,0 +1,135 @@
+FLAGS= -g -fdata-sections -ffunction-sections -ffreestanding -nostartfiles -fexec-charset=ISO-8859-1 -mcpu=cortex-a76 -mlittle-endian
+FLAGS_CPP= -std=c++17
+FLAGS_LD= --no-warn-rwx-segments --gc-sections -nostdlib -LC:\Users\svenb\gcc\arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-aarch64-none-elf\lib\gcc\aarch64-none-elf\13.2.1\
+PREPROC=-D_DEBUG
+INCLUDE=-IC:\Users\svenb\Documents\GitHub\Blink\ -IC:\Users\svenb\Documents\GitHub\Blink\Blink\ -IC:\Users\svenb\Documents\GitHub\Blink\Core\ -IC:\Users\svenb\Documents\GitHub\Blink\Core\Runtime\ -IC:\Users\svenb\Documents\GitHub\Blink\Core.Rpi5\ -IC:\Users\svenb\Documents\GitHub\Blink\Default\
+SCRIPTS=-Tobj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.linker.ld.in.o
+LIBS= -lgcc -lm -lstdc++
+CRTBEGIN=C:\Users\svenb\gcc\arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-aarch64-none-elf\lib\gcc\aarch64-none-elf\13.2.1\crtbegin.o
+CRTEND=C:\Users\svenb\gcc\arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-aarch64-none-elf\lib\gcc\aarch64-none-elf\13.2.1\crtend.o
+
+
+rule .s.o
+  depfile=$out.d
+  command=aarch64-none-elf-gcc -MD -MF $out.d -c $FLAGS $FLAGS_S $PREPROC $INCLUDE -o $out $in
+
+rule .cpp.o
+  depfile=$out.d
+  command=aarch64-none-elf-g++ -MD -MF $out.d -c $FLAGS $FLAGS_CPP $PREPROC $INCLUDE -o $out $in
+
+rule .ld
+  depfile=$out.d
+  command=aarch64-none-elf-gcc -MD -MF $out.d -MT $out -E -P -x c -D__ASSEMBLER__ -D__LINKER__ $PREPROC $INCLUDE -o $out $in
+
+rule .elf
+  depfile=
+  command=aarch64-none-elf-ld -o $out $FLAGS_LD $SCRIPTS $CRTBEGIN $in --start-group $LIBS --end-group $CRTEND
+
+rule .elf.txt
+  depfile=
+  command=cmd /c aarch64-none-elf-objdump -h $in > $out
+
+rule .bin
+  depfile=
+  command=aarch64-none-elf-objcopy -O binary $in $out
+
+
+build obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.System.Cpu.S.o: .s.o C$:\Users\svenb\Documents\GitHub\Blink\Core.Rpi5\Devices\System\Cpu.S
+build obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.System.Exceptions.S.o: .s.o C$:\Users\svenb\Documents\GitHub\Blink\Core.Rpi5\Devices\System\Exceptions.S
+build obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.System.Tasks.S.o: .s.o C$:\Users\svenb\Documents\GitHub\Blink\Core.Rpi5\Devices\System\Tasks.S
+build obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.start.S.o: .s.o C$:\Users\svenb\Documents\GitHub\Blink\Core.Rpi5\start.S
+build obj\Users.svenb.Documents.GitHub.Blink.Core.Concurrency.CriticalSection.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Core\Concurrency\CriticalSection.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Core.Concurrency.Mutex.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Core\Concurrency\Mutex.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Core.Concurrency.Scheduler.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Core\Concurrency\Scheduler.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Core.Concurrency.Signal.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Core\Concurrency\Signal.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Core.Concurrency.Task.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Core\Concurrency\Task.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Core.Runtime.stdlib.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Core\Runtime\stdlib.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Core.Runtime.heap.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Core\Runtime\heap.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Core.ErrorHelper.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Core\ErrorHelper.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.Arm.MailBox.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Core.Rpi5\Devices\Arm\MailBox.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.Arm.Gpio.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Core.Rpi5\Devices\Arm\Gpio.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.DeviceTree.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Core.Rpi5\Devices\DeviceTree.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.Gpio.Gpio.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Core.Rpi5\Devices\Gpio\Gpio.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.Serial.SerialPort.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Core.Rpi5\Devices\Serial\SerialPort.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.System.Cpu.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Core.Rpi5\Devices\System\Cpu.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.System.Exceptions.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Core.Rpi5\Devices\System\Exceptions.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.System.Interrupts.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Core.Rpi5\Devices\System\Interrupts.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.System.Memory.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Core.Rpi5\Devices\System\Memory.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.System.System.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Core.Rpi5\Devices\System\System.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.Timers.SystemTimer.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Core.Rpi5\Devices\Timers\SystemTimer.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.start.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Core.Rpi5\start.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Default.CharHelper.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Default\CharHelper.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Default.Collections.Node.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Default\Collections\Node.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Default.Collections.StringList.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Default\Collections\StringList.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Default.Core.Application.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Default\Core\Application.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Default.Core.DispatchedHandler.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Default\Core\DispatchedHandler.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Default.MemoryHelper.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Default\MemoryHelper.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Default.Object.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Default\Object.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Default.PathHelper.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Default\PathHelper.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Default.Storage.Buffer.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Default\Storage\Buffer.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Default.Storage.Directory.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Default\Storage\Directory.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Default.Storage.File.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Default\Storage\File.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Default.Storage.DynamicBuffer.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Default\Storage\DynamicBuffer.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Default.Storage.Intermediate.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Default\Storage\Intermediate.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Default.Storage.StaticBuffer.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Default\Storage\StaticBuffer.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Default.Storage.Streams.StreamHelper.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Default\Storage\Streams\StreamHelper.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Default.Storage.Streams.StreamReader.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Default\Storage\Streams\StreamReader.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Default.Storage.Streams.StreamWriter.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Default\Storage\Streams\StreamWriter.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Default.StringClass.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Default\StringClass.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Default.StringHelper.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Default\StringHelper.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Default.UnknownClass.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Default\UnknownClass.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Blink.Application.cpp.o: .cpp.o C$:\Users\svenb\Documents\GitHub\Blink\Blink\Application.cpp
+build obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.linker.ld.in.o: .ld C$:\Users\svenb\Documents\GitHub\Blink\Core.Rpi5\linker.ld.in
+
+build kernel_2712.elf: .elf $
+obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.System.Cpu.S.o $
+obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.System.Exceptions.S.o $
+obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.System.Tasks.S.o $
+obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.start.S.o obj\Users.svenb.Documents.GitHub.Blink.Core.Concurrency.CriticalSection.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Core.Concurrency.Mutex.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Core.Concurrency.Scheduler.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Core.Concurrency.Signal.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Core.Concurrency.Task.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Core.Runtime.stdlib.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Core.Runtime.heap.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Core.ErrorHelper.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.Arm.MailBox.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.Arm.Gpio.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.DeviceTree.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.Gpio.Gpio.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.Serial.SerialPort.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.System.Cpu.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.System.Exceptions.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.System.Interrupts.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.System.Memory.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.System.System.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.Devices.Timers.SystemTimer.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.start.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Default.CharHelper.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Default.Collections.Node.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Default.Collections.StringList.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Default.Core.Application.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Default.Core.DispatchedHandler.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Default.MemoryHelper.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Default.Object.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Default.PathHelper.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Default.Storage.Buffer.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Default.Storage.Directory.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Default.Storage.File.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Default.Storage.DynamicBuffer.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Default.Storage.Intermediate.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Default.Storage.StaticBuffer.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Default.Storage.Streams.StreamHelper.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Default.Storage.Streams.StreamReader.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Default.Storage.Streams.StreamWriter.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Default.StringClass.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Default.StringHelper.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Default.UnknownClass.cpp.o $
+obj\Users.svenb.Documents.GitHub.Blink.Blink.Application.cpp.o $
+|obj\Users.svenb.Documents.GitHub.Blink.Core.Rpi5.linker.ld.in.o 
+
+
+build kernel_2712.elf.txt: .elf.txt kernel_2712.elf
+
+build kernel_2712.img: .bin kernel_2712.elf
+

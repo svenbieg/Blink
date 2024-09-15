@@ -41,7 +41,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskLock.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ErrorHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Network\Ethernet\Ethernet.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\cmath" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\condition_variable" />
@@ -58,7 +57,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Scheduler.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Signal.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Task.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Network\Ethernet\Ethernet.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\stdlib.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\heap.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ErrorHelper.cpp" />
