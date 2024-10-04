@@ -68,6 +68,7 @@ else
 m_WaitingTask=Scheduler::AddParallelTask(m_WaitingTask, task);
 lock.Unlock();
 task_lock.Unlock();
+// Waiting...
 lock.Lock();
 return task->m_ResumeTime==0;
 }

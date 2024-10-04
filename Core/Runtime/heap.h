@@ -2,13 +2,13 @@
 // heap.h
 //========
 
-#pragma once
-
 // Memory-manager for real-time C++ applications
 // Allocations and deletions are done in constant low time
 
 // Copyright 2024, Sven Bieg (svenbieg@web.de)
 // http://github.com/svenbieg/Heap
+
+#pragma once
 
 
 //=======

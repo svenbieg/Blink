@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Mutex.h"
+#include "ScopedLock.h"
 
 
 //===========
@@ -23,7 +23,7 @@ namespace Concurrency {
 // Task-Lock
 //===========
 
-class TaskLock
+class TaskLock: public ScopedLock
 {
 public:
 	// Con-/Destructors
@@ -31,17 +31,10 @@ public:
 		{
 		m_Mutex->Lock(true);
 		}
-	inline ~TaskLock()
-		{
-		if(m_Mutex)
-			m_Mutex->Unlock();
-		}
 
 	// Common
-	inline VOID Lock() { m_Mutex->Lock(true); }
-	inline VOID Release() { m_Mutex=nullptr; }
-	inline BOOL TryLock() { return m_Mutex->TryLock(true); }
-	inline VOID Unlock() { m_Mutex->Unlock(); }
+	inline VOID Lock()override { m_Mutex->Lock(true); }
+	inline BOOL TryLock()override { return m_Mutex->TryLock(true); }
 
 private:
 	// Common

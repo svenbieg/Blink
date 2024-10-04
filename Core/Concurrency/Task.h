@@ -37,9 +37,12 @@ class Signal;
 enum class TaskFlags: UINT
 {
 None=0,
-Exclusive=1,
-Sharing=2,
-Suspend=4
+Blocking=1,
+Critical=2,
+Switch=4,
+Busy=7,
+Sharing=8,
+Remove=16
 };
 
 

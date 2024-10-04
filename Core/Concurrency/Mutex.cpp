@@ -45,16 +45,16 @@ m_Owner->m_Waiting=nullptr;
 m_Owner=task;
 }
 
-VOID Mutex::Lock(BOOL exclusive)
+VOID Mutex::Lock(BOOL blocking)
 {
-if(!exclusive)
+if(!blocking)
 	return Lock();
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto task=Scheduler::s_CurrentTask[core];
 if(!task)
 	return;
-task->SetFlag(TaskFlags::Exclusive);
+task->SetFlag(TaskFlags::Blocking);
 if(!m_Owner)
 	{
 	m_Owner=task;
@@ -109,9 +109,9 @@ m_Owner=Scheduler::s_CurrentTask[core];
 return true;
 }
 
-BOOL Mutex::TryLock(BOOL exclusive)
+BOOL Mutex::TryLock(BOOL blocking)
 {
-if(!exclusive)
+if(!blocking)
 	return TryLock();
 SpinLock lock(Scheduler::s_CriticalSection);
 if(m_Owner)
@@ -120,7 +120,7 @@ UINT core=Cpu::GetId();
 m_Owner=Scheduler::s_CurrentTask[core];
 if(m_Owner)
 	{
-	m_Owner->SetFlag(TaskFlags::Exclusive);
+	m_Owner->SetFlag(TaskFlags::Blocking);
 	Interrupts::Disable();
 	}
 return true;
@@ -131,10 +131,10 @@ VOID Mutex::Unlock()
 SpinLock lock(Scheduler::s_CriticalSection);
 if(!m_Owner)
 	return;
-if(m_Owner->GetFlag(TaskFlags::Exclusive))
+if(m_Owner->GetFlag(TaskFlags::Blocking))
 	{
 	Interrupts::Enable();
-	m_Owner->ClearFlag(TaskFlags::Exclusive);
+	m_Owner->ClearFlag(TaskFlags::Blocking);
 	}
 auto waiting=m_Owner->m_Waiting;
 if(!waiting)

@@ -38,11 +38,15 @@ public:
 		}
 
 	// Common
-	inline VOID Lock() { m_Mutex->Lock(); }
+	virtual inline VOID Lock() { m_Mutex->Lock(); }
 	inline VOID Release() { m_Mutex=nullptr; }
+	virtual inline BOOL TryLock() { return m_Mutex->TryLock(); }
 	inline VOID Unlock() { m_Mutex->Unlock(); }
 
-private:
+protected:
+	// Con-/Destructors
+	inline ScopedLock() {}
+
 	// Common
 	Mutex* m_Mutex;
 };

@@ -38,16 +38,17 @@ public:
 	static VOID ExitTask();
 	static Handle<Task> GetCurrentTask();
 	static VOID Initialize();
+	static VOID Schedule();
 	static VOID SuspendCurrentTask(UINT MilliSeconds);
 
 private:
 	// Common
 	static Task* AddParallelTask(Task* Current, Task* Parallel);
+	static UINT CurrentCore();
 	static Handle<Task> GetWaitingTask();
 	static VOID HandleTaskSwitch(VOID* Parameter);
 	static VOID IdleTask();
 	static VOID MainTask();
-	static VOID OnSystemTimerTick();
 	static Task* RemoveParallelTask(Task* Current, Task* Remove);
 	static VOID ResumeTask(Task* Task);
 	static Task* SuspendCurrentTask(Task* Owner, UINT MilliSeconds);

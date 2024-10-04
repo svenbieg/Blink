@@ -13,6 +13,8 @@
 #include "Concurrency/ScopedLock.h"
 #include "Concurrency/SharedLock.h"
 #include "Concurrency/Signal.h"
+#include "Concurrency/SpinLock.h"
+#include "Concurrency/TaskLock.h"
 #include "Core/Application.h"
 
 
