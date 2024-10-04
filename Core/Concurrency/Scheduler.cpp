@@ -70,18 +70,17 @@ return s_CurrentTask[core];
 VOID Scheduler::Initialize()
 {
 s_CurrentCore=0;
+Interrupts::Route(IRQ_TASK_SWITCH, IrqTarget::All);
+Interrupts::SetHandler(IRQ_TASK_SWITCH, HandleTaskSwitch);
 for(UINT core=0; core<CPU_COUNT; core++)
 	{
 	Handle<Task> idle=new Concurrency::Details::TaskTyped(IdleTask);
-	InitializeTask(&idle->m_StackPointer, &Task::TaskProc, idle);
 	s_IdleTask[core]=idle;
 	s_CurrentTask[core]=idle;
 	}
 Handle<Task> main=new Concurrency::Details::TaskTyped(MainTask);
 InitializeTask(&main->m_StackPointer, &Task::TaskProc, main);
-s_CurrentTask[0]=main;
-Interrupts::Route(IRQ_TASK_SWITCH, IrqTarget::All);
-Interrupts::SetHandler(IRQ_TASK_SWITCH, HandleTaskSwitch);
+s_WaitingTask=main;
 SystemTimer::Open();
 }
 
@@ -170,6 +169,7 @@ Cpu::SwitchTask(core, current, next);
 VOID Scheduler::IdleTask()
 {
 Interrupts::Enable();
+SystemTimer::Start();
 while(1)
 	{
 	Cpu::WaitForInterrupt();
