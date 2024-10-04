@@ -24,14 +24,6 @@ using namespace Devices::System;
 namespace Concurrency {
 
 
-//==================
-// Con-/Destructors
-//==================
-
-Signal::Signal()
-{}
-
-
 //========
 // Common
 //========

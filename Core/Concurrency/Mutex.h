@@ -34,7 +34,7 @@ class Mutex
 {
 public:
 	// Con-/Destructors
-	inline Mutex(): m_Owner(nullptr) {}
+	Mutex(): m_Owner(nullptr) {}
 
 	// Common
 	VOID Lock();

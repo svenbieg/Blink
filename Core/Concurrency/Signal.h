@@ -35,7 +35,7 @@ class Signal
 {
 public:
 	// Con-/Destructors
-	Signal();
+	Signal() {}
 
 	// Common
 	VOID Broadcast();
