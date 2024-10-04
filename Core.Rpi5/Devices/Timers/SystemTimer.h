@@ -26,6 +26,7 @@ public:
 	static inline UINT Milliseconds() { return (UINT)(Microseconds64()/1000); }
 	static UINT64 Milliseconds64() { return Microseconds64()/1000; }
 	static Handle<SystemTimer> Open();
+	static VOID Start();
 	Event<SystemTimer> Tick; // ~10ms (100Hz)
 
 private:
