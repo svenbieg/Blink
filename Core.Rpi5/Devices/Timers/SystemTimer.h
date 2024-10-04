@@ -34,7 +34,11 @@ private:
 
 	// Common
 	static VOID HandleInterrupt(VOID* Parameter);
+	static VOID TaskProc();
 	static Handle<SystemTimer> s_Current;
+	static Concurrency::Mutex s_Mutex;
+	static Concurrency::Signal s_Signal;
+	static Handle<Concurrency::Task> s_Task;
 };
 
 }}
