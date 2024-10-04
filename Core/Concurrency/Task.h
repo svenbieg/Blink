@@ -38,11 +38,10 @@ enum class TaskFlags: UINT
 {
 None=0,
 Blocking=1,
-Critical=2,
-Switch=4,
-Busy=7,
-Sharing=8,
-Remove=16
+Switch=2,
+Busy=3,
+Sharing=4,
+Suspend=8
 };
 
 

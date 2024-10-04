@@ -29,12 +29,12 @@ public:
 	// Con-/Destructors
 	inline TaskLock(Mutex& Mutex): m_Mutex(&Mutex)
 		{
-		m_Mutex->Lock(true);
+		m_Mutex->LockBlocking();
 		}
 
 	// Common
-	inline VOID Lock()override { m_Mutex->Lock(true); }
-	inline BOOL TryLock()override { return m_Mutex->TryLock(true); }
+	inline VOID Lock()override { m_Mutex->LockBlocking(); }
+	inline BOOL TryLock()override { return m_Mutex->TryLockBlocking(); }
 
 private:
 	// Common

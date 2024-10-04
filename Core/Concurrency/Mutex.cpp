@@ -45,10 +45,8 @@ m_Owner->m_Waiting=nullptr;
 m_Owner=task;
 }
 
-VOID Mutex::Lock(BOOL blocking)
+VOID Mutex::LockBlocking()
 {
-if(!blocking)
-	return Lock();
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto task=Scheduler::s_CurrentTask[core];
@@ -58,7 +56,7 @@ task->SetFlag(TaskFlags::Blocking);
 if(!m_Owner)
 	{
 	m_Owner=task;
-	Interrupts::Disable();
+	Interrupts::Disable(IRQ_TASK_SWITCH);
 	return;
 	}
 Scheduler::SuspendCurrentTask(m_Owner, 0);
@@ -109,10 +107,8 @@ m_Owner=Scheduler::s_CurrentTask[core];
 return true;
 }
 
-BOOL Mutex::TryLock(BOOL blocking)
+BOOL Mutex::TryLockBlocking()
 {
-if(!blocking)
-	return TryLock();
 SpinLock lock(Scheduler::s_CriticalSection);
 if(m_Owner)
 	return false;
@@ -121,7 +117,7 @@ m_Owner=Scheduler::s_CurrentTask[core];
 if(m_Owner)
 	{
 	m_Owner->SetFlag(TaskFlags::Blocking);
-	Interrupts::Disable();
+	Interrupts::Disable(IRQ_TASK_SWITCH);
 	}
 return true;
 }
@@ -133,7 +129,7 @@ if(!m_Owner)
 	return;
 if(m_Owner->GetFlag(TaskFlags::Blocking))
 	{
-	Interrupts::Enable();
+	Interrupts::Enable(IRQ_TASK_SWITCH);
 	m_Owner->ClearFlag(TaskFlags::Blocking);
 	}
 auto waiting=m_Owner->m_Waiting;

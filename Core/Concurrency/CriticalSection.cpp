@@ -46,7 +46,11 @@ if(m_Core==core)
 	return;
 	}
 while(!Cpu::CompareAndSet(&m_Core, CPU_COUNT, core))
+	{
+	Interrupts::Enable();
 	Cpu::WaitForEvent();
+	Interrupts::Disable();
+	}
 m_LockCount++;
 }
 

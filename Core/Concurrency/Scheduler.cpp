@@ -155,7 +155,7 @@ auto current=s_CurrentTask[core];
 ClearFlag(current->m_Flags, TaskFlags::Switch);
 auto next=current->m_Next;
 current->m_Next=nullptr;
-BOOL remove=current->GetFlag(TaskFlags::Remove);
+BOOL remove=current->GetFlag(TaskFlags::Suspend);
 remove|=(current==s_IdleTask[core]);
 if(!remove)
 	s_WaitingTask=SuspendTask(s_WaitingTask, current, 0);
@@ -163,8 +163,6 @@ if(!next)
 	next=s_IdleTask[core];
 if(next->GetFlag(TaskFlags::Blocking))
 	Interrupts::Disable(IRQ_TASK_SWITCH);
-if(next->GetFlag(TaskFlags::Critical))
-	Interrupts::Disable();
 s_CurrentTask[core]=next;
 Cpu::SwitchTask(core, current, next);
 }
@@ -240,7 +238,7 @@ Task* Scheduler::SuspendCurrentTask(Task* owner, UINT ms)
 {
 UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
-current->SetFlag(TaskFlags::Remove);
+current->SetFlag(TaskFlags::Suspend);
 if(!current->m_Next)
 	{
 	auto next=GetWaitingTask();

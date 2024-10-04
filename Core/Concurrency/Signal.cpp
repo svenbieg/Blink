@@ -70,6 +70,8 @@ lock.Unlock();
 task_lock.Unlock();
 // Waiting...
 lock.Lock();
+if(task->m_ResumeTime!=0)
+	m_WaitingTask=Scheduler::RemoveParallelTask(m_WaitingTask, task);
 return task->m_ResumeTime==0;
 }
 
