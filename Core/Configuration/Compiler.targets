@@ -33,14 +33,14 @@
       <NinjaCompileCpp Condition="'@(SourceListCpp)'!=''">@(SourceListCpp->'build %(OutputFileName): .cpp.o %(InputFileName)', '%0D%0A')</NinjaCompileCpp>
       <NinjaCompileIn Condition="'@(SourceListIn)'!=''">@(SourceListIn->'build %(OutputFileName): .ld %(InputFileName)', '%0D%0A')</NinjaCompileIn>
       <NinjaCompileS Condition="'@(SourceListS)'!=''">@(SourceListS->'build %(OutputFileName): .s.o %(InputFileName)', '%0D%0A')</NinjaCompileS>
-      <NinjaLink Condition="'@(ClCompile)'!=''">%0D%0Abuild $(TargetName).elf: .elf $%0D%0A</NinjaLink>
+      <NinjaLink Condition="'@(ClCompile)'!=''">%0D%0Abuild $(ProjectName).elf: .elf $%0D%0A</NinjaLink>
       <NinjaLink Condition="'@(SourceListS)'!=''">$(NinjaLink)@(SourceListS->'%(OutputFileName) ', '$%0D%0A')</NinjaLink>
       <NinjaLink Condition="'@(SourceListC)'!=''">$(NinjaLink)@(SourceListC->'%(OutputFileName) ', '$%0D%0A')</NinjaLink>
       <NinjaLink Condition="'@(SourceListCpp)'!=''">$(NinjaLink)@(SourceListCpp->'%(OutputFileName) ', '$%0D%0A')</NinjaLink>
       <NinjaLink Condition="'@(SourceListIn)'!=''">$(NinjaLink)$%0D%0A|@(SourceListIn->'%(OutputFileName) ', '$%0D%0A')</NinjaLink>
       <NinjaLink Condition="'@(ClCompile)'!=''">$(NinjaLink)%0D%0A%0D%0A</NinjaLink>
-      <NinjaHeaders Condition="'$(Configuration)'=='Debug'">build $(TargetName).elf.txt: .elf.txt $(TargetName).elf%0D%0A</NinjaHeaders>
-      <NinjaBinary Condition="'$(TargetType)'=='Binary'">build $(TargetName)$(TargetExt): .bin $(TargetName).elf%0D%0A</NinjaBinary>
+      <NinjaHeaders Condition="'$(Configuration)'=='Debug'">build $(ProjectName).elf.txt: .elf.txt $(ProjectName).elf%0D%0A</NinjaHeaders>
+      <NinjaBinary Condition="'$(TargetType)'=='Binary'">build $(TargetName)$(TargetExt): .bin $(ProjectName).elf%0D%0A</NinjaBinary>
     </PropertyGroup>
     <ItemGroup>
       <NinjaRules Include=".s.o" Condition="'$(NinjaCompileS)'!=''">

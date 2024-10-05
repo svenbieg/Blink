@@ -2,11 +2,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <HasSharedItems>true</HasSharedItems>
-    <ItemsProjectGuid>{4422A24D-5F09-491B-B4F1-48433B26ED3D}</ItemsProjectGuid>
-    <ItemsSccProjectName>$/Core/Core.Rpi5</ItemsSccProjectName>
-    <ItemsSccAuxPath>https://svenbieg.visualstudio.com</ItemsSccAuxPath>
-    <ItemsSccLocalPath>.</ItemsSccLocalPath>
-    <ItemsSccProvider>{4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}</ItemsSccProvider>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(MSBuildThisFileDirectory)</NMakeIncludeSearchPath>
   </PropertyGroup>
@@ -15,7 +10,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Default.props" />
-    <None Include="$(MSBuildThisFileDirectory)Configuration\OpenOcd.cfg" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Platform.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.props" />

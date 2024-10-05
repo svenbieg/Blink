@@ -80,9 +80,6 @@
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.targets">
       <Filter>Configuration</Filter>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)Configuration\OpenOcd.cfg">
-      <Filter>Configuration</Filter>
-    </None>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Default.props">
       <Filter>Configuration</Filter>
     </None>

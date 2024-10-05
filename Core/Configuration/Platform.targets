@@ -4,5 +4,6 @@
   <Import Project="$(MSBuildThisFileDirectory)Default.targets" />
   <Import Project="$(MSBuildThisFileDirectory)Tools.targets" />
   <Import Project="$(MSBuildThisFileDirectory)Compiler.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)Debug.targets" />
 
 </Project>
