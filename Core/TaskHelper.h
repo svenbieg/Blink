@@ -28,10 +28,15 @@ inline Handle<Concurrency::Task> CreateTask(VOID (*Procedure)(_args_t...), _args
 using Application=Core::Application;
 using Scheduler=Concurrency::Scheduler;
 using Task=Concurrency::Task;
-if(!Application::Current)
-	return nullptr;
 Handle<Task> task=new Concurrency::Details::TaskTyped<_args_t...>(Procedure, Arguments...);
-Application::Current->Dispatch<Handle<Task>>(Scheduler::AddTask, task);
+if(Application::Current)
+	{
+	Application::Current->Dispatch<Handle<Task>>(Scheduler::AddTask, task);
+	}
+else
+	{
+	Scheduler::AddTask(task);
+	}
 return task;
 }
 
@@ -41,10 +46,15 @@ inline Handle<Concurrency::Task> CreateTask(_owner_t* Owner, VOID (_owner_t::*Pr
 using Application=Core::Application;
 using Scheduler=Concurrency::Scheduler;
 using Task=Concurrency::Task;
-if(!Application::Current)
-	return nullptr;
 Handle<Task> task=new Concurrency::Details::TaskOwned<_owner_t, _args_t...>(Owner, Procedure, Arguments...);
-Application::Current->Dispatch<Handle<Task>>(Scheduler::AddTask, task);
+if(Application::Current)
+	{
+	Application::Current->Dispatch<Handle<Task>>(Scheduler::AddTask, task);
+	}
+else
+	{
+	Scheduler::AddTask(task);
+	}
 return task;
 }
 
