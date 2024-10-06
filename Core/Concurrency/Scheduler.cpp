@@ -81,7 +81,8 @@ for(UINT core=0; core<CPU_COUNT; core++)
 Handle<Task> main=new Concurrency::Details::TaskTyped(MainTask);
 InitializeTask(&main->m_StackPointer, &Task::TaskProc, main);
 s_WaitingTask=main;
-SystemTimer::Open();
+auto timer=SystemTimer::Open();
+timer->Tick.Add(Scheduler::Schedule);
 }
 
 VOID Scheduler::Schedule()
