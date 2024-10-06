@@ -70,8 +70,7 @@ __asm volatile("msr CNTP_CTL_EL0, %0": : "r" (1UL));
 SystemTimer::SystemTimer()
 {
 Interrupts::SetHandler(IRQ_SYSTIMER, HandleInterrupt, this);
-s_Task=new Concurrency::Details::TaskTyped(TaskProc);
-Scheduler::AddTask(s_Task);
+m_Task=CreateTask(this, &SystemTimer::TaskProc);
 }
 
 
@@ -81,8 +80,7 @@ Scheduler::AddTask(s_Task);
 
 VOID SystemTimer::HandleInterrupt(VOID* param)
 {
-Scheduler::Schedule();
-s_Signal.Broadcast();
+s_Current->m_Signal.Broadcast();
 UINT64 cnt_freq;
 __asm volatile("mrs %0, CNTFRQ_EL0": "=r" (cnt_freq));
 UINT64 ticks=cnt_freq/100;
@@ -96,17 +94,14 @@ __asm volatile("msr CNTP_CVAL_EL0, %0": : "r" (cnt_pct+ticks));
 
 VOID SystemTimer::TaskProc()
 {
-while(s_Current)
+while(m_Task)
 	{
-	TaskLock lock(s_Mutex);
-	s_Signal.Wait(lock);
-	s_Current->Tick(s_Current);
+	TaskLock lock(m_Mutex);
+	m_Signal.Wait(lock);
+	Tick(this);
 	}
 }
 
 Handle<SystemTimer> SystemTimer::s_Current;
-Mutex SystemTimer::s_Mutex;
-Signal SystemTimer::s_Signal;
-Handle<Task> SystemTimer::s_Task;
 
 }}

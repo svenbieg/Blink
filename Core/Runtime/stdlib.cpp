@@ -11,7 +11,10 @@
 
 #include <stdarg.h>
 #include <stdio.h>
+#include "Concurrency/TaskLock.h"
 #include "heap.h"
+
+using namespace Concurrency;
 
 
 //========
@@ -51,6 +54,7 @@ throw NotImplementedException();
 //=========
 
 heap_handle_t g_heap=nullptr;
+Mutex g_heap_mutex;
 
 extern "C" LPCSTR getenv(LPCSTR name)
 {
@@ -59,17 +63,20 @@ return nullptr;
 
 extern "C" VOID* malloc(SIZE_T size)
 {
+TaskLock lock(g_heap_mutex);
 return heap_alloc(g_heap, size);
 }
 
 extern "C" VOID free(VOID* buf)
 {
+TaskLock lock(g_heap_mutex);
 heap_free(g_heap, buf);
 }
 
 extern "C" VOID* realloc(VOID* buf, SIZE_T size)
 {
-return heap_realloc(g_heap, buf, size);
+throw NotImplementedException();
+return nullptr;
 }
 
 
