@@ -31,20 +31,6 @@
     <Exec Command="winget install --id Python.Python.3.8 -e --source winget" />
   </Target>
 
-  <Target Name="InstallVsCode" Condition="!Exists('$(VsCodeExe)')">
-    <Message Text="Installing VSCode..." Importance="High" />
-    <Exec Command="winget install --id Microsoft.VisualStudioCode" />
-    <Exec Command="$(VsCodeCmd) --install-extension ms-ceintl.vscode-language-pack-de" />
-    <Exec Command="$(VsCodeCmd) --install-extension ms-vscode.cmake-tools" />
-    <Exec Command="$(VsCodeCmd) --install-extension ms-vscode.cpptools" />
-    <Exec Command="$(VsCodeCmd) --install-extension ms-vscode.cpptools-extension-pack" />
-    <Exec Command="$(VsCodeCmd) --install-extension ms-vscode.cpptools-themes" />
-    <Exec Command="$(VsCodeCmd) --install-extension ms-vscode.vscode-serial-monitor" />
-    <Exec Command="$(VsCodeCmd) --install-extension marus25.cortex-debug" />
-    <Exec Command="$(VsCodeCmd) --install-extension dan-c-underwood.arm" />
-    <Exec Command="$(VsCodeCmd) --install-extension zixuanwang.linkerscript" />
-  </Target>
-
   <Import Project="$(SolutionDir)Core.$(Platform)\Configuration\Tools.targets" Condition="Exists('$(SolutionDir)Core.$(Platform)\Configuration\Tools.targets')" />
 
   <Import Project="$(ProjectDir)Configuration\Tools.targets" Condition="Exists('$(ProjectDir)Configuration\Tools.targets')" />

@@ -27,7 +27,7 @@
 
   <Target Name="Rebuild" DependsOnTargets="Clean;Build" />
 
-  <Target Name="NinjaBuild" DependsOnTargets="NinjaCompile" />
+  <Target Name="NinjaBuild" DependsOnTargets="VsCodeSetup;NinjaCompile" />
 
   <Import Project="$(SolutionDir)Core.$(Platform)\Configuration\Default.targets" Condition="Exists('$(SolutionDir)Core.$(Platform)\Configuration\Default.targets')" />
 

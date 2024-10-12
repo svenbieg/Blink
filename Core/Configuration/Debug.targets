@@ -13,7 +13,7 @@
     <WriteLinesToFile File="$(SolutionDir)\.vscode\openocd.cfg" Lines="@(OpenOcdLines)" Overwrite="true" />
   </Target>
 
-  <Target Name="VsCodeSetup" DependsOnTargets="OpenOcdSetup;NinjaSetup;InstallVsCode">
+  <Target Name="VsCodeSetup" DependsOnTargets="OpenOcdSetup;NinjaSetup">
     <ItemGroup>
       <ForcedIncludeList Include="$(NMakeForcedIncludes)" />
     </ItemGroup>

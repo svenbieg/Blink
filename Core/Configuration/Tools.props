@@ -23,12 +23,6 @@
     <PythonExe>$(PythonPath)python.exe</PythonExe>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <VsCodePath>$(HomePath)AppData\Local\Programs\Microsoft VS Code\</VsCodePath>
-    <VsCodeExe>$(VsCodePath)Code.exe</VsCodeExe>
-    <VsCodeCmd>"$(VsCodePath)bin\code.cmd"</VsCodeCmd>
-  </PropertyGroup>
-
   <Import Project="$(SolutionDir)Core.$(Platform)\Configuration\Tools.props" Condition="Exists('$(SolutionDir)Core.$(Platform)\Configuration\Tools.props')"/>
 
   <Import Project="$(ProjectDir)Configuration\Tools.props" Condition="Exists('$(ProjectDir)Configuration\Tools.props')" />
