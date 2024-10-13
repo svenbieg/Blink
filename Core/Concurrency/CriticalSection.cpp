@@ -75,12 +75,12 @@ return false;
 VOID CriticalSection::Leave()
 {
 UINT core=Cpu::GetId();
-if(m_Core!=core)
-	return;
-if(--m_LockCount>0)
-	return;
-Cpu::StoreAndRelease(&m_Core, CPU_COUNT);
-Cpu::SetEvent();
+assert(m_Core==core);
+if(--m_LockCount==0)
+	{
+	Cpu::StoreAndRelease(&m_Core, CPU_COUNT);
+	Cpu::SetEvent();
+	}
 Interrupts::Enable();
 }
 
