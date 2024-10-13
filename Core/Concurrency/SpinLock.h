@@ -32,7 +32,10 @@ public:
 		{
 		Lock();
 		}
-	inline ~SpinLock() { Unlock(); }
+	inline ~SpinLock()
+		{
+		Unlock();
+		}
 
 	// Common
 	inline VOID Lock() { m_CriticalSection->Enter(); }

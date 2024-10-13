@@ -53,6 +53,7 @@ private:
 	static VOID ResumeTask(Task* Task);
 	static Task* SuspendCurrentTask(Task* Owner, UINT MilliSeconds);
 	static Task* SuspendTask(Task* Owner, Task* Suspend, UINT MilliSeconds);
+	static UINT s_CoreCount;
 	static UINT s_CurrentCore;
 	static Handle<Task> s_CurrentTask[CPU_COUNT];
 	static Handle<Task> s_IdleTask[CPU_COUNT];

@@ -43,9 +43,16 @@ ResumeTask(task);
 VOID Scheduler::Begin()
 {
 SpinLock lock(s_CriticalSection);
+UINT core_count=++s_CoreCount;
 UINT core=Cpu::GetId();
 auto task=s_CurrentTask[core];
 lock.Unlock();
+if(core_count==CPU_COUNT)
+	{
+	auto timer=SystemTimer::Open();
+	timer->Tick.Add(Scheduler::Schedule);
+	}
+Interrupts::Enable();
 Cpu::SetContext(&Task::TaskProc, task, task->m_StackPointer);
 }
 
@@ -69,20 +76,18 @@ return s_CurrentTask[core];
 
 VOID Scheduler::Initialize()
 {
-s_CurrentCore=0;
 Interrupts::Route(IRQ_TASK_SWITCH, IrqTarget::All);
 Interrupts::SetHandler(IRQ_TASK_SWITCH, HandleTaskSwitch);
 for(UINT core=0; core<CPU_COUNT; core++)
 	{
 	Handle<Task> idle=new Concurrency::Details::TaskTyped(IdleTask);
+	InitializeTask(&idle->m_StackPointer, &Task::TaskProc, idle);
 	s_IdleTask[core]=idle;
 	s_CurrentTask[core]=idle;
 	}
 Handle<Task> main=new Concurrency::Details::TaskTyped(MainTask);
 InitializeTask(&main->m_StackPointer, &Task::TaskProc, main);
-s_WaitingTask=main;
-auto timer=SystemTimer::Open();
-timer->Tick.Add(Scheduler::Schedule);
+s_CurrentTask[0]=main;
 }
 
 VOID Scheduler::Schedule()
@@ -159,18 +164,12 @@ BOOL remove=current->GetFlag(TaskFlags::Suspend);
 remove|=(current==s_IdleTask[core]);
 if(!remove)
 	s_WaitingTask=SuspendTask(s_WaitingTask, current, 0);
-if(!next)
-	next=s_IdleTask[core];
-if(next->GetFlag(TaskFlags::Blocking))
-	Interrupts::Disable(IRQ_TASK_SWITCH);
 s_CurrentTask[core]=next;
 Cpu::SwitchTask(core, current, next);
 }
 
 VOID Scheduler::IdleTask()
 {
-Interrupts::Enable();
-SystemTimer::Start();
 while(1)
 	{
 	Cpu::WaitForInterrupt();
@@ -273,6 +272,7 @@ task->m_Waiting=suspend;
 return owner;
 }
 
+UINT Scheduler::s_CoreCount=0;
 UINT Scheduler::s_CurrentCore=0;
 Handle<Task> Scheduler::s_CurrentTask[CPU_COUNT];
 Handle<Task> Scheduler::s_IdleTask[CPU_COUNT];
