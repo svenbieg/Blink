@@ -30,7 +30,7 @@ public:
 	friend class Signal;
 
 	// Con-/Destructors
-	inline ScopedLock(Mutex& Mutex): m_Mutex(m_Mutex)
+	inline ScopedLock(Mutex& Mutex): m_Mutex(&Mutex)
 		{
 		m_Mutex->Lock();
 		}
