@@ -51,17 +51,6 @@ if(!s_Current)
 return s_Current;
 }
 
-VOID SystemTimer::Start()
-{
-UINT64 cnt_pct;
-__asm volatile("mrs %0, CNTPCT_EL0": "=r" (cnt_pct));
-UINT64 cnt_freq;
-__asm volatile("mrs %0, CNTFRQ_EL0": "=r" (cnt_freq));
-UINT64 ticks=cnt_freq/100;
-__asm volatile("msr CNTP_CVAL_EL0, %0": : "r" (cnt_pct+ticks));
-__asm volatile("msr CNTP_CTL_EL0, %0": : "r" (1UL));
-}
-
 
 //==========================
 // Con-/Destructors Private
@@ -69,8 +58,15 @@ __asm volatile("msr CNTP_CTL_EL0, %0": : "r" (1UL));
 
 SystemTimer::SystemTimer()
 {
-Interrupts::SetHandler(IRQ_SYSTIMER, HandleInterrupt, this);
 m_Task=CreateTask(this, &SystemTimer::TaskProc);
+Interrupts::SetHandler(IRQ_SYSTIMER, HandleInterrupt, this);
+UINT64 cnt_pct;
+__asm volatile("mrs %0, CNTPCT_EL0": "=r" (cnt_pct));
+UINT64 cnt_freq;
+__asm volatile("mrs %0, CNTFRQ_EL0": "=r" (cnt_freq));
+UINT64 ticks=cnt_freq/100;
+__asm volatile("msr CNTP_CVAL_EL0, %0": : "r" (cnt_pct+ticks));
+__asm volatile("msr CNTP_CTL_EL0, %0": : "r" (1UL));
 }
 
 
@@ -94,9 +90,9 @@ __asm volatile("msr CNTP_CVAL_EL0, %0": : "r" (cnt_pct+ticks));
 
 VOID SystemTimer::TaskProc()
 {
-while(m_Task)
+TaskLock lock(m_Mutex);
+while(1)
 	{
-	TaskLock lock(m_Mutex);
 	m_Signal.Wait(lock);
 	Tick(this);
 	}

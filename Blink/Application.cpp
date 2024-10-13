@@ -61,6 +61,7 @@ if(++loops<50)
 led=!led;
 auto system=System::Open();
 system->Led(led);
+loops=0;
 }
 
 }

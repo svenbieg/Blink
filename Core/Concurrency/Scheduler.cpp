@@ -47,12 +47,9 @@ UINT core_count=++s_CoreCount;
 UINT core=Cpu::GetId();
 auto task=s_CurrentTask[core];
 lock.Unlock();
-if(core_count==CPU_COUNT)
-	{
-	auto timer=SystemTimer::Open();
-	timer->Tick.Add(Scheduler::Schedule);
-	}
 Interrupts::Enable();
+if(core_count<CPU_COUNT)
+	Cpu::PowerOn(core_count);
 Cpu::SetContext(&Task::TaskProc, task, task->m_StackPointer);
 }
 
@@ -95,7 +92,7 @@ VOID Scheduler::Schedule()
 SpinLock lock(s_CriticalSection);
 if(!s_WaitingTask)
 	return;
-for(UINT u=0; u<CPU_COUNT; u++)
+for(UINT u=0; u<s_CoreCount; u++)
 	{
 	UINT core=CurrentCore();
 	auto current=s_CurrentTask[core];
@@ -134,7 +131,7 @@ return current;
 
 UINT Scheduler::CurrentCore()
 {
-if(++s_CurrentCore==CPU_COUNT)
+if(++s_CurrentCore==s_CoreCount)
 	s_CurrentCore=0;
 return s_CurrentCore;
 }
@@ -178,6 +175,8 @@ while(1)
 
 VOID Scheduler::MainTask()
 {
+auto timer=SystemTimer::Open();
+timer->Tick.Add(Scheduler::Schedule);
 Main();
 }
 
@@ -208,7 +207,7 @@ return task;
 
 VOID Scheduler::ResumeTask(Task* resume)
 {
-for(UINT u=0; u<CPU_COUNT; u++)
+for(UINT u=0; u<s_CoreCount; u++)
 	{
 	if(!resume)
 		break;
