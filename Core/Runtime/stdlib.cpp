@@ -25,27 +25,27 @@ _reent* _impure_ptr=nullptr;
 
 extern "C" INT fputc(INT c, FILE* file)
 {
-throw NotImplementedException();
+return 0;
 }
 
 extern "C" INT fputs(LPCSTR str, FILE* file)
 {
-throw NotImplementedException();
+return 0;
 }
 
 extern "C" size_t fwrite(VOID const* buf, size_t size, size_t count, FILE* file)
 {
-throw NotImplementedException();
+return 0;
 }
 
 extern "C" int sprintf(LPSTR str, LPCSTR format, ...)
 {
-throw NotImplementedException();
+return 0;
 }
 
 extern "C" size_t write(FILE* file, void const* buf, size_t size)
 {
-throw NotImplementedException();
+return 0;
 }
 
 
@@ -75,8 +75,19 @@ heap_free(g_heap, buf);
 
 extern "C" VOID* realloc(VOID* buf, SIZE_T size)
 {
-throw NotImplementedException();
-return nullptr;
+TaskLock lock(g_heap_mutex);
+VOID* dst=heap_alloc(g_heap, size);
+if(buf)
+	{
+	heap_block_info_t info;
+	heap_block_get_info(g_heap, buf, &info);
+	lock.Unlock();
+	SIZE_T copy=Min(size, info.size);
+	CopyMemory(dst, buf, copy);
+	lock.Lock();
+	heap_free(g_heap, buf);
+	}
+return dst;
 }
 
 
@@ -122,17 +133,34 @@ throw NotImplementedException();
 
 extern "C" INT strcmp(LPCSTR str1, LPCSTR str2)
 {
-throw NotImplementedException();
+for(UINT pos=0; str1[pos]||str2[pos]; pos++)
+	{
+	if(str1[pos]<str2[pos])
+		return -1;
+	if(str1[pos]>str2[pos])
+		return 1;
+	}
+return 0;
 }
 
 extern "C" INT strlen(LPCSTR str)
 {
-throw NotImplementedException();
+UINT len=0;
+while(str[len])
+	len++;
+return len;
 }
 
 extern "C" INT strncmp(LPCSTR str1, LPCSTR str2, UINT len)
 {
-	throw NotImplementedException();
+for(UINT pos=0; pos<len; pos++)
+	{
+	if(str1[pos]<str2[pos])
+		return -1;
+	if(str1[pos]>str2[pos])
+		return 1;
+	}
+return 0;
 }
 
 extern "C" UINT strtoul(LPCSTR str, LPCSTR end, INT base)
