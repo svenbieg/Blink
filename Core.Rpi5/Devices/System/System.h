@@ -34,7 +34,7 @@ public:
 	VOID Led(BOOL On);
 	static Handle<System> Open();
 	static VOID PowerOff();
-	static VOID Reboot();
+	static VOID Reset();
 	static VOID Reset(ResetDevice Device);
 
 private:

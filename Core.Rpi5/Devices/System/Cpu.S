@@ -31,8 +31,8 @@ mov x0, x1
 mov sp, x2
 ret
 
-.globl cpu_on
-cpu_on:
+.globl cpu_power_on
+cpu_power_on:
 lsl x0, x0, #8
 mov x1, x0
 ldr x0, =0xC4000003

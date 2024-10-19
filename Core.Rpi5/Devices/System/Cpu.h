@@ -31,7 +31,7 @@ namespace Devices {
 
 extern "C" BOOL cpu_compare_and_set(volatile UINT* value_ptr, UINT compare, UINT set);
 extern "C" VOID cpu_context_set(void (*task_proc)(void*), void* param, void* stack);
-extern "C" INT cpu_on(UINT core);
+extern "C" INT cpu_power_on(UINT64 core);
 
 
 //==========
@@ -72,7 +72,7 @@ public:
 		}
 	static inline void DataMemoryBarrier()
 		{
-		__asm volatile("dmb st"::: "memory");
+		__asm volatile("dmb sy"::: "memory");
 		}
 	static inline VOID DataStoreBarrier()
 		{
@@ -112,7 +112,7 @@ public:
 		{
 		__asm volatile("ic iallu"::: "memory");
 		}
-	static inline INT PowerOn(UINT Core) { return cpu_on(Core); }
+	static inline INT PowerOn(UINT Core) { return cpu_power_on(Core); }
 	static inline VOID SetContext(VOID (*TaskProc)(VOID*), VOID* Parameter, VOID* Stack)
 		{
 		cpu_context_set(TaskProc, Parameter, Stack);

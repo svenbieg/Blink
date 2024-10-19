@@ -54,6 +54,7 @@ constexpr UINT PM_FULL_RESET=0x20;
 //====================================
 
 constexpr UINT64 PSCI_POWER_OFF=0x84000008;
+constexpr UINT64 PSCI_RESET=0x84000009;
 
 
 //=======
@@ -100,11 +101,12 @@ smc	#0\n\
 Abort();
 }
 
-VOID System::Reboot()
+VOID System::Reset()
 {
-auto pm=(PM_REGS*)ARM_PM_BASE;
-Bits::Write(pm->WDOG, PM_PASSWD|1);
-Bits::Write(pm->RSTC, PM_PASSWD|PM_FULL_RESET);
+__asm volatile("\
+mov	x0, %0\n\
+smc	#0\n\
+":: "r" (PSCI_RESET));
 Abort();
 }
 
