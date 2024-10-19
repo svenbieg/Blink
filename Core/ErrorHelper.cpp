@@ -10,14 +10,8 @@
 //=======
 
 #include "Collections/StringList.h"
-#include "Devices/Serial/SerialPort.h"
-#include "Devices/System/Cpu.h"
-#include "Storage/Streams/StreamWriter.h"
 
 using namespace Collections;
-using namespace Devices::Serial;
-using namespace Devices::System;
-using namespace Storage::Streams;
 
 
 //=========
