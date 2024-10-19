@@ -51,7 +51,7 @@ private:
 	static VOID IdleTask();
 	static VOID MainTask();
 	static Task* RemoveParallelTask(Task* Current, Task* Remove);
-	static VOID ResumeTask(Task* Task);
+	static VOID ResumeTask(Handle<Task> Resume);
 	static Task* SuspendCurrentTask(Task* Owner, UINT MilliSeconds);
 	static UINT s_CoreCount;
 	static UINT s_CurrentCore;

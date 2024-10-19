@@ -47,8 +47,8 @@ UINT core_count=++s_CoreCount;
 UINT core=Cpu::GetId();
 auto task=s_CurrentTask[core];
 lock.Unlock();
-if(core_count<CPU_COUNT)
-	Cpu::PowerOn(core_count);
+//if(core_count<CPU_COUNT)
+//	Cpu::PowerOn(core_count);
 Interrupts::Enable();
 Cpu::SetContext(&Task::TaskProc, task, task->m_StackPointer);
 }
@@ -167,8 +167,8 @@ UINT64 time=GetTickCount64();
 if(s_WaitingTask->m_ResumeTime>time)
 	return nullptr;
 auto waiting=s_WaitingTask;
-s_WaitingTask=s_WaitingTask->m_Next;
-waiting->m_Next=nullptr;
+s_WaitingTask=s_WaitingTask->m_Waiting;
+waiting->m_Waiting=nullptr;
 return waiting;
 }
 
@@ -229,7 +229,7 @@ remove->m_Parallel=nullptr;
 return task;
 }
 
-VOID Scheduler::ResumeTask(Task* resume)
+VOID Scheduler::ResumeTask(Handle<Task> resume)
 {
 for(UINT u=0; u<s_CoreCount; u++)
 	{
@@ -268,7 +268,7 @@ if(!current->m_Next)
 	auto next=GetWaitingTask();
 	if(!next)
 		next=s_IdleTask[core];
-	SetFlag(current->m_Flags, TaskFlags::Switch);
+	current->SetFlag(TaskFlags::Switch);
 	current->m_Next=next;
 	Interrupts::Send(IRQ_TASK_SWITCH, core);
 	}
