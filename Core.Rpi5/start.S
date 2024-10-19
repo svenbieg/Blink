@@ -24,11 +24,6 @@ and \reg, \reg, #(CPU_COUNT-1)
 
 .globl _start
 _start:
-#ifdef _DEBUG_START
-mov x0, #1
-1:
-cbnz x0, 1b
-#endif
 
 
 //============

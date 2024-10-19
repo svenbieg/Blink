@@ -14,30 +14,18 @@ SECTIONS
 	*(.text .text.*)
 	}
 
-.got :
-	{
-	KEEP(*(.got .got.*))
-	}
-
 .eh_frame :
 	{
 	KEEP(*(.eh_frame*))
 	}
 
-.gcc_except_table :
+.data :
 	{
 	KEEP(*(.gcc_except_table .gcc_except_table.*))
-	}
-
-.init_array :
-	{
+	KEEP(*(.got*))
 	__init_array_start = .;
 	KEEP(*(.init_array*))
 	__init_array_end = .;
-	}
-
-.data :
-	{
 	*(.rodata .rodata.*)
 	*(.data .data.*)
 	}
@@ -46,7 +34,7 @@ SECTIONS
 	{
 	. = ALIGN(8);
 	__bss_start = .;
-	*(.bss .bss.*)
+	*(.bss*)
 	*(COMMON)
 	. = ALIGN(8);
 	__bss_end = .;
@@ -74,11 +62,10 @@ __heap_start = .;
 /DISCARD/ :
 	{
 	*(.comment)
+	*(.dtors)
 	#ifndef _DEBUG
 	*(.debug_*)
 	#endif
-	*(.dtors)
-	*(.eh_frame*)
 	}
 
 }

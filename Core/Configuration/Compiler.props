@@ -5,7 +5,7 @@
     <AdditionalLinkerFlags>$(AdditionalLinkerFlags) -lgcc -lm -lstdc++</AdditionalLinkerFlags>
     <CompilerFlags Condition="'$(Configuration)'=='Debug'">$(CompilerFlags) -g</CompilerFlags>
     <CompilerFlags>$(CompilerFlags) -fdata-sections -ffunction-sections</CompilerFlags>
-    <CompilerFlags>$(CompilerFlags) -ffreestanding -nostartfiles</CompilerFlags>
+    <CompilerFlags>$(CompilerFlags) -fno-builtin -nostartfiles</CompilerFlags>
     <CompilerFlags>$(CompilerFlags) -fexec-charset=ISO-8859-1</CompilerFlags>
     <CompilerFlagsCpp>$(CompilerFlagsCpp) -std=c++17</CompilerFlagsCpp>
     <LibPath>$(CompilerPath)lib\gcc\$(CompilerName)\$(CompilerVersion)\</LibPath>

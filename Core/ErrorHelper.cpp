@@ -46,25 +46,9 @@ Abort();
 
 VOID DebugPrint(Handle<String> msg)
 {
-auto serial=SerialPort::Open();
-if(!serial)
-	{
-	if(!g_DebugStrings)
-		g_DebugStrings=new StringList();
-	g_DebugStrings->Append(msg);
-	return;
-	}
-StreamWriter writer(serial);
-if(g_DebugStrings)
-	{
-	for(auto it=g_DebugStrings->First(); it->HasCurrent(); it->MoveNext())
-		{
-		auto str=it->GetCurrent();
-		writer.Print(str);
-		}
-	g_DebugStrings=nullptr;
-	}
-writer.Print(msg);
+if(!g_DebugStrings)
+	g_DebugStrings=new StringList();
+g_DebugStrings->Append(msg);
 }
 
 #endif

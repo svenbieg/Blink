@@ -128,7 +128,12 @@ return dst;
 
 extern "C" LPCSTR strchr(LPCSTR str, INT c)
 {
-throw NotImplementedException();
+for(UINT pos=0; str[pos]; pos++)
+	{
+	if(str[pos]==c)
+		return &str[pos];
+	}
+return nullptr;
 }
 
 extern "C" INT strcmp(LPCSTR str1, LPCSTR str2)
@@ -165,7 +170,10 @@ return 0;
 
 extern "C" UINT strtoul(LPCSTR str, LPCSTR end, INT base)
 {
-throw NotImplementedException();
+UINT len=(UINT)(end-str);
+UINT value=0;
+StringScanUInt(str, &value, base, len);
+return value;
 }
 
 

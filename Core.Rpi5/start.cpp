@@ -24,11 +24,13 @@ using namespace Devices::System;
 
 extern "C" VOID start()
 {
+#ifdef _DEBUG
+BOOL wait=true;
+while(wait) {}
+#endif
 Memory::Initialize();
 Interrupts::Initialize();
 Scheduler::Initialize();
-//for(UINT u=1; u<CPU_COUNT; u++)
-//	Cpu::PowerOn(u);
 Scheduler::Begin();
 }
 
