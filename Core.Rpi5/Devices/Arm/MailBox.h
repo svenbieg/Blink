@@ -153,12 +153,12 @@ public:
 	// Common
 	static VOID GetArmMemory(ARM_MEMORY* Info);
 	static UINT GetClockRate(ClockType Clock);
-	static VOID GetProperty(PropertyTag Tag, VOID* Property, UINT Size);
+	static BOOL GetProperty(PropertyTag Tag, VOID* Property, UINT Size);
 
 private:
 	// Common
-	static UINT Read(MailBoxChannel Channel);
-	static VOID Write(MailBoxChannel Channel, UINT Value);
+	static BOOL Read(MailBoxChannel Channel, UINT Address);
+	static VOID Write(MailBoxChannel Channel, UINT Address);
 };
 
 }}

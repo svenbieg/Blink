@@ -30,11 +30,27 @@ constexpr SIZE_T LOCAL_IO_BASE	=0xFF800000;
 constexpr SIZE_T LOCAL_IO_END	=0xFFFFFFFF;
 
 
+//===============
+// Cached Memory
+//===============
+
+constexpr SIZE_T CACHED_BASE	=0x00000000;
+constexpr SIZE_T CACHED_END		=0xFFFFFFFF; // 0xFFFFFFFF (4GB)
+
+
+//=================
+// Uncached Memory
+//=================
+
+constexpr SIZE_T UNCACHED_BASE	=0x100000000; // 0x100000000 (4GB)
+constexpr SIZE_T UNCACHED_END	=0x1FFFFFFFF; // 0x1FFFFFFFF (8GB)
+
+
 //=================
 // AXI Peripherals
 //=================
 
-constexpr SIZE_T AXI_IO_BASE	=0x1000000000; // 0x1000000000
+constexpr SIZE_T AXI_IO_BASE	=0x1000000000; // 0x1000000000 (64GB)
 constexpr SIZE_T AXI_IO_END		=0x101FFFFFFF;
 
 constexpr SIZE_T AXI_DMA_BASE			=AXI_IO_BASE+0x00010000;
@@ -61,7 +77,7 @@ constexpr SIZE_T ARM_IO_END		=0x107FFFFFFF;
 //constexpr SIZE_T ARM_IC_BASE					=ARM_IO_BASE+0x0000B000; // Interrupt Controller
 //constexpr SIZE_T ARM_TIMER_BASE				=ARM_IO_BASE+0x0000B400; // ARM Timer
 //constexpr SIZE_T ARM_VCHIQ_BASE				=ARM_IO_BASE+0x0000B840; // VC4
-constexpr SIZE_T ARM_MAILBOX_BASE				=ARM_IO_BASE+0x00013880; // Mailbox
+constexpr SIZE_T ARM_MAILBOX_BASE				=ARM_IO_BASE+0x00013880;
 //constexpr SIZE_T ARM_CM_BASE					=ARM_IO_BASE+0x00101000; // Clock Manager
 //constexpr SIZE_T ARM_HW_RNG_BASE				=ARM_IO_BASE+0x00104000; // Random Nuber Generator
 //constexpr SIZE_T ARM_GPIO_BASE				=ARM_IO_BASE+0x00200000;

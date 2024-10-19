@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Devices/System/Peripherals.h"
+#include "Devices/System/Memory.h"
 #include "MailBox.h"
 
 using namespace Devices::System;
@@ -30,24 +30,17 @@ namespace Devices {
 typedef struct
 {
 REG READ;
-REG RESERVED[5];
+REG RES0[5];
 REG STATUS;
-REG CONFIG;
+REG RES1;
 REG WRITE;
 }MAILBOX_REGS;
 
-MAILBOX_REGS* MAILBOX=(MAILBOX_REGS*)ARM_MAILBOX_BASE;
-
-
-//========
-// Status
-//========
-
-typedef enum
+namespace STATUS
 {
-STATUS_FULL=1<<31,
-STATUS_EMPTY=1<<30,
-}MAILBOX_STATUS;
+constexpr UINT FULL=(1<<31);
+constexpr UINT EMPTY=(1<<30);
+}
 
 
 //=================
@@ -57,19 +50,17 @@ STATUS_EMPTY=1<<30,
 typedef struct
 {
 UINT Size;
-UINT Code;
+volatile UINT Code;
 PropertyTag Tag;
-UINT BufferSize;
-UINT ValueLength;
+volatile UINT BufferSize;
+volatile UINT Status;
 BYTE Data[0];
 }PROPERTY_BUFFER;
 
-constexpr UINT PROPERTY_END=0;
+constexpr UINT PROPERTY_BUFSIZE=64;
 constexpr UINT PROPERTY_REQUEST=0;
 
-constexpr UINT MAILBOX_BUFSIZE=64;
-
-BYTE PropertyBuffer[MAILBOX_BUFSIZE] ALIGN(16);
+BYTE PropertyBuffer[PROPERTY_BUFSIZE] ALIGN(16);
 
 PROPERTY_BUFFER* Properties=(PROPERTY_BUFFER*)PropertyBuffer;
 
@@ -103,20 +94,24 @@ GetProperty(PropertyTag::GetClockRate, &info, sizeof(CLOCK_RATE));
 return info.ClockRate;
 }
 
-VOID MailBox::GetProperty(PropertyTag tag, VOID* prop, UINT prop_size)
+BOOL MailBox::GetProperty(PropertyTag tag, VOID* prop, UINT prop_size)
 {
-UINT buf_size=prop_size+sizeof(PROPERTY_BUFFER);
-assert(buf_size<=MAILBOX_BUFSIZE);
-Properties->Size=buf_size;
-Properties->Code=PROPERTY_REQUEST;
-Properties->Tag=tag;
-Properties->BufferSize=prop_size;
-Properties->ValueLength=0;
-CopyMemory(Properties->Data, prop, prop_size);
-CopyMemory(&Properties->Data[prop_size], &PROPERTY_END, sizeof(UINT));
-Write(MailBoxChannel::Properties, (UINT)(SIZE_T)Properties);
-Read(MailBoxChannel::Properties);
-CopyMemory(prop, &Properties->Data, prop_size);
+UINT buf_size=sizeof(PROPERTY_BUFFER)+prop_size+sizeof(UINT);
+assert(buf_size<=PROPERTY_BUFSIZE);
+auto buf=Memory::Uncached(Properties);
+buf->Size=buf_size;
+buf->Code=PROPERTY_REQUEST;
+buf->Tag=tag;
+buf->BufferSize=prop_size;
+buf->Status=0;
+CopyMemory(buf->Data, prop, prop_size);
+ZeroMemory(&buf->Data[prop_size], sizeof(UINT));
+UINT addr=(UINT)(SIZE_T)buf;
+Write(MailBoxChannel::Properties, addr);
+if(!Read(MailBoxChannel::Properties, addr))
+	return false;
+CopyMemory(prop, &buf->Data, prop_size);
+return true;
 }
 
 
@@ -124,27 +119,27 @@ CopyMemory(prop, &Properties->Data, prop_size);
 // Common Private
 //================
 
-UINT MailBox::Read(MailBoxChannel ch)
+BOOL MailBox::Read(MailBoxChannel ch, UINT addr)
 {
-UINT value=0;
+auto mbox=(MAILBOX_REGS*)ARM_MAILBOX_BASE;
+addr&=0xFFFFFFF0;
+addr|=(UINT)ch;
 while(1)
 	{
-	while(Bits::Get(MAILBOX->STATUS, STATUS_EMPTY));
-	value=Bits::Get(MAILBOX->READ);
-	MailBoxChannel dst=(MailBoxChannel)(value&0xF);
-	value&=0xFFFFFFF0;
-	if(dst==ch)
-		break;
+	while(Bits::Get(mbox->STATUS, STATUS::EMPTY));
+	if(Bits::Get(mbox->READ)==addr)
+		return true;
 	}
-return value;
+return false;
 }
 
-VOID MailBox::Write(MailBoxChannel ch, UINT value)
+VOID MailBox::Write(MailBoxChannel ch, UINT addr)
 {
-value&=0xFFFFFFF0;
-value|=(UINT)ch;
-while(Bits::Get(MAILBOX->STATUS, STATUS_FULL));
-Bits::Write(MAILBOX->WRITE, value);
+auto mbox=(MAILBOX_REGS*)ARM_MAILBOX_BASE;
+addr&=0xFFFFFFF0;
+addr|=(UINT)ch;
+while(Bits::Get(mbox->STATUS, STATUS::FULL));
+Bits::Write(mbox->WRITE, addr);
 }
 
 }}

@@ -9,7 +9,6 @@
 // Using
 //=======
 
-#include "Devices/System/Peripherals.h"
 #include "heap.h"
 #include "Memory.h"
 #include "Settings.h"
@@ -39,13 +38,6 @@ namespace Devices {
 	namespace System {
 
 
-//==========
-// Settings
-//==========
-
-constexpr SIZE_T RAM_SIZE=LOCAL_IO_BASE;
-
-
 //============
 // Page-Table
 //============
@@ -53,20 +45,23 @@ constexpr SIZE_T RAM_SIZE=LOCAL_IO_BASE;
 constexpr UINT64 PAGE_TABLE_ENTRIES=512;
 constexpr UINT64 REGION_SIZE=0x40000000;
 
-constexpr UINT PAGE_ATT_NORMAL=0;
-constexpr UINT PAGE_ATT_DEVICE=1;
+constexpr UINT PAGE_ATT_CACHED=0;
+constexpr UINT PAGE_ATT_UNCACHED=1;
+constexpr UINT PAGE_ATT_DEVICE=2;
 
 constexpr UINT64 ENTRY_PXN=(1ULL<<53);
 constexpr UINT64 ENTRY_UXN=(1ULL<<54);
 constexpr UINT64 ENTRY_ACC=(1<<10);
 constexpr UINT64 ENTRY_SHARE_OUT=(2<<8);
 constexpr UINT64 ENTRY_SHARE_IN=(3<<8);
-constexpr UINT64 ENTRY_ATT_NORMAL=(PAGE_ATT_NORMAL<<2);
+constexpr UINT64 ENTRY_ATT_CACHED=(PAGE_ATT_CACHED<<2);
+constexpr UINT64 ENTRY_ATT_UNCACHED=(PAGE_ATT_UNCACHED<<2);
 constexpr UINT64 ENTRY_ATT_DEVICE=(PAGE_ATT_DEVICE<<2);
 constexpr UINT64 ENTRY_TYPE_BLOCK=1;
 
+constexpr UINT64 ENTRY_CACHED=(ENTRY_ACC|ENTRY_SHARE_IN|ENTRY_ATT_CACHED|ENTRY_TYPE_BLOCK);
+constexpr UINT64 ENTRY_UNCACHED=(ENTRY_ACC|ENTRY_SHARE_IN|ENTRY_ATT_UNCACHED|ENTRY_TYPE_BLOCK);
 constexpr UINT64 ENTRY_DEVICE=(ENTRY_PXN|ENTRY_UXN|ENTRY_ACC|ENTRY_SHARE_OUT|ENTRY_ATT_DEVICE|ENTRY_TYPE_BLOCK);
-constexpr UINT64 ENTRY_MEMORY=(ENTRY_ACC|ENTRY_SHARE_IN|ENTRY_ATT_NORMAL|ENTRY_TYPE_BLOCK);
 
 
 //========
@@ -77,10 +72,12 @@ VOID Memory::Enable()
 {
 UINT64 page_table=(UINT64)&__page_table_start;
 __asm volatile("msr ttbr0_el1, %0":: "r" (page_table));
-constexpr UINT64 MAIR_ATT_NORMAL=0xFF;
+constexpr UINT64 MAIR_ATT_CACHED=0xFF;
+constexpr UINT64 MAIR_ATT_UNCACHED=0x44;
 constexpr UINT64 MAIR_ATT_DEVICE=0x04;
 UINT64 mair_el1=0;
-mair_el1|=MAIR_ATT_NORMAL<<(PAGE_ATT_NORMAL*8);
+mair_el1|=MAIR_ATT_CACHED<<(PAGE_ATT_CACHED*8);
+mair_el1|=MAIR_ATT_UNCACHED<<(PAGE_ATT_UNCACHED*8);
 mair_el1|=MAIR_ATT_DEVICE<<(PAGE_ATT_DEVICE*8);
 __asm volatile("msr mair_el1, %0":: "r" (mair_el1));
 constexpr UINT64 TCR_IPS_4GB=(0ULL<<32);
@@ -115,7 +112,7 @@ SIZE_T bss_end=(SIZE_T)&__bss_end;
 SIZE_T bss_size=bss_end-bss_start;
 ZeroMemory(&__bss_start, bss_size);
 SIZE_T heap_start=(SIZE_T)&__heap_start;
-SIZE_T heap_end=RAM_SIZE;
+SIZE_T heap_end=LOCAL_IO_BASE;
 SIZE_T heap_size=heap_end-heap_start;
 g_heap=heap_create(heap_start, heap_size);
 heap_reserve(g_heap, LOW_IO_BASE, LOW_IO_SIZE);
@@ -133,8 +130,10 @@ VOID Memory::CreatePageTable()
 UINT64* table=(UINT64*)&__page_table_start;
 SIZE_T offset=0;
 UINT page=0;
-for(; offset<RAM_SIZE; offset+=REGION_SIZE)
-	table[page++]=offset|ENTRY_MEMORY;
+for(; offset<CACHED_END; offset+=REGION_SIZE)
+	table[page++]=offset|ENTRY_CACHED;
+for(; offset<UNCACHED_END; offset+=REGION_SIZE)
+	table[page++]=(offset-UNCACHED_BASE)|ENTRY_UNCACHED;
 for(; offset<AXI_IO_BASE; offset+=REGION_SIZE)
 	table[page++]=0;
 for(; offset<SOC_IO_END; offset+=REGION_SIZE)
