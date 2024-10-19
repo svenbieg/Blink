@@ -47,9 +47,9 @@ UINT core_count=++s_CoreCount;
 UINT core=Cpu::GetId();
 auto task=s_CurrentTask[core];
 lock.Unlock();
-Interrupts::Enable();
 if(core_count<CPU_COUNT)
 	Cpu::PowerOn(core_count);
+Interrupts::Enable();
 Cpu::SetContext(&Task::TaskProc, task, task->m_StackPointer);
 }
 
@@ -101,7 +101,9 @@ for(UINT u=0; u<s_CoreCount; u++)
 	auto next=GetWaitingTask();
 	if(!next)
 		break;
-	SetFlag(current->m_Flags, TaskFlags::Switch);
+	if(current!=s_IdleTask[core])
+		current->SetFlag(TaskFlags::Suspend);
+	current->SetFlag(TaskFlags::Switch);
 	current->m_Next=next;
 	Interrupts::Send(IRQ_TASK_SWITCH, core);
 	}
@@ -127,6 +129,27 @@ while(task->m_Parallel)
 	task=task->m_Parallel;
 task->m_Parallel=parallel;
 return current;
+}
+
+Task* Scheduler::AddWaitingTask(Task* owner, Task* suspend, UINT ms)
+{
+suspend->m_ResumeTime=(ms? GetTickCount64()+ms: 0);
+if(!owner)
+	return suspend;
+Task* task=owner;
+while(task->m_Waiting)
+	{
+	auto next=task->m_Waiting;
+	if(next->m_ResumeTime>suspend->m_ResumeTime)
+		{
+		task->m_Waiting=suspend;
+		suspend->m_Waiting=next;
+		return owner;
+		}
+	task=next;
+	}
+task->m_Waiting=suspend;
+return owner;
 }
 
 UINT Scheduler::CurrentCore()
@@ -157,10 +180,11 @@ auto current=s_CurrentTask[core];
 ClearFlag(current->m_Flags, TaskFlags::Switch);
 auto next=current->m_Next;
 current->m_Next=nullptr;
-BOOL remove=current->GetFlag(TaskFlags::Suspend);
-remove|=(current==s_IdleTask[core]);
-if(!remove)
-	s_WaitingTask=SuspendTask(s_WaitingTask, current, 0);
+if(current->GetFlag(TaskFlags::Suspend))
+	{
+	current->ClearFlag(TaskFlags::Suspend);
+	s_WaitingTask=AddWaitingTask(s_WaitingTask, current, 0);
+	}
 s_CurrentTask[core]=next;
 Cpu::SwitchTask(core, current, next);
 }
@@ -215,17 +239,19 @@ for(UINT u=0; u<s_CoreCount; u++)
 	auto current=s_CurrentTask[core];
 	if(GetFlag(current->m_Flags, TaskFlags::Busy))
 		continue;
-	SetFlag(current->m_Flags, TaskFlags::Switch);
-	current->m_Next=resume;
 	auto parallel=resume->m_Parallel;
 	resume->m_ResumeTime=0;
 	resume->m_Parallel=nullptr;
-	resume=parallel;
+	if(current!=s_IdleTask[core])
+		current->SetFlag(TaskFlags::Suspend);
+	current->SetFlag(TaskFlags::Switch);
+	current->m_Next=resume;
 	Interrupts::Send(IRQ_TASK_SWITCH, core);
+	resume=parallel;
 	}
 while(resume)
 	{
-	s_WaitingTask=SuspendTask(s_WaitingTask, resume, 0);
+	s_WaitingTask=AddWaitingTask(s_WaitingTask, resume, 0);
 	auto parallel=resume->m_Parallel;
 	resume->m_Parallel=nullptr;
 	resume->m_ResumeTime=0;
@@ -237,7 +263,6 @@ Task* Scheduler::SuspendCurrentTask(Task* owner, UINT ms)
 {
 UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
-current->SetFlag(TaskFlags::Suspend);
 if(!current->m_Next)
 	{
 	auto next=GetWaitingTask();
@@ -247,28 +272,7 @@ if(!current->m_Next)
 	current->m_Next=next;
 	Interrupts::Send(IRQ_TASK_SWITCH, core);
 	}
-return SuspendTask(owner, current, ms);
-}
-
-Task* Scheduler::SuspendTask(Task* owner, Task* suspend, UINT ms)
-{
-suspend->m_ResumeTime=(ms? GetTickCount64()+ms: 0);
-if(!owner)
-	return suspend;
-Task* task=owner;
-while(task->m_Waiting)
-	{
-	auto next=task->m_Waiting;
-	if(next->m_ResumeTime>suspend->m_ResumeTime)
-		{
-		task->m_Waiting=suspend;
-		suspend->m_Waiting=next;
-		return owner;
-		}
-	task=next;
-	}
-task->m_Waiting=suspend;
-return owner;
+return AddWaitingTask(owner, current, ms);
 }
 
 UINT Scheduler::s_CoreCount=0;

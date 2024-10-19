@@ -15,7 +15,6 @@
 #include "Concurrency/Signal.h"
 #include "Concurrency/SpinLock.h"
 #include "Concurrency/TaskLock.h"
-#include "Core/Application.h"
 
 
 //========
@@ -25,36 +24,20 @@
 template <class... _args_t>
 inline Handle<Concurrency::Task> CreateTask(VOID (*Procedure)(_args_t...), _args_t... Arguments)
 {
-using Application=Core::Application;
 using Scheduler=Concurrency::Scheduler;
 using Task=Concurrency::Task;
 Handle<Task> task=new Concurrency::Details::TaskTyped<_args_t...>(Procedure, Arguments...);
-if(Application::Current)
-	{
-	Application::Current->Dispatch<Handle<Task>>(Scheduler::AddTask, task);
-	}
-else
-	{
-	Scheduler::AddTask(task);
-	}
+Scheduler::AddTask(task);
 return task;
 }
 
 template <class _owner_t, class... _args_t>
 inline Handle<Concurrency::Task> CreateTask(_owner_t* Owner, VOID (_owner_t::*Procedure)(_args_t...), _args_t... Arguments)
 {
-using Application=Core::Application;
 using Scheduler=Concurrency::Scheduler;
 using Task=Concurrency::Task;
 Handle<Task> task=new Concurrency::Details::TaskOwned<_owner_t, _args_t...>(Owner, Procedure, Arguments...);
-if(Application::Current)
-	{
-	Application::Current->Dispatch<Handle<Task>>(Scheduler::AddTask, task);
-	}
-else
-	{
-	Scheduler::AddTask(task);
-	}
+Scheduler::AddTask(task);
 return task;
 }
 

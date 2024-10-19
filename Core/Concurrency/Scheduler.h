@@ -44,6 +44,7 @@ public:
 private:
 	// Common
 	static Task* AddParallelTask(Task* Current, Task* Parallel);
+	static Task* AddWaitingTask(Task* Owner, Task* Suspend, UINT MilliSeconds);
 	static UINT CurrentCore();
 	static Handle<Task> GetWaitingTask();
 	static VOID HandleTaskSwitch(VOID* Parameter);
@@ -52,7 +53,6 @@ private:
 	static Task* RemoveParallelTask(Task* Current, Task* Remove);
 	static VOID ResumeTask(Task* Task);
 	static Task* SuspendCurrentTask(Task* Owner, UINT MilliSeconds);
-	static Task* SuspendTask(Task* Owner, Task* Suspend, UINT MilliSeconds);
 	static UINT s_CoreCount;
 	static UINT s_CurrentCore;
 	static Handle<Task> s_CurrentTask[CPU_COUNT];
