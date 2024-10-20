@@ -39,10 +39,12 @@ public:
 
 	// Common
 	VOID Broadcast();
-	BOOL Wait(ScopedLock& Lock, UINT Timeout=0);
+	inline BOOL Wait(UINT Timeout=0) { return Wait(nullptr, Timeout); }
+	inline BOOL Wait(ScopedLock& Lock, UINT Timeout=0) { return Wait(&Lock, Timeout); }
 
 private:
 	// Common
+	BOOL Wait(ScopedLock* Lock, UINT Timeout);
 	Handle<Task> m_WaitingTask;
 };
 

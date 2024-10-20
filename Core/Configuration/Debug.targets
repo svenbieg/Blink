@@ -55,7 +55,7 @@
       <LaunchLines Include="%09{" />
       <LaunchLines Include="%09%22cwd%22: %22${workspaceRoot}%22," />
       <LaunchLines Include="%09%22executable%22: %22$(ElfFile)%22," />
-      <LaunchLines Include="%09%22name%22: %22Debug with OpenOCD%22," />
+      <LaunchLines Include="%09%22name%22: %22Debug $(Platform)%22," />
       <LaunchLines Include="%09%22request%22: %22launch%22," />
       <LaunchLines Include="%09%22type%22: %22cortex-debug%22," />
       <LaunchLines Include="%09%22servertype%22: %22openocd%22," />

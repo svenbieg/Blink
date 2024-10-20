@@ -37,7 +37,10 @@ VOID Scheduler::AddTask(Handle<Task> task)
 {
 InitializeTask(&task->m_StackPointer, &Task::TaskProc, task);
 SpinLock lock(s_CriticalSection);
-ResumeTask(task);
+UINT core=Cpu::GetId();
+auto current=s_CurrentTask[core];
+current->SetFlag(TaskFlags::Owner);
+s_WaitingTask=AddWaitingTask(s_WaitingTask, task, 0);
 }
 
 VOID Scheduler::Begin()
@@ -97,7 +100,10 @@ for(UINT u=0; u<s_CoreCount; u++)
 	UINT core=CurrentCore();
 	auto current=s_CurrentTask[core];
 	if(GetFlag(current->m_Flags, TaskFlags::Busy))
+		{
+		current->ClearFlag(TaskFlags::Owner);
 		continue;
+		}
 	auto next=GetWaitingTask();
 	if(!next)
 		break;
@@ -120,36 +126,36 @@ s_WaitingTask=SuspendCurrentTask(s_WaitingTask, ms);
 // Common Private
 //================
 
-Handle<Task> Scheduler::AddParallelTask(Handle<Task> current, Handle<Task> parallel)
+Handle<Task> Scheduler::AddParallelTask(Handle<Task> first, Handle<Task> parallel)
 {
-if(!current)
+if(!first)
 	return parallel;
-auto task=current;
-while(task->m_Parallel)
-	task=task->m_Parallel;
-task->m_Parallel=parallel;
+auto current=first;
+while(current->m_Parallel)
+	current=current->m_Parallel;
+current->m_Parallel=parallel;
 return current;
 }
 
-Handle<Task> Scheduler::AddWaitingTask(Handle<Task> owner, Handle<Task> suspend, UINT ms)
+Handle<Task> Scheduler::AddWaitingTask(Handle<Task> first, Handle<Task> suspend, UINT ms)
 {
 suspend->m_ResumeTime=(ms? GetTickCount64()+ms: 0);
-if(!owner)
+if(!first)
 	return suspend;
-Handle<Task> task=owner;
-while(task->m_Waiting)
+Handle<Task> current=first;
+while(current->m_Waiting)
 	{
-	auto next=task->m_Waiting;
-	if(next->m_ResumeTime>suspend->m_ResumeTime)
+	auto waiting=current->m_Waiting;
+	if(waiting->m_ResumeTime>suspend->m_ResumeTime)
 		{
-		task->m_Waiting=suspend;
-		suspend->m_Waiting=next;
-		return owner;
+		suspend->m_Waiting=waiting;
+		current->m_Waiting=suspend;
+		return first;
 		}
-	task=next;
+	current=waiting;
 	}
-task->m_Waiting=suspend;
-return owner;
+current->m_Waiting=suspend;
+return first;
 }
 
 UINT Scheduler::CurrentCore()
@@ -204,19 +210,19 @@ timer->Tick.Add(Scheduler::Schedule);
 Main();
 }
 
-Handle<Task> Scheduler::RemoveParallelTask(Handle<Task> task, Handle<Task> remove)
+Handle<Task> Scheduler::RemoveParallelTask(Handle<Task> first, Handle<Task> remove)
 {
-if(task==remove)
+if(first==remove)
 	{
-	auto parallel=task->m_Parallel;
+	auto parallel=first->m_Parallel;
 	if(!parallel)
 		return nullptr;
-	parallel->m_Waiting=task->m_Waiting;
-	task->m_Parallel=nullptr;
-	task->m_Waiting=nullptr;
+	parallel->m_Waiting=first->m_Waiting;
+	first->m_Parallel=nullptr;
+	first->m_Waiting=nullptr;
 	return parallel;
 	}
-auto current=task;
+auto current=first;
 while(current->m_Parallel)
 	{
 	if(current->m_Parallel==remove)
@@ -226,11 +232,37 @@ while(current->m_Parallel)
 assert(current->m_Parallel==remove);
 current->m_Parallel=remove->m_Parallel;
 remove->m_Parallel=nullptr;
-return task;
+return first;
+}
+
+Handle<Task> Scheduler::RemoveWaitingTask(Handle<Task> first, Handle<Task> remove)
+{
+if(!first)
+	return nullptr;
+if(first==remove)
+	{
+	auto waiting=first->m_Waiting;
+	first->m_Waiting=nullptr;
+	return waiting;
+	}
+auto current=first;
+while(current->m_Waiting)
+	{
+	auto waiting=current->m_Waiting;
+	if(waiting==remove)
+		{
+		current->m_Waiting=remove->m_Waiting;
+		remove->m_Waiting=nullptr;
+		return first;
+		}
+	current=waiting;
+	}
+return first;
 }
 
 VOID Scheduler::ResumeTask(Handle<Task> resume)
 {
+s_WaitingTask=RemoveWaitingTask(s_WaitingTask, resume);
 for(UINT u=0; u<s_CoreCount; u++)
 	{
 	if(!resume)
@@ -240,8 +272,8 @@ for(UINT u=0; u<s_CoreCount; u++)
 	if(GetFlag(current->m_Flags, TaskFlags::Busy))
 		continue;
 	auto parallel=resume->m_Parallel;
-	resume->m_ResumeTime=0;
 	resume->m_Parallel=nullptr;
+	resume->m_ResumeTime=0;
 	if(current!=s_IdleTask[core])
 		current->SetFlag(TaskFlags::Suspend);
 	current->SetFlag(TaskFlags::Switch);
@@ -263,6 +295,7 @@ Handle<Task> Scheduler::SuspendCurrentTask(Handle<Task> owner, UINT ms)
 {
 UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
+current->ClearFlag(TaskFlags::Owner);
 if(!current->m_Next)
 	{
 	auto next=GetWaitingTask();

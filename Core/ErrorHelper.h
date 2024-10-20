@@ -99,5 +99,5 @@ class TimeoutException: public Exception
 {
 public:
 	// Con-/Destructors
-	TimeoutException(): Exception(Status::TimeOut) {}
+	TimeoutException(): Exception(Status::Timeout) {}
 };

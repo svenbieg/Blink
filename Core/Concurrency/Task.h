@@ -39,9 +39,10 @@ enum class TaskFlags: UINT
 None=0,
 Blocking=1,
 Switch=2,
-Busy=3,
-Sharing=4,
-Suspend=8
+Owner=4,
+Busy=7,
+Sharing=8,
+Suspend=16
 };
 
 
@@ -69,9 +70,9 @@ public:
 		auto handler=new Core::Details::DispatchedMemberFunction<_owner_t>(Owner, [Owner, Procedure]() { (Owner->*Procedure)(); });
 		DispatchedHandler::Append(m_Then, handler);
 		}
-	template <class _lambda_t, class... _args_t> VOID Then(_lambda_t Lambda, _args_t... Arguments)
+	inline VOID Then(Function<VOID()> Function)
 		{
-		auto handler=new Core::Details::DispatchedFunction<Task, _args_t...>(this, Lambda, Arguments...);
+		auto handler=new Core::Details::DispatchedFunction<Task>(this, Function);
 		DispatchedHandler::Append(m_Then, handler);
 		}
 	inline Status GetStatus()const { return m_Status; }
