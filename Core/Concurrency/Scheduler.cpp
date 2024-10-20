@@ -262,7 +262,6 @@ return first;
 
 VOID Scheduler::ResumeTask(Handle<Task> resume)
 {
-s_WaitingTask=RemoveWaitingTask(s_WaitingTask, resume);
 for(UINT u=0; u<s_CoreCount; u++)
 	{
 	if(!resume)
@@ -271,6 +270,7 @@ for(UINT u=0; u<s_CoreCount; u++)
 	auto current=s_CurrentTask[core];
 	if(GetFlag(current->m_Flags, TaskFlags::Busy))
 		continue;
+	s_WaitingTask=RemoveWaitingTask(s_WaitingTask, resume);
 	auto parallel=resume->m_Parallel;
 	resume->m_Parallel=nullptr;
 	resume->m_ResumeTime=0;
@@ -283,6 +283,7 @@ for(UINT u=0; u<s_CoreCount; u++)
 	}
 while(resume)
 	{
+	s_WaitingTask=RemoveWaitingTask(s_WaitingTask, resume);
 	auto parallel=resume->m_Parallel;
 	resume->m_Parallel=nullptr;
 	resume->m_ResumeTime=0;
