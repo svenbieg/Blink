@@ -48,14 +48,6 @@ SECTIONS
 	__stack_end = .;
 	}
 
-.page_table (NOLOAD) :
-	{
-	. = ALIGN(PAGE_TABLE_SIZE);
-	__page_table_start = .;
-	. += PAGE_TABLE_SIZE;
-	__page_table_end = .;
-	}
-
 __end = .;
 __heap_start = .;
 

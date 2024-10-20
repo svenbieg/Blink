@@ -81,6 +81,7 @@ if(--m_LockCount==0)
 	Cpu::StoreAndRelease(&m_Core, CPU_COUNT);
 	Cpu::SetEvent();
 	}
+Cpu::DataStoreBarrier();
 Interrupts::Enable();
 }
 

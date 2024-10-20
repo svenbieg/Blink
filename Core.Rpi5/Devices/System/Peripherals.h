@@ -22,6 +22,13 @@ constexpr SIZE_T LOW_IO_END		=0x3FFFFFFF;
 constexpr SIZE_T LOW_IO_SIZE	=0x00800000;
 
 
+//=============
+// High Memory
+//=============
+
+constexpr SIZE_T HIGH_MEM_BASE	=0x40000000; // 0x40000000 (1GB)
+
+
 //=======================
 // ARM Local Peripherals
 //=======================

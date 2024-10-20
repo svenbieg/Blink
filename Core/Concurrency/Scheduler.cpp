@@ -47,8 +47,8 @@ UINT core_count=++s_CoreCount;
 UINT core=Cpu::GetId();
 auto task=s_CurrentTask[core];
 lock.Unlock();
-//if(core_count<CPU_COUNT)
-//	Cpu::PowerOn(core_count);
+if(core_count<CPU_COUNT)
+	Cpu::PowerOn(core_count);
 Interrupts::Enable();
 Cpu::SetContext(&Task::TaskProc, task, task->m_StackPointer);
 }
@@ -120,7 +120,7 @@ s_WaitingTask=SuspendCurrentTask(s_WaitingTask, ms);
 // Common Private
 //================
 
-Task* Scheduler::AddParallelTask(Task* current, Task* parallel)
+Handle<Task> Scheduler::AddParallelTask(Handle<Task> current, Handle<Task> parallel)
 {
 if(!current)
 	return parallel;
@@ -131,12 +131,12 @@ task->m_Parallel=parallel;
 return current;
 }
 
-Task* Scheduler::AddWaitingTask(Task* owner, Task* suspend, UINT ms)
+Handle<Task> Scheduler::AddWaitingTask(Handle<Task> owner, Handle<Task> suspend, UINT ms)
 {
 suspend->m_ResumeTime=(ms? GetTickCount64()+ms: 0);
 if(!owner)
 	return suspend;
-Task* task=owner;
+Handle<Task> task=owner;
 while(task->m_Waiting)
 	{
 	auto next=task->m_Waiting;
@@ -204,7 +204,7 @@ timer->Tick.Add(Scheduler::Schedule);
 Main();
 }
 
-Task* Scheduler::RemoveParallelTask(Task* task, Task* remove)
+Handle<Task> Scheduler::RemoveParallelTask(Handle<Task> task, Handle<Task> remove)
 {
 if(task==remove)
 	{
@@ -251,15 +251,15 @@ for(UINT u=0; u<s_CoreCount; u++)
 	}
 while(resume)
 	{
-	s_WaitingTask=AddWaitingTask(s_WaitingTask, resume, 0);
 	auto parallel=resume->m_Parallel;
 	resume->m_Parallel=nullptr;
 	resume->m_ResumeTime=0;
+	s_WaitingTask=AddWaitingTask(s_WaitingTask, resume, 0);
 	resume=parallel;
 	}
 }
 
-Task* Scheduler::SuspendCurrentTask(Task* owner, UINT ms)
+Handle<Task> Scheduler::SuspendCurrentTask(Handle<Task> owner, UINT ms)
 {
 UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];

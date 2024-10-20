@@ -69,9 +69,9 @@ public:
 		auto handler=new Core::Details::DispatchedMemberFunction<_owner_t>(Owner, [Owner, Procedure]() { (Owner->*Procedure)(); });
 		DispatchedHandler::Append(m_Then, handler);
 		}
-	inline VOID Then(Function<VOID()> Function)
+	template <class _lambda_t, class... _args_t> VOID Then(_lambda_t Lambda, _args_t... Arguments)
 		{
-		auto handler=new Core::Details::DispatchedFunction<Task>(this, [this, Function]() { Function(); });
+		auto handler=new Core::Details::DispatchedFunction<Task, _args_t...>(this, Lambda, Arguments...);
 		DispatchedHandler::Append(m_Then, handler);
 		}
 	inline Status GetStatus()const { return m_Status; }

@@ -33,8 +33,9 @@ VOID Signal::Broadcast()
 SpinLock task_lock(Scheduler::s_CriticalSection);
 if(!m_WaitingTask)
 	return;
-Scheduler::ResumeTask(m_WaitingTask);
+auto waiting=m_WaitingTask;
 m_WaitingTask=nullptr;
+Scheduler::ResumeTask(waiting);
 }
 
 

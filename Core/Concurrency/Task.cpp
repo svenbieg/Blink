@@ -9,8 +9,11 @@
 // Using
 //=======
 
+#include "Core/Application.h"
 #include "Scheduler.h"
 #include "Task.h"
+
+using namespace Core;
 
 
 //===========
@@ -63,6 +66,11 @@ catch(Exception e)
 	}
 task->m_Status=status;
 task->m_Done.Broadcast();
+if(task->m_Then)
+	{
+	if(Application::Current)
+		Application::Current->Dispatch(task->m_Then);
+	}
 Scheduler::ExitTask();
 }
 
