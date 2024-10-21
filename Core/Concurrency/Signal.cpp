@@ -68,7 +68,7 @@ else
 m_WaitingTask=Scheduler::AddParallelTask(m_WaitingTask, task);
 if(scoped_lock)
 	scoped_lock->Unlock();
-lock.Yield(); // Waiting...
+lock.Yield();
 if(scoped_lock)
 	scoped_lock->Lock();
 BOOL signal=(task->m_ResumeTime==0);

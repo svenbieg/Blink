@@ -40,6 +40,7 @@ SpinLock lock(s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
 current->SetFlag(TaskFlags::Owner);
+task->m_Owner=current;
 s_WaitingTask=AddWaitingTask(s_WaitingTask, task, 0);
 }
 
@@ -131,7 +132,7 @@ auto current=first;
 while(current->m_Parallel)
 	current=current->m_Parallel;
 current->m_Parallel=parallel;
-return current;
+return first;
 }
 
 Handle<Task> Scheduler::AddWaitingTask(Handle<Task> first, Handle<Task> suspend, UINT ms)
@@ -139,19 +140,23 @@ Handle<Task> Scheduler::AddWaitingTask(Handle<Task> first, Handle<Task> suspend,
 suspend->m_ResumeTime=(ms? GetTickCount64()+ms: 0);
 if(!first)
 	return suspend;
-Handle<Task> current=first;
-while(current->m_Waiting)
+auto current_ptr=&first;
+while(*current_ptr)
 	{
-	auto waiting=current->m_Waiting;
-	if(waiting->m_ResumeTime>suspend->m_ResumeTime)
+	auto current=*current_ptr;
+	if(current->m_ResumeTime>suspend->m_ResumeTime)
 		{
-		suspend->m_Waiting=waiting;
-		current->m_Waiting=suspend;
-		return first;
+		suspend->m_Waiting=current;
+		*current_ptr=suspend;
+		break;
 		}
-	current=waiting;
+	if(!current->m_Waiting)
+		{
+		current->m_Waiting=suspend;
+		break;
+		}
+	current_ptr=&current->m_Waiting;
 	}
-current->m_Waiting=suspend;
 return first;
 }
 
@@ -167,12 +172,28 @@ Handle<Task> Scheduler::GetWaitingTask()
 if(!s_WaitingTask)
 	return nullptr;
 UINT64 time=GetTickCount64();
-if(s_WaitingTask->m_ResumeTime>time)
-	return nullptr;
-auto waiting=s_WaitingTask;
-s_WaitingTask=s_WaitingTask->m_Waiting;
-waiting->m_Waiting=nullptr;
-return waiting;
+auto current_ptr=&s_WaitingTask;
+while(*current_ptr)
+	{
+	auto current=*current_ptr;
+	if(current->m_ResumeTime>time)
+		return nullptr;
+	if(current->m_Owner)
+		{
+		auto owner=current->m_Owner;
+		if(owner->GetFlag(TaskFlags::Owner))
+			{
+			current_ptr=&current->m_Waiting;
+			continue;
+			}
+		current->m_Owner=nullptr;
+		}
+	auto waiting=current->m_Waiting;
+	current->m_Waiting=nullptr;
+	*current_ptr=waiting;
+	return current;
+	}
+return nullptr;
 }
 
 VOID Scheduler::HandleTaskSwitch(VOID* param)
@@ -209,50 +230,37 @@ Main();
 
 Handle<Task> Scheduler::RemoveParallelTask(Handle<Task> first, Handle<Task> remove)
 {
-if(first==remove)
+auto current_ptr=&first;
+while(*current_ptr)
 	{
-	auto parallel=first->m_Parallel;
-	if(!parallel)
-		return nullptr;
-	parallel->m_Waiting=first->m_Waiting;
-	first->m_Parallel=nullptr;
-	first->m_Waiting=nullptr;
-	return parallel;
-	}
-auto current=first;
-while(current->m_Parallel)
-	{
-	if(current->m_Parallel==remove)
+	auto current=*current_ptr;
+	if(current==remove)
+		{
+		auto parallel=current->m_Parallel;
+		current->m_Parallel=nullptr;
+		parallel->m_Waiting=current->m_Waiting;
+		*current_ptr=parallel;
 		break;
-	current=current->m_Parallel;
+		}
+	current_ptr=&current->m_Parallel;
 	}
-assert(current->m_Parallel==remove);
-current->m_Parallel=remove->m_Parallel;
-remove->m_Parallel=nullptr;
 return first;
 }
 
 Handle<Task> Scheduler::RemoveWaitingTask(Handle<Task> first, Handle<Task> remove)
 {
-if(!first)
-	return nullptr;
-if(first==remove)
+auto current_ptr=&first;
+while(*current_ptr)
 	{
-	auto waiting=first->m_Waiting;
-	first->m_Waiting=nullptr;
-	return waiting;
-	}
-auto current=first;
-while(current->m_Waiting)
-	{
-	auto waiting=current->m_Waiting;
-	if(waiting==remove)
+	auto current=*current_ptr;
+	if(current==remove)
 		{
-		current->m_Waiting=remove->m_Waiting;
-		remove->m_Waiting=nullptr;
-		return first;
+		auto waiting=current->m_Waiting;
+		current->m_Waiting=nullptr;
+		*current_ptr=waiting;
+		break;
 		}
-	current=waiting;
+	current_ptr=&current->m_Waiting;
 	}
 return first;
 }

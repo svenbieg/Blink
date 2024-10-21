@@ -99,6 +99,7 @@ private:
 	TaskFlags m_Flags;
 	Mutex m_Mutex;
 	Handle<Task> m_Next;
+	Handle<Task> m_Owner;
 	Handle<Task> m_Parallel;
 	UINT64 m_ResumeTime;
 	VOID* m_StackPointer;

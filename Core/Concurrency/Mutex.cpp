@@ -33,48 +33,44 @@ VOID Mutex::Lock()
 {
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
-auto task=Scheduler::s_CurrentTask[core];
+auto current=Scheduler::s_CurrentTask[core];
 if(!m_Owner)
 	{
-	m_Owner=task;
+	m_Owner=current;
 	return;
 	}
 Scheduler::SuspendCurrentTask(m_Owner, 0);
 lock.Yield();
-m_Owner->m_Waiting=nullptr;
-m_Owner=task;
+m_Owner=current;
 }
 
 VOID Mutex::LockBlocking()
 {
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
-auto task=Scheduler::s_CurrentTask[core];
-if(!task)
+auto current=Scheduler::s_CurrentTask[core];
+if(!current)
 	return;
-task->SetFlag(TaskFlags::Blocking);
+current->SetFlag(TaskFlags::Blocking);
 if(!m_Owner)
 	{
-	m_Owner=task;
+	m_Owner=current;
 	return;
 	}
 Scheduler::SuspendCurrentTask(m_Owner, 0);
 lock.Yield();
-m_Owner->m_Waiting=nullptr;
-m_Owner=task;
+m_Owner=current;
 }
 
 VOID Mutex::LockShared()
 {
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
-auto task=Scheduler::s_CurrentTask[core];
-if(!task)
-	return;
-task->SetFlag(TaskFlags::Sharing);
+auto current=Scheduler::s_CurrentTask[core];
+current->SetFlag(TaskFlags::Sharing);
 if(!m_Owner)
 	{
-	m_Owner=task;
+	m_Owner=current;
 	return;
 	}
 auto waiting=m_Owner;
@@ -82,7 +78,7 @@ while(waiting->m_Waiting)
 	waiting=waiting->m_Waiting;
 if(waiting->GetFlag(TaskFlags::Sharing))
 	{
-	Scheduler::AddParallelTask(waiting, task);
+	Scheduler::AddParallelTask(waiting, current);
 	if(waiting==m_Owner)
 		return;
 	Scheduler::SuspendCurrentTask(nullptr, 0);
@@ -92,8 +88,7 @@ else
 	Scheduler::SuspendCurrentTask(waiting, 0);
 	}
 lock.Yield();
-m_Owner->m_Waiting=nullptr;
-m_Owner=task;
+m_Owner=current;
 }
 
 BOOL Mutex::TryLock()
@@ -113,8 +108,7 @@ if(m_Owner)
 	return false;
 UINT core=Cpu::GetId();
 m_Owner=Scheduler::s_CurrentTask[core];
-if(m_Owner)
-	m_Owner->SetFlag(TaskFlags::Blocking);
+m_Owner->SetFlag(TaskFlags::Blocking);
 return true;
 }
 
@@ -124,12 +118,13 @@ SpinLock lock(Scheduler::s_CriticalSection);
 if(!m_Owner)
 	return;
 m_Owner->ClearFlag(TaskFlags::Blocking);
-auto waiting=m_Owner->m_Waiting;
-if(!waiting)
+if(!m_Owner->m_Waiting)
 	{
 	m_Owner=nullptr;
 	return;
 	}
+auto waiting=m_Owner->m_Waiting;
+m_Owner->m_Waiting=nullptr;
 Cpu::DataStoreBarrier();
 Scheduler::ResumeTask(waiting);
 }
@@ -139,8 +134,6 @@ VOID Mutex::UnlockShared()
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
-if(!current)
-	return;
 current->ClearFlag(TaskFlags::Sharing);
 auto parallel=Scheduler::RemoveParallelTask(m_Owner, current);
 if(parallel)
@@ -148,12 +141,13 @@ if(parallel)
 	m_Owner=parallel;
 	return;
 	}
-auto waiting=m_Owner->m_Waiting;
-if(!waiting)
+if(!m_Owner->m_Waiting)
 	{
 	m_Owner=nullptr;
 	return;
 	}
+auto waiting=m_Owner->m_Waiting;
+m_Owner->m_Waiting=nullptr;
 Cpu::DataStoreBarrier();
 Scheduler::ResumeTask(waiting);
 }
