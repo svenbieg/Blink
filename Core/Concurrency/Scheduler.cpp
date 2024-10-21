@@ -100,10 +100,7 @@ for(UINT u=0; u<s_CoreCount; u++)
 	UINT core=CurrentCore();
 	auto current=s_CurrentTask[core];
 	if(GetFlag(current->m_Flags, TaskFlags::Busy))
-		{
-		current->ClearFlag(TaskFlags::Owner);
 		continue;
-		}
 	auto next=GetWaitingTask();
 	if(!next)
 		break;
@@ -270,10 +267,8 @@ for(UINT u=0; u<s_CoreCount; u++)
 	auto current=s_CurrentTask[core];
 	if(GetFlag(current->m_Flags, TaskFlags::Busy))
 		continue;
-	s_WaitingTask=RemoveWaitingTask(s_WaitingTask, resume);
 	auto parallel=resume->m_Parallel;
 	resume->m_Parallel=nullptr;
-	resume->m_ResumeTime=0;
 	if(current!=s_IdleTask[core])
 		current->SetFlag(TaskFlags::Suspend);
 	current->SetFlag(TaskFlags::Switch);
@@ -283,10 +278,8 @@ for(UINT u=0; u<s_CoreCount; u++)
 	}
 while(resume)
 	{
-	s_WaitingTask=RemoveWaitingTask(s_WaitingTask, resume);
 	auto parallel=resume->m_Parallel;
 	resume->m_Parallel=nullptr;
-	resume->m_ResumeTime=0;
 	s_WaitingTask=AddWaitingTask(s_WaitingTask, resume, 0);
 	resume=parallel;
 	}
