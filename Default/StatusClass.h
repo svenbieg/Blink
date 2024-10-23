@@ -24,7 +24,7 @@ FileNotFound		=FileExists-1,
 InvalidArgument		=FileNotFound-1,
 NotImplemented		=InvalidArgument-1,
 OutOfRange			=NotImplemented-1,
-TimeOut				=OutOfRange-1
+Timeout				=OutOfRange-1
 };
 
 

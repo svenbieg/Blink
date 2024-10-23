@@ -56,39 +56,15 @@ protected:
 
 namespace Details {
 
-class DispatchedProcedure: public DispatchedHandler
-{
-public:
-	// Using
-	typedef VOID (*_proc_t)();
-
-	// Con-/Destructors
-	DispatchedProcedure(_proc_t Procedure): pProcedure(Procedure) {}
-
-	// Common
-	inline VOID Run()override { (*pProcedure)(); }
-
-private:
-	// Common
-	_proc_t pProcedure;
-};}
-
-
-//==========================
-// Procedure with Arguments
-//==========================
-
-namespace Details {
-
 template <class... _args_t>
-class DispatchedProcedureWithArgs: public DispatchedHandler
+class DispatchedProcedure: public DispatchedHandler
 {
 public:
 	// Using
 	typedef VOID (*_proc_t)(_args_t...);
 
 	// Con-/Destructors
-	DispatchedProcedureWithArgs(_proc_t Procedure, _args_t... Arguments):
+	DispatchedProcedure(_proc_t Procedure, _args_t... Arguments):
 		cFunction([Procedure, Arguments...](){ (*Procedure)(Arguments...); })
 		{}
 
@@ -107,13 +83,13 @@ private:
 
 namespace Details {
 
-template <class _owner_t, class... _args_t>
+template <class _owner_t, class _lambda_t, class... _args_t>
 class DispatchedFunction: public DispatchedHandler
 {
 public:
 	// Con-/Destructors
-	DispatchedFunction(_owner_t* Owner, Function<VOID(_args_t...)> Function, _args_t... Arguments):
-		cFunction(Function),
+	DispatchedFunction(_owner_t* Owner, _lambda_t Function, _args_t... Arguments):
+		cFunction([Function, Arguments...](){ Function(Arguments...); }),
 		hOwner(Owner) {}
 
 	// Common
@@ -121,7 +97,7 @@ public:
 
 private:
 	// Common
-	Function<VOID(_args_t...)> cFunction;
+	Function<VOID()> cFunction;
 	Handle<_owner_t> hOwner;
 };}
 

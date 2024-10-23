@@ -29,7 +29,7 @@ public:
 	VOID Remove(VOID* Owner)
 		{
 		_handler_t* prev=nullptr;
-		auto handler=hHandler;
+		auto handler=m_Handler;
 		while(handler)
 			{
 			auto next=handler->hNext;
@@ -46,7 +46,7 @@ public:
 				}
 			else
 				{
-				hHandler=next;
+				m_Handler=next;
 				}
 			handler=next;
 			}
@@ -59,26 +59,26 @@ protected:
 	// Common
 	VOID AddHandler(_handler_t* Handler)
 		{
-		if(!hHandler)
+		if(!m_Handler)
 			{
-			hHandler=Handler;
+			m_Handler=Handler;
 			return;
 			}
-		auto handler=hHandler;
+		auto handler=m_Handler;
 		while(handler->hNext)
 			handler=handler->hNext;
 		handler->hNext=Handler;
 		}
 	VOID Run(_sender_t* Sender, _args_t... Arguments)
 		{
-		auto handler=hHandler;
+		auto handler=m_Handler;
 		while(handler)
 			{
 			handler->Run(Sender, Arguments...);
 			handler=handler->hNext;
 			}
 		}
-	Handle<_handler_t> hHandler;
+	Handle<_handler_t> m_Handler;
 };
 
 }
@@ -170,7 +170,7 @@ public:
 	Event(Event&&)=delete;
 
 	// Access
-	inline operator BOOL() { return this->hHandler!=nullptr; }
+	inline operator BOOL() { return this->m_Handler!=nullptr; }
 	VOID operator()(_sender_t* Sender) { this->Run(Sender); }
 
 	// Modification

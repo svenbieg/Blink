@@ -27,6 +27,12 @@ namespace Core {
 
 Handle<Application> Application::Current;
 
+VOID Application::Dispatch(DispatchedHandler* handler)
+{
+DispatchedHandler::Append(m_DispatchedHandlers, handler);
+m_Dispatched.Broadcast();
+}
+
 VOID Application::HandleDispatched()
 {
 while(m_DispatchedHandlers)
@@ -50,6 +56,7 @@ VOID Application::Quit()
 {
 Running=false;
 m_DispatchedHandlers=nullptr;
+m_Dispatched.Broadcast();
 }
 
 
@@ -63,17 +70,6 @@ Running(true),
 Version(version)
 {
 Current=this;
-}
-
-
-//==================
-// Common Protected
-//==================
-
-VOID Application::DispatchHandler(DispatchedHandler* handler)
-{
-DispatchedHandler::Append(m_DispatchedHandlers, handler);
-m_Dispatched.Broadcast();
 }
 
 }

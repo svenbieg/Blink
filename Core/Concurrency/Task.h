@@ -60,19 +60,24 @@ public:
 	friend Signal;
 
 	// Common
-	template <class _owner_t> inline VOID Then(VOID (*Procedure)())
+	template <class... _args_t> inline VOID Then(VOID (*Procedure)(_args_t...), _args_t... Arguments)
 		{
-		auto handler=new Core::Details::DispatchedProcedure(Procedure);
+		auto handler=new Core::Details::DispatchedProcedure<_args_t...>(Procedure, Arguments...);
 		DispatchedHandler::Append(m_Then, handler);
 		}
-	template <class _owner_t> inline VOID Then(_owner_t* Owner, VOID (_owner_t::*Procedure)())
+	template <class _owner_t, class... _args_t> inline VOID Then(_owner_t* Owner, VOID (_owner_t::*Procedure)(_args_t...), _args_t... Arguments)
 		{
-		auto handler=new Core::Details::DispatchedMemberFunction<_owner_t>(Owner, [Owner, Procedure]() { (Owner->*Procedure)(); });
+		auto handler=new Core::Details::DispatchedMemberFunction<_owner_t>(Owner, Procedure, Arguments...);
 		DispatchedHandler::Append(m_Then, handler);
 		}
-	inline VOID Then(Function<VOID()> Function)
+	template <class _owner_t, class... _args_t> inline VOID Then(Handle<_owner_t> Owner, VOID (_owner_t::*Procedure)(_args_t...), _args_t... Arguments)
 		{
-		auto handler=new Core::Details::DispatchedFunction<Task>(this, Function);
+		auto handler=new Core::Details::DispatchedMemberFunction<_owner_t>(Owner, Procedure, Arguments...);
+		DispatchedHandler::Append(m_Then, handler);
+		}
+	template <class _owner_t, class _lambda_t, class... _args_t> inline VOID Then(_owner_t* Owner, _lambda_t Lambda, _args_t... Arguments)
+		{
+		auto handler=new Core::Details::DispatchedFunction(Owner, Lambda, Arguments...);
 		DispatchedHandler::Append(m_Then, handler);
 		}
 	inline Status GetStatus()const { return m_Status; }
