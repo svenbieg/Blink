@@ -27,7 +27,7 @@ namespace Core {
 
 Handle<Application> Application::Current;
 
-VOID Application::Dispatch(DispatchedHandler* handler)
+VOID Application::DispatchHandler(DispatchedHandler* handler)
 {
 DispatchedHandler::Append(m_DispatchedHandlers, handler);
 m_Dispatched.Broadcast();
