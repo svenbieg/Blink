@@ -38,7 +38,7 @@ public:
 	Signal() {}
 
 	// Common
-	VOID Broadcast();
+	VOID Trigger();
 	inline BOOL Wait(UINT Timeout=0) { return Wait(nullptr, Timeout); }
 	inline BOOL Wait(ScopedLock& Lock, UINT Timeout=0) { return Wait(&Lock, Timeout); }
 

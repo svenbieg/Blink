@@ -28,7 +28,7 @@ public:
 	Handle(_obj_t* Object) { HandleCreate(&pObject, Object); }
 	template <class _convert_t> Handle(_convert_t* Object) { HandleCreate(&pObject, static_cast<_obj_t*>(Object)); }
 	Handle(Handle<_obj_t> const& Handle) { HandleCreate(&pObject, Handle.pObject); }
-	Handle(Handle<_obj_t>&& Handle): pObject(Handle.pObject) { Handle.pObject=nullptr; }
+	Handle(Handle<_obj_t>&& Handle)noexcept: pObject(Handle.pObject) { Handle.pObject=nullptr; }
 	template <class _convert_t> Handle(Handle<_convert_t> const& Handle) { HandleCreate(&pObject, static_cast<_obj_t*>(Handle.pObject)); }
 	~Handle() { HandleClear(&pObject); }
 

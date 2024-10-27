@@ -28,7 +28,7 @@ namespace Concurrency {
 // Common
 //========
 
-VOID Signal::Broadcast()
+VOID Signal::Trigger()
 {
 SpinLock task_lock(Scheduler::s_CriticalSection);
 if(!m_WaitingTask)

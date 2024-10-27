@@ -49,11 +49,10 @@ public:
 		DispatchHandler(handler);
 		}
 	virtual VOID DispatchHandler(DispatchedHandler* Handler);
-	VOID HandleDispatched();
 	LPCSTR Name;
 	virtual INT Run();
 	volatile BOOL Running;
-	VOID Quit();
+	virtual VOID Quit();
 	LPCSTR Version;
 
 protected:
@@ -65,7 +64,7 @@ protected:
 
 	// Common
 	Concurrency::Signal m_Dispatched;
-	Handle<DispatchedHandler> m_DispatchedHandlers;
+	Handle<DispatchedHandler> m_DispatchedHandler;
 	Concurrency::Mutex m_Mutex;
 };
 

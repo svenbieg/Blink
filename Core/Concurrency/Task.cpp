@@ -65,11 +65,11 @@ catch(Exception e)
 	status=e.GetStatus();
 	}
 task->m_Status=status;
-task->m_Done.Broadcast();
+task->m_Done.Trigger();
 if(task->m_Then)
 	{
 	if(Application::Current)
-		Application::Current->Dispatch(task->m_Then);
+		Application::Current->DispatchHandler(task->m_Then);
 	}
 Scheduler::ExitTask();
 }

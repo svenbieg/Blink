@@ -29,16 +29,9 @@ Handle<Application> Application::Current;
 
 VOID Application::DispatchHandler(DispatchedHandler* handler)
 {
-DispatchedHandler::Append(m_DispatchedHandlers, handler);
-m_Dispatched.Broadcast();
-}
-
-VOID Application::HandleDispatched()
-{
-while(m_DispatchedHandlers)
-	{
-	DispatchedHandler::Remove(m_DispatchedHandlers)->Run();
-	}
+ScopedLock lock(m_Mutex);
+DispatchedHandler::Append(m_DispatchedHandler, handler);
+m_Dispatched.Trigger();
 }
 
 INT Application::Run()
@@ -47,16 +40,23 @@ ScopedLock lock(m_Mutex);
 while(Running)
 	{
 	m_Dispatched.Wait(lock);
-	HandleDispatched();
+	while(m_DispatchedHandler)
+		{
+		auto handler=DispatchedHandler::Remove(m_DispatchedHandler);
+		lock.Unlock();
+		handler->Run();
+		lock.Lock();
+		}
 	}
 return 0;
 }
 
 VOID Application::Quit()
 {
+ScopedLock lock(m_Mutex);
 Running=false;
-m_DispatchedHandlers=nullptr;
-m_Dispatched.Broadcast();
+m_DispatchedHandler=nullptr;
+m_Dispatched.Trigger();
 }
 
 

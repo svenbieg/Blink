@@ -153,20 +153,20 @@ public:
 	typedef VOID (_owner_t::*_func_t)();
 
 	// Con-/Destructors
-	EventMemberFunction(_owner_t* Owner, _func_t Procedure): pOwner(Owner), pProcedure(Procedure) {}
+	EventMemberFunction(_owner_t* Owner, _func_t Procedure): m_Owner(Owner), pProcedure(Procedure) {}
 
 	// Common
-	inline VOID* GetOwner()const override { return pOwner; }
-	inline VOID Invalidate()override { pOwner=nullptr; }
+	inline VOID* GetOwner()const override { return m_Owner; }
+	inline VOID Invalidate()override { m_Owner=nullptr; }
 	inline VOID Run(_sender_t* Sender, _args_t... Arguments)override
 		{
-		if(pOwner)
-			(pOwner->*pProcedure)();
+		if(m_Owner)
+			(m_Owner->*pProcedure)();
 		}
 
 private:
 	// Common
-	_owner_t* pOwner;
+	_owner_t* m_Owner;
 	_func_t pProcedure;
 };
 
@@ -183,20 +183,20 @@ public:
 	typedef VOID (_owner_t::*_func_t)(_args_t...);
 
 	// Con-/Destructors
-	EventMemberFunctionWithArgs(_owner_t* Owner, _func_t Procedure): pOwner(Owner), pProcedure(Procedure) {}
+	EventMemberFunctionWithArgs(_owner_t* Owner, _func_t Procedure): m_Owner(Owner), pProcedure(Procedure) {}
 
 	// Common
-	inline VOID* GetOwner()const override { return pOwner; }
-	inline VOID Invalidate()override { pOwner=nullptr; }
+	inline VOID* GetOwner()const override { return m_Owner; }
+	inline VOID Invalidate()override { m_Owner=nullptr; }
 	inline VOID Run(_sender_t* Sender, _args_t... Arguments)override
 		{
-		if(pOwner)
-			(pOwner->*pProcedure)(Arguments...);
+		if(m_Owner)
+			(m_Owner->*pProcedure)(Arguments...);
 		}
 
 private:
 	// Common
-	_owner_t* pOwner;
+	_owner_t* m_Owner;
 	_func_t pProcedure;
 };
 
@@ -213,20 +213,20 @@ public:
 	typedef VOID (_owner_t::*_func_t)(_sender_t*, _args_t...);
 
 	// Con-/Destructors
-	EventMemberFunctionWithSender(_owner_t* Owner, _func_t Procedure): pOwner(Owner), pProcedure(Procedure) {}
+	EventMemberFunctionWithSender(_owner_t* Owner, _func_t Procedure): m_Owner(Owner), pProcedure(Procedure) {}
 
 	// Common
-	inline VOID* GetOwner()const override { return pOwner; }
-	inline VOID Invalidate()override { pOwner=nullptr; }
+	inline VOID* GetOwner()const override { return m_Owner; }
+	inline VOID Invalidate()override { m_Owner=nullptr; }
 	inline VOID Run(_sender_t* Sender, _args_t... Arguments)override
 		{
-		if(pOwner)
-			(pOwner->*pProcedure)(Sender, Arguments...);
+		if(m_Owner)
+			(m_Owner->*pProcedure)(Sender, Arguments...);
 		}
 
 private:
 	// Common
-	_owner_t* pOwner;
+	_owner_t* m_Owner;
 	_func_t pProcedure;
 };
 

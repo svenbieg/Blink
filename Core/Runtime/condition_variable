@@ -43,7 +43,7 @@ public:
 	condition_variable();
 
 	// Common
-	inline void notify_all() { Broadcast(); }
+	inline void notify_all() { Trigger(); }
 	inline void wait(unique_lock<mutex>& lock) { Wait(lock); }
 	inline cv_status wait_for(unique_lock<mutex>& lock, chrono::duration<UINT> time_out)
 		{

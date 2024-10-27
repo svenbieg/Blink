@@ -76,7 +76,7 @@ __asm volatile("msr CNTP_CTL_EL0, %0": : "r" (1UL));
 
 VOID SystemTimer::HandleInterrupt(VOID* param)
 {
-s_Current->m_Signal.Broadcast();
+s_Current->m_Signal.Trigger();
 UINT64 cnt_freq;
 __asm volatile("mrs %0, CNTFRQ_EL0": "=r" (cnt_freq));
 UINT64 ticks=cnt_freq/100;

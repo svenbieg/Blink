@@ -22,7 +22,7 @@ class DynamicHandle
 {
 public:
 	// Con-/Destructors
-	DynamicHandle(_owner_t* Owner, Handle<_obj_t> Object=nullptr): hObject(Object), pOwner(Owner) {}
+	DynamicHandle(_owner_t* Owner, Handle<_obj_t> Object=nullptr): hObject(Object), m_Owner(Owner) {}
 	DynamicHandle(DynamicHandle const&)=delete;
 	DynamicHandle(DynamicHandle&&)=delete;
 
@@ -47,11 +47,11 @@ public:
 			return;
 		hObject=Object;
 		if(Notify)
-			Changed(pOwner, hObject);
+			Changed(m_Owner, hObject);
 		}
 
 private:
 	// Common
 	Handle<_obj_t> hObject;
-	_owner_t* pOwner;
+	_owner_t* m_Owner;
 };

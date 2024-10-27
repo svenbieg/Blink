@@ -31,20 +31,8 @@ if(!dispatched)
 	return;
 	}
 auto current=dispatched;
-#ifdef _DEBUG
-UINT count=0;
 while(current->hNext)
-	{
 	current=current->hNext;
-	count++;
-	}
-assert(count<10);
-#else
-while(current->hNext)
-	{
-	current=current->hNext;
-	}
-#endif
 current->hNext=handler;
 }
 

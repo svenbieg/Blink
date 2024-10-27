@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include <utility>
 #include "Core/DispatchedHandler.h"
 #include "Devices/System/Cpu.h"
 #include "Signal.h"
@@ -60,24 +61,24 @@ public:
 	friend Signal;
 
 	// Common
-	template <class... _args_t> inline VOID Then(VOID (*Procedure)(_args_t...), _args_t... Arguments)
+	inline VOID Then(VOID (*Procedure)())
 		{
-		auto handler=new Core::Details::DispatchedProcedure<_args_t...>(Procedure, Arguments...);
+		auto handler=new Core::Details::DispatchedProcedure(Procedure);
 		DispatchedHandler::Append(m_Then, handler);
 		}
-	template <class _owner_t, class... _args_t> inline VOID Then(_owner_t* Owner, VOID (_owner_t::*Procedure)(_args_t...), _args_t... Arguments)
+	template <class _owner_t> inline VOID Then(_owner_t* Owner, VOID (_owner_t::*Procedure)())
 		{
-		auto handler=new Core::Details::DispatchedMemberFunction<_owner_t>(Owner, Procedure, Arguments...);
+		auto handler=new Core::Details::DispatchedMemberProcedure<_owner_t>(Owner, Procedure);
 		DispatchedHandler::Append(m_Then, handler);
 		}
-	template <class _owner_t, class... _args_t> inline VOID Then(Handle<_owner_t> Owner, VOID (_owner_t::*Procedure)(_args_t...), _args_t... Arguments)
+	template <class _owner_t, class... _args_t> inline VOID Then(Handle<_owner_t> Owner, VOID (_owner_t::*Procedure)())
 		{
-		auto handler=new Core::Details::DispatchedMemberFunction<_owner_t>(Owner, Procedure, Arguments...);
+		auto handler=new Core::Details::DispatchedMemberProcedure<_owner_t>(Owner, Procedure);
 		DispatchedHandler::Append(m_Then, handler);
 		}
-	template <class _owner_t, class _lambda_t, class... _args_t> inline VOID Then(_owner_t* Owner, _lambda_t Lambda, _args_t... Arguments)
+	template <class _owner_t, class _lambda_t> inline VOID Then(_owner_t* Owner, _lambda_t&& Lambda)
 		{
-		auto handler=new Core::Details::DispatchedFunction(Owner, Lambda, Arguments...);
+		auto handler=new Core::Details::DispatchedLambda(Owner, std::forward<_lambda_t>(Lambda));
 		DispatchedHandler::Append(m_Then, handler);
 		}
 	inline Status GetStatus()const { return m_Status; }

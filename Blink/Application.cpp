@@ -56,12 +56,11 @@ UINT loops=0;
 
 VOID Application::OnSystemTimerTick()
 {
-if(++loops<50)
+if(++loops%50)
 	return;
 led=!led;
 auto system=System::Open();
 system->Led(led);
-loops=0;
 }
 
 }
