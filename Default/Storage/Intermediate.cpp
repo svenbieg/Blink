@@ -26,17 +26,33 @@ namespace Storage {
 //==================
 
 Intermediate::Intermediate():
-uReadPos(0),
-uWritePos(0)
+m_First(nullptr),
+m_Last(nullptr),
+m_Offset(0)
 {}
 
 Intermediate::~Intermediate()
 {
-for(auto it=cBuffers.cbegin(); it.has_current(); it.move_next())
+Clear();
+}
+
+
+//========
+// Common
+//========
+
+VOID Intermediate::Clear()
+{
+auto buf=m_First;
+while(buf)
 	{
-	auto buf=it.get_current();
+	auto next=buf->Next;
 	delete buf;
+	buf=next;
 	}
+m_First=nullptr;
+m_Last=nullptr;
+m_Offset=0;
 }
 
 
@@ -46,31 +62,43 @@ for(auto it=cBuffers.cbegin(); it.has_current(); it.move_next())
 
 SIZE_T Intermediate::Available()
 {
-ScopedLock lock(cMutex);
-return uWritePos-uReadPos;
+ScopedLock lock(m_Mutex);
+if(!m_First)
+	return 0;
+SIZE_T available=m_First->Size-m_Offset;
+auto buf=m_First->Next;
+while(buf)
+	{
+	available+=buf->Size;
+	buf=buf->Next;
+	}
+return available;
 }
 
 SIZE_T Intermediate::Read(VOID* buf, SIZE_T size)
 {
-ScopedLock lock(cMutex);
+ScopedLock lock(m_Mutex);
 auto dst=(BYTE*)buf;
 SIZE_T pos=0;
 while(pos<size)
 	{
-	if(uReadPos==uWritePos)
-		cWritten.Wait(lock);
-	SIZE_T available=uWritePos-uReadPos;
-	if(!available)
+	if(!m_First)
+		m_Written.Wait(lock);
+	if(!m_First)
 		break;
+	SIZE_T available=m_First->Size-m_Offset;
 	SIZE_T copy=Min(size-pos, available);
-	BYTE* src=nullptr;
-	UINT src_pos=0;
-	UINT block=GetBuffer(uReadPos, &src, &src_pos);
-	copy=Min(copy, (SIZE_T)block);
-	if(dst)
-		CopyMemory(&dst[pos], &src[src_pos], copy);
-	uReadPos+=copy;
-	DiscardBuffers();
+	CopyMemory(&dst[pos], &m_First->Buffer[m_Offset], copy);
+	m_Offset+=copy;
+	if(m_Offset==m_First->Size)
+		{
+		auto next=m_First->Next;
+		delete m_First;
+		m_First=next;
+		if(!m_First)
+			m_Last=nullptr;
+		m_Offset=0;
+		}
 	pos+=copy;
 	}
 return pos;
@@ -81,67 +109,42 @@ return pos;
 // Output-Stream
 //===============
 
+VOID Intermediate::Flush()
+{
+m_Written.Trigger();
+}
+
 SIZE_T Intermediate::Write(VOID const* buf, SIZE_T size)
 {
-ScopedLock lock(cMutex);
+ScopedLock lock(m_Mutex);
+if(!m_First)
+	{
+	m_First=new BUFFER();
+	m_First->Size=0;
+	m_First->Next=nullptr;
+	m_Last=m_First;
+	}
+auto current=m_Last;
 auto src=(BYTE*)buf;
 SIZE_T pos=0;
 while(pos<size)
 	{
-	BYTE* dst=nullptr;
-	UINT dst_pos=0;
-	UINT block=GetBuffer(uWritePos, &dst, &dst_pos);
-	if(!block)
-		block=AllocBuffer(&dst, &dst_pos);
-	SIZE_T copy=Min(size-pos, (SIZE_T)block);
-	CopyMemory(&dst[dst_pos], &src[pos], copy);
-	uWritePos+=copy;
+	if(current->Size==PAGE_SIZE)
+		{
+		auto next=new BUFFER();
+		next->Size=0;
+		next->Next=nullptr;
+		current->Next=next;
+		m_Last=next;
+		current=next;
+		}
+	SIZE_T available=PAGE_SIZE-current->Size;
+	SIZE_T copy=Min(size-pos, available);
+	CopyMemory(&current->Buffer[current->Size], &src[pos], copy);
+	current->Size+=copy;
 	pos+=copy;
-	cWritten.Broadcast();
 	}
 return pos;
-}
-
-
-//================
-// Common Private
-//================
-
-UINT Intermediate::AllocBuffer(BYTE** buf_ptr, UINT* pos_ptr)
-{
-BYTE* buf=new BYTE[PAGE_SIZE];
-cBuffers.append(buf);
-*buf_ptr=buf;
-*pos_ptr=0;
-return PAGE_SIZE;
-}
-
-VOID Intermediate::DiscardBuffers()
-{
-UINT discard=(UINT)(uReadPos/PAGE_SIZE);
-if(!discard)
-	return;
-SIZE_T discarded=discard*PAGE_SIZE;
-for(auto it=cBuffers.begin(); discard>0; discard--)
-	{
-	auto buf=it.get_current();
-	delete buf;
-	it.remove_current();
-	}
-uReadPos-=discarded;
-uWritePos-=discarded;
-}
-
-UINT Intermediate::GetBuffer(SIZE_T offset, BYTE** buf_ptr, UINT* pos_ptr)
-{
-UINT buf_id=(UINT)(offset/PAGE_SIZE);
-UINT buf_count=cBuffers.get_count();
-if(buf_id>=buf_count)
-	return 0;
-UINT buf_pos=(UINT)(offset%PAGE_SIZE);
-*buf_ptr=cBuffers.get_at(buf_id);
-*pos_ptr=buf_pos;
-return PAGE_SIZE-buf_pos;
 }
 
 }
