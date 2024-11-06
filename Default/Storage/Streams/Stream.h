@@ -51,15 +51,15 @@ class Stream: public virtual Object
 {
 public:
 	// Common
-	StreamFormat GetFormat() { return uFormat; }
-	VOID SetFormat(StreamFormat Format) { uFormat=Format; }
+	StreamFormat GetFormat() { return m_Format; }
+	VOID SetFormat(StreamFormat Format) { m_Format=Format; }
 
 protected:
 	// Con-/Destructors
-	Stream(): uFormat(StandardStreamFormat) {}
+	Stream(): m_Format(StandardStreamFormat) {}
 
 	// Common
-	StreamFormat uFormat;
+	StreamFormat m_Format;
 };
 
 }}

@@ -38,10 +38,10 @@ while(pos<size)
 	{
 	SIZE_T copy=Min(size-pos, PAGE_SIZE);
 	SIZE_T read=src->Read(buf_ptr, copy);
+	if(!read)
+		break;
 	dst->Write(buf_ptr, read);
 	pos+=read;
-	if(read<copy)
-		break;
 	}
 return pos;
 }

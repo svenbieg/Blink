@@ -31,18 +31,20 @@ public:
 	// Friends
 	template <class _item_t> friend class Handle;
 
+	// Con-/Destructors
+	virtual ~Object() {}
+
 	// Common
-	inline VOID AddReference() { uRefCount++; }
-	inline UINT GetRefCount()const { return uRefCount; }
+	inline VOID AddReference() { m_RefCount++; }
+	inline UINT GetRefCount()const { return m_RefCount; }
 	VOID Release();
-	inline VOID RemoveReference() { uRefCount--; }
+	inline VOID RemoveReference() { m_RefCount--; }
 	virtual Handle<String> ToString();
 
 protected:
 	// Con-/Destructors
-	Object(): uRefCount(0) {}
-	virtual ~Object() {}
+	Object(): m_RefCount(0) {}
 
 	// Common
-	UINT uRefCount;
+	UINT m_RefCount;
 };

@@ -90,6 +90,6 @@ public:
 
 private:
 	// Common
-	alignas(8) BYTE pBuffer[8];
-	UnknownType uType;
+	alignas(8) BYTE m_Buffer[8];
+	UnknownType m_BaseInfo;
 };

@@ -26,9 +26,9 @@ namespace Storage {
 //==================
 
 StreamWriter::StreamWriter(OutputStream* stream):
-pStream(nullptr),
-pWriteAnsi(nullptr),
-pWriteUnicode(nullptr)
+m_Stream(nullptr),
+m_WriteAnsi(nullptr),
+m_WriteUnicode(nullptr)
 {
 SetStream(stream);
 }
@@ -40,7 +40,7 @@ SetStream(stream);
 
 UINT StreamWriter::Print(LPCSTR value)
 {
-return DoPrint(pWriteAnsi, 0, value);
+return DoPrint(m_WriteAnsi, 0, value);
 }
 
 UINT StreamWriter::Print(LPCSTR value, StringFormatFlags flags, UINT width)
@@ -50,7 +50,7 @@ return DoPrint(value, flags, width);
 
 UINT StreamWriter::Print(LPCWSTR value)
 {
-return DoPrint(pWriteUnicode, 0, value);
+return DoPrint(m_WriteUnicode, 0, value);
 }
 
 UINT StreamWriter::Print(LPCWSTR value, StringFormatFlags flags, UINT width)
@@ -60,12 +60,12 @@ return DoPrint(value, flags, width);
 
 UINT StreamWriter::Print(UINT len, LPCSTR value)
 {
-return DoPrint(pWriteAnsi, len, value);
+return DoPrint(m_WriteAnsi, len, value);
 }
 
 UINT StreamWriter::Print(UINT len, LPCWSTR value)
 {
-return DoPrint(pWriteUnicode, len, value);
+return DoPrint(m_WriteUnicode, len, value);
 }
 
 UINT StreamWriter::Print(Handle<String> value)
@@ -184,95 +184,95 @@ return written;
 
 UINT StreamWriter::PrintChar(CHAR c, UINT count)
 {
-return DoPrintChar(pWriteAnsi, c, count);
+return DoPrintChar(m_WriteAnsi, c, count);
 }
 
 UINT StreamWriter::PrintChar(WCHAR c, UINT count)
 {
-return DoPrintChar(pWriteUnicode, c, count);
+return DoPrintChar(m_WriteUnicode, c, count);
 }
 
 UINT StreamWriter::PrintDouble(DOUBLE value, StringFormatFlags flags, UINT width, UINT prec)
 {
 CHAR buf[64];
 StringPrintDouble(buf, 64, value, flags, width, prec);
-return DoPrint(pWriteAnsi, 0, buf);
+return DoPrint(m_WriteAnsi, 0, buf);
 }
 
 UINT StreamWriter::PrintFloat(FLOAT value, StringFormatFlags flags, UINT width, UINT prec)
 {
 CHAR buf[32];
 StringPrintFloat(buf, 32, value, flags, width, prec);
-return DoPrint(pWriteAnsi, 0, buf);
+return DoPrint(m_WriteAnsi, 0, buf);
 }
 
 UINT StreamWriter::PrintHex(UINT value, StringFormatFlags flags, UINT width)
 {
 CHAR buf[32];
 StringPrintHex(buf, 32, value, flags, width);
-return DoPrint(pWriteAnsi, 0, buf);
+return DoPrint(m_WriteAnsi, 0, buf);
 }
 
 UINT StreamWriter::PrintHex64(UINT64 value, StringFormatFlags flags, UINT width)
 {
 CHAR buf[64];
 StringPrintHex64(buf, 64, value, flags, width);
-return DoPrint(pWriteAnsi, 0, buf);
+return DoPrint(m_WriteAnsi, 0, buf);
 }
 
 UINT StreamWriter::PrintInt(INT value, StringFormatFlags flags, UINT width)
 {
 CHAR buf[32];
 StringPrintInt(buf, 32, value, flags, width);
-return DoPrint(pWriteAnsi, 0, buf);
+return DoPrint(m_WriteAnsi, 0, buf);
 }
 
 UINT StreamWriter::PrintInt64(INT64 value, StringFormatFlags flags, UINT width)
 {
 CHAR buf[64];
 StringPrintInt64(buf, 64, value, flags, width);
-return DoPrint(pWriteAnsi, 0, buf);
+return DoPrint(m_WriteAnsi, 0, buf);
 }
 
 UINT StreamWriter::PrintUInt(UINT value, StringFormatFlags flags, UINT width)
 {
 CHAR buf[32];
 StringPrintUInt(buf, 32, value, flags, width);
-return DoPrint(pWriteAnsi, 0, buf);
+return DoPrint(m_WriteAnsi, 0, buf);
 }
 
 UINT StreamWriter::PrintUInt64(UINT64 value, StringFormatFlags flags, UINT width)
 {
 CHAR buf[64];
 StringPrintUInt64(buf, 64, value, flags, width);
-return DoPrint(pWriteAnsi, 0, buf);
+return DoPrint(m_WriteAnsi, 0, buf);
 }
 
 VOID StreamWriter::SetStream(OutputStream* stream)
 {
-if(pStream==stream)
+if(m_Stream==stream)
 	return;
-pStream=stream;
-auto format=pStream->GetFormat();
+m_Stream=stream;
+auto format=m_Stream->GetFormat();
 switch(format)
 	{
 	case StreamFormat::Ansi:
 		{
-		pWriteAnsi=AnsiWrite<CHAR>;
-		pWriteUnicode=AnsiWrite<WCHAR>;
+		m_WriteAnsi=AnsiWrite<CHAR>;
+		m_WriteUnicode=AnsiWrite<WCHAR>;
 		break;
 		}
 	case StreamFormat::Unicode:
 		{
-		pWriteAnsi=UnicodeWrite<CHAR>;
-		pWriteUnicode=UnicodeWrite<WCHAR>;
+		m_WriteAnsi=UnicodeWrite<CHAR>;
+		m_WriteUnicode=UnicodeWrite<WCHAR>;
 		break;
 		}
 	default:
 	case StreamFormat::UTF8:
 		{
-		pWriteAnsi=Utf8Write<CHAR>;
-		pWriteUnicode=Utf8Write<WCHAR>;
+		m_WriteAnsi=Utf8Write<CHAR>;
+		m_WriteUnicode=Utf8Write<WCHAR>;
 		break;
 		}
 	}
@@ -294,7 +294,7 @@ for(UINT u=0; value[u]; u++)
 	{
 	if(u==len)
 		break;
-	size+=write_fn(pStream, value[u]);
+	size+=write_fn(m_Stream, value[u]);
 	}
 return size;
 }
@@ -325,7 +325,7 @@ template <class _func_t, class _char_t> UINT StreamWriter::DoPrintChar(_func_t w
 {
 UINT size=0;
 for(UINT u=0; u<count; u++)
-	size+=write_fn(pStream, c);
+	size+=write_fn(m_Stream, c);
 return size;
 }
 

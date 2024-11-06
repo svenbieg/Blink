@@ -33,7 +33,7 @@ public:
 		DispatchedHandler* handler=new Details::DispatchedProcedure(Procedure);
 		DispatchHandler(handler);
 		}
-	template <class _owner_t, class... _args_t> inline VOID Dispatch(_owner_t* Owner, VOID (_owner_t::*Procedure)())
+	template <class _owner_t> inline VOID Dispatch(_owner_t* Owner, VOID (_owner_t::*Procedure)())
 		{
 		DispatchedHandler* handler=new Details::DispatchedMemberProcedure<_owner_t>(Owner, Procedure);
 		DispatchHandler(handler);

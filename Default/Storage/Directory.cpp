@@ -25,12 +25,12 @@ namespace Storage {
 
 Handle<String> Directory::GetName()const
 {
-return PathGetLastComponent(hPath->Begin());
+return PathGetLastComponent(m_Path->Begin());
 }
 
 Handle<String> Directory::GetPath()const
 {
-return hPath;
+return m_Path;
 }
 
 
@@ -39,7 +39,7 @@ return hPath;
 //============================
 
 Directory::Directory(Handle<String> path):
-hPath(path)
+m_Path(path)
 {}
 
 }

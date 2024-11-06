@@ -28,7 +28,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Clusters\shared_index.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Clusters\shared_list.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Clusters\shared_map.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\Container.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\Index.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\List.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\Map.h" />
@@ -41,6 +40,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)DynamicPointer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Event.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)EventHandler.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Exception.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)FlagHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Function.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Handle.h" />
@@ -50,13 +50,13 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)PathHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Property.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)StatusClass.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Status.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Buffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Directory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Encoding\Dwarf\Dwarf.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\File.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Intermediate.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Seekable.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\DynamicBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\StaticBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\CharHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\InputStream.h" />
@@ -79,13 +79,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Collections\StringList.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Core\Application.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Core\DispatchedHandler.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)MemoryHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Object.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)PathHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Buffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Directory.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Encoding\Dwarf\Dwarf.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\File.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\DynamicBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Intermediate.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\StaticBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamHelper.cpp" />

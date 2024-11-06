@@ -50,12 +50,15 @@ public:
 
 	// Con-/Destructors
 	Index() {}
-	Index(nullptr_t) {}
-	Index(_index_t* Index): cIndex(Index->cIndex) {}
+	Index(_index_t* Index)
+		{
+		if(Index)
+			m_Index.copy_from(Index->m_Index);
+		}
 
 	// Access
 	inline Handle<Iterator> At(UINT Position) { return new Iterator(this, Position); }
-	inline BOOL Contains(_id_t const& Id) { return cIndex.contains(Id); }
+	inline BOOL Contains(_id_t const& Id) { return m_Index.contains(Id); }
 	inline Handle<Iterator> Find(_id_t const& Id, FindFunction Function=FindFunction::equal)
 		{
 		auto it=new Iterator(this, -2);
@@ -70,8 +73,8 @@ public:
 		}
 	inline Handle<Iterator> First() { return new Iterator(this, 0); }
 	inline Handle<ConstIterator> FirstConst() { return new ConstIterator(this, 0); }
-	inline _id_t GetAt(_size_t Position) { return cIndex.get_at(Position); }
-	inline _size_t GetCount() { return cIndex.get_count(); }
+	inline _id_t GetAt(_size_t Position) { return m_Index.get_at(Position); }
+	inline _size_t GetCount() { return m_Index.get_count(); }
 	inline Handle<Iterator> Last()
 		{
 		auto it=new Iterator(this, -2);
@@ -88,7 +91,7 @@ public:
 	// Modification
 	template <typename _id_param_t> BOOL Add(_id_param_t&& Id, BOOL Notify=true)
 		{
-		if(cIndex.add(std::forward<_id_param_t>(Id)))
+		if(m_Index.add(std::forward<_id_param_t>(Id)))
 			{
 			if(Notify)
 				{
@@ -103,7 +106,7 @@ public:
 	Event<Index> Changed;
 	BOOL Clear(BOOL Notify=true)
 		{
-		if(cIndex.clear())
+		if(m_Index.clear())
 			{
 			if(Notify)
 				Changed(this);
@@ -113,7 +116,7 @@ public:
 		}
 	BOOL Remove(_id_t const& Id, BOOL Notify=true)
 		{
-		if(cIndex.remove(Id))
+		if(m_Index.remove(Id))
 			{
 			if(Notify)
 				{
@@ -128,7 +131,7 @@ public:
 
 private:
 	// Common
-	Clusters::shared_index<_id_t, _size_t, _group_size> cIndex;
+	Clusters::shared_index<_id_t, _size_t, _group_size> m_Index;
 };
 
 
@@ -148,35 +151,35 @@ public:
 	using FindFunction=Clusters::find_func;
 
 	// Con-/Destructors
-	IndexIterator(_index_t* Index, _size_t Position): cIt(&Index->cIndex, Position), hIndex(Index) {}
+	IndexIterator(_index_t* Index, _size_t Position): m_It(&Index->m_Index, Position), m_Index(Index) {}
 
 	// Access
-	inline _id_t GetCurrent()const { return *cIt; }
-	inline BOOL HasCurrent()const { return cIt.has_current(); }
+	inline _id_t GetCurrent()const { return *m_It; }
+	inline BOOL HasCurrent()const { return m_It.has_current(); }
 
 	// Navigation
-	inline BOOL Find(_id_t const& Id, FindFunction Function=FindFunction::equal) { return cIt.find(Id, Function); }
-	inline BOOL MoveNext() { return cIt.move_next(); }
-	inline BOOL MovePrevious() { return cIt.move_previous(); }
+	inline BOOL Find(_id_t const& Id, FindFunction Function=FindFunction::equal) { return m_It.find(Id, Function); }
+	inline BOOL MoveNext() { return m_It.move_next(); }
+	inline BOOL MovePrevious() { return m_It.move_previous(); }
 
 	// Modification
 	BOOL RemoveCurrent(BOOL Notify=true)
 		{
 		if(!Notify)
-			return cIt.remove_current();
-		if(!cIt.has_current())
+			return m_It.remove_current();
+		if(!m_It.has_current())
 			return false;
-		_id_t id=cIt.get_current_id();
-		cIt.remove_current();
-		hIndex->Removed(hIndex, id);
-		hIndex->Changed(hIndex);
+		_id_t id=m_It.get_current_id();
+		m_It.remove_current();
+		m_Index->Removed(m_Index, id);
+		m_Index->Changed(m_Index);
 		return true;
 		}
 
 private:
 	// Common
-	typename Clusters::shared_index<_id_t, _size_t, _group_size>::iterator cIt;
-	Handle<_index_t> hIndex;
+	typename Clusters::shared_index<_id_t, _size_t, _group_size>::iterator m_It;
+	Handle<_index_t> m_Index;
 };
 
 
@@ -192,21 +195,21 @@ public:
 	using FindFunction=Clusters::find_func;
 
 	// Con-/Destructors
-	ConstIndexIterator(_index_t* Index, _size_t Position): cIt(&Index->cIndex, Position), hIndex(Index) {}
+	ConstIndexIterator(_index_t* Index, _size_t Position): m_It(&Index->m_Index, Position), m_Index(Index) {}
 
 	// Access
-	inline _id_t GetCurrent()const { return *cIt; }
-	inline BOOL HasCurrent()const { return cIt.has_current(); }
+	inline _id_t GetCurrent()const { return *m_It; }
+	inline BOOL HasCurrent()const { return m_It.has_current(); }
 
 	// Navigation
-	inline BOOL Find(_id_t const& Id, FindFunction Function=FindFunction::equal) { return cIt.find(Id, Function); }
-	inline BOOL MoveNext() { return cIt.move_next(); }
-	inline BOOL MovePrevious() { return cIt.move_previous(); }
+	inline BOOL Find(_id_t const& Id, FindFunction Function=FindFunction::equal) { return m_It.find(Id, Function); }
+	inline BOOL MoveNext() { return m_It.move_next(); }
+	inline BOOL MovePrevious() { return m_It.move_previous(); }
 
 private:
 	// Common
-	typename Clusters::shared_index<_id_t, _size_t, _group_size>::const_iterator cIt;
-	Handle<_index_t> hIndex;
+	typename Clusters::shared_index<_id_t, _size_t, _group_size>::const_iterator m_It;
+	Handle<_index_t> m_Index;
 };
 
 }

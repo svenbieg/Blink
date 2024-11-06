@@ -31,25 +31,25 @@ if(!dispatched)
 	return;
 	}
 auto current=dispatched;
-while(current->hNext)
-	current=current->hNext;
-current->hNext=handler;
+while(current->m_Next)
+	current=current->m_Next;
+current->m_Next=handler;
 }
 
 VOID DispatchedHandler::Remove(Handle<DispatchedHandler>& dispatched, DispatchedHandler* handler)
 {
 if(dispatched==handler)
 	{
-	dispatched=handler->hNext;
+	dispatched=handler->m_Next;
 	return;
 	}
 auto current=dispatched;
-while(current->hNext)
+while(current->m_Next)
 	{
-	auto next=current->hNext;
+	auto next=current->m_Next;
 	if(next==handler)
 		{
-		current->hNext=next->hNext;
+		current->m_Next=next->m_Next;
 		return;
 		}
 	current=next;

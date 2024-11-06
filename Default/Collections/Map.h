@@ -50,11 +50,14 @@ public:
 
 	// Con-/Destructors
 	Map() {}
-	Map(nullptr_t) {}
-	Map(_map_t* Map): cMap(Map->cMap) {}
+	Map(_map_t* Map)
+		{
+		if(Map)
+			m_Map.copy_from(Map->m_Map);
+		}
 
 	// Access
-	inline BOOL Contains(_key_t const& Key) { return cMap.contains(Key); }
+	inline BOOL Contains(_key_t const& Key) { return m_Map.contains(Key); }
 	inline Handle<Iterator> Find(_key_t const& Key, FindFunction Function=FindFunction::equal)
 		{
 		auto it=new Iterator(this, -2);
@@ -69,8 +72,8 @@ public:
 		}
 	inline Handle<Iterator> First() { return new Iterator(this, 0); }
 	inline Handle<Iterator> FirstConst() { return new ConstIterator(this, 0); }
-	inline _value_t Get(_key_t const& Key) { return cMap.get(Key); }
-	inline _size_t GetCount() { return cMap.get_count(); }
+	inline _value_t Get(_key_t const& Key) { return m_Map.get(Key); }
+	inline _size_t GetCount() { return m_Map.get_count(); }
 	inline Handle<Iterator> Last()
 		{
 		auto it=new Iterator(this, -2);
@@ -83,12 +86,12 @@ public:
 		it->Last();
 		return it;
 		}
-	inline BOOL TryGet(_key_t const& Key, _value_t* Value) { return cMap.try_get(Key, Value); }
+	inline BOOL TryGet(_key_t const& Key, _value_t* Value) { return m_Map.try_get(Key, Value); }
 
 	// Modification
 	template <typename _key_param_t, typename _value_param_t> BOOL Add(_key_param_t&& Key, _value_param_t&& Value, BOOL Notify=true)
 		{
-		if(cMap.add(std::forward<_key_param_t>(Key), std::forward<_value_param_t>(Value)))
+		if(m_Map.add(std::forward<_key_param_t>(Key), std::forward<_value_param_t>(Value)))
 			{
 			if(Notify)
 				{
@@ -103,7 +106,7 @@ public:
 	Event<Map> Changed;
 	BOOL Clear(BOOL Notify=true)
 		{
-		if(cMap.clear())
+		if(m_Map.clear())
 			{
 			if(Notify)
 				Changed(this);
@@ -114,8 +117,8 @@ public:
 	BOOL Remove(_key_t const& Key, BOOL Notify=true)
 		{
 		if(!Notify)
-			return cMap.remove(Key);
-		auto it=cMap.find(Key);
+			return m_Map.remove(Key);
+		auto it=m_Map.find(Key);
 		if(!it.has_current())
 			return false;
 		_value_t value=it->get_value();
@@ -127,8 +130,8 @@ public:
 	BOOL RemoveAt(_size_t Position, BOOL Notify=true)
 		{
 		if(!Notify)
-			return cMap.remove_at(Position);
-		auto it=cMap.begin(Position);
+			return m_Map.remove_at(Position);
+		auto it=m_Map.begin(Position);
 		if(!it.has_current())
 			return false;
 		_key_t key=it->get_key();
@@ -141,7 +144,7 @@ public:
 	Event<Map, _key_t, _value_t> Removed;
 	template <typename _key_param_t, typename _value_param_t> BOOL Set(_key_param_t&& Key, _value_param_t&& Value, BOOL Notify=true)
 		{
-		if(cMap.set(std::forward<_key_param_t>(Key), std::forward<_value_param_t>(Value)))
+		if(m_Map.set(std::forward<_key_param_t>(Key), std::forward<_value_param_t>(Value)))
 			{
 			if(Notify)
 				Changed(this);
@@ -152,7 +155,7 @@ public:
 
 protected:
 	// Common
-	Clusters::shared_map<_key_t, _value_t, _size_t, _group_size> cMap;
+	Clusters::shared_map<_key_t, _value_t, _size_t, _group_size> m_Map;
 };
 
 
@@ -172,44 +175,44 @@ public:
 	using FindFunction=Clusters::find_func;
 
 	// Con-/Destructors
-	MapIterator(_map_t* Map, _size_t Position): cIt(&Map->cMap, Position), hMap(Map) {}
+	MapIterator(_map_t* Map, _size_t Position): m_It(&Map->m_Map, Position), m_Map(Map) {}
 
 	// Access
-	inline _key_t GetKey()const { return cIt->get_key(); }
-	inline _value_t GetValue()const { return cIt->get_value(); }
-	inline BOOL HasCurrent()const { return cIt.has_current(); }
+	inline _key_t GetKey()const { return m_It->get_key(); }
+	inline _value_t GetValue()const { return m_It->get_value(); }
+	inline BOOL HasCurrent()const { return m_It.has_current(); }
 
 	// Navigation
-	inline BOOL Find(_key_t const& Key, FindFunction Function=FindFunction::equal) { return cIt.find(Key, Function); }
-	inline BOOL First() { return cIt.begin(); }
-	inline _size_t GetPosition() { return cIt.get_position(); }
-	inline BOOL Last() { return cIt.rbegin(); }
-	inline BOOL MoveNext() { return cIt.move_next(); }
-	inline BOOL MovePrevious() { return cIt.move_previous(); }
+	inline BOOL Find(_key_t const& Key, FindFunction Function=FindFunction::equal) { return m_It.find(Key, Function); }
+	inline BOOL First() { return m_It.begin(); }
+	inline _size_t GetPosition() { return m_It.get_position(); }
+	inline BOOL Last() { return m_It.rbegin(); }
+	inline BOOL MoveNext() { return m_It.move_next(); }
+	inline BOOL MovePrevious() { return m_It.move_previous(); }
 	
 	// Modification
 	BOOL RemoveCurrent(BOOL Notify=true)
 		{
 		if(!Notify)
-			return cIt.remove_current();
-		if(!cIt.has_current())
+			return m_It.remove_current();
+		if(!m_It.has_current())
 			return false;
-		_key_t id=cIt->get_key();
-		_value_t item=cIt->get_value();
-		cIt.remove_current();
-		hMap->Removed(hMap, id, item);
-		hMap->Changed(hMap);
+		_key_t id=m_It->get_key();
+		_value_t item=m_It->get_value();
+		m_It.remove_current();
+		m_Map->Removed(m_Map, id, item);
+		m_Map->Changed(m_Map);
 		return true;
 		}
 	template <typename _value_param_t> inline VOID SetValue(_value_param_t&& Value)
 		{
-		cIt->set_value(std::forward<_value_param_t>(Value));
+		m_It->set_value(std::forward<_value_param_t>(Value));
 		}
 
 private:
 	// Common
-	typename Clusters::shared_map<_key_t, _value_t, _size_t, _group_size>::iterator cIt;
-	Handle<_map_t> hMap;
+	typename Clusters::shared_map<_key_t, _value_t, _size_t, _group_size>::iterator m_It;
+	Handle<_map_t> m_Map;
 };
 
 template <typename _key_t, typename _value_t, typename _size_t, WORD _group_size>
@@ -224,25 +227,25 @@ public:
 	using FindFunction=Clusters::find_func;
 
 	// Con-/Destructors
-	ConstMapIterator(_map_t* Map, _size_t Position): cIt(&Map->cMap, Position), hMap(Map) {}
+	ConstMapIterator(_map_t* Map, _size_t Position): m_It(&Map->m_Map, Position), m_Map(Map) {}
 
 	// Access
-	inline _key_t GetKey()const { return cIt->get_key(); }
-	inline _value_t GetValue()const { return cIt->get_value(); }
-	inline BOOL HasCurrent()const { return cIt.has_current(); }
+	inline _key_t GetKey()const { return m_It->get_key(); }
+	inline _value_t GetValue()const { return m_It->get_value(); }
+	inline BOOL HasCurrent()const { return m_It.has_current(); }
 
 	// Navigation
-	inline BOOL Find(_key_t const& Key, FindFunction Function=FindFunction::equal) { return cIt.find(Key, Function); }
-	inline BOOL First() { return cIt.begin(); }
-	inline _size_t GetPosition() { return cIt.get_position(); }
-	inline BOOL Last() { return cIt.rbegin(); }
-	inline BOOL MoveNext() { return cIt.move_next(); }
-	inline BOOL MovePrevious() { return cIt.move_previous(); }
+	inline BOOL Find(_key_t const& Key, FindFunction Function=FindFunction::equal) { return m_It.find(Key, Function); }
+	inline BOOL First() { return m_It.begin(); }
+	inline _size_t GetPosition() { return m_It.get_position(); }
+	inline BOOL Last() { return m_It.rbegin(); }
+	inline BOOL MoveNext() { return m_It.move_next(); }
+	inline BOOL MovePrevious() { return m_It.move_previous(); }
 	
 private:
 	// Common
-	typename Clusters::shared_map<_key_t, _value_t, _size_t, _group_size>::const_iterator cIt;
-	Handle<_map_t> hMap;
+	typename Clusters::shared_map<_key_t, _value_t, _size_t, _group_size>::const_iterator m_It;
+	Handle<_map_t> m_Map;
 };
 
 }

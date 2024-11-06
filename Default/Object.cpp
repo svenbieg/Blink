@@ -19,7 +19,7 @@
 
 VOID Object::Release()
 {
-if(--uRefCount==0)
+if(--m_RefCount==0)
 	delete this;
 }
 

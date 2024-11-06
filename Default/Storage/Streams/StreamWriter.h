@@ -69,9 +69,9 @@ private:
 	template <class _char_t> UINT DoPrint(_char_t const* Value, StringFormatFlags Flags, UINT Width);
 	template <class _func_t, class _char_t> UINT DoPrintChar(_func_t WriteChar, _char_t Char, UINT Count);
 
-	OutputStream* pStream;
-	ANSI_PROC pWriteAnsi;
-	UNICODE_PROC pWriteUnicode;
+	OutputStream* m_Stream;
+	ANSI_PROC m_WriteAnsi;
+	UNICODE_PROC m_WriteUnicode;
 };
 
 }}

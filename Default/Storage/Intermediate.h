@@ -27,7 +27,7 @@ class Intermediate: public Streams::RandomAccessStream
 {
 public:
 	// Con-/Destructors
-	Intermediate();
+	Intermediate(UINT BlockSize=PAGE_SIZE);
 	~Intermediate();
 
 	// Common
@@ -42,17 +42,22 @@ public:
 	SIZE_T Write(VOID const* Buffer, SIZE_T Size)override;
 
 private:
-	// Buffer
-	struct BUFFER
+	// Block
+	struct BLOCK
 		{
-		BYTE Buffer[PAGE_SIZE];
-		BUFFER* Next;
+		BLOCK* Next;
 		UINT Size;
+		BYTE Buffer[];
 		};
 
 	// Common
-	BUFFER* m_First;
-	BUFFER* m_Last;
+	VOID* AllocateBlock();
+	VOID CacheBlock(BLOCK* Block);
+	VOID FreeBlocks(BLOCK* Block);
+	UINT m_BlockSize;
+	BLOCK* m_First;
+	BLOCK* m_Free;
+	BLOCK* m_Last;
 	Concurrency::Mutex m_Mutex;
 	UINT m_Offset;
 	Concurrency::Signal m_Written;

@@ -32,14 +32,14 @@ UINT pos=0;
 while(StringFindChar(str_ptr, sep, &pos))
 	{
 	Handle<String> value=new String(pos, str_ptr);
-	cList.append(value);
+	m_List.append(value);
 	str_ptr=&str_ptr[pos+1];
 	pos=0;
 	}
 if(str_ptr[pos])
 	{
 	Handle<String> value=new String(str_ptr);
-	cList.append(value);
+	m_List.append(value);
 	}
 }
 

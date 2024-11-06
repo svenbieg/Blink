@@ -25,8 +25,10 @@ namespace Storage {
 // Con-/Destructors
 //==================
 
-Intermediate::Intermediate():
+Intermediate::Intermediate(UINT block_size):
+m_BlockSize(block_size),
 m_First(nullptr),
+m_Free(nullptr),
 m_Last(nullptr),
 m_Offset(0)
 {}
@@ -43,14 +45,10 @@ Clear();
 
 VOID Intermediate::Clear()
 {
-auto buf=m_First;
-while(buf)
-	{
-	auto next=buf->Next;
-	delete buf;
-	buf=next;
-	}
+FreeBlocks(m_First);
+FreeBlocks(m_Free);
 m_First=nullptr;
+m_Free=nullptr;
 m_Last=nullptr;
 m_Offset=0;
 }
@@ -66,11 +64,11 @@ ScopedLock lock(m_Mutex);
 if(!m_First)
 	return 0;
 SIZE_T available=m_First->Size-m_Offset;
-auto buf=m_First->Next;
-while(buf)
+auto block=m_First->Next;
+while(block)
 	{
-	available+=buf->Size;
-	buf=buf->Next;
+	available+=block->Size;
+	block=block->Next;
 	}
 return available;
 }
@@ -82,23 +80,26 @@ auto dst=(BYTE*)buf;
 SIZE_T pos=0;
 while(pos<size)
 	{
-	if(!m_First)
-		m_Written.Wait(lock);
-	if(!m_First)
-		break;
-	SIZE_T available=m_First->Size-m_Offset;
-	SIZE_T copy=Min(size-pos, available);
-	CopyMemory(&dst[pos], &m_First->Buffer[m_Offset], copy);
-	m_Offset+=copy;
-	if(m_Offset==m_First->Size)
+	if(m_Offset==m_BlockSize)
 		{
 		auto next=m_First->Next;
-		delete m_First;
+		CacheBlock(m_First);
 		m_First=next;
-		if(!m_First)
+		if(!next)
 			m_Last=nullptr;
 		m_Offset=0;
 		}
+	SIZE_T available=0;
+	if(m_First)
+		available=m_First->Size-m_Offset;
+	if(!available)
+		{
+		m_Written.Wait(lock);
+		continue;
+		}
+	SIZE_T copy=Min(size-pos, available);
+	CopyMemory(&dst[pos], &m_First->Buffer[m_Offset], copy);
+	m_Offset+=copy;
 	pos+=copy;
 	}
 return pos;
@@ -119,9 +120,7 @@ SIZE_T Intermediate::Write(VOID const* buf, SIZE_T size)
 ScopedLock lock(m_Mutex);
 if(!m_First)
 	{
-	m_First=new BUFFER();
-	m_First->Size=0;
-	m_First->Next=nullptr;
+	m_First=(BLOCK*)AllocateBlock();
 	m_Last=m_First;
 	}
 auto current=m_Last;
@@ -129,22 +128,58 @@ auto src=(BYTE*)buf;
 SIZE_T pos=0;
 while(pos<size)
 	{
-	if(current->Size==PAGE_SIZE)
+	if(current->Size==m_BlockSize)
 		{
-		auto next=new BUFFER();
-		next->Size=0;
-		next->Next=nullptr;
+		auto next=(BLOCK*)AllocateBlock();
 		current->Next=next;
-		m_Last=next;
 		current=next;
+		m_Last=current;
 		}
-	SIZE_T available=PAGE_SIZE-current->Size;
+	SIZE_T available=m_BlockSize-current->Size;
 	SIZE_T copy=Min(size-pos, available);
 	CopyMemory(&current->Buffer[current->Size], &src[pos], copy);
 	current->Size+=copy;
 	pos+=copy;
 	}
 return pos;
+}
+
+
+//================
+// Common Private
+//================
+
+VOID* Intermediate::AllocateBlock()
+{
+BLOCK* block=nullptr;
+if(m_Free)
+	{
+	block=m_Free;
+	m_Free=m_Free->Next;
+	}
+else
+	{
+	block=(BLOCK*)operator new(sizeof(BLOCK)+m_BlockSize);
+	}
+block->Next=nullptr;
+block->Size=0;
+return block;
+}
+
+VOID Intermediate::CacheBlock(BLOCK* block)
+{
+block->Next=m_Free;
+m_Free=block;
+}
+
+VOID Intermediate::FreeBlocks(BLOCK* block)
+{
+while(block)
+	{
+	auto next=block->Next;
+	delete block;
+	block=next;
+	}
 }
 
 }

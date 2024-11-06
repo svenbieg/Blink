@@ -46,75 +46,75 @@ public:
 	friend Iterator;
 
 	// Con-/Destructors
-	Vector(Handle<Vector> Vector): uCount(Vector->GetCount())
+	Vector(_size_t Count): m_Count(Count), m_Items(nullptr)
 		{
-		pItems=operator new(uCount*sizeof(_item_t));
-		for(_size_t u=0; u<uCount; u++)
-			new (&pItems[u]) _item_t(Vector->GetAt(u));
+		if(m_Count>0)
+			m_Items=new _item_t[m_Count];
 		}
-	Vector(_size_t Count): pItems(nullptr), uCount(Count)
+	Vector(Handle<Vector> Vector): m_Count(Vector->GetCount())
 		{
-		if(uCount>0)
-			pItems=new _item_t[uCount];
+		m_Items=operator new(m_Count*sizeof(_item_t));
+		for(_size_t u=0; u<m_Count; u++)
+			new (&m_Items[u]) _item_t(Vector->GetAt(u));
 		}
 	~Vector()
 		{
-		if(pItems)
-			delete [] pItems;
+		if(m_Items)
+			delete [] m_Items;
 		}
 
 	// Access
-	inline _item_t* Begin() { return pItems; }
-	inline _item_t const* Begin()const { return pItems; }
+	inline _item_t* Begin() { return m_Items; }
+	inline _item_t const* Begin()const { return m_Items; }
 	inline Handle<Iterator> First() { return new Iterator(this, 0); }
-	inline _item_t& GetAt(SIZE_T Position) { return pItems[Position]; }
-	inline _item_t const& GetAt(SIZE_T Position)const { return pItems[Position]; }
-	inline _size_t GetCount()const { return uCount; }
+	inline _item_t& GetAt(SIZE_T Position) { return m_Items[Position]; }
+	inline _item_t const& GetAt(SIZE_T Position)const { return m_Items[Position]; }
+	inline _size_t GetCount()const { return m_Count; }
 	SIZE_T PrintToStream(Handle<OutputStream> Stream, LPCSTR Format="%i")
 		{
 		SIZE_T size=0;
 		StreamWriter writer(Stream);
 		size+=writer.Print("[ ");
-		for(_size_t u=0; u<uCount; u++)
+		for(_size_t u=0; u<m_Count; u++)
 			{
 			if(u>0)
 				size+=writer.Print(", ");
-			size+=writer.Print(Format, pItems[u]);
+			size+=writer.Print(Format, m_Items[u]);
 			}
 		size+=writer.Print(" ]");
 		return size;
 		}
 	inline SIZE_T WriteToStream(Handle<OutputStream> Stream)
 		{
-		return Stream->Write(pItems, uCount*sizeof(_item_t));
+		return Stream->Write(m_Items, m_Count*sizeof(_item_t));
 		}
 
 	// Modification
 	virtual VOID Clear()
 		{
-		ZeroMemory(pItems, uCount*sizeof(_item_t));
+		ZeroMemory(m_Items, m_Count*sizeof(_item_t));
 		}
 	virtual VOID Fill(_item_t const& Item)
 		{
-		for(SIZE_T u=0; u<uCount; u++)
-			pItems[u]=Item;
+		for(SIZE_T u=0; u<m_Count; u++)
+			m_Items[u]=Item;
 		}
 	inline SIZE_T ReadFromStream(Handle<InputStream> Stream)
 		{
-		return Stream->Read(pItems, uCount*sizeof(_item_t));
+		return Stream->Read(m_Items, m_Count*sizeof(_item_t));
 		}
 	virtual BOOL SetAt(_size_t Position, _item_t const& Item)
 		{
-		if(Position>=uCount)
+		if(Position>=m_Count)
 			return false;
-		pItems[Position]=Item;
+		m_Items[Position]=Item;
 		return true;
 		}
 
 protected:
 	// Common
-	_item_t* pItems;
-	_size_t uCount;
+	_size_t m_Count;
+	_item_t* m_Items;
 };
 
 
@@ -131,35 +131,35 @@ private:
 
 public:
 	// Con-/Destructors
-	VectorIterator(Handle<_vector_t> Vector, _size_t Position): hVector(Vector), uPosition(Position) {}
+	VectorIterator(Handle<_vector_t> Vector, _size_t Position): m_Position(Position), m_Vector(Vector) {}
 
 	// Access
 	_item_t GetCurrent()const
 		{
 		if(!HasCurrent())
 			return _item_t();
-		return hVector->GetAt(uPosition);
+		return m_Vector->GetAt(m_Position);
 		}
-	inline BOOL HasCurrent()const { return uPosition<hVector->GetCount(); }
+	inline BOOL HasCurrent()const { return m_Position<m_Vector->GetCount(); }
 	BOOL MoveNext()
 		{
-		uPosition++;
+		m_Position++;
 		return HasCurrent();
 		}
 	BOOL MovePrevious()
 		{
-		if(uPosition==0)
+		if(m_Position==0)
 			{
-			uPosition=hVector->GetCount();
+			m_Position=m_Vector->GetCount();
 			return false;
 			}
-		uPosition--;
+		m_Position--;
 		return true;
 		}
 
 private:
-	Handle<_vector_t> hVector;
-	_size_t uPosition;
+	_size_t m_Position;
+	Handle<_vector_t> m_Vector;
 };
 
 }

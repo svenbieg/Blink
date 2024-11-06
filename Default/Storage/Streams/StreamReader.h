@@ -54,9 +54,9 @@ private:
 	template <class _func_t, class _char_t> UINT DoReadString(_func_t ReadChar, _char_t* Buffer, UINT Size, CHAR Escape);
 	template <class _func_t, class _char_t> UINT DoReadString(_func_t ReadChar, _char_t* Buffer, UINT Size, LPCSTR Escape, LPCSTR Truncate);
 	template <class _func_t> Handle<String> DoReadString(_func_t ReadChar, SIZE_T* Size, LPCSTR Escape, LPCSTR Truncate);
-	ANSI_PROC pReadAnsi;
-	UNICODE_PROC pReadUnicode;
-	InputStream* pStream;
+	ANSI_PROC m_ReadAnsi;
+	UNICODE_PROC m_ReadUnicode;
+	InputStream* m_Stream;
 };
 
 }}

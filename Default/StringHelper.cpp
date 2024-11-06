@@ -107,16 +107,19 @@ template <class _str_t, class _char_t> inline BOOL StringFindChar(_str_t const* 
 {
 if(!str||!c)
 	return false;
-for(UINT pos=0; str[pos]; pos++)
+BOOL found=false;
+UINT pos=0;
+for(; str[pos]; pos++)
 	{
 	if(CharCompare(str[pos], c, cs)==0)
 		{
-		if(pos_ptr)
-			*pos_ptr=pos;
-		return true;
+		found=true;
+		break;
 		}
 	}
-return false;
+if(pos_ptr)
+	*pos_ptr=pos;
+return found;
 }
 
 BOOL StringFindChar(LPCSTR str, CHAR c, UINT* pos_ptr, BOOL cs)
@@ -133,7 +136,8 @@ template <class _char_t, class _find_t> inline BOOL StringFindChars(_char_t cons
 {
 if(!str||!find)
 	return false;
-for(UINT pos=0; str[pos]; pos++)
+UINT pos=0;
+for(; str[pos]; pos++)
 	{
 	for(UINT find_pos=0; find[find_pos]; find_pos++)
 		{
@@ -145,6 +149,8 @@ for(UINT pos=0; str[pos]; pos++)
 			}
 		}
 	}
+if(pos_ptr)
+	*pos_ptr=pos;
 return false;
 }
 
@@ -158,12 +164,12 @@ BOOL StringFindChars(LPCWSTR str, LPCSTR find, UINT* pos_ptr, BOOL cs)
 return StringFindChars<WCHAR, CHAR>(str, find, pos_ptr, cs);
 }
 
-template <class _char_t> inline UINT StringLength(_char_t const* Value)
+template <class _char_t> inline UINT StringLength(_char_t const* value)
 {
-if(!Value)
+if(!value)
 	return 0;
 UINT len=0;
-for(; Value[len]; len++);
+for(; value[len]; len++);
 return len;
 }
 
@@ -177,16 +183,16 @@ UINT StringLength(LPCWSTR str)
 return StringLength<WCHAR>(str);
 }
 
-template <class _char_t> inline UINT StringLength(_char_t const* Value, UINT Maximum)
+template <class _char_t> inline UINT StringLength(_char_t const* value, UINT max)
 {
-if(!Value)
+if(!value)
 	return 0;
-if(!Maximum)
-	Maximum=UINT_MAX;
+if(!max)
+	max=UINT_MAX;
 UINT len=0;
-for(; Value[len]; len++)
+for(; value[len]; len++)
 	{
-	if(len==Maximum)
+	if(len==max)
 		break;
 	}
 return len;

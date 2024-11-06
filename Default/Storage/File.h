@@ -76,7 +76,7 @@ protected:
 	File(Handle<String> Path);
 
 	// Common
-	Handle<String> hPath;
+	Handle<String> m_Path;
 };
 
 }

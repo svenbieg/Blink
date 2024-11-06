@@ -421,22 +421,22 @@ if(!cs)
 return c1==c2;
 }
 
-BOOL CharEqual(CHAR c1, CHAR c2, BOOL bcs)
+BOOL CharEqual(CHAR c1, CHAR c2, BOOL cs)
 {
-return CharEqual<CHAR, CHAR>(c1, c2, bcs);
+return CharEqual<CHAR, CHAR>(c1, c2, cs);
 }
 
-BOOL CharEqual(CHAR c1, WCHAR c2, BOOL bcs)
+BOOL CharEqual(CHAR c1, WCHAR c2, BOOL cs)
 {
-return CharEqual<CHAR, WCHAR>(c1, c2, bcs);
+return CharEqual<CHAR, WCHAR>(c1, c2, cs);
 }
 
-BOOL CharEqual(WCHAR c1, CHAR c2, BOOL bcs)
+BOOL CharEqual(WCHAR c1, CHAR c2, BOOL cs)
 {
-return CharEqual<WCHAR, CHAR>(c1, c2, bcs);
+return CharEqual<WCHAR, CHAR>(c1, c2, cs);
 }
 
-BOOL CharEqual(WCHAR c1, WCHAR c2, BOOL bcs)
+BOOL CharEqual(WCHAR c1, WCHAR c2, BOOL cs)
 {
-return CharEqual<WCHAR, WCHAR>(c1, c2, bcs);
+return CharEqual<WCHAR, WCHAR>(c1, c2, cs);
 }

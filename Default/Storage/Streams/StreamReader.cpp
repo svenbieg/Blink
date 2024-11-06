@@ -26,9 +26,9 @@ namespace Storage {
 
 StreamReader::StreamReader(InputStream* stream):
 LastChar(0),
-pReadAnsi(nullptr),
-pReadUnicode(nullptr),
-pStream(nullptr)
+m_ReadAnsi(nullptr),
+m_ReadUnicode(nullptr),
+m_Stream(nullptr)
 {
 SetStream(stream);
 }
@@ -44,7 +44,7 @@ UINT size=0;
 while(1)
 	{
 	CHAR c=0;
-	size+=pReadAnsi(pStream, &c);
+	size+=m_ReadAnsi(m_Stream, &c);
 	LastChar=CharToChar<TCHAR, CHAR>(c);
 	if(c==0)
 		break;
@@ -59,67 +59,67 @@ return size;
 
 UINT StreamReader::ReadString(LPSTR buf, UINT size)
 {
-return DoReadString(pReadAnsi, buf, size);
+return DoReadString(m_ReadAnsi, buf, size);
 }
 
 UINT StreamReader::ReadString(LPWSTR buf, UINT size)
 {
-return DoReadString(pReadUnicode, buf, size);
+return DoReadString(m_ReadUnicode, buf, size);
 }
 
 UINT StreamReader::ReadString(LPSTR buf, UINT size, CHAR esc)
 {
-return DoReadString(pReadAnsi, buf, size, esc);
+return DoReadString(m_ReadAnsi, buf, size, esc);
 }
 
 UINT StreamReader::ReadString(LPWSTR buf, UINT size, CHAR esc)
 {
-return DoReadString(pReadUnicode, buf, size, esc);
+return DoReadString(m_ReadUnicode, buf, size, esc);
 }
 
 UINT StreamReader::ReadString(LPSTR buf, UINT size, LPCSTR esc, LPCSTR truncate)
 {
-return DoReadString(pReadAnsi, buf, size, esc, truncate);
+return DoReadString(m_ReadAnsi, buf, size, esc, truncate);
 }
 
 UINT StreamReader::ReadString(LPWSTR buf, UINT size, LPCSTR esc, LPCSTR truncate)
 {
-return DoReadString(pReadUnicode, buf, size, esc, truncate);
+return DoReadString(m_ReadUnicode, buf, size, esc, truncate);
 }
 
 Handle<String> StreamReader::ReadString(SIZE_T* size_ptr, LPCSTR esc, LPCSTR truncate)
 {
 #ifdef UNICODE
-return DoReadString(pReadUnicode, size_ptr, esc, truncate);
+return DoReadString(m_ReadUnicode, size_ptr, esc, truncate);
 #else
-return DoReadString(pReadAnsi, size_ptr, esc, truncate);
+return DoReadString(m_ReadAnsi, size_ptr, esc, truncate);
 #endif
 }
 
 VOID StreamReader::SetStream(InputStream* stream)
 {
-if(pStream==stream)
+if(m_Stream==stream)
 	return;
-pStream=stream;
-auto format=pStream->GetFormat();
+m_Stream=stream;
+auto format=m_Stream->GetFormat();
 switch(format)
 	{
 	case StreamFormat::Ansi:
 		{
-		pReadAnsi=AnsiRead<CHAR>;
-		pReadUnicode=AnsiRead<WCHAR>;
+		m_ReadAnsi=AnsiRead<CHAR>;
+		m_ReadUnicode=AnsiRead<WCHAR>;
 		break;
 		}
 	case StreamFormat::Unicode:
 		{
-		pReadAnsi=UnicodeRead<CHAR>;
-		pReadUnicode=UnicodeRead<WCHAR>;
+		m_ReadAnsi=UnicodeRead<CHAR>;
+		m_ReadUnicode=UnicodeRead<WCHAR>;
 		break;
 		}
 	case StreamFormat::UTF8:
 		{
-		pReadAnsi=Utf8Read<CHAR>;
-		pReadUnicode=Utf8Read<WCHAR>;
+		m_ReadAnsi=Utf8Read<CHAR>;
+		m_ReadUnicode=Utf8Read<WCHAR>;
 		break;
 		}
 	}
@@ -131,7 +131,7 @@ UINT size_ptr=0;
 for(UINT u=0; u<count; u++)
 	{
 	CHAR c=0;
-	size_ptr+=pReadAnsi(pStream, &c);
+	size_ptr+=m_ReadAnsi(m_Stream, &c);
 	}
 return size_ptr;
 }
@@ -148,7 +148,7 @@ UINT pos=0;
 while(1)
 	{
 	_char_t c=0;
-	read+=read_fn(pStream, &c);
+	read+=read_fn(m_Stream, &c);
 	LastChar=CharToChar<TCHAR, _char_t>(c);
 	buf[pos++]=c;
 	if(!c)
@@ -169,7 +169,7 @@ UINT pos=0;
 while(1)
 	{
 	_char_t c=0;
-	read+=read_fn(pStream, &c);
+	read+=read_fn(m_Stream, &c);
 	LastChar=CharToChar<TCHAR, _char_t>(c);
 	if(CharEqual(c, esc))
 		c=0;
@@ -192,7 +192,7 @@ UINT pos=0;
 while(1)
 	{
 	_char_t c=0;
-	read+=read_fn(pStream, &c);
+	read+=read_fn(m_Stream, &c);
 	LastChar=CharToChar<TCHAR, _char_t>(c);
 	BOOL skip=false;
 	if(trunc)
@@ -239,7 +239,7 @@ Clusters::list<TCHAR> buf;
 while(1)
 	{
 	TCHAR c=0;
-	read+=read_fn(pStream, &c);
+	read+=read_fn(m_Stream, &c);
 	LastChar=c;
 	BOOL skip=false;
 	if(trunc)

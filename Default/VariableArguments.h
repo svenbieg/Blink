@@ -20,19 +20,19 @@ class VariableArguments
 {
 public:
 	// Con-/Destructors
-	VariableArguments(UnknownClass* Arguments, UINT Count): pArguments(Arguments), uCount(Count) {}
+	VariableArguments(UnknownClass* Arguments, UINT Count): m_Arguments(Arguments), m_Count(Count) {}
 
 	// Access
 	template <class _item_t> BOOL GetAt(UINT Position, _item_t& Item)const
 		{
-		if(Position>=uCount)
+		if(Position>=m_Count)
 			return false;
-		return pArguments[Position].Get(Item);
+		return m_Arguments[Position].Get(Item);
 		}
-	UINT GetCount()const { return uCount; }
+	UINT GetCount()const { return m_Count; }
 
 private:
 	// Common
-	UnknownClass* pArguments;
-	UINT uCount;
+	UnknownClass* m_Arguments;
+	UINT m_Count;
 };

@@ -32,7 +32,7 @@ public:
 		auto handler=m_Handler;
 		while(handler)
 			{
-			auto next=handler->hNext;
+			auto next=handler->m_Next;
 			if(handler->GetOwner()!=Owner)
 				{
 				prev=handler;
@@ -42,7 +42,7 @@ public:
 			handler->Invalidate();
 			if(prev)
 				{
-				prev->hNext=next;
+				prev->m_Next=next;
 				}
 			else
 				{
@@ -65,9 +65,9 @@ protected:
 			return;
 			}
 		auto handler=m_Handler;
-		while(handler->hNext)
-			handler=handler->hNext;
-		handler->hNext=Handler;
+		while(handler->m_Next)
+			handler=handler->m_Next;
+		handler->m_Next=Handler;
 		}
 	VOID Run(_sender_t* Sender, _args_t... Arguments)
 		{
@@ -75,7 +75,7 @@ protected:
 		while(handler)
 			{
 			handler->Run(Sender, Arguments...);
-			handler=handler->hNext;
+			handler=handler->m_Next;
 			}
 		}
 	Handle<_handler_t> m_Handler;

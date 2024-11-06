@@ -32,11 +32,11 @@ public:
 
 	// Common
 	static VOID Append(Handle<DispatchedHandler>& Dispatched, DispatchedHandler* Handler);
-	inline static Handle<DispatchedHandler> Remove(Handle<DispatchedHandler>& Dispatched)
+	static Handle<DispatchedHandler> Remove(Handle<DispatchedHandler>& Dispatched)
 		{
 		Handle<DispatchedHandler> dispatched=Dispatched;
 		if(dispatched)
-			Dispatched=dispatched->hNext;
+			Dispatched=dispatched->m_Next;
 		return dispatched;
 		}
 	static VOID Remove(Handle<DispatchedHandler>& Dispatched, DispatchedHandler* Handler);
@@ -47,7 +47,7 @@ protected:
 	DispatchedHandler() {}
 
 	// Common
-	Handle<DispatchedHandler> hNext;
+	Handle<DispatchedHandler> m_Next;
 };
 
 
