@@ -18,5 +18,6 @@
 
 #include "BitHelper.h"
 #include "ErrorHelper.h"
+#include "MemoryHelper.h"
 #include "TaskHelper.h"
 #include "TimeHelper.h"

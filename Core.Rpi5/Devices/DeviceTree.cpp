@@ -117,9 +117,9 @@ DeviceTree::DeviceTree()
 auto offset_ptr=(UINT*)DTB_OFFSET_PTR32;
 Offset=*offset_ptr;
 auto header=(DTB_HEADER*)Offset;
-if(Reverse(header->MAGIC)!=DTB_MAGIC)
+if(BigEndian(header->MAGIC)!=DTB_MAGIC)
 	return;
-SIZE_T offset=Offset+Reverse(header->OFF_DT_STRUCT);
+SIZE_T offset=Offset+BigEndian(header->OFF_DT_STRUCT);
 Root=CreateNode(&offset);
 }
 
@@ -132,12 +132,12 @@ Handle<Node> DeviceTree::CreateNode(SIZE_T* offset_ptr)
 {
 SIZE_T node_pos=*offset_ptr;
 auto dtb_node=(DTB_NODE*)node_pos;
-while(Reverse(dtb_node->TOKEN)==TOKEN_NOP)
+while(BigEndian(dtb_node->TOKEN)==TOKEN_NOP)
 	{
 	node_pos+=sizeof(UINT);
 	dtb_node=(DTB_NODE*)node_pos;
 	}
-if(Reverse(dtb_node->TOKEN)!=TOKEN_BEGIN)
+if(BigEndian(dtb_node->TOKEN)!=TOKEN_BEGIN)
 	return nullptr;
 LPCSTR name_ptr=(LPCSTR)dtb_node->DATA;
 UINT name_len=StringLength(name_ptr);
@@ -146,29 +146,29 @@ if(name_len>0)
 	name=new String(name_ptr);
 Handle<Node> node=new Node(name);
 auto header=(DTB_HEADER*)Offset;
-SIZE_T strings_pos=Offset+Reverse(header->OFF_DT_STRINGS);
+SIZE_T strings_pos=Offset+BigEndian(header->OFF_DT_STRINGS);
 node_pos+=sizeof(UINT)+AlignUp(name_len+1, 4);
 while(1)
 	{
 	dtb_node=(DTB_NODE*)node_pos;
-	if(Reverse(dtb_node->TOKEN)==TOKEN_NOP)
+	if(BigEndian(dtb_node->TOKEN)==TOKEN_NOP)
 		{
 		node_pos+=sizeof(UINT);
 		continue;
 		}
-	if(Reverse(dtb_node->TOKEN)==TOKEN_PROP)
+	if(BigEndian(dtb_node->TOKEN)==TOKEN_PROP)
 		{
 		auto prop=(DTB_PROPERTY*)node_pos;
-		SIZE_T name_pos=strings_pos+Reverse(prop->NAME_OFF);
+		SIZE_T name_pos=strings_pos+BigEndian(prop->NAME_OFF);
 		LPCSTR name_ptr=(LPCSTR)name_pos;
 		Handle<String> prop_name=new String(name_ptr);
-		UINT prop_len=Reverse(prop->LEN);
+		UINT prop_len=BigEndian(prop->LEN);
 		Handle<Buffer> prop_value=new Buffer(prop->DATA, prop_len);
 		node->Properties->Add(prop_name, prop_value);
 		node_pos+=sizeof(DTB_PROPERTY)+AlignUp(prop_len, 4);
 		continue;
 		}
-	if(Reverse(dtb_node->TOKEN)==TOKEN_BEGIN)
+	if(BigEndian(dtb_node->TOKEN)==TOKEN_BEGIN)
 		{
 		auto child=CreateNode(&node_pos);
 		if(!child||!child->Name)
@@ -176,7 +176,7 @@ while(1)
 		node->Children->Add(child->Name, child);
 		continue;
 		}
-	if(Reverse(dtb_node->TOKEN)==TOKEN_END)
+	if(BigEndian(dtb_node->TOKEN)==TOKEN_END)
 		{
 		node_pos+=sizeof(UINT);
 		break;

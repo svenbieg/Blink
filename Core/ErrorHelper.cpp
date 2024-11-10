@@ -25,15 +25,9 @@ Handle<StringList> g_DebugStrings;
 // Common
 //========
 
-[[noreturn]] VOID Abort()
+VOID Abort()
 {
 throw AbortException();
-}
-
-[[noreturn]] VOID Abort(LPCSTR file, UINT line, LPCSTR func, LPCSTR expr)
-{
-DebugPrint("Abort at %s:%s (%u) - %s\n", file, func, line, expr);
-Abort();
 }
 
 #ifdef _DEBUG
