@@ -31,6 +31,18 @@ namespace Devices {
 constexpr UINT64 CLOCK_MHZ=1000000;
 
 
+//==================
+// Con-/Destructors
+//==================
+
+SystemTimer::~SystemTimer()
+{
+m_Task->Cancel();
+m_Signal.Trigger();
+s_Current=nullptr;
+}
+
+
 //========
 // Common
 //========
@@ -91,13 +103,16 @@ __asm volatile("msr CNTP_CVAL_EL0, %0": : "r" (cnt_pct+ticks));
 VOID SystemTimer::TaskProc()
 {
 TaskLock lock(m_Mutex);
-while(1)
+auto task=GetCurrentTask();
+while(!task->Cancelled)
 	{
 	m_Signal.Wait(lock);
-	Tick(this);
+	if(!task->Cancelled)
+		Tick(this);
 	}
+Interrupts::SetHandler(IRQ_SYSTIMER, nullptr, nullptr);
 }
 
-Handle<SystemTimer> SystemTimer::s_Current;
+SystemTimer* SystemTimer::s_Current=nullptr;
 
 }}

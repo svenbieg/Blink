@@ -20,6 +20,9 @@ namespace Devices {
 class SystemTimer: public Object
 {
 public:
+	// Con-/Destructors
+	~SystemTimer();
+
 	// Common
 	static inline UINT Microseconds() { return (UINT)Microseconds64(); }
 	static UINT64 Microseconds64();
@@ -38,7 +41,7 @@ private:
 	Concurrency::Mutex m_Mutex;
 	Concurrency::Signal m_Signal;
 	Handle<Concurrency::Task> m_Task;
-	static Handle<SystemTimer> s_Current;
+	static SystemTimer* s_Current;
 };
 
 }}
