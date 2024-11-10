@@ -99,6 +99,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\Scheduler.h">
       <Filter>Concurrency</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)MemoryHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)ErrorHelper.cpp" />
@@ -123,6 +124,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\stdlib.cpp">
       <Filter>Runtime</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)MemoryHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="$(MSBuildThisFileDirectory)Configuration\PropertySheets\General.xaml">

@@ -191,10 +191,10 @@ extern "C" void __cxa_atexit()
 
 extern "C" [[noreturn]] VOID abort()
 {
-Abort();
+throw AbortException();
 }
 
 extern "C" [[noreturn]] VOID __assert_func(LPCSTR file, INT line, LPCSTR func, LPCSTR expr)
 {
-Abort(file, line, func, expr);
+throw AbortException();
 }

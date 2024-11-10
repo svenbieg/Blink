@@ -21,22 +21,32 @@
 // Common
 //========
 
-template <class... _args_t>
-inline Handle<Concurrency::Task> CreateTask(VOID (*Procedure)(_args_t...), _args_t... Arguments)
+template <class _owner_t, class... _args_t>
+inline Handle<Concurrency::Task> CreateTask(VOID (*Procedure)())
 {
 using Scheduler=Concurrency::Scheduler;
 using Task=Concurrency::Task;
-Handle<Task> task=new Concurrency::Details::TaskTyped<_args_t...>(Procedure, Arguments...);
+Handle<Task> task=new Concurrency::Details::TaskProcedure(Procedure);
 Scheduler::AddTask(task);
 return task;
 }
 
-template <class _owner_t, class... _args_t>
-inline Handle<Concurrency::Task> CreateTask(_owner_t* Owner, VOID (_owner_t::*Procedure)(_args_t...), _args_t... Arguments)
+template <class _owner_t>
+inline Handle<Concurrency::Task> CreateTask(_owner_t* Owner, VOID (_owner_t::*Procedure)())
 {
 using Scheduler=Concurrency::Scheduler;
 using Task=Concurrency::Task;
-Handle<Task> task=new Concurrency::Details::TaskOwned<_owner_t, _args_t...>(Owner, Procedure, Arguments...);
+Handle<Task> task=new Concurrency::Details::TaskMemberProcedure(Owner, Procedure);
+Scheduler::AddTask(task);
+return task;
+}
+
+template <class _owner_t, class _lambda_t>
+inline Handle<Concurrency::Task> CreateTask(_owner_t* Owner, _lambda_t&& Lambda)
+{
+using Scheduler=Concurrency::Scheduler;
+using Task=Concurrency::Task;
+Handle<Task> task=new Concurrency::Details::TaskLambda<_owner_t, _lambda_t>(Owner, std::forward<_lambda_t>(Lambda));
 Scheduler::AddTask(task);
 return task;
 }

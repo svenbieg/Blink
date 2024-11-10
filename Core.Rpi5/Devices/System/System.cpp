@@ -98,7 +98,8 @@ __asm volatile("\
 mov	x0, %0\n\
 smc	#0\n\
 ":: "r" (PSCI_POWER_OFF));
-Abort();
+while(1)
+	Cpu::WaitForInterrupt();
 }
 
 VOID System::Reset()
@@ -107,7 +108,8 @@ __asm volatile("\
 mov	x0, %0\n\
 smc	#0\n\
 ":: "r" (PSCI_RESET));
-Abort();
+while(1)
+	Cpu::WaitForInterrupt();
 }
 
 VOID System::Reset(ResetDevice device)
