@@ -26,8 +26,11 @@ namespace Core {
 class Application: public Object
 {
 public:
+	// Con-/Destructors
+	~Application();
+
 	// Common
-	static Handle<Application> Current;
+	static Application* Current;
 	inline VOID Dispatch(VOID (*Procedure)())
 		{
 		DispatchedHandler* handler=new Details::DispatchedProcedure(Procedure);

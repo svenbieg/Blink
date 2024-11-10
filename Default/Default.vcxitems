@@ -20,18 +20,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)CharHelper.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Clusters\cluster.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Clusters\index.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Clusters\list.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Clusters\map.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Clusters\shared_cluster.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Clusters\shared_index.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Clusters\shared_list.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Clusters\shared_map.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\cluster.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\Index.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\index.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\List.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\list.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\Map.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\map.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\Node.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\shared_cluster.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\shared_index.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\shared_list.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\shared_map.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\StringList.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\Vector.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Core\Application.h" />
@@ -93,8 +93,5 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)StringClass.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StringHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)UnknownClass.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)Clusters\Readme.md" />
   </ItemGroup>
 </Project>

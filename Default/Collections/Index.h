@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Clusters/shared_index.hpp"
+#include "shared_index.hpp"
 
 
 //===========
@@ -40,7 +40,7 @@ private:
 
 public:
 	// Types
-	using FindFunction=Clusters::find_func;
+	using FindFunction=find_func;
 	using Iterator=IndexIterator<_id_t, _size_t, _group_size>;
 	using ConstIterator=ConstIndexIterator<_id_t, _size_t, _group_size>;
 
@@ -131,7 +131,7 @@ public:
 
 private:
 	// Common
-	Clusters::shared_index<_id_t, _size_t, _group_size> m_Index;
+	shared_index<_id_t, _size_t, _group_size> m_Index;
 };
 
 
@@ -148,7 +148,7 @@ private:
 
 public:
 	// Using
-	using FindFunction=Clusters::find_func;
+	using FindFunction=find_func;
 
 	// Con-/Destructors
 	IndexIterator(_index_t* Index, _size_t Position): m_It(&Index->m_Index, Position), m_Index(Index) {}
@@ -178,7 +178,7 @@ public:
 
 private:
 	// Common
-	typename Clusters::shared_index<_id_t, _size_t, _group_size>::iterator m_It;
+	typename shared_index<_id_t, _size_t, _group_size>::iterator m_It;
 	Handle<_index_t> m_Index;
 };
 
@@ -208,7 +208,7 @@ public:
 
 private:
 	// Common
-	typename Clusters::shared_index<_id_t, _size_t, _group_size>::const_iterator m_It;
+	typename shared_index<_id_t, _size_t, _group_size>::const_iterator m_It;
 	Handle<_index_t> m_Index;
 };
 

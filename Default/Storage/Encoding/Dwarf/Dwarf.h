@@ -49,17 +49,17 @@ class Dwarf
 {
 public:
 	// Common
-	static SIZE_T Read(BYTE const*& Dwarf)noexcept;
-	static SIZE_T ReadEncoded(BYTE const*& Dwarf, BYTE Encoding, SIZE_T Relative=0)noexcept;
-	static SIZE_T ReadSigned(BYTE const*& Dwarf)noexcept;
-	static SIZE_T ReadUnsigned(BYTE const*& Dwarf)noexcept;
-	template <typename _value_t> static inline _value_t ReadValue(BYTE const*& Dwarf)noexcept
+	static SIZE_T Read(BYTE const*& Dwarf);
+	static SIZE_T ReadEncoded(BYTE const*& Dwarf, BYTE Encoding, SIZE_T Relative=0);
+	static SIZE_T ReadSigned(BYTE const*& Dwarf);
+	static SIZE_T ReadUnsigned(BYTE const*& Dwarf);
+	template <typename _value_t> static inline _value_t ReadValue(BYTE const*& Dwarf)
 		{
 		_value_t value=*(_value_t const*)Dwarf;
 		Dwarf+=sizeof(_value_t);
 		return value;
 		}
-	static UINT GetSize(BYTE Encoding)noexcept;
+	static UINT GetSize(BYTE Encoding);
 };
 
 }}

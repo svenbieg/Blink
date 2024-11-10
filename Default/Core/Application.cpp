@@ -21,11 +21,21 @@ using namespace Concurrency;
 namespace Core {
 
 
+//============================
+// Con-/Destructors Protected
+//============================
+
+Application::~Application()
+{
+Current=nullptr;
+}
+
+
 //========
 // Common
 //========
 
-Handle<Application> Application::Current;
+Application* Application::Current=nullptr;
 
 VOID Application::DispatchHandler(DispatchedHandler* handler)
 {

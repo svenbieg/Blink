@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Clusters/shared_list.hpp"
+#include "shared_list.hpp"
 
 
 //===========
@@ -183,7 +183,7 @@ public:
 
 protected:
 	// Common
-	Clusters::shared_list<_item_t, _size_t, _group_size> m_List;
+	shared_list<_item_t, _size_t, _group_size> m_List;
 };
 
 
@@ -206,7 +206,7 @@ public:
 	_item_t& GetCurrent()
 		{
 		if(!m_It.has_current())
-			return cItem;
+			throw OutOfRangeException();
 		return *m_It;
 		}
 	BOOL HasCurrent()const { return m_It.has_current(); }
@@ -256,8 +256,7 @@ public:
 
 private:
 	// Common
-	typename Clusters::shared_list<_item_t, _size_t, _group_size>::iterator m_It;
-	static inline _item_t cItem=_item_t();
+	typename shared_list<_item_t, _size_t, _group_size>::iterator m_It;
 	Handle<_list_t> hList;
 };
 
@@ -285,7 +284,7 @@ public:
 
 private:
 	// Common
-	typename Clusters::shared_list<_item_t, _size_t, _group_size>::const_iterator m_It;
+	typename shared_list<_item_t, _size_t, _group_size>::const_iterator m_It;
 	Handle<_list_t> hList;
 };
 

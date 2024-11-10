@@ -67,30 +67,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\StringList.h">
       <Filter>Collections</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Clusters\cluster.hpp">
-      <Filter>Clusters</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Clusters\index.hpp">
-      <Filter>Clusters</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Clusters\list.hpp">
-      <Filter>Clusters</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Clusters\map.hpp">
-      <Filter>Clusters</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Clusters\shared_cluster.hpp">
-      <Filter>Clusters</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Clusters\shared_index.hpp">
-      <Filter>Clusters</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Clusters\shared_list.hpp">
-      <Filter>Clusters</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Clusters\shared_map.hpp">
-      <Filter>Clusters</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Core\Application.h">
       <Filter>Core</Filter>
     </ClInclude>
@@ -117,6 +93,30 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Exception.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Encoding\Dwarf\Dwarf.h">
       <Filter>Storage\Encoding\Dwarf</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\cluster.hpp">
+      <Filter>Collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\index.hpp">
+      <Filter>Collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\list.hpp">
+      <Filter>Collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\map.hpp">
+      <Filter>Collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\shared_cluster.hpp">
+      <Filter>Collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\shared_index.hpp">
+      <Filter>Collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\shared_list.hpp">
+      <Filter>Collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\shared_map.hpp">
+      <Filter>Collections</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -176,9 +176,6 @@
     <Filter Include="Collections">
       <UniqueIdentifier>{dbd5d5fd-db4e-40f0-9b20-2e4bff03e78e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Clusters">
-      <UniqueIdentifier>{2b3fb06c-6f0e-4688-990e-16fa86b9b5b2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Core">
       <UniqueIdentifier>{bff08e3e-51aa-4b21-9a7a-07516a794c62}</UniqueIdentifier>
     </Filter>
@@ -188,10 +185,5 @@
     <Filter Include="Storage\Encoding\Dwarf">
       <UniqueIdentifier>{42658492-a0f4-43dd-8d2b-b1ba1a167023}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)Clusters\Readme.md">
-      <Filter>Clusters</Filter>
-    </None>
   </ItemGroup>
 </Project>

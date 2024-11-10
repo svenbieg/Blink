@@ -27,13 +27,13 @@ namespace Storage {
 // Common
 //========
 
-SIZE_T Dwarf::Read(BYTE const*& dwarf)noexcept
+SIZE_T Dwarf::Read(BYTE const*& dwarf)
 {
 BYTE encoding=*dwarf++;
 return ReadEncoded(dwarf, encoding);
 }
 
-SIZE_T Dwarf::ReadEncoded(BYTE const*& dwarf, BYTE encoding, SIZE_T relative)noexcept
+SIZE_T Dwarf::ReadEncoded(BYTE const*& dwarf, BYTE encoding, SIZE_T relative)
 {
 SIZE_T ptr_rel=(SIZE_T)dwarf;
 SIZE_T value=0;
@@ -70,7 +70,7 @@ switch(type)
 		value=ReadValue<INT64>(dwarf);
 		break;
 	default:
-		Abort();
+		throw InvalidArgumentException();
 	}
 UINT mode=encoding&0x70;
 switch(mode)
@@ -88,14 +88,14 @@ switch(mode)
 		break;
 		}
 	default:
-		Abort();
+		throw InvalidArgumentException();
 	}
 if(GetFlag(encoding, DW_INDIRECT))
 	value=*(SIZE_T*)value;
 return value;
 }
 
-SIZE_T Dwarf::ReadSigned(BYTE const*& dwarf)noexcept
+SIZE_T Dwarf::ReadSigned(BYTE const*& dwarf)
 {
 SIZE_T value=0;
 UINT shift=0;
@@ -112,7 +112,7 @@ if(byte&0x40)
 return value;
 }
 
-SIZE_T Dwarf::ReadUnsigned(BYTE const*& dwarf)noexcept
+SIZE_T Dwarf::ReadUnsigned(BYTE const*& dwarf)
 {
 SIZE_T value=0;
 UINT shift=0;
@@ -127,7 +127,7 @@ while(byte&0x80);
 return value;
 }
 
-UINT Dwarf::GetSize(BYTE encoding)noexcept
+UINT Dwarf::GetSize(BYTE encoding)
 {
 UINT size=0;
 switch(encoding&0x0F)
@@ -150,7 +150,7 @@ switch(encoding&0x0F)
 		size=8;
 		break;
 	default:
-		Abort();
+		throw InvalidArgumentException();
 	}
 return size;
 }

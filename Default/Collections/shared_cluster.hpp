@@ -6,11 +6,10 @@
 // Shared classes for shared_list and shared_index
 
 // Copyright 2024, Sven Bieg (svenbieg@web.de)
-// http://github.com/svenbieg/clusters
+// http://github.com/svenbieg/Clusters
 
 
-#ifndef _CLUSTERS_SHARED_CLUSTER_HPP
-#define _CLUSTERS_SHARED_CLUSTER_HPP
+#pragma once
 
 
 //=======
@@ -25,7 +24,7 @@
 // Namespace
 //===========
 
-namespace Clusters {
+namespace Collections {
 
 
 //======================
@@ -313,6 +312,4 @@ protected:
 	iterable_shared_cluster() {}
 };
 
-} // namespace
-
-#endif // _CLUSTERS_SHARED_CLUSTER_HPP
+}

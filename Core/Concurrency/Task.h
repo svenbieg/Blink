@@ -9,7 +9,6 @@
 // Using
 //=======
 
-#include <utility>
 #include "Core/DispatchedHandler.h"
 #include "Devices/System/Cpu.h"
 #include "Signal.h"
@@ -61,6 +60,8 @@ public:
 	friend Signal;
 
 	// Common
+	VOID Cancel();
+	volatile BOOL Cancelled;
 	inline VOID Then(VOID (*Procedure)())
 		{
 		auto handler=new Core::Details::DispatchedProcedure(Procedure);
@@ -115,50 +116,72 @@ private:
 };
 
 
-//============
-// Task-Typed
-//============
+//===========
+// Procedure
+//===========
 
 namespace Details {
-template <class... _args_t> class TaskTyped: public Task
+class TaskProcedure: public Task
 {
 public:
 	// Using
-	typedef VOID (*_proc_t)(_args_t...);
+	typedef VOID (*_proc_t)();
 
 	// Con-/Destructors
-	TaskTyped(_proc_t Procedure, _args_t... Arguments):
-		m_Function([Procedure, Arguments...]() { (*Procedure)(Arguments...); })
+	TaskProcedure(_proc_t Procedure):
+		m_Procedure(Procedure)
 		{}
 
 private:
 	// Common
-	VOID Run()override { m_Function(); }
-	Function<VOID()> m_Function;
+	VOID Run()override { m_Procedure(); }
+	_proc_t m_Procedure;
 };}
 
 
-//============
-// Task-Owned
-//============
+//==================
+// Member-Procedure
+//==================
 
 namespace Details {
-template <class _owner_t, class... _args_t> class TaskOwned: public Task
+template <class _owner_t> class TaskMemberProcedure: public Task
 {
 public:
 	// Using
-	typedef VOID (_owner_t::*_proc_t)(_args_t...);
+	typedef VOID (_owner_t::*_proc_t)();
 
 	// Con-/Destructors
-	TaskOwned(_owner_t* Owner, _proc_t Procedure, _args_t... Arguments):
-		m_Function([this, Owner, Procedure, Arguments...]() { (Owner->*Procedure)(Arguments...); }),
+	TaskMemberProcedure(_owner_t* Owner, _proc_t Procedure):
+		m_Owner(Owner),
+		m_Procedure(Procedure)
+		{}
+
+private:
+	// Common
+	VOID Run()override { (m_Owner->*m_Procedure)(); }
+	Handle<_owner_t> m_Owner;
+	_proc_t m_Procedure;
+};}
+
+
+//=============
+// Task-Lambda
+//=============
+
+namespace Details {
+template <class _owner_t, class _lambda_t> class TaskLambda: public Task
+{
+public:
+	// Con-/Destructors
+	TaskLambda(_owner_t* Owner, _lambda_t&& Lambda):
+		m_Lambda(std::move(Lambda)),
 		m_Owner(Owner)
 		{}
 
 private:
 	// Common
-	VOID Run()override { m_Function(); }
-	Function<VOID()> m_Function;
+	VOID Run()override { m_Lambda(); }
+	_lambda_t m_Lambda;
 	Handle<_owner_t> m_Owner;
 };}
 

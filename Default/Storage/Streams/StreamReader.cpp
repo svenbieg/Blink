@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include "Collections/list.hpp"
 #include "StreamReader.h"
 
 
@@ -235,7 +236,7 @@ return read;
 template <class _func_t> Handle<String> StreamReader::DoReadString(_func_t read_fn, SIZE_T* size_ptr, LPCSTR esc, LPCSTR trunc)
 {
 SIZE_T read=0;
-Clusters::list<TCHAR> buf;
+Collections::list<TCHAR> buf;
 while(1)
 	{
 	TCHAR c=0;

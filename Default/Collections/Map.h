@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Clusters/shared_map.hpp"
+#include "shared_map.hpp"
 
 
 //===========
@@ -40,7 +40,7 @@ private:
 
 public:
 	// Using
-	using FindFunction=Clusters::find_func;
+	using FindFunction=find_func;
 	using Iterator=MapIterator<_key_t, _value_t, _size_t, _group_size>;
 	using ConstIterator=ConstMapIterator<_key_t, _value_t, _size_t, _group_size>;
 
@@ -155,7 +155,7 @@ public:
 
 protected:
 	// Common
-	Clusters::shared_map<_key_t, _value_t, _size_t, _group_size> m_Map;
+	shared_map<_key_t, _value_t, _size_t, _group_size> m_Map;
 };
 
 
@@ -172,7 +172,7 @@ private:
 
 public:
 	// Using
-	using FindFunction=Clusters::find_func;
+	using FindFunction=find_func;
 
 	// Con-/Destructors
 	MapIterator(_map_t* Map, _size_t Position): m_It(&Map->m_Map, Position), m_Map(Map) {}
@@ -211,7 +211,7 @@ public:
 
 private:
 	// Common
-	typename Clusters::shared_map<_key_t, _value_t, _size_t, _group_size>::iterator m_It;
+	typename shared_map<_key_t, _value_t, _size_t, _group_size>::iterator m_It;
 	Handle<_map_t> m_Map;
 };
 
@@ -224,7 +224,7 @@ private:
 
 public:
 	// Using
-	using FindFunction=Clusters::find_func;
+	using FindFunction=find_func;
 
 	// Con-/Destructors
 	ConstMapIterator(_map_t* Map, _size_t Position): m_It(&Map->m_Map, Position), m_Map(Map) {}
@@ -244,7 +244,7 @@ public:
 	
 private:
 	// Common
-	typename Clusters::shared_map<_key_t, _value_t, _size_t, _group_size>::const_iterator m_It;
+	typename shared_map<_key_t, _value_t, _size_t, _group_size>::const_iterator m_It;
 	Handle<_map_t> m_Map;
 };
 
