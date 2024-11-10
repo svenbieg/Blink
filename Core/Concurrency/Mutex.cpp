@@ -9,7 +9,6 @@
 // Using
 //=======
 
-#include "Devices/System/Cpu.h"
 #include "Devices/System/Interrupts.h"
 #include "Mutex.h"
 #include "Scheduler.h"
@@ -34,13 +33,11 @@ VOID Mutex::Lock()
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
-if(!m_Owner)
+if(m_Owner)
 	{
-	m_Owner=current;
-	return;
+	Scheduler::SuspendCurrentTask(m_Owner, 0);
+	lock.Yield();
 	}
-Scheduler::SuspendCurrentTask(m_Owner, 0);
-lock.Yield();
 m_Owner=current;
 }
 
@@ -52,13 +49,11 @@ auto current=Scheduler::s_CurrentTask[core];
 if(!current)
 	return;
 current->SetFlag(TaskFlags::Blocking);
-if(!m_Owner)
+if(m_Owner)
 	{
-	m_Owner=current;
-	return;
+	Scheduler::SuspendCurrentTask(m_Owner, 0);
+	lock.Yield();
 	}
-Scheduler::SuspendCurrentTask(m_Owner, 0);
-lock.Yield();
 m_Owner=current;
 }
 
@@ -115,8 +110,9 @@ return true;
 VOID Mutex::Unlock()
 {
 SpinLock lock(Scheduler::s_CriticalSection);
-if(!m_Owner)
-	return;
+UINT core=Cpu::GetId();
+auto current=Scheduler::s_CurrentTask[core];
+assert(m_Owner==current);
 m_Owner->ClearFlag(TaskFlags::Blocking);
 if(!m_Owner->m_Waiting)
 	{
@@ -125,7 +121,6 @@ if(!m_Owner->m_Waiting)
 	}
 auto waiting=m_Owner->m_Waiting;
 m_Owner->m_Waiting=nullptr;
-Cpu::DataStoreBarrier();
 Scheduler::ResumeTask(waiting);
 }
 
@@ -148,7 +143,6 @@ if(!m_Owner->m_Waiting)
 	}
 auto waiting=m_Owner->m_Waiting;
 m_Owner->m_Waiting=nullptr;
-Cpu::DataStoreBarrier();
 Scheduler::ResumeTask(waiting);
 }
 
