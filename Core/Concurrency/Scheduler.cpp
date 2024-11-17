@@ -41,7 +41,7 @@ UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
 current->SetFlag(TaskFlags::Owner);
 task->m_Owner=current;
-s_WaitingTask=AddWaitingTask(s_WaitingTask, task, 0);
+s_WaitingTask=AddWaitingTask(s_WaitingTask, task);
 }
 
 VOID Scheduler::Begin()
@@ -60,7 +60,7 @@ Cpu::SetContext(&Task::TaskProc, task, task->m_StackPointer);
 VOID Scheduler::ExitTask()
 {
 SpinLock lock(s_CriticalSection);
-SuspendCurrentTask(nullptr, 0);
+SuspendCurrentTask(nullptr);
 lock.Unlock();
 while(1)
 	{
@@ -115,7 +115,18 @@ for(UINT u=0; u<s_CoreCount; u++)
 VOID Scheduler::SuspendCurrentTask(UINT ms)
 {
 SpinLock lock(s_CriticalSection);
-s_WaitingTask=SuspendCurrentTask(s_WaitingTask, ms);
+UINT core=Cpu::GetId();
+auto current=s_CurrentTask[core];
+current->ClearFlag(TaskFlags::Owner);
+current->m_ResumeTime=GetTickCount64()+ms;
+if(current->m_Next)
+	return;
+auto next=GetWaitingTask();
+if(!next)
+	next=s_IdleTask[core];
+current->SetFlag(TaskFlags::Switch);
+current->m_Next=next;
+Interrupts::Send(IRQ_TASK_SWITCH, core);
 }
 
 
@@ -134,9 +145,8 @@ current->m_Parallel=parallel;
 return first;
 }
 
-Handle<Task> Scheduler::AddWaitingTask(Handle<Task> first, Handle<Task> suspend, UINT ms)
+Handle<Task> Scheduler::AddWaitingTask(Handle<Task> first, Handle<Task> suspend)
 {
-suspend->m_ResumeTime=(ms? GetTickCount64()+ms: 0);
 if(!first)
 	return suspend;
 auto current_ptr=&first;
@@ -205,7 +215,7 @@ ClearFlag(current->m_Flags, TaskFlags::Switch);
 auto next=current->m_Next;
 current->m_Next=nullptr;
 if(!current->GetFlag(TaskFlags::Remove))
-	s_WaitingTask=AddWaitingTask(s_WaitingTask, current, 0);
+	s_WaitingTask=AddWaitingTask(s_WaitingTask, current);
 s_CurrentTask[core]=next;
 Cpu::SwitchTask(core, current, next);
 }
@@ -272,6 +282,7 @@ for(UINT u=0; u<s_CoreCount; u++)
 	auto current=s_CurrentTask[core];
 	if(current->GetFlag(TaskFlags::Busy))
 		continue;
+	resume->ClearFlag(TaskFlags::Remove);
 	auto parallel=resume->m_Parallel;
 	resume->m_Parallel=nullptr;
 	current->SetFlag(TaskFlags::Switch);
@@ -281,14 +292,15 @@ for(UINT u=0; u<s_CoreCount; u++)
 	}
 while(resume)
 	{
+	resume->ClearFlag(TaskFlags::Remove);
 	auto parallel=resume->m_Parallel;
 	resume->m_Parallel=nullptr;
-	s_WaitingTask=AddWaitingTask(s_WaitingTask, resume, 0);
+	s_WaitingTask=AddWaitingTask(s_WaitingTask, resume);
 	resume=parallel;
 	}
 }
 
-Handle<Task> Scheduler::SuspendCurrentTask(Handle<Task> owner, UINT ms)
+Handle<Task> Scheduler::SuspendCurrentTask(Handle<Task> owner)
 {
 UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
@@ -303,7 +315,7 @@ if(!current->m_Next)
 	current->m_Next=next;
 	Interrupts::Send(IRQ_TASK_SWITCH, core);
 	}
-return AddWaitingTask(owner, current, ms);
+return AddWaitingTask(owner, current);
 }
 
 UINT Scheduler::s_CoreCount=0;

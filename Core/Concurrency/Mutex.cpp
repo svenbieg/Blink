@@ -35,7 +35,7 @@ UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 if(m_Owner)
 	{
-	Scheduler::SuspendCurrentTask(m_Owner, 0);
+	Scheduler::SuspendCurrentTask(m_Owner);
 	lock.Yield();
 	}
 m_Owner=current;
@@ -51,7 +51,7 @@ if(!current)
 current->SetFlag(TaskFlags::Blocking);
 if(m_Owner)
 	{
-	Scheduler::SuspendCurrentTask(m_Owner, 0);
+	Scheduler::SuspendCurrentTask(m_Owner);
 	lock.Yield();
 	}
 m_Owner=current;
@@ -76,11 +76,11 @@ if(waiting->GetFlag(TaskFlags::Sharing))
 	Scheduler::AddParallelTask(waiting, current);
 	if(waiting==m_Owner)
 		return;
-	Scheduler::SuspendCurrentTask(nullptr, 0);
+	Scheduler::SuspendCurrentTask(nullptr);
 	}
 else
 	{
-	Scheduler::SuspendCurrentTask(waiting, 0);
+	Scheduler::SuspendCurrentTask(waiting);
 	}
 lock.Yield();
 m_Owner=current;

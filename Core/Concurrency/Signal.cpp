@@ -59,11 +59,11 @@ UINT core=Cpu::GetId();
 auto task=Scheduler::s_CurrentTask[core];
 if(!timeout)
 	{
-	Scheduler::SuspendCurrentTask(nullptr, 0);
+	Scheduler::SuspendCurrentTask(nullptr);
 	}
 else
 	{
-	Scheduler::s_WaitingTask=Scheduler::SuspendCurrentTask(Scheduler::s_WaitingTask, timeout);
+	Scheduler::SuspendCurrentTask(timeout);
 	}
 m_WaitingTask=Scheduler::AddParallelTask(m_WaitingTask, task);
 if(scoped_lock)
