@@ -30,7 +30,7 @@ namespace Concurrency {
 
 VOID Signal::Trigger()
 {
-SpinLock task_lock(Scheduler::s_CriticalSection);
+SpinLock lock(Scheduler::s_CriticalSection);
 if(!m_WaitingTask)
 	return;
 auto waiting=m_WaitingTask;

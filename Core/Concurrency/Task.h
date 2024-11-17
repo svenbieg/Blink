@@ -42,7 +42,7 @@ Switch=2,
 Owner=4,
 Busy=7,
 Sharing=8,
-Suspend=16
+Remove=16
 };
 
 

@@ -45,11 +45,11 @@ private:
 	// Common
 	static Handle<Task> AddParallelTask(Handle<Task> First, Handle<Task> Parallel);
 	static Handle<Task> AddWaitingTask(Handle<Task> First, Handle<Task> Suspend, UINT MilliSeconds);
-	static UINT CurrentCore();
 	static Handle<Task> GetWaitingTask();
 	static VOID HandleTaskSwitch(VOID* Parameter);
 	static VOID IdleTask();
 	static VOID MainTask();
+	static UINT NextCore();
 	static Handle<Task> RemoveParallelTask(Handle<Task> First, Handle<Task> Remove);
 	static Handle<Task> RemoveWaitingTask(Handle<Task> First, Handle<Task> Remove);
 	static VOID ResumeTask(Handle<Task> Resume);

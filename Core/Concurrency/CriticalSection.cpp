@@ -36,7 +36,7 @@ m_LockCount(0)
 // Common
 //========
 
-VOID CriticalSection::Enter()
+VOID CriticalSection::Lock()
 {
 Interrupts::Disable();
 UINT core=Cpu::GetId();
@@ -52,9 +52,10 @@ while(!Cpu::CompareAndSet(&m_Core, CPU_COUNT, core))
 	Interrupts::Disable();
 	}
 m_LockCount++;
+Cpu::DataSyncBarrier();
 }
 
-BOOL CriticalSection::TryEnter()
+BOOL CriticalSection::TryLock()
 {
 Interrupts::Disable();
 UINT core=Cpu::GetId();
@@ -66,22 +67,23 @@ if(m_Core==core)
 if(Cpu::CompareAndSet(&m_Core, CPU_COUNT, core))
 	{
 	m_LockCount++;
+	Cpu::DataSyncBarrier();
 	return true;
 	}
 Interrupts::Enable();
 return false;
 }
 
-VOID CriticalSection::Leave()
+VOID CriticalSection::Unlock()
 {
 UINT core=Cpu::GetId();
 assert(m_Core==core);
 if(--m_LockCount==0)
 	{
 	Cpu::StoreAndRelease(&m_Core, CPU_COUNT);
+	Cpu::DataStoreBarrier();
 	Cpu::SetEvent();
 	}
-Cpu::DataStoreBarrier();
 Interrupts::Enable();
 }
 

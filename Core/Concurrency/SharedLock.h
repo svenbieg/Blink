@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Mutex.h"
+#include "ScopedLock.h"
 
 
 //===========
@@ -23,12 +23,16 @@ namespace Concurrency {
 // Shared-Lock
 //=============
 
-class SharedLock
+class SharedLock: public ScopedLock
 {
 public:
 	// Con-/Destructors
-	inline SharedLock(Mutex& Mutex): m_Mutex(&Mutex) {}
-	inline ~SharedLock()
+	inline SharedLock(Mutex& Mutex)
+		{
+		m_Mutex=&Mutex;
+		m_Mutex->LockShared();
+		}
+	inline ~SharedLock()override
 		{
 		if(m_Mutex)
 			m_Mutex->UnlockShared();

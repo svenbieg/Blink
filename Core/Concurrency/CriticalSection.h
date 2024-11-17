@@ -23,9 +23,9 @@ public:
 	CriticalSection();
 
 	// Common
-	VOID Enter();
-	BOOL TryEnter();
-	VOID Leave();
+	VOID Lock();
+	BOOL TryLock();
+	VOID Unlock();
 
 private:
 	// Common

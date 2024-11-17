@@ -83,6 +83,7 @@ for(UINT core=0; core<CPU_COUNT; core++)
 	{
 	Handle<Task> idle=new Concurrency::Details::TaskProcedure(IdleTask);
 	InitializeTask(&idle->m_StackPointer, &Task::TaskProc, idle);
+	idle->SetFlag(TaskFlags::Remove);
 	s_IdleTask[core]=idle;
 	s_CurrentTask[core]=idle;
 	}
@@ -98,15 +99,13 @@ if(!s_WaitingTask)
 	return;
 for(UINT u=0; u<s_CoreCount; u++)
 	{
-	UINT core=CurrentCore();
+	UINT core=NextCore();
 	auto current=s_CurrentTask[core];
 	if(GetFlag(current->m_Flags, TaskFlags::Busy))
 		continue;
 	auto next=GetWaitingTask();
 	if(!next)
 		break;
-	if(current!=s_IdleTask[core])
-		current->SetFlag(TaskFlags::Suspend);
 	current->SetFlag(TaskFlags::Switch);
 	current->m_Next=next;
 	Interrupts::Send(IRQ_TASK_SWITCH, core);
@@ -144,6 +143,7 @@ auto current_ptr=&first;
 while(*current_ptr)
 	{
 	auto current=*current_ptr;
+	assert(current!=suspend);
 	if(current->m_ResumeTime>suspend->m_ResumeTime)
 		{
 		suspend->m_Waiting=current;
@@ -160,7 +160,7 @@ while(*current_ptr)
 return first;
 }
 
-UINT Scheduler::CurrentCore()
+UINT Scheduler::NextCore()
 {
 if(++s_CurrentCore==s_CoreCount)
 	s_CurrentCore=0;
@@ -204,11 +204,8 @@ auto current=s_CurrentTask[core];
 ClearFlag(current->m_Flags, TaskFlags::Switch);
 auto next=current->m_Next;
 current->m_Next=nullptr;
-if(current->GetFlag(TaskFlags::Suspend))
-	{
-	current->ClearFlag(TaskFlags::Suspend);
+if(!current->GetFlag(TaskFlags::Remove))
 	s_WaitingTask=AddWaitingTask(s_WaitingTask, current, 0);
-	}
 s_CurrentTask[core]=next;
 Cpu::SwitchTask(core, current, next);
 }
@@ -271,14 +268,12 @@ for(UINT u=0; u<s_CoreCount; u++)
 	{
 	if(!resume)
 		break;
-	UINT core=CurrentCore();
+	UINT core=NextCore();
 	auto current=s_CurrentTask[core];
-	if(GetFlag(current->m_Flags, TaskFlags::Busy))
+	if(current->GetFlag(TaskFlags::Busy))
 		continue;
 	auto parallel=resume->m_Parallel;
 	resume->m_Parallel=nullptr;
-	if(current!=s_IdleTask[core])
-		current->SetFlag(TaskFlags::Suspend);
 	current->SetFlag(TaskFlags::Switch);
 	current->m_Next=resume;
 	Interrupts::Send(IRQ_TASK_SWITCH, core);
@@ -298,6 +293,7 @@ Handle<Task> Scheduler::SuspendCurrentTask(Handle<Task> owner, UINT ms)
 UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
 current->ClearFlag(TaskFlags::Owner);
+current->SetFlag(TaskFlags::Remove);
 if(!current->m_Next)
 	{
 	auto next=GetWaitingTask();

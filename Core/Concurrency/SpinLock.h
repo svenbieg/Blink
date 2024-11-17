@@ -38,8 +38,8 @@ public:
 		}
 
 	// Common
-	inline VOID Lock() { m_CriticalSection->Enter(); }
-	inline VOID Unlock() { m_CriticalSection->Leave(); }
+	inline VOID Lock() { m_CriticalSection->Lock(); }
+	inline VOID Unlock() { m_CriticalSection->Unlock(); }
 	inline VOID Yield() { Unlock(); Lock(); }
 
 private:
