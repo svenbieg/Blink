@@ -39,9 +39,9 @@ public:
 		}
 
 	// Common
-	inline VOID Lock() { m_Mutex->LockShared(); }
-	inline VOID Release() { m_Mutex=nullptr; }
-	inline VOID Unlock() { m_Mutex->UnlockShared(); }
+	inline VOID Lock()override { m_Mutex->LockShared(); }
+	inline BOOL TryLock()override { return m_Mutex->TryLockShared(); }
+	inline VOID Unlock()override { m_Mutex->UnlockShared(); }
 
 private:
 	// Common

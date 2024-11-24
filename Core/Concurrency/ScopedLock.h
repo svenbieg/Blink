@@ -30,11 +30,11 @@ public:
 	friend class Signal;
 
 	// Con-/Destructors
-	ScopedLock(Mutex& Mutex): m_Mutex(&Mutex)
+	inline ScopedLock(Mutex& Mutex): m_Mutex(&Mutex)
 		{
 		m_Mutex->Lock();
 		}
-	virtual ~ScopedLock()
+	virtual inline ~ScopedLock()
 		{
 		if(m_Mutex)
 			m_Mutex->Unlock();
@@ -44,7 +44,7 @@ public:
 	virtual inline VOID Lock() { m_Mutex->Lock(); }
 	inline VOID Release() { m_Mutex=nullptr; }
 	virtual inline BOOL TryLock() { return m_Mutex->TryLock(); }
-	inline VOID Unlock() { m_Mutex->Unlock(); }
+	virtual inline VOID Unlock() { m_Mutex->Unlock(); }
 
 protected:
 	// Con-/Destructors

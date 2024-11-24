@@ -42,7 +42,9 @@ public:
 	VOID LockShared();
 	BOOL TryLock();
 	BOOL TryLockBlocking();
+	BOOL TryLockShared();
 	VOID Unlock();
+	VOID UnlockBlocking();
 	VOID UnlockShared();
 
 protected:

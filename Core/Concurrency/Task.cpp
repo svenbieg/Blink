@@ -52,6 +52,7 @@ Task::Task():
 Cancelled(false),
 m_Status(Status::Pending),
 // Private
+m_BlockingCount(0),
 m_Flags(TaskFlags::None),
 m_ResumeTime(0),
 m_StackPointer(&m_Stack[STACK_SIZE])

@@ -102,6 +102,7 @@ private:
 	inline VOID SetFlag(TaskFlags Flag) { ::SetFlag(m_Flags, Flag); }
 	virtual VOID Run()=0;
 	static VOID TaskProc(VOID* Parameter);
+	UINT m_BlockingCount;
 	Signal m_Done;
 	TaskFlags m_Flags;
 	Mutex m_Mutex;
