@@ -9,7 +9,9 @@
 // Using
 //=======
 
+#include <utility>
 #include "Handle.h"
+#include "Object.h"
 
 
 //==========
@@ -37,22 +39,22 @@ namespace Details
 
 namespace Details {
 
-template <class _func_t, class _ret_t, class... _args_t>
+template <class _lambda_t, class _ret_t, class... _args_t>
 class CallableTyped: public Callable<_ret_t, _args_t...>
 {
 public:
 	// Con-/Destructors
-	CallableTyped(_func_t fn): cFunction(fn) {}
+	CallableTyped(_lambda_t&& fn): m_Lambda(std::move(fn)) {}
 
 	// Common
 	_ret_t Call(_args_t... Arguments)override
 		{
-		return cFunction(Arguments...);
+		return m_Lambda(Arguments...);
 		}
 
 private:
 	// Common
-	_func_t cFunction;
+	_lambda_t m_Lambda;
 };
 
 }
@@ -68,21 +70,21 @@ class Function
 public:
 	// Con-/Destructors
 	Function() {}
-	Function(Function const& Function): hCallable(Function.hCallable) {}
-	template<class _func_t> Function(_func_t fn)
+	Function(Function const& Function): m_Callable(Function.m_Callable) {}
+	template<class _lambda_t> Function(_lambda_t&& Lambda)
 		{
-		hCallable=new ::Details::CallableTyped<_func_t, _ret_t, _args_t...>(fn);
+		m_Callable=new ::Details::CallableTyped<_lambda_t, _ret_t, _args_t...>(std::forward<_lambda_t>(Lambda));
 		}
 
 	// Common
-	inline operator bool()const { return hCallable!=nullptr; }
+	inline operator bool()const { return m_Callable!=nullptr; }
 	inline _ret_t operator()(_args_t... Arguments)const
 		{
-		return hCallable->Call(Arguments...);
+		return m_Callable->Call(Arguments...);
 		}
 	inline Function& operator=(nullptr_t)
 		{
-		hCallable=nullptr;
+		m_Callable=nullptr;
 		return *this;
 		}
 
@@ -91,7 +93,7 @@ private:
 	using _callable_t=::Details::Callable<_ret_t, _args_t...>;
 
 	// Common
-	Handle<_callable_t> hCallable;
+	Handle<_callable_t> m_Callable;
 };
 
 template <class _ret_t, class... _args_t>

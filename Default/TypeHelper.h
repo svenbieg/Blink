@@ -6,6 +6,13 @@
 
 
 //=======
+// Using
+//=======
+
+#include <stddef.h>
+
+
+//=======
 // Types
 //=======
 
@@ -15,6 +22,8 @@ typedef decltype(nullptr) nullptr_t;
 
 typedef unsigned char BYTE;
 typedef unsigned short int WORD;
+typedef unsigned __long DWORD;
+typedef unsigned __longlong QWORD;
 
 typedef int BOOL;
 
@@ -28,7 +37,8 @@ constexpr INT INT_MIN=-0x7FFFFFFF;
 typedef unsigned int UINT;
 constexpr UINT UINT_MAX=0xFFFFFFFF;
 
-typedef long int LONG;
+typedef __longlong int INT64;
+typedef unsigned __longlong int UINT64;
 
 typedef float FLOAT;
 typedef double DOUBLE;
@@ -104,17 +114,12 @@ return (((UINT64)High)<<32)|Low;
 // Big Endian
 //============
 
-template <class _value_t> inline _value_t BigEndian(_value_t Value)
-{
-static_assert(false);
-}
-
-template <> inline WORD BigEndian(WORD Value)
+inline WORD BigEndian(WORD Value)
 {
 return (Value>>8)|(Value<<8);
 }
 
-template <> inline UINT BigEndian(UINT Value)
+inline UINT BigEndian(UINT Value)
 {
 UINT value=(Value>>24);
 value|=(Value>>8)&0xFF00;

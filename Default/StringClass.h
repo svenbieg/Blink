@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include <utility>
 #include "Handle.h"
 #include "StringHelper.h"
 
@@ -89,28 +90,26 @@ private:
 //===============
 
 template <>
-class Handle<String>
+class Handle<String>: public ::Details::HandleBase<String>
 {
 public:
-	// Friends
-	template <class _friend_t> friend class Handle;
+	// Using
+	using _base_t=::Details::HandleBase<String>;
 
 	// Con-/Destructors
-	Handle(): m_Object(nullptr) {}
-	Handle(nullptr_t): m_Object(nullptr) {}
-	Handle(LPCSTR Value) { HandleCreate<String, String>(&m_Object, new String(Value)); }
-	Handle(LPCWSTR Value) { HandleCreate<String, String>(&m_Object, new String(Value)); }
-	Handle(String* Value) { HandleCreate<String, String>(&m_Object, Value); }
-	Handle(Handle<String> const& Handle) { HandleCreate<String, String>(&m_Object, Handle.m_Object); }
-	Handle(Handle<String>&& Handle): m_Object(Handle.m_Object) { Handle.m_Object=nullptr; }
-	~Handle() { HandleClear(&m_Object); }
+	Handle(): _base_t(nullptr) {}
+	Handle(nullptr_t): _base_t(nullptr) {}
+	Handle(String* Object): _base_t(Object) {}
+	Handle(Handle const& Copy): _base_t(Copy) {}
+	Handle(Handle&& Move)noexcept: _base_t(std::forward<Handle>(Move)) {}
+	Handle(LPCSTR Value) { Create(new String(Value)); }
+	Handle(LPCWSTR Value) { Create(new String(Value)); }
 
 	// Access
-	inline operator String*()const { return m_Object; }
-	inline String* operator->()const { return m_Object; }
+	inline operator bool()const override { return m_Object&&m_Object->GetLength(); }
 
 	// Comparison
-	inline bool operator==(nullptr_t)const { return !(m_Object&&m_Object->GetLength()); }
+	inline bool operator==(nullptr_t)const override { return !operator bool(); }
 	inline bool operator==(LPCSTR Value)const
 		{
 		auto str=m_Object? m_Object->Begin(): nullptr;
@@ -121,16 +120,15 @@ public:
 		auto str=m_Object? m_Object->Begin(): nullptr;
 		return StringCompare(str, Value)==0;
 		}
-	inline bool operator==(Handle<String> const& Handle)const
+	inline bool operator==(String* Object)const override
 		{
 		auto str1=m_Object? m_Object->Begin(): nullptr;
-		auto str2=Handle? Handle->Begin(): nullptr;
+		auto str2=Object? Object->Begin(): nullptr;
 		return StringCompare(str1, str2)==0;
 		}
-	inline bool operator!=(nullptr_t)const { return (m_Object&&m_Object->GetLength()); }
+	inline bool operator!=(nullptr_t)const { return !operator==(nullptr); }
 	inline bool operator!=(LPCSTR Value)const { return !operator==(Value); }
 	inline bool operator!=(LPCWSTR Value)const { return !operator==(Value); }
-	inline bool operator!=(Handle<String> const& Handle)const { return !operator==(Handle); }
 	inline bool operator>(nullptr_t)const { return (m_Object&&m_Object->GetLength()); }
 	inline bool operator>(LPCSTR Value)const
 		{
@@ -201,43 +199,31 @@ public:
 		}
 
 	// Assignment
-	inline Handle& operator=(nullptr_t) { HandleClear(&m_Object); return *this; }
-	Handle& operator=(LPCSTR Value)
+	inline Handle& operator=(nullptr_t) { Clear(); return *this; }
+	inline Handle& operator=(LPCSTR Value) { Set(Value); return *this; }
+	inline Handle& operator=(LPCWSTR Value) { Set(Value); return *this; }
+	inline Handle& operator=(Handle const& Copy) { HandleBase::Set(Copy.m_Object); return *this; }
+	VOID Set(LPCSTR Value)
 		{
 		if(m_Object)
 			{
 			if(StringCompare(m_Object->Begin(), Value)==0)
-				return *this;
-			m_Object->Release();
-			m_Object=nullptr;
+				return;
+			Clear();
 			}
 		if(Value&&Value[0])
-			{
-			m_Object=new String(Value);
-			m_Object->AddReference();
-			}
-		return *this;
+			Create(new String(Value));
 		}
-	Handle& operator=(LPCWSTR Value)
+	VOID Set(LPCWSTR Value)
 		{
 		if(m_Object)
 			{
 			if(StringCompare(m_Object->Begin(), Value)==0)
-				return *this;
-			m_Object->Release();
-			m_Object=nullptr;
+				return;
+			Clear();
 			}
 		if(Value&&Value[0])
-			{
-			m_Object=new String(Value);
-			m_Object->AddReference();
-			}
-		return *this;
-		}
-	inline Handle& operator=(Handle const& Handle)
-		{
-		HandleAssign(&m_Object, Handle.m_Object);
-		return *this;
+			Create(new String(Value));
 		}
 
 	// Operators
@@ -261,8 +247,4 @@ public:
 			return m_Object;
 		return new String("%s%s", m_Object->Begin(), Append->Begin());
 		}
-
-private:
-	// Common
-	String* m_Object;
 };

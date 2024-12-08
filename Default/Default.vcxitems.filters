@@ -12,7 +12,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Event.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)EventHandler.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Handle.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HandleHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Object.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StringClass.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\InputStream.h">

@@ -48,18 +48,41 @@ DW_OMIT=0xFF
 class Dwarf
 {
 public:
+	// Con-/Destructors
+	Dwarf(SIZE_T Position): m_Buffer((BYTE*)Position) {}
+	Dwarf(Dwarf const& Dwarf): m_Buffer(Dwarf.m_Buffer) {}
+
 	// Common
+	inline LPCSTR Begin()const { return (LPCSTR)m_Buffer; }
+	static UINT GetEncodedSize(BYTE Encoding);
+	inline SIZE_T GetPosition()const { return (SIZE_T)m_Buffer; }
+	inline SIZE_T Read() { return Read((BYTE const*&)m_Buffer); }
 	static SIZE_T Read(BYTE const*& Dwarf);
+	inline BYTE ReadByte() { return *m_Buffer++; }
+	static inline BYTE ReadByte(BYTE const*& Dwarf) { return *Dwarf++; }
+	inline SIZE_T ReadEncoded(BYTE Encoding, SIZE_T Relative=0) { return ReadEncoded((BYTE const*&)m_Buffer, Encoding, Relative); }
 	static SIZE_T ReadEncoded(BYTE const*& Dwarf, BYTE Encoding, SIZE_T Relative=0);
+	inline SIZE_T ReadSigned() { return ReadSigned((BYTE const*&)m_Buffer); }
 	static SIZE_T ReadSigned(BYTE const*& Dwarf);
+	inline SIZE_T ReadUnsigned() { return ReadUnsigned((BYTE const*&)m_Buffer); }
 	static SIZE_T ReadUnsigned(BYTE const*& Dwarf);
+	template <typename _value_t> inline _value_t ReadValue()
+		{
+		_value_t value=*(_value_t const*)m_Buffer;
+		m_Buffer+=sizeof(_value_t);
+		return value;
+		}
 	template <typename _value_t> static inline _value_t ReadValue(BYTE const*& Dwarf)
 		{
 		_value_t value=*(_value_t const*)Dwarf;
 		Dwarf+=sizeof(_value_t);
 		return value;
 		}
-	static UINT GetSize(BYTE Encoding);
+	VOID SetPosition(SIZE_T Position) { m_Buffer=(BYTE*)Position; }
+
+private:
+	// Common
+	BYTE* m_Buffer;
 };
 
 }}

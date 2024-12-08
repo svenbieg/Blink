@@ -27,6 +27,34 @@ namespace Storage {
 // Common
 //========
 
+UINT Dwarf::GetEncodedSize(BYTE encoding)
+{
+UINT size=0;
+switch(encoding&0x0F)
+	{
+	case DW_OMIT:
+	case DW_UNSIGNED:
+	case DW_SIGNED:
+		break;
+	case DW_WORD:
+	case DW_SHORT:
+		size=2;
+		break;
+	case DW_DWORD:
+	case DW_INT:
+		size=4;
+		break;
+	case DW_POINTER_ABS:
+	case DW_QWORD:
+	case DW_LONG:
+		size=8;
+		break;
+	default:
+		throw InvalidArgumentException();
+	}
+return size;
+}
+
 SIZE_T Dwarf::Read(BYTE const*& dwarf)
 {
 BYTE encoding=*dwarf++;
@@ -125,34 +153,6 @@ do
 	}
 while(byte&0x80);
 return value;
-}
-
-UINT Dwarf::GetSize(BYTE encoding)
-{
-UINT size=0;
-switch(encoding&0x0F)
-	{
-	case DW_OMIT:
-	case DW_UNSIGNED:
-	case DW_SIGNED:
-		break;
-	case DW_WORD:
-	case DW_SHORT:
-		size=2;
-		break;
-	case DW_DWORD:
-	case DW_INT:
-		size=4;
-		break;
-	case DW_POINTER_ABS:
-	case DW_QWORD:
-	case DW_LONG:
-		size=8;
-		break;
-	default:
-		throw InvalidArgumentException();
-	}
-return size;
 }
 
 }}
