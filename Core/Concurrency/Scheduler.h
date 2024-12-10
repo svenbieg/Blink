@@ -38,6 +38,7 @@ public:
 	static VOID ExitTask();
 	static Handle<Task> GetCurrentTask();
 	static VOID Initialize();
+	static BOOL IsMainTask();
 	static VOID Schedule();
 	static VOID SuspendCurrentTask(UINT MilliSeconds);
 
@@ -55,10 +56,11 @@ private:
 	static VOID ResumeTask(Handle<Task> Resume);
 	static Handle<Task> SuspendCurrentTask(Handle<Task> Owner);
 	static UINT s_CoreCount;
+	static CriticalSection s_CriticalSection;
 	static UINT s_CurrentCore;
 	static Handle<Task> s_CurrentTask[CPU_COUNT];
 	static Handle<Task> s_IdleTask[CPU_COUNT];
-	static CriticalSection s_CriticalSection;
+	static Task* s_MainTask;
 	static Handle<Task> s_WaitingTask;
 };
 
