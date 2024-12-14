@@ -43,6 +43,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Memory.h">
       <Filter>Devices\System</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\stddef.h">
+      <Filter>Runtime</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">
@@ -65,6 +68,9 @@
     </Filter>
     <Filter Include="Devices\System">
       <UniqueIdentifier>{18aeb9f7-bb20-4dd2-b627-eb5e5216577f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Runtime">
+      <UniqueIdentifier>{9a83fb85-2413-4d1a-9708-b75ab7d479f6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
