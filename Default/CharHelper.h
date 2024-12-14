@@ -5,13 +5,6 @@
 #pragma once
 
 
-//=======
-// Using
-//=======
-
-#include "TypeHelper.h"
-
-
 //============
 // Characters
 //============
