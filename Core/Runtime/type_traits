@@ -1,0 +1,31 @@
+//=============
+// type_traits
+//=============
+
+#pragma once
+
+
+//===========
+// Namespace
+//===========
+
+namespace std {
+
+
+//=============
+// Conditional
+//=============
+
+template<bool _condition, class _if_t, class _else_t> struct conditional {};
+
+template<class _if_t, class _else_t> struct conditional<true, _if_t, _else_t>
+{
+using type=_if_t;
+};
+
+template<class _if_t, class _else_t> struct conditional<false, _if_t, _else_t>
+{
+using type=_else_t;
+};
+
+}

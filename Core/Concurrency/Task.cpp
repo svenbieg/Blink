@@ -9,11 +9,8 @@
 // Using
 //=======
 
-#include "Core/Application.h"
 #include "Scheduler.h"
 #include "Task.h"
-
-using namespace Core;
 
 
 //===========
@@ -55,7 +52,8 @@ m_Status(Status::Pending),
 m_BlockingCount(0),
 m_Flags(TaskFlags::None),
 m_ResumeTime(0),
-m_StackPointer(&m_Stack[STACK_SIZE])
+m_StackPointer(&m_Stack[STACK_SIZE]),
+m_Then(nullptr)
 {}
 
 
@@ -80,8 +78,7 @@ task->m_Status=status;
 task->m_Done.Trigger();
 if(task->m_Then)
 	{
-	if(Application::Current)
-		Application::Current->DispatchHandler(task->m_Then);
+	DispatchedQueue::Append(task->m_Then);
 	task->m_Then=nullptr;
 	}
 lock.Unlock();

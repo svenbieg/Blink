@@ -28,7 +28,7 @@ namespace Concurrency {
 // Common
 //========
 
-VOID Signal::Trigger()
+VOID Signal::Trigger(BOOL cancel)
 {
 SpinLock lock(Scheduler::s_CriticalSection);
 if(!m_WaitingTask)
@@ -37,10 +37,8 @@ auto waiting=m_WaitingTask;
 while(waiting)
 	{
 	if(waiting->m_ResumeTime)
-		{
 		Scheduler::s_WaitingTask=Scheduler::RemoveWaitingTask(Scheduler::s_WaitingTask, waiting);
-		waiting->m_ResumeTime=0;
-		}
+	waiting->m_ResumeTime=(cancel? 1: 0);
 	waiting=waiting->m_Parallel;
 	}
 Scheduler::ResumeTask(m_WaitingTask);
@@ -68,9 +66,11 @@ else
 m_WaitingTask=Scheduler::AddParallelTask(m_WaitingTask, task);
 if(scoped_lock)
 	scoped_lock->Unlock();
-lock.Yield();
+lock.Unlock();
+// Waiting...
 if(scoped_lock)
 	scoped_lock->Lock();
+lock.Lock();
 BOOL signal=(task->m_ResumeTime==0);
 if(!signal)
 	{

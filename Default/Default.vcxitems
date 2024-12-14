@@ -34,8 +34,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\shared_map.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\StringList.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\Vector.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\DispatchedHandler.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\DispatchedQueue.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Core\Application.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Core\DispatchedHandler.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)DynamicHandle.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)DynamicPointer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Event.h" />
@@ -76,8 +77,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CharHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Collections\Node.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Collections\StringList.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\DispatchedQueue.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Core\Application.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Core\DispatchedHandler.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Object.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)PathHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Buffer.cpp" />

@@ -74,7 +74,7 @@ constexpr UINT GICC_IAR_IRQ_MASK=0x3FF;
 // Handler
 //=========
 
-extern "C" VOID HandleInterrupt()
+extern "C" VOID HandleInterrupt()noexcept
 {
 auto gicc=(GICC_REGS*)ARM_GICC_BASE;
 UINT iar=Bits::Get(gicc->IAR);
@@ -90,14 +90,14 @@ Bits::Write(gicc->EOIR, iar);
 // Common
 //========
 
-VOID Interrupts::Disable()
+VOID Interrupts::Disable()noexcept
 {
 Cpu::DisableInterrupts();
 UINT core=Cpu::GetId();
 s_DisableCount[core]++;
 }
 
-VOID Interrupts::Disable(UINT irq)
+VOID Interrupts::Disable(UINT irq)noexcept
 {
 assert(irq<IRQ_COUNT);
 auto gicd=(GICD_REGS*)ARM_GICD_BASE;
@@ -106,14 +106,14 @@ UINT mask=1<<(irq%32);
 Bits::Set(gicd->CLEAR_ENABLED[reg], mask);
 }
 
-VOID Interrupts::Enable()
+VOID Interrupts::Enable()noexcept
 {
 UINT core=Cpu::GetId();
 if(--s_DisableCount[core]==0)
 	Cpu::EnableInterrupts();
 }
 
-VOID Interrupts::Enable(UINT irq)
+VOID Interrupts::Enable(UINT irq)noexcept
 {
 assert(irq<IRQ_COUNT);
 auto gicd=(GICD_REGS*)ARM_GICD_BASE;
@@ -122,20 +122,16 @@ UINT mask=1<<(irq%32);
 Bits::Set(gicd->SET_ENABLED[reg], mask);
 }
 
-VOID Interrupts::HandleInterrupt(UINT irq)
+VOID Interrupts::HandleInterrupt(UINT irq)noexcept
 {
 UINT core=Cpu::GetId();
 s_DisableCount[core]++;
 if(s_IrqHandler[irq])
 	s_IrqHandler[irq](s_IrqParameter[irq]);
-if(--s_DisableCount[core]>0)
-	{
-	auto exc_stack=GetExceptionStack(core);
-	exc_stack->DAIF=0;
-	}
+s_DisableCount[core]--;
 }
 
-VOID Interrupts::Initialize()
+VOID Interrupts::Initialize()noexcept
 {
 auto gicd=(GICD_REGS*)ARM_GICD_BASE;
 Bits::Write(gicd->CTRL, GICD_CTRL_DISABLE);
@@ -162,7 +158,7 @@ for(UINT core=0; core<CPU_COUNT; core++)
 	s_DisableCount[core]=1;
 }
 
-VOID Interrupts::Route(UINT irq, IrqTarget target)
+VOID Interrupts::Route(UINT irq, IrqTarget target)noexcept
 {
 auto gicd=(GICD_REGS*)ARM_GICD_BASE;
 UINT reg=irq/4;
@@ -172,7 +168,7 @@ UINT value=(UINT)target<<id;
 Bits::Set(gicd->TARGET[reg], mask, value);
 }
 
-VOID Interrupts::Send(UINT irq, IrqTarget target)
+VOID Interrupts::Send(UINT irq, IrqTarget target)noexcept
 {
 auto gicd=(GICD_REGS*)ARM_GICD_BASE;
 UINT value=0;
@@ -181,7 +177,7 @@ Bits::Set(value, irq);
 Bits::Write(gicd->SGIR, value);
 }
 
-VOID Interrupts::SetHandler(UINT irq, IRQ_HANDLER handler, VOID* param)
+VOID Interrupts::SetHandler(UINT irq, IRQ_HANDLER handler, VOID* param)noexcept
 {
 assert(irq<IRQ_COUNT);
 Disable(irq);

@@ -18,9 +18,6 @@
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props">
       <Filter>Configuration</Filter>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)Configuration\Debug.targets">
-      <Filter>Configuration</Filter>
-    </None>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Default.props">
       <Filter>Configuration</Filter>
     </None>
@@ -42,6 +39,9 @@
     <None Include="$(MSBuildThisFileDirectory)Configuration\DesignTime.props">
       <Filter>Configuration</Filter>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Debug.targets">
+      <Filter>Configuration</Filter>
+    </None>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Platform.targets">
       <Filter>Configuration</Filter>
     </None>
@@ -52,7 +52,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TimeHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)BitHelper.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)AsmHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TaskHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\Task.h">
       <Filter>Concurrency</Filter>
@@ -72,9 +71,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\Signal.h">
       <Filter>Concurrency</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\cmath">
-      <Filter>Runtime</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\condition_variable">
       <Filter>Runtime</Filter>
     </ClInclude>
@@ -93,13 +89,54 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\SharedLock.h">
       <Filter>Concurrency</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\heap.h">
-      <Filter>Runtime</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\Scheduler.h">
       <Filter>Concurrency</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\heap.h">
+      <Filter>Runtime</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)MemoryHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\assert.h">
+      <Filter>Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AsmHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)TypeInfo.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\cmath">
+      <Filter>Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\cxxabi.h">
+      <Filter>Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\new">
+      <Filter>Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\type_traits">
+      <Filter>Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\unwind.h">
+      <Filter>Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\utility">
+      <Filter>Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\stdbool.h">
+      <Filter>Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\stdint.h">
+      <Filter>Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\cstddef">
+      <Filter>Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\stdlib.h">
+      <Filter>Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\string.h">
+      <Filter>Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\cstring">
+      <Filter>Runtime</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)ErrorHelper.cpp" />
@@ -115,16 +152,22 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Signal.cpp">
       <Filter>Concurrency</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\heap.c">
-      <Filter>Runtime</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Scheduler.cpp">
       <Filter>Concurrency</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\stdlib.cpp">
       <Filter>Runtime</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)MemoryHelper.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\heap.c">
+      <Filter>Runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)TypeInfo.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\cxxabi.cpp">
+      <Filter>Runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\unwind.cpp">
+      <Filter>Runtime</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Page Include="$(MSBuildThisFileDirectory)Configuration\PropertySheets\General.xaml">

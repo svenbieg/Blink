@@ -25,11 +25,6 @@ Handle<StringList> g_DebugStrings;
 // Common
 //========
 
-VOID Abort()
-{
-throw AbortException();
-}
-
 #ifdef _DEBUG
 
 VOID DebugPrint(Handle<String> msg)

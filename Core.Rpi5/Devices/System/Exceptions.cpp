@@ -12,8 +12,6 @@
 #include "Cpu.h"
 #include "Exceptions.h"
 
-extern BYTE __stack_end;
-
 
 //===========
 // Namespace
@@ -55,19 +53,13 @@ DebugPrint("CPU%u: %s (@0x%08x)\n", core, ExceptionName[id], (SIZE_T)instr);
 // Common
 //========
 
-EXC_STACK* GetExceptionStack(UINT core)
-{
-SIZE_T stack_end=(SIZE_T)&__stack_end;
-return (EXC_STACK*)(stack_end-core*STACK_SIZE-sizeof(EXC_STACK));
-}
-
 VOID InitializeStack(VOID** stack, VOID (*task_proc)(VOID*), VOID* param)
 {
 SIZE_T stack_ptr=(SIZE_T)(*stack);
-auto exc_frame=(EXC_FRAME*)(stack_ptr-sizeof(EXC_FRAME));
-exc_frame->X0=(SIZE_T)param;
-exc_frame->X30=(SIZE_T)task_proc;
-*stack=exc_frame;
+auto irq_frame=(IRQ_FRAME*)(stack_ptr-sizeof(IRQ_FRAME));
+irq_frame->X0=(SIZE_T)param;
+irq_frame->X30=(SIZE_T)task_proc;
+*stack=irq_frame;
 }
 
 }}

@@ -13,8 +13,8 @@
 .globl InitializeTask
 InitializeTask:
 ldr x3, [x0]
-sub x3, x3, EXC_FRAME_SIZE
-str x2, [x3, EXC_FRAME_X0]
+sub x3, x3, IRQ_FRAME_SIZE
+str x2, [x3, IRQ_FRAME_X0]
 sub x3, x3, TASK_FRAME_SIZE
 str x1, [x3, TASK_FRAME_ELR]
 str x3, [x0]

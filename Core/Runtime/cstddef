@@ -1,0 +1,29 @@
+//=========
+// cstddef
+//=========
+
+#pragma once
+
+
+//========
+// Macros
+//========
+
+#define offsetof(type, member) __builtin_offsetof(type, member)
+
+
+//===========
+// Namespace
+//===========
+
+namespace std {
+
+
+//========
+// Common
+//========
+
+typedef decltype(sizeof(0)) ptrdiff_t;
+typedef decltype(sizeof(0)) size_t;
+
+}

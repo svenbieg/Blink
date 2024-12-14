@@ -9,192 +9,153 @@
 // Using
 //=======
 
-#include <stdarg.h>
-#include <stdio.h>
+#include <heap.h>
+#include <new>
+#include <stdlib.h>
+#include <string.h>
 #include "Concurrency/TaskLock.h"
-#include "heap.h"
+#include "Devices/System/System.h"
 
 using namespace Concurrency;
 
-
-//========
-// cstdio
-//========
-
-_reent* _impure_ptr=nullptr;
-
-extern "C" INT fputc(INT c, FILE* file)
-{
-return 0;
-}
-
-extern "C" INT fputs(LPCSTR str, FILE* file)
-{
-return 0;
-}
-
-extern "C" size_t fwrite(VOID const* buf, size_t size, size_t count, FILE* file)
-{
-return 0;
-}
-
-extern "C" int sprintf(LPSTR str, LPCSTR format, ...)
-{
-return 0;
-}
-
-extern "C" size_t write(FILE* file, void const* buf, size_t size)
-{
-return 0;
-}
+using System=Devices::System::System;
 
 
-//=========
-// cstdlib
-//=========
+//=====
+// new
+//=====
 
 heap_handle_t g_heap=nullptr;
 Mutex g_heap_mutex;
 
-extern "C" LPCSTR getenv(LPCSTR name)
+void* operator new(std::size_t size)
 {
-return nullptr;
+TaskLock lock(g_heap_mutex);
+auto buf=heap_alloc(g_heap, size);
+if(!buf)
+	throw OutOfMemoryException();
+return buf;
 }
 
-extern "C" VOID* malloc(SIZE_T size)
+void* operator new(std::size_t size, std::nothrow_t const&)noexcept
 {
 TaskLock lock(g_heap_mutex);
 return heap_alloc(g_heap, size);
 }
 
-extern "C" VOID free(VOID* buf)
+void* operator new[](std::size_t size)
+{
+TaskLock lock(g_heap_mutex);
+auto buf=heap_alloc(g_heap, size);
+if(!buf)
+	throw OutOfMemoryException();
+return buf;
+}
+
+void* operator new[](std::size_t size, std::nothrow_t const&)noexcept
+{
+TaskLock lock(g_heap_mutex);
+return heap_alloc(g_heap, size);
+}
+
+void operator delete(void* buf)noexcept
 {
 TaskLock lock(g_heap_mutex);
 heap_free(g_heap, buf);
 }
 
-extern "C" VOID* realloc(VOID* buf, SIZE_T size)
+void operator delete(void* buf, std::size_t)noexcept
 {
 TaskLock lock(g_heap_mutex);
-VOID* dst=heap_alloc(g_heap, size);
-if(buf)
-	{
-	heap_block_info_t info;
-	heap_block_get_info(g_heap, buf, &info);
-	lock.Unlock();
-	SIZE_T copy=Min(size, info.size);
-	CopyMemory(dst, buf, copy);
-	lock.Lock();
-	heap_free(g_heap, buf);
-	}
-return dst;
+heap_free(g_heap, buf);
 }
 
-
-//=========
-// cstring
-//=========
-
-extern "C" INT memcmp(VOID const* buf1, VOID const* buf2, SIZE_T size)
+void operator delete[](void* array)noexcept
 {
-LPCSTR buf1_ptr=(LPCSTR)buf1;
-LPCSTR buf2_ptr=(LPCSTR)buf2;
-for(SIZE_T u=0; u<size; u++)
-	{
-	if(buf1_ptr[u]>buf2_ptr[u])
-		return 1;
-	if(buf1_ptr[u]<buf2_ptr[u])
-		return -1;
-	}
-return 0;
-}
-
-extern "C" VOID* memcpy(VOID* dst, VOID const* src, SIZE_T size)
-{
-LPSTR dst_buf=(LPSTR)dst;
-LPCSTR src_buf=(LPCSTR)src;
-for(SIZE_T u=0; u<size; u++)
-	dst_buf[u]=src_buf[u];
-return dst;
-}
-
-extern "C" VOID* memset(VOID* dst, INT value, SIZE_T size)
-{
-LPSTR dst_buf=(LPSTR)dst;
-for(SIZE_T u=0; u<size; u++)
-	dst_buf[u]=(CHAR)value;
-return dst;
-}
-
-extern "C" LPCSTR strchr(LPCSTR str, INT c)
-{
-for(UINT pos=0; str[pos]; pos++)
-	{
-	if(str[pos]==c)
-		return &str[pos];
-	}
-return nullptr;
-}
-
-extern "C" INT strcmp(LPCSTR str1, LPCSTR str2)
-{
-for(UINT pos=0; str1[pos]||str2[pos]; pos++)
-	{
-	if(str1[pos]<str2[pos])
-		return -1;
-	if(str1[pos]>str2[pos])
-		return 1;
-	}
-return 0;
-}
-
-extern "C" INT strlen(LPCSTR str)
-{
-UINT len=0;
-while(str[len])
-	len++;
-return len;
-}
-
-extern "C" INT strncmp(LPCSTR str1, LPCSTR str2, UINT len)
-{
-for(UINT pos=0; pos<len; pos++)
-	{
-	if(str1[pos]<str2[pos])
-		return -1;
-	if(str1[pos]>str2[pos])
-		return 1;
-	}
-return 0;
-}
-
-extern "C" UINT strtoul(LPCSTR str, LPCSTR end, INT base)
-{
-UINT len=(UINT)(end-str);
-UINT value=0;
-StringScanUInt(str, &value, base, len);
-return value;
+TaskLock lock(g_heap_mutex);
+heap_free(g_heap, array);
 }
 
 
-//========
-// cxxabi
-//========
+//==========
+// stdlib.h
+//==========
 
-extern "C" void __cxa_atexit()
-{}
+VOID* __dso_handle=nullptr;
 
-
-//========
-// stdlib
-//========
-
-extern "C" [[noreturn]] VOID abort()
+extern "C" void abort()
 {
 throw AbortException();
 }
 
-extern "C" [[noreturn]] VOID __assert_func(LPCSTR file, INT line, LPCSTR func, LPCSTR expr)
+extern "C" void free(void* buf)
 {
-throw AbortException();
+TaskLock lock(g_heap_mutex);
+heap_free(g_heap, buf);
+}
+
+extern "C" void* malloc(size_t size)
+{
+TaskLock lock(g_heap_mutex);
+return heap_alloc(g_heap, size);
+}
+
+
+//==========
+// string.h
+//==========
+
+extern "C" int memcmp(void const* buf1_ptr, void const* buf2_ptr, size_t size)
+{
+auto buf1=(LPCSTR)buf1_ptr;
+auto buf2=(LPCSTR)buf2_ptr;
+for(SIZE_T u=0; u<size; u++)
+	{
+	if(buf1[u]>buf2[u])
+		return 1;
+	if(buf1[u]<buf2[u])
+		return -1;
+	}
+return 0;
+}
+
+extern "C" void* memcpy(void* dst_ptr, void const* src_ptr, size_t size)
+{
+auto dst=(LPSTR)dst_ptr;
+auto src=(LPCSTR)src_ptr;
+auto end=dst+size;
+while(dst<end)
+	*dst++=*src++;
+return dst;
+}
+
+extern "C" void* memmove(void* dst_ptr, void const* src_ptr, size_t size)
+{
+auto dst=(LPSTR)dst_ptr;
+auto src=(LPCSTR)src_ptr;
+if(dst==src)
+	return dst+size;
+if(dst>src)
+	{
+	dst+=size;
+	src+=size;
+	while(dst>=dst_ptr)
+		*--dst=*--src;
+	}
+else
+	{
+	auto end=dst+size;
+	while(dst<end)
+		*dst++=*src++;
+	}
+return dst+size;
+}
+
+extern "C" void* memset(void* dst_ptr, int value, size_t size)
+{
+auto dst=(LPSTR)dst_ptr;
+auto end=dst+size;
+while(dst<end)
+	*dst++=(CHAR)value;
+return dst;
 }

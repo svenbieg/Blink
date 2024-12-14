@@ -1,0 +1,31 @@
+//=========
+// cstring
+//=========
+
+#pragma once
+
+
+//=======
+// Using
+//=======
+
+#include <cstddef>
+
+
+//===========
+// Namespace
+//===========
+
+namespace std {
+
+
+//========
+// Common
+//========
+
+extern "C" int memcmp(void const* Buffer1, void const* Buffer2, size_t Size);
+extern "C" void* memcpy(void* Destination, void const* Source, size_t Size);
+extern "C" void* memmove(void* Destination, void const* Source, size_t Size);
+extern "C" void* memset(void* Destination, int Value, size_t Size);
+
+}

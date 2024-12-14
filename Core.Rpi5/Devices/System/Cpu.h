@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include "Exceptions.h"
 #include "Settings.h"
 
 namespace Concurrency
@@ -30,7 +31,10 @@ namespace Devices {
 //=======
 
 extern "C" BOOL cpu_compare_and_set(volatile UINT* value_ptr, UINT compare, UINT set);
+extern "C" VOID cpu_context_restore(EXC_FRAME* context);
+extern "C" VOID cpu_context_save(EXC_FRAME* context);
 extern "C" VOID cpu_context_set(void (*task_proc)(void*), void* param, void* stack);
+extern "C" UINT cpu_id();
 extern "C" INT cpu_power_on(UINT64 core);
 
 
@@ -39,7 +43,6 @@ extern "C" INT cpu_power_on(UINT64 core);
 //==========
 
 constexpr UINT CACHE_LINE_SIZE=64;
-constexpr BIT_FIELD CPU_ID={ 0x3, 8 };
 
 
 //=============
@@ -65,73 +68,64 @@ public:
 	using Task=Concurrency::Task;
 
 	// Common
-	static VOID CleanDataCache();
-	static inline BOOL CompareAndSet(volatile UINT* Value, UINT Compare, UINT Set)
-		{
-		return cpu_compare_and_set(Value, Compare, Set);
-		}
-	static inline void DataMemoryBarrier()
+	static VOID CleanDataCache()noexcept;
+	static inline BOOL CompareAndSet(volatile UINT* Value, UINT Compare, UINT Set)noexcept { return cpu_compare_and_set(Value, Compare, Set); }
+	static inline VOID DataMemoryBarrier()noexcept
 		{
 		__asm volatile("dmb sy"::: "memory");
 		}
-	static inline VOID DataStoreBarrier()
+	static inline VOID DataStoreBarrier()noexcept
 		{
 		__asm volatile("dsb st"::: "memory");
 		}
-	static inline VOID DataSyncBarrier()
+	static inline VOID DataSyncBarrier()noexcept
 		{
 		__asm volatile("dsb sy"::: "memory");
 		}
-	static inline VOID Delay(UINT Cycles)
-		{
-		__asm volatile("\
-		%=:\n\
-		subs %[cycles], %[cycles], #1\n\
-		bne %=b\n\
-		":: [cycles] "r" (Cycles));
-		}
-	static inline VOID DisableInterrupts()
+	//static inline VOID Delay(UINT Cycles)
+	//	{
+	//	__asm volatile("\
+	//	%=:\n\
+	//	subs %[cycles], %[cycles], #1\n\
+	//	bne %=b\n\
+	//	":: [cycles] "r" (Cycles));
+	//	}
+	static inline VOID DisableInterrupts()noexcept
 		{
 		__asm volatile("msr daifset, #2");
 		}
-	static inline VOID EnableInterrupts()
+	static inline VOID EnableInterrupts()noexcept
 		{
 		__asm volatile("msr daifclr, #2");
 		}
-	static inline UINT GetId()
-		{
-		UINT id=0;
-		__asm volatile("mrs %[id], mpidr_el1": [id] "=r" (id));
-		return Bits::Get(id, CPU_ID);
-		}
-	static inline VOID InstructionSyncBarrier()
+	static inline UINT GetId()noexcept { return cpu_id(); }
+	static inline VOID InstructionSyncBarrier()noexcept
 		{
 		__asm volatile("isb"::: "memory");
 		}
-	static inline VOID InvalidateInstructionCache()
+	static inline VOID InvalidateInstructionCache()noexcept
 		{
 		__asm volatile("ic iallu"::: "memory");
 		}
-	static inline INT PowerOn(UINT Core) { return cpu_power_on(Core); }
-	static inline VOID SetContext(VOID (*TaskProc)(VOID*), VOID* Parameter, VOID* Stack)
-		{
-		cpu_context_set(TaskProc, Parameter, Stack);
-		}
-	static inline VOID SetEvent()
+	static inline INT PowerOn(UINT Core)noexcept { return cpu_power_on(Core); }
+	static inline VOID RestoreContext(EXC_FRAME* Context)noexcept { cpu_context_restore(Context); }
+	static inline VOID SaveContext(EXC_FRAME* Context)noexcept { cpu_context_save(Context); }
+	static inline VOID SetContext(VOID (*TaskProc)(VOID*), VOID* Parameter, VOID* Stack)noexcept { cpu_context_set(TaskProc, Parameter, Stack); }
+	static inline VOID SetEvent()noexcept
 		{
 		__asm volatile("sev");
 		}
-	static inline VOID StoreAndRelease(volatile UINT* Address, UINT Set)
+	static inline VOID StoreAndRelease(volatile UINT* Address, UINT Set)noexcept
 		{
 		__asm volatile("stlr %w1, [%0]":: "r" (Address), "r" (Set));
 		}
-	static VOID SwitchTask(UINT Core, Task* Current, Task* Next);
-	static VOID SynchronizeDataAndInstructionCache();
-	static inline VOID WaitForEvent()
+	static VOID SwitchTask(UINT Core, Task* Current, Task* Next)noexcept;
+	static VOID SynchronizeDataAndInstructionCache()noexcept;
+	static inline VOID WaitForEvent()noexcept
 		{
 		__asm volatile("wfe");
 		}
-	static inline VOID WaitForInterrupt()
+	static inline VOID WaitForInterrupt()noexcept
 		{
 		__asm volatile("wfi");
 		}

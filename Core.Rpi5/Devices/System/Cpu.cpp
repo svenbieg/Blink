@@ -14,6 +14,8 @@
 #include "Exceptions.h"
 #include "Tasks.h"
 
+extern BYTE __stack_end;
+
 
 //===========
 // Namespace
@@ -54,7 +56,7 @@ constexpr UINT64 PSCI_CPU_ON=0xC4000003;
 // Common
 //========
 
-VOID Cpu::CleanDataCache()
+VOID Cpu::CleanDataCache()noexcept
 {
 for(UINT set=0; set<L1_DATA_CACHE_SETS; set++)
 	{
@@ -83,14 +85,15 @@ for(UINT set=0; set<L3_CACHE_SETS; set++)
 DataSyncBarrier();
 }
 
-VOID Cpu::SwitchTask(UINT core, Task* current, Task* next)
+VOID Cpu::SwitchTask(UINT core, Task* current, Task* next)noexcept
 {
-auto exc_stack=GetExceptionStack(core);
-current->m_StackPointer=SaveTaskContext(exc_stack->SP);
-exc_stack->SP=RestoreTaskContext(next->m_StackPointer);
+SIZE_T stack_end=(SIZE_T)&__stack_end;
+auto irq_stack=(IRQ_STACK*)(stack_end-core*STACK_SIZE-sizeof(IRQ_STACK));
+current->m_StackPointer=SaveTaskContext(irq_stack->SP);
+irq_stack->SP=RestoreTaskContext(next->m_StackPointer);
 }
 
-VOID Cpu::SynchronizeDataAndInstructionCache()
+VOID Cpu::SynchronizeDataAndInstructionCache()noexcept
 {
 CleanDataCache();
 InvalidateInstructionCache();

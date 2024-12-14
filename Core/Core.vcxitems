@@ -2,17 +2,20 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <HasSharedItems>true</HasSharedItems>
-    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
-    <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(MSBuildThisFileDirectory)</NMakeIncludeSearchPath>
-    <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(MSBuildThisFileDirectory)Runtime\</NMakeIncludeSearchPath>
     <ItemsProjectGuid>{5246A431-BF83-4EB6-BD97-A664298B76E2}</ItemsProjectGuid>
+    <ItemsSccProjectName>$/Core/Core</ItemsSccProjectName>
+    <ItemsSccAuxPath>https://svenbieg.visualstudio.com</ItemsSccAuxPath>
+    <ItemsSccLocalPath>.</ItemsSccLocalPath>
+    <ItemsSccProvider>{4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}</ItemsSccProvider>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <IncludePath>$(IncludePath);$(MSBuildThisFileDirectory)Runtime\</IncludePath>
+    <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(MSBuildThisFileDirectory)</NMakeIncludeSearchPath>
   </PropertyGroup>
   <ItemGroup>
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props" />
-    <None Include="$(MSBuildThisFileDirectory)Configuration\Debug.targets" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Default.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Default.targets" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\DesignTime.props" />
@@ -21,6 +24,7 @@
     <None Include="$(MSBuildThisFileDirectory)Configuration\Platform.targets" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.targets" />
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Debug.targets" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)AsmHelper.h" />
@@ -38,14 +42,27 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MemoryHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\assert.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\cmath" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\condition_variable" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\cstddef" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\cstring" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\cxxabi.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\heap.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\mutex" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\new" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\shared_mutex" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\stdbool.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\stdexcept" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\stdint.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\stdlib.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\string.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\type_traits" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\unwind.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\utility" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TaskHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TimeHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)TypeInfo.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\CriticalSection.cpp" />
@@ -53,10 +70,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Scheduler.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Signal.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Task.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)MemoryHelper.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\stdlib.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\cxxabi.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\heap.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\stdlib.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ErrorHelper.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\unwind.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)TypeInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="$(MSBuildThisFileDirectory)Configuration\PropertySheets\General.xaml" />

@@ -82,14 +82,8 @@ INIT_BANK_REGS INIT_BANK[2];
 VOID System::Led(BOOL on)
 {
 using Gpio=Devices::Arm::Gpio;
+Gpio::SetPinMode(ACTLED_PIN, PinMode::Output);
 Gpio::DigitalWrite(ACTLED_PIN, on);
-}
-
-Handle<System> System::Open()
-{
-if(!s_Default)
-	s_Default=new System();
-return s_Default;
 }
 
 VOID System::PowerOff()
@@ -122,24 +116,5 @@ SleepMicroseconds(100);
 Bits::Write(reset->INIT_BANK[bank].CLEAR, mask);
 SleepMicroseconds(100);
 }
-
-
-//==========================
-// Con-/Destructors Private
-//==========================
-
-System::System()
-{
-using Gpio=Devices::Arm::Gpio;
-Gpio::SetPinMode(ACTLED_PIN, PinMode::Output);
-Gpio::DigitalWrite(ACTLED_PIN, 0);
-}
-
-
-//================
-// Common Private
-//================
-
-Handle<System> System::s_Default;
 
 }}

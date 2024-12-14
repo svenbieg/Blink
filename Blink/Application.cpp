@@ -16,6 +16,8 @@
 using namespace Devices::System;
 using namespace Devices::Timers;
 
+using Application=Blink::Application;
+
 
 //=============
 // Entry-Point
@@ -23,7 +25,7 @@ using namespace Devices::Timers;
 
 INT Main()
 {
-auto app=new Blink::Application();
+Handle<Application> app=new Application();
 return app->Run();
 }
 
@@ -59,8 +61,7 @@ VOID Application::OnSystemTimerTick()
 if(++loops%50)
 	return;
 led=!led;
-auto system=System::Open();
-system->Led(led);
+System::Led(led);
 }
 
 }

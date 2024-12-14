@@ -10,8 +10,8 @@
 //=======
 
 #include <chrono>
+#include <mutex>
 #include "Concurrency/Signal.h"
-#include "mutex"
 
 
 //===========
@@ -40,14 +40,14 @@ class condition_variable: private Concurrency::Signal
 {
 public:
 	// Con-/Destructors
-	condition_variable();
+	condition_variable() {}
 
 	// Common
 	inline void notify_all() { Trigger(); }
 	inline void wait(unique_lock<mutex>& lock) { Wait(lock); }
 	inline cv_status wait_for(unique_lock<mutex>& lock, chrono::duration<UINT> time_out)
 		{
-		return Wait(lock, time_out.value)? cv_status::no_timeout: cv_status::timeout;
+		return Wait(lock, time_out.count())? cv_status::no_timeout: cv_status::timeout;
 		}
 };
 

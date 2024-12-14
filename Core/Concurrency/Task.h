@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Core/DispatchedHandler.h"
+#include "Concurrency/DispatchedQueue.h"
 #include "Devices/System/Cpu.h"
 #include "Signal.h"
 
@@ -64,23 +64,23 @@ public:
 	volatile BOOL Cancelled;
 	inline VOID Then(VOID (*Procedure)())
 		{
-		auto handler=new Core::Details::DispatchedProcedure(Procedure);
-		DispatchedHandler::Append(m_Then, handler);
+		auto handler=new DispatchedProcedure(Procedure);
+		DispatchedQueue::Append(&m_Then, handler);
 		}
 	template <class _owner_t> inline VOID Then(_owner_t* Owner, VOID (_owner_t::*Procedure)())
 		{
-		auto handler=new Core::Details::DispatchedMemberProcedure<_owner_t>(Owner, Procedure);
-		DispatchedHandler::Append(m_Then, handler);
+		auto handler=new DispatchedMemberProcedure<_owner_t>(Owner, Procedure);
+		DispatchedQueue::Append(&m_Then, handler);
 		}
 	template <class _owner_t, class... _args_t> inline VOID Then(Handle<_owner_t> Owner, VOID (_owner_t::*Procedure)())
 		{
-		auto handler=new Core::Details::DispatchedMemberProcedure<_owner_t>(Owner, Procedure);
-		DispatchedHandler::Append(m_Then, handler);
+		auto handler=new DispatchedMemberProcedure<_owner_t>(Owner, Procedure);
+		DispatchedQueue::Append(&m_Then, handler);
 		}
 	template <class _owner_t, class _lambda_t> inline VOID Then(_owner_t* Owner, _lambda_t&& Lambda)
 		{
-		auto handler=new Core::Details::DispatchedLambda(Owner, std::forward<_lambda_t>(Lambda));
-		DispatchedHandler::Append(m_Then, handler);
+		auto handler=new DispatchedLambda(Owner, std::forward<_lambda_t>(Lambda));
+		DispatchedQueue::Append(&m_Then, handler);
 		}
 	inline Status GetStatus()const { return m_Status; }
 	Status Wait();
@@ -93,9 +93,6 @@ protected:
 	Status m_Status;
 
 private:
-	// Using
-	using DispatchedHandler=Core::DispatchedHandler;
-
 	// Common
 	inline VOID ClearFlag(TaskFlags Flag) { ::ClearFlag(m_Flags, Flag); }
 	inline BOOL GetFlag(TaskFlags Flag)const { return ::GetFlag(m_Flags, Flag); }
@@ -111,7 +108,7 @@ private:
 	Handle<Task> m_Parallel;
 	UINT64 m_ResumeTime;
 	VOID* m_StackPointer;
-	Handle<DispatchedHandler> m_Then;
+	DispatchedHandler* m_Then;
 	Handle<Task> m_Waiting;
 	ALIGN(sizeof(SIZE_T)) BYTE m_Stack[STACK_SIZE];
 };

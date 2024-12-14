@@ -3,7 +3,7 @@
 
   <Target Name="NinjaSetup">
     <ItemGroup>
-      <IncludeList Include="$(NMakeIncludeSearchPath)" />
+      <IncludeList Include="$(IncludePath);$(NMakeIncludeSearchPath)" />
       <PreprocessorList Include="$(NMakePreprocessorDefinitions)" />
       <SourceListC Include="@(ClCompile)" Condition="'%(Extension)'=='.c'">
         <InputFileName>$([System.String]::Copy('%(FullPath)').Replace(':', '$:'))</InputFileName>
@@ -13,10 +13,10 @@
         <InputFileName>$([System.String]::Copy('%(FullPath)').Replace(':', '$:'))</InputFileName>
         <OutputFileName>obj\$([System.String]::Copy('%(Directory)').Replace('\', '.'))%(FileName)%(Extension).o</OutputFileName>
       </SourceListCpp>
-      <SourceListIn Include="@(ClCompile)" Condition="'%(Extension)'=='.in'">
+      <SourceListLdIn Include="@(ClCompile)" Condition="'%(Extension)'=='.in'">
         <InputFileName>$([System.String]::Copy('%(FullPath)').Replace(':', '$:'))</InputFileName>
-        <OutputFileName>obj\$([System.String]::Copy('%(Directory)').Replace('\', '.'))%(FileName)%(Extension).o</OutputFileName>
-      </SourceListIn>
+        <OutputFileName>obj\$([System.String]::Copy('%(Directory)').Replace('\', '.'))%(FileName)</OutputFileName>
+      </SourceListLdIn>
       <SourceListS Include="@(ClCompile)" Condition="'%(Extension)'=='.S'">
         <InputFileName>$([System.String]::Copy('%(FullPath)').Replace(':', '$:'))</InputFileName>
         <OutputFileName>obj\$([System.String]::Copy('%(Directory)').Replace('\', '.'))%(FileName)%(Extension).o</OutputFileName>
@@ -28,16 +28,17 @@
       <IncludeArg Condition="'@(IncludeList)'!=''">-I@(IncludeList->'%(Identity)', ' -I')</IncludeArg>
       <PreprocessorArg Condition="'@(PreprocessorList)'!=''">-D@(PreprocessorList->'%(Identity)', ' -D')</PreprocessorArg>
       <PreprocessorArg>$([System.String]::Copy('$(PreprocessorArg)').Replace('"', '\"'))</PreprocessorArg>
-      <LinkerScriptArg Condition="'@(SourceListIn)'!=''">-T@(SourceListIn->'%(OutputFileName)', ' -T')</LinkerScriptArg>
+      <LinkerScriptArg Condition="'@(SourceListLdIn)'!=''">-T@(SourceListLdIn->'%(OutputFileName)', ' -T')</LinkerScriptArg>
+      <NinjaAssembleC Condition="'$(Configuration)'=='Debug' AND '@(SourceListC)'!=''">@(SourceListC->'build %(OutputFileName).S: .c.o.S %(InputFileName)', '%0D%0A')</NinjaAssembleC>
       <NinjaCompileC Condition="'@(SourceListC)'!=''">@(SourceListC->'build %(OutputFileName): .c.o %(InputFileName)', '%0D%0A')</NinjaCompileC>
       <NinjaCompileCpp Condition="'@(SourceListCpp)'!=''">@(SourceListCpp->'build %(OutputFileName): .cpp.o %(InputFileName)', '%0D%0A')</NinjaCompileCpp>
-      <NinjaCompileIn Condition="'@(SourceListIn)'!=''">@(SourceListIn->'build %(OutputFileName): .ld %(InputFileName)', '%0D%0A')</NinjaCompileIn>
+      <NinjaCompileIn Condition="'@(SourceListLdIn)'!=''">@(SourceListLdIn->'build %(OutputFileName): .ld %(InputFileName)', '%0D%0A')</NinjaCompileIn>
       <NinjaCompileS Condition="'@(SourceListS)'!=''">@(SourceListS->'build %(OutputFileName): .s.o %(InputFileName)', '%0D%0A')</NinjaCompileS>
       <NinjaLink Condition="'@(ClCompile)'!=''">%0D%0Abuild $(ProjectName).elf: .elf $%0D%0A</NinjaLink>
       <NinjaLink Condition="'@(SourceListS)'!=''">$(NinjaLink)@(SourceListS->'%(OutputFileName) ', '$%0D%0A')</NinjaLink>
       <NinjaLink Condition="'@(SourceListC)'!=''">$(NinjaLink)@(SourceListC->'%(OutputFileName) ', '$%0D%0A')</NinjaLink>
       <NinjaLink Condition="'@(SourceListCpp)'!=''">$(NinjaLink)@(SourceListCpp->'%(OutputFileName) ', '$%0D%0A')</NinjaLink>
-      <NinjaLink Condition="'@(SourceListIn)'!=''">$(NinjaLink)$%0D%0A|@(SourceListIn->'%(OutputFileName) ', '$%0D%0A')</NinjaLink>
+      <NinjaLink Condition="'@(SourceListLdIn)'!=''">$(NinjaLink)$%0D%0A|@(SourceListLdIn->'%(OutputFileName) ', '$%0D%0A')</NinjaLink>
       <NinjaLink Condition="'@(ClCompile)'!=''">$(NinjaLink)%0D%0A%0D%0A</NinjaLink>
       <NinjaHeaders Condition="'$(Configuration)'=='Debug'">build $(ProjectName).elf.txt: .elf.txt $(ProjectName).elf%0D%0A</NinjaHeaders>
       <NinjaBinary Condition="'$(TargetType)'=='Binary'">build $(TargetName)$(TargetExt): .bin $(ProjectName).elf%0D%0A</NinjaBinary>
@@ -51,6 +52,10 @@
         <Command>$(CompilerPrefix)gcc -MD -MF $out.d -c $FLAGS $FLAGS_C $PREPROC $INCLUDE -o $out $in</Command>
         <Dependency>$out.d</Dependency>
       </NinjaRules>
+      <NinjaRules Include=".c.o.S" Condition="'$(NinjaAssembleC)'!=''">
+        <Command>$(CompilerPrefix)g++ -MD -MF $out.d -S $FLAGS $FLAGS_CPP $PREPROC $INCLUDE -o $out $in</Command>
+        <Dependency>$out.d</Dependency>
+      </NinjaRules>
       <NinjaRules Include=".cpp.o" Condition="'$(NinjaCompileCpp)'!=''">
         <Command>$(CompilerPrefix)g++ -MD -MF $out.d -c $FLAGS $FLAGS_CPP $PREPROC $INCLUDE -o $out $in</Command>
         <Dependency>$out.d</Dependency>
@@ -60,7 +65,8 @@
         <Dependency>$out.d</Dependency>
       </NinjaRules>
       <NinjaRules Include=".elf" Condition="'$(NinjaLink)'!=''">
-        <Command Condition="'$(LibPath)'!=''">$(CompilerPrefix)ld -o $out $FLAGS_LD $SCRIPTS $CRTBEGIN $in --start-group $LIBS --end-group $CRTEND</Command>
+        <!--<Command Condition="'$(LibPath)'!=''">$(CompilerPrefix)ld -o $out $FLAGS_LD $SCRIPTS $CRTBEGIN $in -.-start-group $LIBS -.-end-group $CRTEND</Command>-->
+        <Command Condition="'$(LibPath)'!=''">$(CompilerPrefix)ld -o $out $FLAGS_LD $SCRIPTS $in</Command>
         <Command Condition="'$(LibPath)'==''">$(CompilerPrefix)ld -o $out $FLAGS_LD $SCRIPTS $in</Command>
       </NinjaRules>
       <NinjaRules Include=".elf.txt" Condition="'$(NinjaHeaders)'!=''">
@@ -94,6 +100,7 @@
       <NinjaLines Include="%0D%0A" />
     </ItemGroup>
     <ItemGroup>
+      <NinjaLines Include="$(NinjaAssembleC)" Condition="'$(NinjaAssembleC)'!=''" />
       <NinjaLines Include="$(NinjaCompileS)" Condition="'$(NinjaCompileS)'!=''" />
       <NinjaLines Include="$(NinjaCompileC)" Condition="'$(NinjaCompileC)'!=''" />
       <NinjaLines Include="$(NinjaCompileCpp)" Condition="'$(NinjaCompileCpp)'!=''" />

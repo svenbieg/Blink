@@ -27,22 +27,14 @@ PcieHost=44
 // System
 //========
 
-class System: public Object
+class System
 {
 public:
 	// Common
-	VOID Led(BOOL On);
-	static Handle<System> Open();
-	static VOID PowerOff();
-	static VOID Reset();
+	static VOID Led(BOOL On);
+	[[noreturn]] static VOID PowerOff();
+	[[noreturn]] static VOID Reset();
 	static VOID Reset(ResetDevice Device);
-
-private:
-	// Con-/Destructors
-	System();
-
-	// Common
-	static Handle<System> s_Default;
 };
 
 }}
