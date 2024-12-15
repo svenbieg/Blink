@@ -5,6 +5,13 @@
 #pragma once
 
 
+//=======
+// Using
+//=======
+
+#include "Object.h"
+
+
 //============
 // Base-Class
 //============
@@ -46,32 +53,32 @@ public:
 	~HandleBase() { Clear(); }
 
 	// Access
-	virtual inline operator bool()const { return m_Object!=nullptr; }
+	virtual inline operator BOOL()const { return m_Object!=nullptr; }
 	inline operator _obj_t*()const { return m_Object; }
 	inline _obj_t* operator->()const { return m_Object; }
 
 	// Comparison
-	virtual inline bool operator==(nullptr_t)const { return m_Object==nullptr; }
-	virtual inline bool operator==(_obj_t* Object)const { return m_Object==Object; }
-	template <class _convert_t> inline bool operator==(_convert_t* Object)const { return operator==(static_cast<_obj_t*>(Object)); }
-	template <class _convert_t> inline bool operator==(HandleBase<_convert_t> const& Handle)const { return operator==(Handle.m_Object); }
-	inline bool operator!=(nullptr_t)const { return !operator==(nullptr); }
-	inline bool operator!=(_obj_t* Object)const { return !operator==(Object); }
-	template <class _convert_t> inline bool operator!=(_convert_t* Object)const { return !operator==(static_cast<_obj_t*>(Object)); }
-	template <class _convert_t> inline bool operator!=(HandleBase<_convert_t> const& Handle)const { return !operator==(Handle.m_Object); }
+	virtual inline BOOL operator==(nullptr_t)const { return m_Object==nullptr; }
+	virtual inline BOOL operator==(_obj_t* Object)const { return m_Object==Object; }
+	template <class _convert_t> inline BOOL operator==(_convert_t* Object)const { return operator==(static_cast<_obj_t*>(Object)); }
+	template <class _convert_t> inline BOOL operator==(HandleBase<_convert_t> const& Handle)const { return operator==(Handle.m_Object); }
+	inline BOOL operator!=(nullptr_t)const { return !operator==(nullptr); }
+	inline BOOL operator!=(_obj_t* Object)const { return !operator==(Object); }
+	template <class _convert_t> inline BOOL operator!=(_convert_t* Object)const { return !operator==(static_cast<_obj_t*>(Object)); }
+	template <class _convert_t> inline BOOL operator!=(HandleBase<_convert_t> const& Handle)const { return !operator==(Handle.m_Object); }
 
 	// Assignment
 	inline HandleBase& operator=(nullptr_t) { Clear(); return *this; }
 	inline HandleBase& operator=(_obj_t* Object) { Set(Object); return *this; }
 	inline HandleBase& operator=(HandleBase const& Handle) { Set(Handle.m_Object); return *this; }
 	template <class _convert_t> inline HandleBase& operator=(HandleBase<_convert_t> const& Handle) { Set(Handle.m_Object); return *this; }
-	void Clear()
+	VOID Clear()
 		{
 		if(m_Object)
 			m_Object->Release();
 		m_Object=nullptr;
 		}
-	void Set(_obj_t* Object)
+	VOID Set(_obj_t* Object)
 		{
 		if(m_Object==Object)
 			return;
@@ -81,7 +88,7 @@ public:
 		if(m_Object)
 			m_Object->m_RefCount++;
 		}
-	template <class _convert_t> inline void Set(_convert_t* Object) { Set(static_cast<_obj_t*>(Object)); }
+	template <class _convert_t> inline VOID Set(_convert_t* Object) { Set(static_cast<_obj_t*>(Object)); }
 
 protected:
 	// Common

@@ -53,7 +53,7 @@ public:
 		return StringFind(m_Buffer, Value, nullptr, CaseSensitive);
 		}
 	inline UINT GetLength()const { return StringLength(m_Buffer); }
-	inline bool IsEmpty()const { return !StringIsSet(m_Buffer); }
+	inline BOOL IsEmpty()const { return !StringIsSet(m_Buffer); }
 	template <class... _args_t> inline UINT Scan(LPCSTR Format, _args_t... Arguments)
 		{
 		UnknownClass args[]={ Arguments... };
@@ -63,12 +63,12 @@ public:
 	Handle<String> ToString()override;
 
 	// Comparison
-	inline bool operator==(String const& String)const { return StringCompare(m_Buffer, String.m_Buffer)==0; }
-	inline bool operator!=(String const& String)const { return StringCompare(m_Buffer, String.m_Buffer)!=0; }
-	inline bool operator>(String const& String)const { return StringCompare(m_Buffer, String.m_Buffer)>0; }
-	inline bool operator>=(String const& String)const { return StringCompare(m_Buffer, String.m_Buffer)>=0; }
-	inline bool operator<(String const& String)const { return StringCompare(m_Buffer, String.m_Buffer)<0; }
-	inline bool operator<=(String const& String)const { return StringCompare(m_Buffer, String.m_Buffer)<=0; }
+	inline BOOL operator==(String const& String)const { return StringCompare(m_Buffer, String.m_Buffer)==0; }
+	inline BOOL operator!=(String const& String)const { return StringCompare(m_Buffer, String.m_Buffer)!=0; }
+	inline BOOL operator>(String const& String)const { return StringCompare(m_Buffer, String.m_Buffer)>0; }
+	inline BOOL operator>=(String const& String)const { return StringCompare(m_Buffer, String.m_Buffer)>=0; }
+	inline BOOL operator<(String const& String)const { return StringCompare(m_Buffer, String.m_Buffer)<0; }
+	inline BOOL operator<=(String const& String)const { return StringCompare(m_Buffer, String.m_Buffer)<=0; }
 
 	// Operators
 	Handle<String> Replace(LPCSTR Find, LPCSTR Replace, BOOL CaseSensitive=true, BOOL Repeat=false);
@@ -106,92 +106,92 @@ public:
 	Handle(LPCWSTR Value) { Create(new String(Value)); }
 
 	// Access
-	inline operator bool()const override { return m_Object&&m_Object->GetLength(); }
+	inline operator BOOL()const override { return m_Object&&m_Object->GetLength(); }
 
 	// Comparison
-	inline bool operator==(nullptr_t)const override { return !operator bool(); }
-	inline bool operator==(LPCSTR Value)const
+	inline BOOL operator==(nullptr_t)const override { return !operator BOOL(); }
+	inline BOOL operator==(LPCSTR Value)const
 		{
 		auto str=m_Object? m_Object->Begin(): nullptr;
 		return StringCompare(str, Value)==0;
 		}
-	inline bool operator==(LPCWSTR Value)const
+	inline BOOL operator==(LPCWSTR Value)const
 		{
 		auto str=m_Object? m_Object->Begin(): nullptr;
 		return StringCompare(str, Value)==0;
 		}
-	inline bool operator==(String* Object)const override
+	inline BOOL operator==(String* Object)const override
 		{
 		auto str1=m_Object? m_Object->Begin(): nullptr;
 		auto str2=Object? Object->Begin(): nullptr;
 		return StringCompare(str1, str2)==0;
 		}
-	inline bool operator!=(nullptr_t)const { return !operator==(nullptr); }
-	inline bool operator!=(LPCSTR Value)const { return !operator==(Value); }
-	inline bool operator!=(LPCWSTR Value)const { return !operator==(Value); }
-	inline bool operator>(nullptr_t)const { return (m_Object&&m_Object->GetLength()); }
-	inline bool operator>(LPCSTR Value)const
+	inline BOOL operator!=(nullptr_t)const { return !operator==(nullptr); }
+	inline BOOL operator!=(LPCSTR Value)const { return !operator==(Value); }
+	inline BOOL operator!=(LPCWSTR Value)const { return !operator==(Value); }
+	inline BOOL operator>(nullptr_t)const { return (m_Object&&m_Object->GetLength()); }
+	inline BOOL operator>(LPCSTR Value)const
 		{
 		auto str=m_Object? m_Object->Begin(): nullptr;
 		return StringCompare(str, Value)>0;
 		}
-	inline bool operator>(LPCWSTR Value)const
+	inline BOOL operator>(LPCWSTR Value)const
 		{
 		auto str=m_Object? m_Object->Begin(): nullptr;
 		return StringCompare(str, Value)>0;
 		}
-	inline bool operator>(Handle<String> const& Object)const
+	inline BOOL operator>(Handle<String> const& Object)const
 		{
 		auto str1=m_Object? m_Object->Begin(): nullptr;
 		auto str2=Object? Object->Begin(): nullptr;
 		return StringCompare(str1, str2)>0;
 		}
-	inline bool operator>=(nullptr_t)const { return true; }
-	inline bool operator>=(LPCSTR Value)const
+	inline BOOL operator>=(nullptr_t)const { return true; }
+	inline BOOL operator>=(LPCSTR Value)const
 		{
 		auto str=m_Object? m_Object->Begin(): nullptr;
 		return StringCompare(str, Value)>=0;
 		}
-	inline bool operator>=(LPCWSTR Value)const
+	inline BOOL operator>=(LPCWSTR Value)const
 		{
 		auto str=m_Object? m_Object->Begin(): nullptr;
 		return StringCompare(str, Value)>=0;
 		}
-	inline bool operator>=(Handle<String> const& Object)const
+	inline BOOL operator>=(Handle<String> const& Object)const
 		{
 		auto str1=m_Object? m_Object->Begin(): nullptr;
 		auto str2=Object? Object->Begin(): nullptr;
 		return StringCompare(str1, str2)>=0;
 		}
-	inline bool operator<(nullptr_t)const { return false; }
-	inline bool operator<(LPCSTR Value)const
+	inline BOOL operator<(nullptr_t)const { return false; }
+	inline BOOL operator<(LPCSTR Value)const
 		{
 		auto str=m_Object? m_Object->Begin(): nullptr;
 		return StringCompare(str, Value)<0;
 		}
-	inline bool operator<(LPCWSTR Value)const
+	inline BOOL operator<(LPCWSTR Value)const
 		{
 		auto str=m_Object? m_Object->Begin(): nullptr;
 		return StringCompare(str, Value)<0;
 		}
-	inline bool operator<(Handle<String> const& Object)const
+	inline BOOL operator<(Handle<String> const& Object)const
 		{
 		auto str1=m_Object? m_Object->Begin(): nullptr;
 		auto str2=Object? Object->Begin(): nullptr;
 		return StringCompare(str1, str2)<0;
 		}
-	inline bool operator<=(nullptr_t)const { return !(m_Object&&m_Object->GetLength()); }
-	inline bool operator<=(LPCSTR Value)const
+	inline BOOL operator<=(nullptr_t)const { return !(m_Object&&m_Object->GetLength()); }
+	inline BOOL operator<=(LPCSTR Value)const
 		{
 		auto str=m_Object? m_Object->Begin(): nullptr;
 		return StringCompare(str, Value)<=0;
 		}
-	inline bool operator<=(LPCWSTR Value)const
+	inline BOOL operator<=(LPCWSTR Value)const
 		{
 		auto str=m_Object? m_Object->Begin(): nullptr;
 		return StringCompare(str, Value)<=0;
 		}
-	inline bool operator<=(Handle<String> const& Object)const
+	inline BOOL operator<=(Handle<String> const& Object)const
 		{
 		auto str1=m_Object? m_Object->Begin(): nullptr;
 		auto str2=Object? Object->Begin(): nullptr;

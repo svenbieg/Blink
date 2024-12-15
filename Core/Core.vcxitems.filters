@@ -47,12 +47,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)ErrorHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)TimeHelper.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)BitHelper.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)TaskHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\Task.h">
       <Filter>Concurrency</Filter>
     </ClInclude>
@@ -95,11 +90,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\heap.h">
       <Filter>Runtime</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)MemoryHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\assert.h">
       <Filter>Runtime</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)AsmHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TypeInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\cmath">
       <Filter>Runtime</Filter>
@@ -137,9 +130,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\cstring">
       <Filter>Runtime</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\MainTask.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)ErrorHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Task.cpp">
       <Filter>Concurrency</Filter>
     </ClCompile>

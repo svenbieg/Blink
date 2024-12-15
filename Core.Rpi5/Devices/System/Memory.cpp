@@ -9,8 +9,10 @@
 // Using
 //=======
 
+#include <heap.h>
 #include "Devices/Arm/MailBox.h"
-#include "heap.h"
+#include "Devices/System/Cpu.h"
+#include "BitHelper.h"
 #include "Memory.h"
 #include "Settings.h"
 

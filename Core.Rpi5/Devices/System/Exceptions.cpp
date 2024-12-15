@@ -11,6 +11,7 @@
 
 #include "Cpu.h"
 #include "Exceptions.h"
+#include "System.h"
 
 
 //===========
@@ -41,11 +42,10 @@ LPCSTR ExceptionName[]=
 extern "C" VOID HandleException(UINT id, VOID* instr)
 {
 UINT core=Cpu::GetId();
-VOID* stack[1024];
 VOID* stack_ptr;
 __asm volatile("mov %0, sp": "=r" (stack_ptr));
-CopyMemory(stack, stack_ptr, 1024*sizeof(SIZE_T));
-DebugPrint("CPU%u: %s (@0x%08x)\n", core, ExceptionName[id], (SIZE_T)instr);
+// Todo
+System::Reset();
 }
 
 

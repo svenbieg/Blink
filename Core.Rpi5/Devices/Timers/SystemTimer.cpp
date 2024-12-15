@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include "Concurrency/Scheduler.h"
 #include "Devices/System/Interrupts.h"
 #include "SystemTimer.h"
 
@@ -70,7 +71,7 @@ return s_Current;
 
 SystemTimer::SystemTimer()
 {
-m_Task=CreateTask(this, &SystemTimer::TaskProc);
+m_Task=Scheduler::CreateTask(this, &SystemTimer::TaskProc);
 Interrupts::SetHandler(IRQ_SYSTIMER, HandleInterrupt, this);
 UINT64 cnt_pct;
 __asm volatile("mrs %0, CNTPCT_EL0": "=r" (cnt_pct));
@@ -103,7 +104,7 @@ __asm volatile("msr CNTP_CVAL_EL0, %0": : "r" (cnt_pct+ticks));
 VOID SystemTimer::TaskProc()
 {
 TaskLock lock(m_Mutex);
-auto task=GetCurrentTask();
+auto task=Task::Get();
 while(!task->Cancelled)
 	{
 	m_Signal.Wait(lock);

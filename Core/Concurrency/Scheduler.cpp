@@ -33,7 +33,7 @@ namespace Concurrency {
 // Common
 //========
 
-VOID Scheduler::AddTask(Handle<Task> task)
+VOID Scheduler::AddTask(Task* task)
 {
 InitializeTask(&task->m_StackPointer, &Task::TaskProc, task);
 SpinLock lock(s_CriticalSection);
@@ -51,8 +51,6 @@ UINT core_count=++s_CoreCount;
 UINT core=Cpu::GetId();
 auto task=s_CurrentTask[core];
 lock.Unlock();
-//if(core_count<CPU_COUNT)
-//	Cpu::PowerOn(core_count);
 Interrupts::Enable();
 Cpu::SetContext(&Task::TaskProc, task, task->m_StackPointer);
 }
@@ -81,13 +79,13 @@ Interrupts::Route(IRQ_TASK_SWITCH, IrqTarget::All);
 Interrupts::SetHandler(IRQ_TASK_SWITCH, HandleTaskSwitch);
 for(UINT core=0; core<CPU_COUNT; core++)
 	{
-	Handle<Task> idle=new Concurrency::Details::TaskProcedure(IdleTask);
+	Handle<Task> idle=new TaskProcedure(IdleTask);
 	InitializeTask(&idle->m_StackPointer, &Task::TaskProc, idle);
 	idle->SetFlag(TaskFlags::Remove);
 	s_IdleTask[core]=idle;
 	s_CurrentTask[core]=idle;
 	}
-s_MainTask=new Concurrency::Details::TaskProcedure(MainTask);
+s_MainTask=new TaskProcedure(MainTask);
 InitializeTask(&s_MainTask->m_StackPointer, &Task::TaskProc, s_MainTask);
 s_CurrentTask[0]=s_MainTask;
 }
@@ -127,7 +125,7 @@ UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
 assert(current->m_Next==nullptr);
 current->ClearFlag(TaskFlags::Owner);
-current->m_ResumeTime=GetTickCount64()+ms;
+current->m_ResumeTime=SystemTimer::GetTickCount64()+ms;
 auto next=GetWaitingTask();
 if(!next)
 	next=s_IdleTask[core];
@@ -188,7 +186,7 @@ Handle<Task> Scheduler::GetWaitingTask()
 {
 if(!s_WaitingTask)
 	return nullptr;
-UINT64 time=GetTickCount64();
+UINT64 time=SystemTimer::GetTickCount64();
 auto current_ptr=&s_WaitingTask;
 while(*current_ptr)
 	{

@@ -27,9 +27,8 @@
     <None Include="$(MSBuildThisFileDirectory)Configuration\Debug.targets" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)AsmHelper.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)BitHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\CriticalSection.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\MainTask.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\Mutex.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\Scheduler.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\ScopedLock.h" />
@@ -38,9 +37,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\SpinLock.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\Task.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskLock.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)ErrorHelper.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)MemoryHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\assert.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\cmath" />
@@ -60,8 +56,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\type_traits" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\unwind.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\utility" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)TaskHelper.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)TimeHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TypeInfo.h" />
   </ItemGroup>
   <ItemGroup>
@@ -73,7 +67,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\cxxabi.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\heap.c" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\stdlib.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)ErrorHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\unwind.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TypeInfo.cpp" />
   </ItemGroup>

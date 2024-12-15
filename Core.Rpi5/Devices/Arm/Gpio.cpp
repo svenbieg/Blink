@@ -10,6 +10,7 @@
 //=======
 
 #include "Devices/System/Peripherals.h"
+#include "BitHelper.h"
 #include "Gpio.h"
 
 using namespace Devices::System;

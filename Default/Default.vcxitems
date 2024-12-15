@@ -43,7 +43,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)EventHandler.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Exception.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)FlagHelper.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Function.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Handle.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MemoryHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Object.h" />

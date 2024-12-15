@@ -9,10 +9,14 @@
 // Using
 //=======
 
+#include "Concurrency/Task.h"
 #include "Devices/Arm/Gpio.h"
+#include "Devices/System/Cpu.h"
 #include "Devices/System/Peripherals.h"
+#include "BitHelper.h"
 #include "System.h"
 
+using namespace Concurrency;
 using namespace Devices::Arm;
 
 
@@ -112,9 +116,9 @@ auto reset=(RESET_REGS*)AXI_RESET_BASE;
 UINT bank=(UINT)device/32;
 UINT mask=(UINT)device&0x1F;
 Bits::Write(reset->INIT_BANK[bank].SET, mask);
-SleepMicroseconds(100);
+Task::SleepMicroseconds(100);
 Bits::Write(reset->INIT_BANK[bank].CLEAR, mask);
-SleepMicroseconds(100);
+Task::SleepMicroseconds(100);
 }
 
 }}

@@ -10,6 +10,7 @@
 //=======
 
 #include "Devices/System/Cpu.h"
+#include "BitHelper.h"
 #include "Exceptions.h"
 #include "Interrupts.h"
 

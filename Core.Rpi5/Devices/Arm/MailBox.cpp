@@ -10,6 +10,7 @@
 //=======
 
 #include "Devices/System/Memory.h"
+#include "BitHelper.h"
 #include "MailBox.h"
 
 using namespace Devices::System;

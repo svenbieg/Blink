@@ -12,10 +12,13 @@
 #include "Devices/Gpio/Gpio.h"
 #include "Devices/System/Interrupts.h"
 #include "Devices/System/Peripherals.h"
+#include "Devices/Timers/SystemTimer.h"
+#include "BitHelper.h"
 #include "SerialPort.h"
 
 using namespace Devices::Gpio;
 using namespace Devices::System;
+using namespace Devices::Timers;
 
 
 //===========
@@ -139,12 +142,8 @@ Handle<SerialPort> SerialPort::Open(UArtDevice device, BaudRate baud)
 UINT id=(UINT)device;
 if(g_SerialPort[id])
 	return g_SerialPort[id];
-/*if(device!=UArtDevice::UArt10)
-	{
-	auto rp1=SouthBridge::Open();
-	if(!rp1)
-		return nullptr;
-	}*/
+if(device!=UArtDevice::UArt10)
+	throw NotImplementedException();
 g_SerialPort[id]=new SerialPort(device, baud);
 return g_SerialPort[id];
 }
@@ -184,10 +183,10 @@ return size;
 VOID SerialPort::Flush()
 {
 auto uart=(PL011_REGS*)m_Address;
-UINT64 timeout=GetTickCount64()+UART_TIMEOUT;
+UINT64 timeout=SystemTimer::GetTickCount64()+UART_TIMEOUT;
 while(Bits::Get(uart->FLAGS, FLAG_BUSY))
 	{
-	if(GetTickCount64()>timeout)
+	if(SystemTimer::GetTickCount64()>timeout)
 		throw TimeoutException();
 	}
 }
@@ -219,10 +218,10 @@ if(UArtInfo[id].RX_PIN)
 	}
 auto uart=(PL011_REGS*)UArtInfo[id].BASE;
 Bits::Clear(uart->CTRL, CTRL_ENABLE);
-UINT timeout=GetTickCount64()+UART_TIMEOUT;
+UINT timeout=SystemTimer::GetTickCount64()+UART_TIMEOUT;
 while(Bits::Get(uart->FLAGS, FLAG_BUSY))
 	{
-	if(GetTickCount64()>timeout)
+	if(SystemTimer::GetTickCount64()>timeout)
 		throw DeviceNotReadyException();
 	}
 Bits::Clear(uart->LCRH, LCRH_FIFO_ENABLE);
@@ -245,10 +244,10 @@ Bits::Set(uart->CTRL, CTRL_RX_ENABLE|CTRL_TX_ENABLE|CTRL_ENABLE);
 BYTE SerialPort::Read()
 {
 auto uart=(PL011_REGS*)m_Address;
-UINT64 timeout=GetTickCount64()+UART_TIMEOUT;
+UINT64 timeout=SystemTimer::GetTickCount64()+UART_TIMEOUT;
 while(Bits::Get(uart->FLAGS, FLAG_RX_EMPTY))
 	{
-	if(GetTickCount64()>timeout)
+	if(SystemTimer::GetTickCount64()>timeout)
 		throw TimeoutException();
 	}
 return (BYTE)Bits::Get(uart->DATA);
@@ -257,10 +256,10 @@ return (BYTE)Bits::Get(uart->DATA);
 VOID SerialPort::Write(BYTE value)
 {
 auto uart=(PL011_REGS*)m_Address;
-UINT64 timeout=GetTickCount64()+UART_TIMEOUT;
+UINT64 timeout=SystemTimer::GetTickCount64()+UART_TIMEOUT;
 while(Bits::Get(uart->FLAGS, FLAG_TX_FULL))
 	{
-	if(GetTickCount64()>timeout)
+	if(SystemTimer::GetTickCount64()>timeout)
 		throw TimeoutException();
 	}
 Bits::Write(uart->DATA, value);

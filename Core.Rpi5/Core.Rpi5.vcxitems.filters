@@ -46,6 +46,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\stddef.h">
       <Filter>Runtime</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)BitHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)AsmHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MemoryHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">
@@ -70,7 +73,7 @@
       <UniqueIdentifier>{18aeb9f7-bb20-4dd2-b627-eb5e5216577f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Runtime">
-      <UniqueIdentifier>{9a83fb85-2413-4d1a-9708-b75ab7d479f6}</UniqueIdentifier>
+      <UniqueIdentifier>{09a5aa6d-9ce5-42f3-a4c5-bbf41cd19308}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

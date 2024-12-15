@@ -9,8 +9,11 @@
 // Using
 //=======
 
+#include "Devices/Timers/SystemTimer.h"
 #include "Scheduler.h"
 #include "Task.h"
+
+using namespace Devices::Timers;
 
 
 //===========
@@ -29,6 +32,24 @@ VOID Task::Cancel()
 ScopedLock lock(m_Mutex);
 m_Then=nullptr;
 Cancelled=true;
+}
+
+Handle<Task> Task::Get()
+{
+return Scheduler::GetCurrentTask();
+}
+
+VOID Task::Sleep(UINT ms)
+{
+assert(!Scheduler::IsMainTask()); // Sleeping is not allowed in the main-task
+Scheduler::SuspendCurrentTask(ms);
+}
+
+VOID Task::SleepMicroseconds(UINT us)
+{
+assert(!Scheduler::IsMainTask()); // Sleeping is not allowed in the main-task
+UINT64 end=SystemTimer::Microseconds64()+us;
+while(SystemTimer::Microseconds64()<=end);
 }
 
 Status Task::Wait()

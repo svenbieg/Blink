@@ -82,7 +82,6 @@
       <Filter>Storage\Streams</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)TypeHelper.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Function.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\Node.h">
       <Filter>Collections</Filter>
     </ClInclude>

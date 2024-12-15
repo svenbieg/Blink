@@ -59,17 +59,17 @@ class DispatchedProcedure: public DispatchedHandler
 {
 public:
 	// Using
-	typedef VOID (*_proc_t)();
+	typedef VOID (*proc_t)();
 
 	// Con-/Destructors
-	DispatchedProcedure(_proc_t Procedure): m_Procedure(Procedure) {}
+	DispatchedProcedure(proc_t Procedure): m_Procedure(Procedure) {}
 
 	// Common
 	inline VOID Run()override { (*m_Procedure)(); }
 
 private:
 	// Common
-	_proc_t m_Procedure;
+	proc_t m_Procedure;
 };
 
 

@@ -40,12 +40,13 @@ public:
 	// Common
 	inline VOID Cancel() { Trigger(true); }
 	VOID Trigger(BOOL Cancel=false);
-	inline BOOL Wait(UINT Timeout=0) { return Wait(nullptr, Timeout); }
-	inline BOOL Wait(ScopedLock& Lock, UINT Timeout=0) { return Wait(&Lock, Timeout); }
+	BOOL Wait();
+	BOOL Wait(UINT Timeout);
+	BOOL Wait(ScopedLock& Lock);
+	BOOL Wait(ScopedLock& Lock, UINT Timeout);
 
 private:
 	// Common
-	BOOL Wait(ScopedLock* Lock, UINT Timeout);
 	Handle<Task> m_WaitingTask;
 };
 

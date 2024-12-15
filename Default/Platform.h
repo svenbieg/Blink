@@ -5,13 +5,6 @@
 #pragma once
 
 
-//======================
-// Forward-Declarations
-//======================
-
-#include "TypeHelper.h"
-
-
 //========
 // Common
 //========
@@ -22,7 +15,6 @@
 #include "Event.h"
 #include "Exception.h"
 #include "FlagHelper.h"
-#include "Function.h"
 #include "PathHelper.h"
 #include "Property.h"
 #include "Status.h"
