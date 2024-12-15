@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include "Concurrency/TaskLock.h"
 #include "DispatchedQueue.h"
 
 
@@ -25,46 +26,53 @@ namespace Concurrency {
 
 VOID DispatchedQueue::Append(DispatchedHandler* handler)
 {
-ScopedLock lock(s_Mutex);
-Append(&s_Handler, handler);
-s_Signal.Trigger();
-}
-
-VOID DispatchedQueue::Append(DispatchedHandler** queue, DispatchedHandler* handler)
-{
-auto current_ptr=queue;
-while(*current_ptr)
+assert(handler->m_Next==nullptr);
+TaskLock lock(s_Mutex);
+if(!s_Last)
 	{
-	auto current=*current_ptr;
-	current_ptr=&current->m_Next;
+	s_First=handler;
+	s_Last=handler;
+	return;
 	}
-*current_ptr=handler;
+s_Last->m_Next=handler;
+s_Last=handler;
+s_Signal.Trigger();
 }
 
 VOID DispatchedQueue::Begin()
 {
-ScopedLock lock(s_Mutex);
-while(s_Signal.Wait(lock))
+s_Waiting=true;
+while(Wait())
 	Run();
 }
 
 VOID DispatchedQueue::Exit()
 {
+s_Waiting=false;
 s_Signal.Cancel();
 }
 
 VOID DispatchedQueue::Run()
 {
-ScopedLock lock(s_Mutex);
-while(s_Handler)
+TaskLock lock(s_Mutex);
+auto handler=s_First;
+s_First=nullptr;
+s_Last=nullptr;
+lock.Unlock();
+while(handler)
 	{
-	auto handler=s_Handler;
-	s_Handler=handler->m_Next;
-	lock.Unlock();
 	handler->Run();
+	auto next=handler->m_Next;
 	delete handler;
-	lock.Lock();
+	handler=next;
 	}
+}
+
+BOOL DispatchedQueue::Wait()
+{
+if(!s_Waiting)
+	return false;
+return s_Signal.Wait();
 }
 
 
@@ -72,8 +80,10 @@ while(s_Handler)
 // Common Private
 //================
 
-DispatchedHandler* DispatchedQueue::s_Handler;
+DispatchedHandler* DispatchedQueue::s_First=nullptr;
+DispatchedHandler* DispatchedQueue::s_Last=nullptr;
 Mutex DispatchedQueue::s_Mutex;
 Signal DispatchedQueue::s_Signal;
+BOOL DispatchedQueue::s_Waiting=true;
 
 }
