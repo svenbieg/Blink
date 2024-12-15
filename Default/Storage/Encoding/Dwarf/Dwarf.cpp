@@ -118,7 +118,7 @@ switch(mode)
 	default:
 		throw InvalidArgumentException();
 	}
-if(GetFlag(encoding, DW_INDIRECT))
+if(FlagHelper::Get(encoding, DW_INDIRECT))
 	value=*(SIZE_T*)value;
 return value;
 }

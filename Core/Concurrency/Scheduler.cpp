@@ -107,7 +107,7 @@ for(UINT u=0; u<s_CoreCount; u++)
 	{
 	UINT core=NextCore();
 	auto current=s_CurrentTask[core];
-	if(GetFlag(current->m_Flags, TaskFlags::Busy))
+	if(FlagHelper::Get(current->m_Flags, TaskFlags::Busy))
 		continue;
 	auto next=GetWaitingTask();
 	if(!next)
@@ -216,7 +216,7 @@ VOID Scheduler::HandleTaskSwitch(VOID* param)
 SpinLock lock(s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
-ClearFlag(current->m_Flags, TaskFlags::Switch);
+FlagHelper::Clear(current->m_Flags, TaskFlags::Switch);
 auto next=current->m_Next;
 current->m_Next=nullptr;
 if(!current->GetFlag(TaskFlags::Remove))

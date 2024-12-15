@@ -428,13 +428,13 @@ if(width>0)
 	len=StringHelper::Length(value);
 if(len<width)
 	{
-	if(!GetFlag(flags, FormatFlags::Left))
+	if(!FlagHelper::Get(flags, FormatFlags::Left))
 		pos+=StringPrintChars(buf, size, ' ', width-len, pos);
 	}
 pos+=StringPrintString(buf, size, value, pos);
 if(len<width)
 	{
-	if(GetFlag(flags, FormatFlags::Left))
+	if(FlagHelper::Get(flags, FormatFlags::Left))
 		pos+=StringPrintChars(buf, size, ' ', width-len, pos);
 	}
 if(pos<size)
@@ -469,20 +469,20 @@ if(width>0)
 UINT start=pos;
 if(len<width)
 	{
-	if(!GetFlag(flags, FormatFlags::Left)&&!GetFlag(flags, FormatFlags::Zero))
+	if(!FlagHelper::Get(flags, FormatFlags::Left)&&!FlagHelper::Get(flags, FormatFlags::Zero))
 		pos+=StringPrintChars(str, size, ' ', width-len, pos);
 	}
-if(GetFlag(flags, FormatFlags::Signed))
+if(FlagHelper::Get(flags, FormatFlags::Signed))
 	pos+=StringPrintChar(str, size, '+', pos);
 if(len<width)
 	{
-	if(!GetFlag(flags, FormatFlags::Left)&&GetFlag(flags, FormatFlags::Zero))
+	if(!FlagHelper::Get(flags, FormatFlags::Left)&&FlagHelper::Get(flags, FormatFlags::Zero))
 		pos+=StringPrintChars(str, size, '0', width-len, pos);
 	}
 pos+=StringPrintUInt(str, size, value, pos);
 if(len<width)
 	{
-	if(GetFlag(flags, FormatFlags::Left))
+	if(FlagHelper::Get(flags, FormatFlags::Left))
 		pos+=StringPrintChars(str, size, ' ', width-len, pos);
 	}
 if(pos<size)
@@ -498,7 +498,7 @@ if(width>0)
 UINT start=pos;
 if(len<width)
 	{
-	if(!GetFlag(flags, FormatFlags::Left)&&!GetFlag(flags, FormatFlags::Zero))
+	if(!FlagHelper::Get(flags, FormatFlags::Left)&&!FlagHelper::Get(flags, FormatFlags::Zero))
 		pos+=StringPrintChars(str, size, ' ', width-len, pos);
 	}
 if(value<0)
@@ -506,19 +506,19 @@ if(value<0)
 	pos+=StringPrintChar(str, size, '-', pos);
 	value*=-1;
 	}
-else if(GetFlag(flags, FormatFlags::Signed))
+else if(FlagHelper::Get(flags, FormatFlags::Signed))
 	{
 	pos+=StringPrintChar(str, size, '+', pos);
 	}
 if(len<width)
 	{
-	if(!GetFlag(flags, FormatFlags::Left)&&GetFlag(flags, FormatFlags::Zero))
+	if(!FlagHelper::Get(flags, FormatFlags::Left)&&FlagHelper::Get(flags, FormatFlags::Zero))
 		pos+=StringPrintChars(str, size, '0', width-len, pos);
 	}
 pos+=StringPrintUInt(str, size, value, pos);
 if(len<width)
 	{
-	if(GetFlag(flags, FormatFlags::Left))
+	if(FlagHelper::Get(flags, FormatFlags::Left))
 		pos+=StringPrintChars(str, size, ' ', width-len, pos);
 	}
 if(pos<size)
@@ -551,20 +551,20 @@ if(width>0)
 UINT start=pos;
 if(len<width)
 	{
-	if(!GetFlag(flags, FormatFlags::Left)&&!GetFlag(flags, FormatFlags::Zero))
+	if(!FlagHelper::Get(flags, FormatFlags::Left)&&!FlagHelper::Get(flags, FormatFlags::Zero))
 		pos+=StringPrintChars(str, size, ' ', width-len, pos);
 	}
-if(GetFlag(flags, FormatFlags::Numeric))
+if(FlagHelper::Get(flags, FormatFlags::Numeric))
 	pos+=StringPrintString(str, size, "0x", pos);
 if(len<width)
 	{
-	if(!GetFlag(flags, FormatFlags::Left)&&GetFlag(flags, FormatFlags::Zero))
+	if(!FlagHelper::Get(flags, FormatFlags::Left)&&FlagHelper::Get(flags, FormatFlags::Zero))
 		pos+=StringPrintChars(str, size, '0', width-len, pos);
 	}
 pos+=StringPrintHex(str, size, value, pos);
 if(len<width)
 	{
-	if(GetFlag(flags, FormatFlags::Left))
+	if(FlagHelper::Get(flags, FormatFlags::Left))
 		StringPrintChars(str, size, ' ', width-len, pos);
 	}
 if(pos<size)
@@ -690,7 +690,7 @@ if(f<0)
 	pos+=StringPrintChar(str, size, '-', pos);
 	f*=-1;
 	}
-else if(GetFlag(flags, FormatFlags::Signed))
+else if(FlagHelper::Get(flags, FormatFlags::Signed))
 	{
 	pos+=StringPrintChar(str, size, '+', pos);
 	}
@@ -710,7 +710,7 @@ LPSTR buf=&chars[15];
 INT idec=precision;
 for(; idec>1&&decimal%10==0; idec--)
 	{
-	if(GetFlag(flags, FormatFlags::Zero))
+	if(FlagHelper::Get(flags, FormatFlags::Zero))
 		*--buf='0';
 	decimal/=10;
 	}
@@ -722,7 +722,7 @@ for(; idec>0; idec--)
 if(precision)
 	*--buf='.';
 pos+=StringPrintString(str, size, buf, pos);
-if(exponent!=0||GetFlag(flags, FormatFlags::Numeric))
+if(exponent!=0||FlagHelper::Get(flags, FormatFlags::Numeric))
 	{
 	pos+=StringPrintChar(str, size, 'e', pos);
 	if(exponent<0)
@@ -767,12 +767,12 @@ for(UINT fmt=0; format[fmt]; )
 		pos+=StringPrintChar(str, size, '%', pos);
 		continue;
 		}
-	if(GetFlag(flags, FormatFlags::Width))
+	if(FlagHelper::Get(flags, FormatFlags::Width))
 		{
 		if(!args.GetAt(arg++, width))
 			return 0;
 		}
-	if(GetFlag(flags, FormatFlags::Precision))
+	if(FlagHelper::Get(flags, FormatFlags::Precision))
 		{
 		if(!args.GetAt(arg++, prec))
 			return 0;
@@ -1230,25 +1230,25 @@ for(; str[pos]; pos++)
 	{
 	if(CharHelper::Compare(str[pos], ' ')==0)
 		{
-		SetFlag(flags, FormatFlags::Space);
+		FlagHelper::Set(flags, FormatFlags::Space);
 		}
 	else if(CharHelper::Compare(str[pos], '+')==0)
 		{
-		SetFlag(flags, FormatFlags::Signed);
+		FlagHelper::Set(flags, FormatFlags::Signed);
 		}
 	else if(CharHelper::Compare(str[pos], '-')==0)
 		{
-		SetFlag(flags, FormatFlags::Left);
+		FlagHelper::Set(flags, FormatFlags::Left);
 		}
 	else if(CharHelper::Compare(str[pos], '#')==0)
 		{
-		SetFlag(flags, FormatFlags::Numeric);
+		FlagHelper::Set(flags, FormatFlags::Numeric);
 		}
 	else if(CharHelper::Compare(str[pos], '0')==0)
 		{
-		if(GetFlag(flags, FormatFlags::Zero))
+		if(FlagHelper::Get(flags, FormatFlags::Zero))
 			break;
-		SetFlag(flags, FormatFlags::Zero);
+		FlagHelper::Set(flags, FormatFlags::Zero);
 		}
 	else
 		{
@@ -1258,7 +1258,7 @@ for(; str[pos]; pos++)
 // Width
 if(CharHelper::Equal(str[pos], '*'))
 	{
-	SetFlag(flags, FormatFlags::Width);
+	FlagHelper::Set(flags, FormatFlags::Width);
 	pos++;
 	}
 else
@@ -1271,7 +1271,7 @@ if(CharHelper::Equal(str[pos], '.'))
 	pos++;
 	if(CharHelper::Equal(str[pos], '*'))
 		{
-		SetFlag(flags, FormatFlags::Precision);
+		FlagHelper::Set(flags, FormatFlags::Precision);
 		pos++;
 		}
 	else

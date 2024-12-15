@@ -91,7 +91,4 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)StringHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)UnknownClass.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)README.md" />
-  </ItemGroup>
 </Project>

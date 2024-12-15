@@ -98,12 +98,12 @@ while(str[pos])
 		written+=PrintChar('%');
 		continue;
 		}
-	if(GetFlag(flags, FormatFlags::Width))
+	if(FlagHelper::Get(flags, FormatFlags::Width))
 		{
 		if(!args.GetAt(arg++, width))
 			return written;
 		}
-	if(GetFlag(flags, FormatFlags::Precision))
+	if(FlagHelper::Get(flags, FormatFlags::Precision))
 		{
 		if(!args.GetAt(arg++, prec))
 			return written;
@@ -310,13 +310,13 @@ if(width>0)
 UINT written=0;
 if(len<width)
 	{
-	if(!GetFlag(flags, FormatFlags::Left))
+	if(!FlagHelper::Get(flags, FormatFlags::Left))
 		written+=PrintChar(' ', width-len);
 	}
 written+=Print(value);
 if(len<width)
 	{
-	if(GetFlag(flags, FormatFlags::Left))
+	if(FlagHelper::Get(flags, FormatFlags::Left))
 		written+=PrintChar(' ', width-len);
 	}
 return written;

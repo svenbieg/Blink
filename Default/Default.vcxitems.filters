@@ -186,7 +186,4 @@
       <UniqueIdentifier>{a599b9e5-8824-40a8-837d-5b692a5ca505}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)README.md" />
-  </ItemGroup>
 </Project>

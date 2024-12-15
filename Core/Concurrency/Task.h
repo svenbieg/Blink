@@ -96,9 +96,9 @@ protected:
 
 private:
 	// Common
-	inline VOID ClearFlag(TaskFlags Flag) { ::ClearFlag(m_Flags, Flag); }
-	inline BOOL GetFlag(TaskFlags Flag)const { return ::GetFlag(m_Flags, Flag); }
-	inline VOID SetFlag(TaskFlags Flag) { ::SetFlag(m_Flags, Flag); }
+	inline VOID ClearFlag(TaskFlags Flag) { FlagHelper::Clear(m_Flags, Flag); }
+	inline BOOL GetFlag(TaskFlags Flag)const { return FlagHelper::Get(m_Flags, Flag); }
+	inline VOID SetFlag(TaskFlags Flag) { FlagHelper::Set(m_Flags, Flag); }
 	virtual VOID Run()=0;
 	static VOID TaskProc(VOID* Parameter);
 	UINT m_BlockingCount;

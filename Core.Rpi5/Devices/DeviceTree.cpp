@@ -140,7 +140,7 @@ while(BigEndian(dtb_node->TOKEN)==TOKEN_NOP)
 if(BigEndian(dtb_node->TOKEN)!=TOKEN_BEGIN)
 	return nullptr;
 LPCSTR name_ptr=(LPCSTR)dtb_node->DATA;
-UINT name_len=StringLength(name_ptr);
+UINT name_len=StringHelper::Length(name_ptr);
 Handle<String> name;
 if(name_len>0)
 	name=new String(name_ptr);
