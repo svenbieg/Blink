@@ -84,7 +84,7 @@ m_Then(nullptr)
 
 VOID Task::TaskProc(VOID* param)
 {
-auto task=(Task*)param;
+Handle<Task> task=(Task*)param;
 Status status=Status::Success;
 try
 	{
@@ -103,6 +103,7 @@ if(task->m_Then)
 	task->m_Then=nullptr;
 	}
 lock.Unlock();
+task=nullptr;
 Scheduler::ExitTask();
 }
 
