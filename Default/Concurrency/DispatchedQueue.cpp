@@ -55,16 +55,20 @@ s_Signal.Cancel();
 VOID DispatchedQueue::Run()
 {
 TaskLock lock(s_Mutex);
-auto handler=s_First;
-s_First=nullptr;
-s_Last=nullptr;
-lock.Unlock();
-while(handler)
+while(s_First)
 	{
-	handler->Run();
-	auto next=handler->m_Next;
-	delete handler;
-	handler=next;
+	auto handler=s_First;
+	s_First=nullptr;
+	s_Last=nullptr;
+	lock.Unlock();
+	while(handler)
+		{
+		handler->Run();
+		auto next=handler->m_Next;
+		delete handler;
+		handler=next;
+		}
+	lock.Lock();
 	}
 }
 
