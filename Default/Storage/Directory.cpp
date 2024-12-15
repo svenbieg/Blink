@@ -25,7 +25,7 @@ namespace Storage {
 
 Handle<String> Directory::GetName()const
 {
-return PathGetLastComponent(m_Path->Begin());
+return PathHelper::GetLastComponent(m_Path->Begin());
 }
 
 Handle<String> Directory::GetPath()const

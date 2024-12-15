@@ -57,7 +57,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Intermediate.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Seekable.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\StaticBuffer.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\CharHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\InputStream.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\OutputStream.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\RandomAccessStream.h" />
@@ -79,7 +78,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\DispatchedQueue.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Core\Application.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Object.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)PathHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Buffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Directory.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Encoding\Dwarf\Dwarf.cpp" />
@@ -92,5 +90,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)StringClass.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StringHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)UnknownClass.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)README.md" />
   </ItemGroup>
 </Project>

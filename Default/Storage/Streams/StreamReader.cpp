@@ -46,7 +46,7 @@ while(1)
 	{
 	CHAR c=0;
 	size+=m_ReadAnsi(m_Stream, &c);
-	LastChar=CharToChar<TCHAR, CHAR>(c);
+	LastChar=CharHelper::ToChar(c);
 	if(c==0)
 		break;
 	for(UINT u=0; chars[u]; u++)
@@ -107,20 +107,20 @@ switch(format)
 	{
 	case StreamFormat::Ansi:
 		{
-		m_ReadAnsi=AnsiRead<CHAR>;
-		m_ReadUnicode=AnsiRead<WCHAR>;
+		m_ReadAnsi=CharHelper::ReadAnsi;
+		m_ReadUnicode=CharHelper::ReadAnsi;
 		break;
 		}
 	case StreamFormat::Unicode:
 		{
-		m_ReadAnsi=UnicodeRead<CHAR>;
-		m_ReadUnicode=UnicodeRead<WCHAR>;
+		m_ReadAnsi=CharHelper::ReadUnicode;
+		m_ReadUnicode=CharHelper::ReadUnicode;
 		break;
 		}
 	case StreamFormat::UTF8:
 		{
-		m_ReadAnsi=Utf8Read<CHAR>;
-		m_ReadUnicode=Utf8Read<WCHAR>;
+		m_ReadAnsi=CharHelper::ReadUtf8;
+		m_ReadUnicode=CharHelper::ReadUtf8;
 		break;
 		}
 	}
@@ -150,7 +150,7 @@ while(1)
 	{
 	_char_t c=0;
 	read+=read_fn(m_Stream, &c);
-	LastChar=CharToChar<TCHAR, _char_t>(c);
+	LastChar=CharHelper::ToChar(c);
 	buf[pos++]=c;
 	if(!c)
 		break;
@@ -171,8 +171,8 @@ while(1)
 	{
 	_char_t c=0;
 	read+=read_fn(m_Stream, &c);
-	LastChar=CharToChar<TCHAR, _char_t>(c);
-	if(CharEqual(c, esc))
+	LastChar=CharHelper::ToChar(c);
+	if(CharHelper::Equal(c, esc))
 		c=0;
 	buf[pos++]=c;
 	if(!c)
@@ -194,13 +194,13 @@ while(1)
 	{
 	_char_t c=0;
 	read+=read_fn(m_Stream, &c);
-	LastChar=CharToChar<TCHAR, _char_t>(c);
+	LastChar=CharHelper::ToChar(c);
 	BOOL skip=false;
 	if(trunc)
 		{
 		for(UINT u=0; trunc[u]; u++)
 			{
-			if(CharEqual(c, trunc[u]))
+			if(CharHelper::Equal(c, trunc[u]))
 				{
 				skip=true;
 				break;
@@ -214,7 +214,7 @@ while(1)
 		{
 		for(UINT u=0; esc[u]; u++)
 			{
-			if(CharEqual(c, esc[u]))
+			if(CharHelper::Equal(c, esc[u]))
 				{
 				c=0;
 				break;
@@ -247,7 +247,7 @@ while(1)
 		{
 		for(UINT u=0; trunc[u]; u++)
 			{
-			if(CharEqual(c, trunc[u]))
+			if(CharHelper::Equal(c, trunc[u]))
 				{
 				skip=true;
 				break;
@@ -261,7 +261,7 @@ while(1)
 		{
 		for(UINT u=0; esc[u]; u++)
 			{
-			if(CharEqual(c, esc[u]))
+			if(CharHelper::Equal(c, esc[u]))
 				{
 				c=0;
 				break;

@@ -29,7 +29,7 @@ if(!str)
 	return;
 auto str_ptr=str->Begin();
 UINT pos=0;
-while(StringFindChar(str_ptr, sep, &pos))
+while(StringHelper::FindChar(str_ptr, sep, &pos))
 	{
 	Handle<String> value=new String(pos, str_ptr);
 	m_List.append(value);

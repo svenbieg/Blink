@@ -32,9 +32,9 @@ public:
 		{
 		UnknownClass args[]={ Arguments... };
 		VariableArguments vargs(args, ArraySize(args));
-		UINT len=StringPrintArgs((LPSTR)nullptr, 0, Format, vargs);
+		UINT len=StringHelper::PrintArgs((LPSTR)nullptr, 0, Format, vargs);
 		m_Buffer=new TCHAR[len+1];
-		StringPrintArgs(m_Buffer, len+1, Format, vargs);
+		StringHelper::PrintArgs(m_Buffer, len+1, Format, vargs);
 		}
 	~String()
 		{
@@ -46,29 +46,29 @@ public:
 	inline LPCTSTR Begin()const { return m_Buffer; }
 	inline BOOL Contains(LPCSTR Value, BOOL CaseSensitive=true)
 		{
-		return StringFind(m_Buffer, Value, nullptr, CaseSensitive);
+		return StringHelper::Find(m_Buffer, Value, nullptr, CaseSensitive);
 		}
 	inline BOOL Contains(LPCWSTR Value, BOOL CaseSensitive=true)
 		{
-		return StringFind(m_Buffer, Value, nullptr, CaseSensitive);
+		return StringHelper::Find(m_Buffer, Value, nullptr, CaseSensitive);
 		}
-	inline UINT GetLength()const { return StringLength(m_Buffer); }
-	inline BOOL IsEmpty()const { return !StringIsSet(m_Buffer); }
+	inline UINT GetLength()const { return StringHelper::Length(m_Buffer); }
+	inline BOOL IsEmpty()const { return !StringHelper::IsSet(m_Buffer); }
 	template <class... _args_t> inline UINT Scan(LPCSTR Format, _args_t... Arguments)
 		{
 		UnknownClass args[]={ Arguments... };
 		VariableArguments vargs(args, ArraySize(args));
-		return StringScanArgs(m_Buffer, Format, vargs);
+		return StringHelper::ScanArgs(m_Buffer, Format, vargs);
 		}
 	Handle<String> ToString()override;
 
 	// Comparison
-	inline BOOL operator==(String const& String)const { return StringCompare(m_Buffer, String.m_Buffer)==0; }
-	inline BOOL operator!=(String const& String)const { return StringCompare(m_Buffer, String.m_Buffer)!=0; }
-	inline BOOL operator>(String const& String)const { return StringCompare(m_Buffer, String.m_Buffer)>0; }
-	inline BOOL operator>=(String const& String)const { return StringCompare(m_Buffer, String.m_Buffer)>=0; }
-	inline BOOL operator<(String const& String)const { return StringCompare(m_Buffer, String.m_Buffer)<0; }
-	inline BOOL operator<=(String const& String)const { return StringCompare(m_Buffer, String.m_Buffer)<=0; }
+	inline BOOL operator==(String const& String)const { return StringHelper::Compare(m_Buffer, String.m_Buffer)==0; }
+	inline BOOL operator!=(String const& String)const { return StringHelper::Compare(m_Buffer, String.m_Buffer)!=0; }
+	inline BOOL operator>(String const& String)const { return StringHelper::Compare(m_Buffer, String.m_Buffer)>0; }
+	inline BOOL operator>=(String const& String)const { return StringHelper::Compare(m_Buffer, String.m_Buffer)>=0; }
+	inline BOOL operator<(String const& String)const { return StringHelper::Compare(m_Buffer, String.m_Buffer)<0; }
+	inline BOOL operator<=(String const& String)const { return StringHelper::Compare(m_Buffer, String.m_Buffer)<=0; }
 
 	// Operators
 	Handle<String> Replace(LPCSTR Find, LPCSTR Replace, BOOL CaseSensitive=true, BOOL Repeat=false);
@@ -77,9 +77,9 @@ private:
 	// Common
 	template <class _char_t> inline VOID Create(UINT copy, _char_t const* value)
 		{
-		UINT len=StringLength(value, copy);
+		UINT len=StringHelper::Length(value, copy);
 		m_Buffer=new TCHAR[len+1];
-		StringCopy(m_Buffer, len+1, value);
+		StringHelper::Copy(m_Buffer, len+1, value);
 		}
 	LPTSTR m_Buffer;
 };
@@ -113,18 +113,18 @@ public:
 	inline BOOL operator==(LPCSTR Value)const
 		{
 		auto str=m_Object? m_Object->Begin(): nullptr;
-		return StringCompare(str, Value)==0;
+		return StringHelper::Compare(str, Value)==0;
 		}
 	inline BOOL operator==(LPCWSTR Value)const
 		{
 		auto str=m_Object? m_Object->Begin(): nullptr;
-		return StringCompare(str, Value)==0;
+		return StringHelper::Compare(str, Value)==0;
 		}
 	inline BOOL operator==(String* Object)const override
 		{
 		auto str1=m_Object? m_Object->Begin(): nullptr;
 		auto str2=Object? Object->Begin(): nullptr;
-		return StringCompare(str1, str2)==0;
+		return StringHelper::Compare(str1, str2)==0;
 		}
 	inline BOOL operator!=(nullptr_t)const { return !operator==(nullptr); }
 	inline BOOL operator!=(LPCSTR Value)const { return !operator==(Value); }
@@ -133,69 +133,69 @@ public:
 	inline BOOL operator>(LPCSTR Value)const
 		{
 		auto str=m_Object? m_Object->Begin(): nullptr;
-		return StringCompare(str, Value)>0;
+		return StringHelper::Compare(str, Value)>0;
 		}
 	inline BOOL operator>(LPCWSTR Value)const
 		{
 		auto str=m_Object? m_Object->Begin(): nullptr;
-		return StringCompare(str, Value)>0;
+		return StringHelper::Compare(str, Value)>0;
 		}
 	inline BOOL operator>(Handle<String> const& Object)const
 		{
 		auto str1=m_Object? m_Object->Begin(): nullptr;
 		auto str2=Object? Object->Begin(): nullptr;
-		return StringCompare(str1, str2)>0;
+		return StringHelper::Compare(str1, str2)>0;
 		}
 	inline BOOL operator>=(nullptr_t)const { return true; }
 	inline BOOL operator>=(LPCSTR Value)const
 		{
 		auto str=m_Object? m_Object->Begin(): nullptr;
-		return StringCompare(str, Value)>=0;
+		return StringHelper::Compare(str, Value)>=0;
 		}
 	inline BOOL operator>=(LPCWSTR Value)const
 		{
 		auto str=m_Object? m_Object->Begin(): nullptr;
-		return StringCompare(str, Value)>=0;
+		return StringHelper::Compare(str, Value)>=0;
 		}
 	inline BOOL operator>=(Handle<String> const& Object)const
 		{
 		auto str1=m_Object? m_Object->Begin(): nullptr;
 		auto str2=Object? Object->Begin(): nullptr;
-		return StringCompare(str1, str2)>=0;
+		return StringHelper::Compare(str1, str2)>=0;
 		}
 	inline BOOL operator<(nullptr_t)const { return false; }
 	inline BOOL operator<(LPCSTR Value)const
 		{
 		auto str=m_Object? m_Object->Begin(): nullptr;
-		return StringCompare(str, Value)<0;
+		return StringHelper::Compare(str, Value)<0;
 		}
 	inline BOOL operator<(LPCWSTR Value)const
 		{
 		auto str=m_Object? m_Object->Begin(): nullptr;
-		return StringCompare(str, Value)<0;
+		return StringHelper::Compare(str, Value)<0;
 		}
 	inline BOOL operator<(Handle<String> const& Object)const
 		{
 		auto str1=m_Object? m_Object->Begin(): nullptr;
 		auto str2=Object? Object->Begin(): nullptr;
-		return StringCompare(str1, str2)<0;
+		return StringHelper::Compare(str1, str2)<0;
 		}
 	inline BOOL operator<=(nullptr_t)const { return !(m_Object&&m_Object->GetLength()); }
 	inline BOOL operator<=(LPCSTR Value)const
 		{
 		auto str=m_Object? m_Object->Begin(): nullptr;
-		return StringCompare(str, Value)<=0;
+		return StringHelper::Compare(str, Value)<=0;
 		}
 	inline BOOL operator<=(LPCWSTR Value)const
 		{
 		auto str=m_Object? m_Object->Begin(): nullptr;
-		return StringCompare(str, Value)<=0;
+		return StringHelper::Compare(str, Value)<=0;
 		}
 	inline BOOL operator<=(Handle<String> const& Object)const
 		{
 		auto str1=m_Object? m_Object->Begin(): nullptr;
 		auto str2=Object? Object->Begin(): nullptr;
-		return StringCompare(str1, str2)<=0;
+		return StringHelper::Compare(str1, str2)<=0;
 		}
 
 	// Assignment
@@ -207,7 +207,7 @@ public:
 		{
 		if(m_Object)
 			{
-			if(StringCompare(m_Object->Begin(), Value)==0)
+			if(StringHelper::Compare(m_Object->Begin(), Value)==0)
 				return;
 			Clear();
 			}
@@ -218,7 +218,7 @@ public:
 		{
 		if(m_Object)
 			{
-			if(StringCompare(m_Object->Begin(), Value)==0)
+			if(StringHelper::Compare(m_Object->Begin(), Value)==0)
 				return;
 			Clear();
 			}

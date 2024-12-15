@@ -69,9 +69,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Core\Application.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\CharHelper.h">
-      <Filter>Storage\Streams</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamHelper.h">
       <Filter>Storage\Streams</Filter>
     </ClInclude>
@@ -123,7 +120,6 @@
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)StringHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CharHelper.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)PathHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)UnknownClass.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Object.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StringClass.cpp" />
@@ -189,5 +185,8 @@
     <Filter Include="Concurrency">
       <UniqueIdentifier>{a599b9e5-8824-40a8-837d-5b692a5ca505}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)README.md" />
   </ItemGroup>
 </Project>

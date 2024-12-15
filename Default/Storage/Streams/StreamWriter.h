@@ -29,14 +29,18 @@ namespace Storage {
 class StreamWriter
 {
 public:
+	// Using
+	using Format=StringHelper::Format;
+	using FormatFlags=StringHelper::FormatFlags;
+
 	// Con-/Destructors
 	StreamWriter(OutputStream* Stream);
 
 	// Common
 	UINT Print(LPCSTR Value);
-	UINT Print(LPCSTR Value, StringFormatFlags Flags, UINT Width);
+	UINT Print(LPCSTR Value, FormatFlags Flags, UINT Width);
 	UINT Print(LPCWSTR Value);
-	UINT Print(LPCWSTR Value, StringFormatFlags Flags, UINT Width);
+	UINT Print(LPCWSTR Value, FormatFlags Flags, UINT Width);
 	UINT Print(UINT Length, LPCSTR Value);
 	UINT Print(UINT Length, LPCWSTR Value);
 	UINT Print(Handle<String> Value);
@@ -49,14 +53,14 @@ public:
 		}
 	UINT PrintChar(CHAR Char, UINT Count=1);
 	UINT PrintChar(WCHAR Char, UINT Count=1);
-	UINT PrintDouble(DOUBLE Value, StringFormatFlags Flags=StringFormatFlags::None, UINT Width=0, UINT Precision=0);
-	UINT PrintFloat(FLOAT Value, StringFormatFlags Flags=StringFormatFlags::None, UINT Width=0, UINT Precision=0);
-	UINT PrintHex(UINT Value, StringFormatFlags Flags=StringFormatFlags::None, UINT Width=0);
-	UINT PrintHex64(UINT64 Value, StringFormatFlags Flags=StringFormatFlags::None, UINT Width=0);
-	UINT PrintInt(INT Value, StringFormatFlags Flags=StringFormatFlags::None, UINT Width=0);
-	UINT PrintInt64(INT64 Value, StringFormatFlags Flags=StringFormatFlags::None, UINT Width=0);
-	UINT PrintUInt(UINT Value, StringFormatFlags Flags=StringFormatFlags::None, UINT Width=0);
-	UINT PrintUInt64(UINT64 Value, StringFormatFlags Flags=StringFormatFlags::None, UINT Width=0);
+	UINT PrintDouble(DOUBLE Value, FormatFlags Flags=FormatFlags::None, UINT Width=0, UINT Precision=0);
+	UINT PrintFloat(FLOAT Value, FormatFlags Flags=FormatFlags::None, UINT Width=0, UINT Precision=0);
+	UINT PrintHex(UINT Value, FormatFlags Flags=FormatFlags::None, UINT Width=0);
+	UINT PrintHex64(UINT64 Value, FormatFlags Flags=FormatFlags::None, UINT Width=0);
+	UINT PrintInt(INT Value, FormatFlags Flags=FormatFlags::None, UINT Width=0);
+	UINT PrintInt64(INT64 Value, FormatFlags Flags=FormatFlags::None, UINT Width=0);
+	UINT PrintUInt(UINT Value, FormatFlags Flags=FormatFlags::None, UINT Width=0);
+	UINT PrintUInt64(UINT64 Value, FormatFlags Flags=FormatFlags::None, UINT Width=0);
 	VOID SetStream(OutputStream* Stream);
 
 private:
@@ -66,7 +70,7 @@ private:
 
 	// Common
 	template <class _func_t, class _char_t> UINT DoPrint(_func_t WriteChar, UINT Length, _char_t const* Value);
-	template <class _char_t> UINT DoPrint(_char_t const* Value, StringFormatFlags Flags, UINT Width);
+	template <class _char_t> UINT DoPrint(_char_t const* Value, FormatFlags Flags, UINT Width);
 	template <class _func_t, class _char_t> UINT DoPrintChar(_func_t WriteChar, _char_t Char, UINT Count);
 
 	OutputStream* m_Stream;

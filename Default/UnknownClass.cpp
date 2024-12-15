@@ -381,7 +381,7 @@ if(m_BaseInfo==UnknownType::Char)
 if(m_BaseInfo==UnknownType::WChar)
 	{
 	auto p=(WCHAR*)m_Buffer;
-	value=CharToAnsi(*p);
+	value=CharHelper::ToAnsi(*p);
 	return true;
 	}
 return false;
@@ -392,7 +392,7 @@ BOOL UnknownClass::Get(WCHAR& value)const
 if(m_BaseInfo==UnknownType::Char)
 	{
 	auto p=(CHAR*)m_Buffer;
-	value=CharToUnicode(*p);
+	value=CharHelper::ToUnicode(*p);
 	return true;
 	}
 if(m_BaseInfo==UnknownType::WChar)

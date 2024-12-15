@@ -11,6 +11,8 @@
 
 #include "CharHelper.h"
 
+using namespace Storage::Streams;
+
 
 //============
 // Conversion
@@ -37,40 +39,36 @@ WCHAR UnicodeMap[128]=
 	0x00F0, 0x00F1, 0x00F2, 0x00F3, 0x00F4, 0x00F5, 0x00F6, 0x00F7, 0x00F8, 0x00F9, 0x00FA, 0x00FB, 0x00FC, 0x00FD, 0x00FE, 0x00FF, // 0xF0
 };
 
-CHAR CharToAnsi(WCHAR wc)
+template <class _dst_t, class _src_t> inline _dst_t CharToChar(_src_t c)
 {
-if(wc<0x80)
-	return (CHAR)wc;
-for(UINT u=0; u<128; u++)
-	{
-	if(UnicodeMap[u]==wc)
-		return (CHAR)(u+0x80);
-	}
-return '_';
+return c;
 }
 
-template <class _char_t> _char_t CharToCapital(_char_t tc)
+template <> inline CHAR CharToChar(WCHAR c)
+{
+return CharHelper::ToAnsi(c);
+}
+
+template <> inline WCHAR CharToChar(CHAR c)
+{
+return CharHelper::ToUnicode(c);
+}
+
+template <class _char_t> inline _char_t CharToCapital(_char_t tc)
 {
 CHAR c=CharToChar<CHAR, _char_t>(tc);
 if(c>='a'&&c<='z')
-	return CharToChar<_char_t, CHAR>((CHAR)(c-0x20));
-if(c==Chars::ae)
-	return CharToChar<_char_t, TCHAR>(Chars::AE);
-if(c==Chars::oe)
-	return CharToChar<_char_t, TCHAR>(Chars::OE);
-if(c==Chars::ue)
-	return CharToChar<_char_t, TCHAR>(Chars::UE);
+	return CharToChar<CHAR, _char_t>((CHAR)(c-0x20));
+switch(c)
+	{
+	case Ansi::ae:
+		return CharToChar<CHAR, _char_t>(Ansi::AE);
+	case Ansi::oe:
+		return CharToChar<CHAR, _char_t>(Ansi::OE);
+	case Ansi::ue:
+		return CharToChar<CHAR, _char_t>(Ansi::UE);
+	}
 return tc;
-}
-
-CHAR CharToCapital(CHAR c)
-{
-return CharToCapital<CHAR>(c);
-}
-
-WCHAR CharToCapital(WCHAR c)
-{
-return CharToCapital<WCHAR>(c);
 }
 
 template <class _char_t> inline BOOL CharToDigit(_char_t tc, UINT* digit_ptr, UINT base)
@@ -97,213 +95,109 @@ if(digit<base)
 return false;
 }
 
-BOOL CharToDigit(CHAR c, UINT* digit_ptr, UINT base)
-{
-return CharToDigit<CHAR>(c, digit_ptr, base);
-}
-
-BOOL CharToDigit(WCHAR c, UINT* digit_ptr, UINT base)
-{
-return CharToDigit<WCHAR>(c, digit_ptr, base);
-}
-
-template <class _char_t> BYTE CharToHex(_char_t tc)
-{
-CHAR c=CharToChar<CHAR, _char_t>(tc);
-if(c<'0')
-	return 0;
-BYTE u=(BYTE)(c-'0');
-if(u<10)
-	return u;
-if(c<'A')
-	return 0;
-u=(BYTE)(c-'A'+10);
-if(u<16)
-	return u;
-if(u<'a')
-	return 0;
-u=(BYTE)(c-'a'+10);
-if(u<16)
-	return u;
-return 0;
-}
-
-BYTE CharToHex(CHAR c)
-{
-return CharToHex<CHAR>(c);
-}
-
-BYTE CharToHex(WCHAR c)
-{
-return CharToHex<WCHAR>(c);
-}
-
-template <class _char_t> _char_t CharToSmall(_char_t tc)
+template <class _char_t> inline _char_t CharToSmall(_char_t tc)
 {
 CHAR c=CharToChar<CHAR, _char_t>(tc);
 if(c>='A'&&c<='Z')
-	return CharToChar<_char_t, CHAR>((CHAR)(c+0x20));
-if(c==Chars::AE)
-	return CharToChar<_char_t, TCHAR>(Chars::ae);
-if(c==Chars::OE)
-	return CharToChar<_char_t, TCHAR>(Chars::oe);
-if(c==Chars::UE)
-	return CharToChar<_char_t, TCHAR>(Chars::ue);
+	return CharToChar<CHAR, _char_t>((CHAR)(c+0x20));
+switch(c)
+	{
+	case Ansi::AE:
+		return CharToChar<CHAR, _char_t>(Ansi::ae);
+	case Ansi::OE:
+		return CharToChar<CHAR, _char_t>(Ansi::oe);
+	case Ansi::UE:
+		return CharToChar<CHAR, _char_t>(Ansi::ue);
+	}
 return tc;
 }
 
-CHAR CharToSmall(CHAR c)
+
+//=======
+// UTF-8
+//=======
+
+template <class _char_t> UINT CharReadUtf8(InputStream* stream, _char_t* c_ptr)
 {
-return CharToSmall<CHAR>(c);
-}
-
-WCHAR CharToSmall(WCHAR c)
-{
-return CharToSmall<WCHAR>(c);
-}
-
-WCHAR CharToUnicode(CHAR c)
-{
-BYTE b=(BYTE)c;
-if(b<0x80)
-	return (WCHAR)c;
-b-=0x80;
-return UnicodeMap[b];
-}
-
-
-//========
-// Common
-//========
-
-template <class _char_t> inline BOOL CharIsAlpha(_char_t tc)
-{
-CHAR c=CharToChar<CHAR, _char_t>(tc);
-if(c>='A'&&c<='Z')
-	return true;
-if(c>='a'&&c<='z')
-	return true;
-return false;
-}
-
-BOOL CharIsAlpha(CHAR c)
-{
-return CharIsAlpha<CHAR>(c);
-}
-
-BOOL CharIsAlpha(WCHAR c)
-{
-return CharIsAlpha<WCHAR>(c);
-}
-
-template <class _char_t> inline BOOL CharIsBreak(_char_t tc)
-{
-if(tc==0)
-	return true;
-CHAR c=CharToChar<CHAR, _char_t>(tc);
-CHAR str[]="\n\r\t;:&|+*/\\?!";
-for(UINT u=0; u<ArraySize(str); u++)
+assert(stream);
+assert(c_ptr);
+UINT size=0;
+BYTE buf[4];
+UINT read=(UINT)stream->Read(&buf[0], 1);
+if(read==1)
 	{
-	if(c==str[u])
-		return true;
+	size+=read;
+	if((buf[0]&0xF0)==0xF0)
+		{
+		read=(UINT)stream->Read(&buf[1], 3);
+		size+=read;
+		if(read==3)
+			{
+			*c_ptr=CharToChar<_char_t, CHAR>('_');
+			return size;
+			}
+		}
+	else if((buf[0]&0xE0)==0xE0)
+		{
+		read=(UINT)stream->Read(&buf[1], 2);
+		size+=read;
+		if(read==2)
+			{
+			*c_ptr=CharToChar<_char_t, CHAR>('_');
+			return size;
+			}
+		}
+	else if((buf[0]&0xC0)==0xC0)
+		{
+		read=(UINT)stream->Read(&buf[1], 1);
+		size+=read;
+		if(read==1)
+			{
+			WCHAR c=0;
+			c|=((buf[0]&0x1F)<<8);
+			c|=((buf[1]&0x3F));
+			*c_ptr=CharToChar<_char_t, WCHAR>(c);
+			return size;
+			}
+		}
+	else
+		{
+		CHAR c=(CHAR)(buf[0]&0x7F);
+		*c_ptr=CharToChar<_char_t, CHAR>(c);;
+		return 1;
+		}
 	}
-return false;
+*c_ptr=0;
+return size;
 }
 
-BOOL CharIsBreak(CHAR c)
+template <class _char_t> UINT CharWriteUtf8(OutputStream* stream, _char_t tc)
 {
-return CharIsBreak<CHAR>(c);
-}
-
-BOOL CharIsBreak(WCHAR c)
-{
-return CharIsBreak<WCHAR>(c);
-}
-
-template <class _char_t> inline BOOL CharIsCapital(_char_t tc)
-{
-CHAR c=CharToChar<CHAR, _char_t>(tc);
-if(c>='A'&&c<='Z')
-	return true;
-return false;
-}
-
-BOOL CharIsCapital(CHAR c)
-{
-return CharIsCapital<CHAR>(c);
-}
-
-BOOL CharIsCapital(WCHAR c)
-{
-return CharIsCapital<WCHAR>(c);
-}
-
-BOOL CharIsDigit(CHAR c, UINT base)
-{
-return CharToDigit<CHAR>(c, nullptr, base);
-}
-
-BOOL CharIsDigit(WCHAR c, UINT base)
-{
-return CharToDigit<WCHAR>(c, nullptr, base);
-}
-
-template <class _char_t> inline BOOL CharIsPrintable(_char_t tc)
-{
-CHAR c=CharToChar<CHAR, _char_t>(tc);
-if(c>=' '&&c<='~')
-	return true;
-return false;
-}
-
-BOOL CharIsPrintable(CHAR c)
-{
-return CharIsPrintable<CHAR>(c);
-}
-
-BOOL CharIsPrintable(WCHAR c)
-{
-return CharIsPrintable<WCHAR>(c);
-}
-
-template <class _char_t> inline BOOL CharIsSmall(_char_t tc)
-{
-CHAR c=CharToChar<CHAR, _char_t>(tc);
-if(c>='a'&&c<='z')
-	return true;
-return false;
-}
-
-BOOL CharIsSmall(CHAR c)
-{
-return CharIsSmall<CHAR>(c);
-}
-
-BOOL CharIsSmall(WCHAR c)
-{
-return CharIsSmall<WCHAR>(c);
-}
-
-template <class _char_t> inline BOOL CharIsSpecial(_char_t tc)
-{
-CHAR c=CharToChar<CHAR, _char_t>(tc);
-CHAR str[]="\"*/:<>?\\|";
-for(UINT u=0; u<ArraySize(str); u++)
+assert(stream);
+WCHAR c=CharToChar<WCHAR, _char_t>(tc);
+if(c<0x80)
 	{
-	if(c==str[u])
-		return true;
+	if(!stream)
+		return 1;
+	BYTE buf=(BYTE)c;
+	return stream->Write(&buf, 1);
 	}
-return false;
-}
-
-BOOL CharIsSpecial(CHAR c)
-{
-return CharIsSpecial<CHAR>(c);
-}
-
-BOOL CharIsSpecial(WCHAR c)
-{
-return CharIsSpecial<WCHAR>(c);
+if(c<0x800)
+	{
+	if(!stream)
+		return 2;
+	BYTE buf[2];
+	buf[0]=((c>>6)&0x1F)|0xC0;
+	buf[1]=(c&0x3F)|0x80;
+	return stream->Write(buf, 2);
+	}
+if(!stream)
+	return 3;
+BYTE buf[3];
+buf[0]=((c>>12)&0xF)|0xE0;
+buf[1]=((c>>6)&0x3F)|0x80;
+buf[2]=(c&0x3F)|0x80;
+return stream->Write(buf, 3);
 }
 
 
@@ -389,54 +283,338 @@ if(c1<c2)
 return 0;
 }
 
-INT CharCompare(CHAR c1, CHAR c2, BOOL cs)
-{
-return CharCompare<CHAR, CHAR>(c1, c2, cs);
-}
-
-INT CharCompare(CHAR c1, WCHAR c2, BOOL cs)
-{
-return CharCompare<CHAR, WCHAR>(c1, c2, cs);
-}
-
-INT CharCompare(WCHAR c1, CHAR c2, BOOL cs)
-{
-return CharCompare<WCHAR, CHAR>(c1, c2, cs);
-}
-
-INT CharCompare(WCHAR c1, WCHAR c2, BOOL cs)
-{
-return CharCompare<WCHAR, WCHAR>(c1, c2, cs);
-}
-
 template <class _char1_t, class _char2_t> inline BOOL CharEqual(_char1_t tc1, _char2_t tc2, BOOL cs)
 {
 CHAR c1=CharToChar<CHAR, _char1_t>(tc1);
 CHAR c2=CharToChar<CHAR, _char2_t>(tc2);
 if(!cs)
 	{
-	c1=CharToCapital(c1);
-	c2=CharToCapital(c2);
+	c1=CharHelper::ToCapital(c1);
+	c2=CharHelper::ToCapital(c2);
 	}
 return c1==c2;
 }
 
-BOOL CharEqual(CHAR c1, CHAR c2, BOOL cs)
+template <class _char_t> inline BOOL CharIsAlpha(_char_t tc)
 {
-return CharEqual<CHAR, CHAR>(c1, c2, cs);
+CHAR c=CharToChar<CHAR, _char_t>(tc);
+if(c>='A'&&c<='Z')
+	return true;
+if(c>='a'&&c<='z')
+	return true;
+switch(c)
+	{
+	case Ansi::AE:
+	case Ansi::ae:
+	case Ansi::OE:
+	case Ansi::oe:
+	case Ansi::UE:
+	case Ansi::ue:
+		return true;
+	}
+return false;
 }
 
-BOOL CharEqual(CHAR c1, WCHAR c2, BOOL cs)
+template <class _char_t> inline BOOL CharIsBreak(_char_t tc)
 {
-return CharEqual<CHAR, WCHAR>(c1, c2, cs);
+if(tc==0)
+	return true;
+CHAR c=CharToChar<CHAR, _char_t>(tc);
+CHAR str[]="\n\r\t;:&|+*/\\?!";
+for(UINT u=0; u<ArraySize(str); u++)
+	{
+	if(c==str[u])
+		return true;
+	}
+return false;
 }
 
-BOOL CharEqual(WCHAR c1, CHAR c2, BOOL cs)
+template <class _char_t> inline BOOL CharIsCapital(_char_t tc)
 {
-return CharEqual<WCHAR, CHAR>(c1, c2, cs);
+CHAR c=CharToChar<CHAR, _char_t>(tc);
+if(c>='A'&&c<='Z')
+	return true;
+switch(c)
+	{
+	case Ansi::AE:
+	case Ansi::OE:
+	case Ansi::UE:
+		return true;
+	}
+return false;
 }
 
-BOOL CharEqual(WCHAR c1, WCHAR c2, BOOL cs)
+template <class _char_t> inline BOOL CharIsPrintable(_char_t tc)
 {
-return CharEqual<WCHAR, WCHAR>(c1, c2, cs);
+CHAR c=CharToChar<CHAR, _char_t>(tc);
+if(c>=' '&&c<='~')
+	return true;
+return false;
+}
+
+template <class _char_t> inline BOOL CharIsSmall(_char_t tc)
+{
+CHAR c=CharToChar<CHAR, _char_t>(tc);
+if(c>='a'&&c<='z')
+	return true;
+switch(c)
+	{
+	case Ansi::ae:
+	case Ansi::oe:
+	case Ansi::ue:
+		return true;
+	}
+return false;
+}
+
+template <class _char_t> inline BOOL CharIsSpecial(_char_t tc)
+{
+CHAR c=CharToChar<CHAR, _char_t>(tc);
+CHAR str[]="\"*/:<>?\\|";
+for(UINT u=0; u<ArraySize(str); u++)
+	{
+	if(c==str[u])
+		return true;
+	}
+return false;
+}
+
+
+//=============
+// Char-Helper
+//=============
+
+INT CharHelper::Compare(CHAR c1, CHAR c2, BOOL cs)
+{
+return CharCompare(c1, c2, cs);
+}
+
+INT CharHelper::Compare(CHAR c1, WCHAR c2, BOOL cs)
+{
+return CharCompare(c1, c2, cs);
+}
+
+INT CharHelper::Compare(WCHAR c1, CHAR c2, BOOL cs)
+{
+return CharCompare(c1, c2, cs);
+}
+
+INT CharHelper::Compare(WCHAR c1, WCHAR c2, BOOL cs)
+{
+return CharCompare(c1, c2, cs);
+}
+
+BOOL CharHelper::Equal(CHAR c1, CHAR c2, BOOL cs)
+{
+return CharEqual(c1, c2, cs);
+}
+
+BOOL CharHelper::Equal(CHAR c1, WCHAR c2, BOOL cs)
+{
+return CharEqual(c1, c2, cs);
+}
+
+BOOL CharHelper::Equal(WCHAR c1, CHAR c2, BOOL cs)
+{
+return CharEqual(c1, c2, cs);
+}
+
+BOOL CharHelper::Equal(WCHAR c1, WCHAR c2, BOOL cs)
+{
+return CharEqual(c1, c2, cs);
+}
+
+BOOL CharHelper::IsAlpha(CHAR c)
+{
+return CharIsAlpha(c);
+}
+
+BOOL CharHelper::IsAlpha(WCHAR c)
+{
+return CharIsAlpha(c);
+}
+
+BOOL CharHelper::IsBreak(CHAR c)
+{
+return CharIsBreak(c);
+}
+
+BOOL CharHelper::IsBreak(WCHAR c)
+{
+return CharIsBreak(c);
+}
+
+BOOL CharHelper::IsCapital(CHAR c)
+{
+return CharIsCapital(c);
+}
+
+BOOL CharHelper::IsCapital(WCHAR c)
+{
+return CharIsCapital(c);
+}
+
+BOOL CharHelper::IsPrintable(CHAR c)
+{
+return CharIsPrintable(c);
+}
+
+BOOL CharHelper::IsPrintable(WCHAR c)
+{
+return CharIsPrintable(c);
+}
+
+BOOL CharHelper::IsSmall(CHAR c)
+{
+return CharIsSmall(c);
+}
+
+BOOL CharHelper::IsSmall(WCHAR c)
+{
+return CharIsSmall(c);
+}
+
+BOOL CharHelper::IsSpecial(CHAR c)
+{
+return CharIsSpecial(c);
+}
+
+BOOL CharHelper::IsSpecial(WCHAR c)
+{
+return CharIsSpecial(c);
+}
+
+UINT CharHelper::ReadAnsi(InputStream* stream, CHAR* c_ptr)
+{
+assert(stream);
+assert(c_ptr);
+return (UINT)stream->Read(c_ptr, sizeof(CHAR));
+}
+
+UINT CharHelper::ReadAnsi(InputStream* stream, WCHAR* c_ptr)
+{
+assert(stream);
+assert(c_ptr);
+CHAR c=0;
+UINT read=stream->Read(&c, sizeof(CHAR));
+*c_ptr=CharToChar<WCHAR, CHAR>(c);
+return read;
+}
+
+UINT CharHelper::ReadUnicode(InputStream* stream, CHAR* c_ptr)
+{
+assert(stream);
+assert(c_ptr);
+WCHAR c=0;
+UINT read=stream->Read(&c, sizeof(WCHAR));
+*c_ptr=CharToChar<CHAR, WCHAR>(c);
+return read;
+}
+
+UINT CharHelper::ReadUnicode(InputStream* stream, WCHAR* c_ptr)
+{
+assert(stream);
+assert(c_ptr);
+return (UINT)stream->Read(c_ptr, sizeof(WCHAR));
+}
+
+UINT CharHelper::ReadUtf8(InputStream* stream, CHAR* c_ptr)
+{
+assert(stream);
+assert(c_ptr);
+return CharReadUtf8(stream, c_ptr);
+}
+
+UINT CharHelper::ReadUtf8(InputStream* stream, WCHAR* c_ptr)
+{
+assert(stream);
+assert(c_ptr);
+return CharReadUtf8(stream, c_ptr);
+}
+
+CHAR CharHelper::ToAnsi(WCHAR wc)
+{
+if(wc<0x80)
+	return (CHAR)wc;
+for(UINT u=0; u<128; u++)
+	{
+	if(UnicodeMap[u]==wc)
+		return (CHAR)(u+0x80);
+	}
+return '_';
+}
+
+CHAR CharHelper::ToCapital(CHAR c)
+{
+return CharToCapital(c);
+}
+
+WCHAR CharHelper::ToCapital(WCHAR c)
+{
+return CharToCapital(c);
+}
+
+BOOL CharHelper::ToDigit(CHAR c, UINT* digit_ptr, UINT base)
+{
+return CharToDigit(c, digit_ptr, base);
+}
+
+BOOL CharHelper::ToDigit(WCHAR c, UINT* digit_ptr, UINT base)
+{
+return CharToDigit(c, digit_ptr, base);
+}
+
+CHAR CharHelper::ToSmall(CHAR c)
+{
+return CharToSmall(c);
+}
+
+WCHAR CharHelper::ToSmall(WCHAR c)
+{
+return CharToSmall(c);
+}
+
+WCHAR CharHelper::ToUnicode(CHAR c)
+{
+BYTE b=(BYTE)c;
+if(b<0x80)
+	return (WCHAR)c;
+b-=0x80;
+return UnicodeMap[b];
+}
+
+UINT CharHelper::WriteAnsi(OutputStream* stream, CHAR c)
+{
+assert(stream);
+return stream->Write(&c, sizeof(CHAR));
+}
+
+UINT CharHelper::WriteAnsi(OutputStream* stream, WCHAR wc)
+{
+assert(stream);
+CHAR c=CharToChar<CHAR, WCHAR>(wc);
+return stream->Write(&c, sizeof(CHAR));
+}
+
+UINT CharHelper::WriteUnicode(OutputStream* stream, CHAR c)
+{
+assert(stream);
+WCHAR wc=CharToChar<WCHAR, CHAR>(c);
+return stream->Write(&wc, sizeof(WCHAR));
+}
+
+UINT CharHelper::WriteUnicode(OutputStream* stream, WCHAR wc)
+{
+assert(stream);
+return stream->Write(&wc, sizeof(WCHAR));
+}
+
+UINT CharHelper::WriteUtf8(OutputStream* stream, CHAR c)
+{
+return CharWriteUtf8(stream, c);
+}
+
+UINT CharHelper::WriteUtf8(OutputStream* stream, WCHAR wc)
+{
+return CharWriteUtf8(stream, wc);
 }
