@@ -27,8 +27,8 @@ class BaseType
 {
 public:
 	// Common
-	inline BOOL IsPublic()const { return GetFlag(m_Offset, OffsetFlags::Public); }
-	inline BOOL IsVirtual()const { return GetFlag(m_Offset, OffsetFlags::Virtual); }
+	inline BOOL IsPublic()const { return FlagHelper::Get(m_Offset, OffsetFlags::Public); }
+	inline BOOL IsVirtual()const { return FlagHelper::Get(m_Offset, OffsetFlags::Virtual); }
 	inline __class_type_info const* GetInfo()const { return m_Info; }
 	inline UINT GetOffset()const { return m_Offset>>8; }
 	static VOID* Upcast(BaseType const& Type, VOID* Object)

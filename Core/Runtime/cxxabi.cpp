@@ -69,7 +69,7 @@ UnwindStatus __gxx_personality_v0(INT version, UnwindFlags flags, UINT64 exc_cla
 {
 TypeInfo const* thrown_type=nullptr;
 VOID* thrown=exc->GetThrownException(&thrown_type);
-if(GetFlag(flags, UnwindFlags::HandlerFrame))
+if(FlagHelper::Get(flags, UnwindFlags::HandlerFrame))
 	return exc->InstallContext(context->InstructionPointer, (SIZE_T)thrown, (SIZE_T)thrown_type);
 Dwarf lsda(context->LanguageData);
 SIZE_T frame_start=context->FrameStart;
@@ -107,7 +107,7 @@ while(lsda.GetPosition()<callsite_pos)
 		INT64 type_id=action.ReadSigned();
 		if(type_id==0)
 			{
-			if(GetFlag(flags, UnwindFlags::SearchPhase))
+			if(FlagHelper::Get(flags, UnwindFlags::SearchPhase))
 				return UnwindStatus::ContinueUnwind;
 			return exc->InstallContext(lp_start+lp_offset, (SIZE_T)exc, 0);
 			}

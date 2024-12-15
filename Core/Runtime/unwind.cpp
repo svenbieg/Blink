@@ -10,6 +10,7 @@
 //=======
 
 #include <unwind.h>
+#include "Devices/System/Cpu.h"
 #include "Devices/System/System.h"
 #include "Storage/Encoding/Dwarf/Dwarf.h"
 
