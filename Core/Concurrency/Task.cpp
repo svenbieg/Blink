@@ -54,6 +54,7 @@ while(SystemTimer::Microseconds64()<=end);
 
 Status Task::Wait()
 {
+assert(!Scheduler::IsMainTask()); // Waiting is not allowed in the main-task
 ScopedLock lock(m_Mutex);
 if(m_Status!=Status::Pending)
 	return m_Status;

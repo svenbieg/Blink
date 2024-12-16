@@ -24,6 +24,7 @@ namespace Concurrency {
 // Forward-Declarations
 //======================
 
+class DispatchedQueue;
 class Task;
 
 
@@ -34,6 +35,9 @@ class Task;
 class Signal
 {
 public:
+	// Friends
+	friend DispatchedQueue;
+
 	// Con-/Destructors
 	Signal() {}
 
@@ -47,6 +51,7 @@ public:
 
 private:
 	// Common
+	BOOL WaitInternal();
 	Handle<Task> m_WaitingTask;
 };
 

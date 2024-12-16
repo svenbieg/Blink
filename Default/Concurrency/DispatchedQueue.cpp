@@ -76,7 +76,7 @@ BOOL DispatchedQueue::Wait()
 {
 if(!s_Waiting)
 	return false;
-return s_Signal.Wait();
+return s_Signal.WaitInternal();
 }
 
 

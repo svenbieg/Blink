@@ -48,6 +48,7 @@ m_WaitingTask=nullptr;
 BOOL Signal::Wait()
 {
 SpinLock lock(Scheduler::s_CriticalSection);
+assert(!Scheduler::IsMainTask()); // Waiting is not allowed in the main-task
 UINT core=Cpu::GetId();
 auto task=Scheduler::s_CurrentTask[core];
 Scheduler::SuspendCurrentTask(nullptr);
@@ -65,6 +66,7 @@ return signal;
 BOOL Signal::Wait(UINT timeout)
 {
 assert(timeout!=0);
+assert(!Scheduler::IsMainTask()); // Waiting is not allowed in the main-task
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto task=Scheduler::s_CurrentTask[core];
@@ -82,6 +84,7 @@ return signal;
 
 BOOL Signal::Wait(ScopedLock& scoped_lock)
 {
+assert(!Scheduler::IsMainTask()); // Waiting is not allowed in the main-task
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto task=Scheduler::s_CurrentTask[core];
@@ -104,6 +107,7 @@ return signal;
 BOOL Signal::Wait(ScopedLock& scoped_lock, UINT timeout)
 {
 assert(timeout!=0);
+assert(!Scheduler::IsMainTask()); // Waiting is not allowed in the main-task
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto task=Scheduler::s_CurrentTask[core];
@@ -114,6 +118,28 @@ lock.Unlock();
 // Waiting...
 scoped_lock.Lock();
 lock.Lock();
+BOOL signal=(task->m_ResumeTime==0);
+if(!signal)
+	{
+	m_WaitingTask=Scheduler::RemoveParallelTask(m_WaitingTask, task);
+	task->m_ResumeTime=0;
+	}
+return signal;
+}
+
+
+//================
+// Common Private
+//================
+
+BOOL Signal::WaitInternal()
+{
+SpinLock lock(Scheduler::s_CriticalSection);
+UINT core=Cpu::GetId();
+auto task=Scheduler::s_CurrentTask[core];
+Scheduler::SuspendCurrentTask(nullptr);
+m_WaitingTask=Scheduler::AddParallelTask(m_WaitingTask, task);
+lock.Yield(); // Waiting...
 BOOL signal=(task->m_ResumeTime==0);
 if(!signal)
 	{
