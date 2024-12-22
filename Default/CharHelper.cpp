@@ -54,21 +54,21 @@ template <> inline WCHAR CharToChar(CHAR c)
 return CharHelper::ToUnicode(c);
 }
 
-template <class _char_t> inline _char_t CharToCapital(_char_t tc)
+template <class _dst_t, class _src_t> inline _dst_t CharToCapital(_src_t tc)
 {
-CHAR c=CharToChar<CHAR, _char_t>(tc);
+CHAR c=CharToChar<CHAR, _src_t>(tc);
 if(c>='a'&&c<='z')
-	return CharToChar<CHAR, _char_t>((CHAR)(c-0x20));
+	return CharToChar<_dst_t, CHAR>((CHAR)(c-0x20));
 switch(c)
 	{
 	case Ansi::ae:
-		return CharToChar<CHAR, _char_t>(Ansi::AE);
+		return CharToChar<_dst_t, CHAR>(Ansi::AE);
 	case Ansi::oe:
-		return CharToChar<CHAR, _char_t>(Ansi::OE);
+		return CharToChar<_dst_t, CHAR>(Ansi::OE);
 	case Ansi::ue:
-		return CharToChar<CHAR, _char_t>(Ansi::UE);
+		return CharToChar<_dst_t, CHAR>(Ansi::UE);
 	}
-return tc;
+return CharToChar<_dst_t, _src_t>(tc);
 }
 
 template <class _char_t> inline BOOL CharToDigit(_char_t tc, UINT* digit_ptr, UINT base)
@@ -321,7 +321,7 @@ if(tc==0)
 	return true;
 CHAR c=CharToChar<CHAR, _char_t>(tc);
 CHAR str[]="\n\r\t;:&|+*/\\?!";
-for(UINT u=0; u<ArraySize(str); u++)
+for(UINT u=0; u<TypeHelper::ArraySize(str); u++)
 	{
 	if(c==str[u])
 		return true;
@@ -371,7 +371,7 @@ template <class _char_t> inline BOOL CharIsSpecial(_char_t tc)
 {
 CHAR c=CharToChar<CHAR, _char_t>(tc);
 CHAR str[]="\"*/:<>?\\|";
-for(UINT u=0; u<ArraySize(str); u++)
+for(UINT u=0; u<TypeHelper::ArraySize(str); u++)
 	{
 	if(c==str[u])
 		return true;
@@ -546,12 +546,32 @@ return '_';
 
 CHAR CharHelper::ToCapital(CHAR c)
 {
-return CharToCapital(c);
+return CharToCapital<CHAR, CHAR>(c);
 }
 
 WCHAR CharHelper::ToCapital(WCHAR c)
 {
-return CharToCapital(c);
+return CharToCapital<WCHAR, WCHAR>(c);
+}
+
+CHAR CharHelper::ToCapitalAnsi(CHAR c)
+{
+return CharToCapital<CHAR, CHAR>(c);
+}
+
+CHAR CharHelper::ToCapitalAnsi(WCHAR c)
+{
+return CharToCapital<CHAR, WCHAR>(c);
+}
+
+WCHAR CharHelper::ToCapitalUnicode(CHAR c)
+{
+return CharToCapital<WCHAR, CHAR>(c);
+}
+
+WCHAR CharHelper::ToCapitalUnicode(WCHAR c)
+{
+return CharToCapital<WCHAR, WCHAR>(c);
 }
 
 BOOL CharHelper::ToDigit(CHAR c, UINT* digit_ptr, UINT base)

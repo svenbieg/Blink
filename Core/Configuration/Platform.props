@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Import Project="$(SolutionDir)Core.Pico\Configuration\Platform.props" Condition="Exists('$(SolutionDir)Core.Pico\Configuration\Platform.props')" />
   <Import Project="$(SolutionDir)Core.Rpi5\Configuration\Platform.props" Condition="Exists('$(SolutionDir)Core.Rpi5\Configuration\Platform.props')" />
 
   <Import Project="$(MSBuildThisFileDirectory)Default.props" />

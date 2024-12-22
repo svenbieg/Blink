@@ -28,6 +28,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\CriticalSection.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\DispatchedHandler.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\DispatchedQueue.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\MainTask.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\Mutex.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\Scheduler.h" />
@@ -42,7 +44,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\cmath" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\condition_variable" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\cstddef" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\cstring" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\cxxabi.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\heap.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\mutex" />
@@ -60,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\CriticalSection.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\DispatchedQueue.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Mutex.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Scheduler.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Signal.cpp" />

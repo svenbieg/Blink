@@ -36,7 +36,7 @@ BYTE* buf_ptr=buf->Begin();
 SIZE_T pos=0;
 while(pos<size)
 	{
-	SIZE_T copy=Min(size-pos, PAGE_SIZE);
+	SIZE_T copy=TypeHelper::Min(size-pos, PAGE_SIZE);
 	SIZE_T read=src->Read(buf_ptr, copy);
 	if(!read)
 		break;

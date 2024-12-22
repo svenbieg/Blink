@@ -115,9 +115,9 @@ VOID System::Reset(ResetDevice device)
 auto reset=(RESET_REGS*)AXI_RESET_BASE;
 UINT bank=(UINT)device/32;
 UINT mask=(UINT)device&0x1F;
-Bits::Write(reset->INIT_BANK[bank].SET, mask);
+BitHelper::Write(reset->INIT_BANK[bank].SET, mask);
 Task::SleepMicroseconds(100);
-Bits::Write(reset->INIT_BANK[bank].CLEAR, mask);
+BitHelper::Write(reset->INIT_BANK[bank].CLEAR, mask);
 Task::SleepMicroseconds(100);
 }
 

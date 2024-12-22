@@ -34,7 +34,7 @@ m_Buffer(new BYTE[size]),
 m_Position(0),
 m_Size(size)
 {
-CopyMemory(m_Buffer, buf, size);
+MemoryHelper::Copy(m_Buffer, buf, size);
 }
 
 Buffer::~Buffer()
@@ -59,9 +59,9 @@ return m_Size-m_Position;
 SIZE_T Buffer::Read(VOID* buf, SIZE_T size)
 {
 SIZE_T available=m_Size-m_Position;
-SIZE_T copy=Min(size, available);
+SIZE_T copy=TypeHelper::Min(size, available);
 if(buf)
-	CopyMemory(buf, &m_Buffer[m_Position], copy);
+	MemoryHelper::Copy(buf, &m_Buffer[m_Position], copy);
 m_Position+=copy;
 return copy;
 }
@@ -78,8 +78,8 @@ VOID Buffer::Flush()
 SIZE_T Buffer::Write(VOID const* buf, SIZE_T size)
 {
 SIZE_T available=m_Size-m_Position;
-SIZE_T copy=Min(size, available);
-CopyMemory(&m_Buffer[m_Position], buf, copy);
+SIZE_T copy=TypeHelper::Min(size, available);
+MemoryHelper::Copy(&m_Buffer[m_Position], buf, copy);
 m_Position+=copy;
 return copy;
 }
@@ -107,8 +107,8 @@ SIZE_T Buffer::Fill(UINT value, SIZE_T size)
 SIZE_T available=m_Size-m_Position;
 if(size==0)
 	size=available;
-SIZE_T copy=Min(size, available);
-FillMemory(&m_Buffer[m_Position], copy, value);
+SIZE_T copy=TypeHelper::Min(size, available);
+MemoryHelper::MemoryHelper::Fill(&m_Buffer[m_Position], copy, value);
 m_Position+=copy;
 return copy;
 }
@@ -118,8 +118,8 @@ SIZE_T Buffer::Zero(SIZE_T size)
 SIZE_T available=m_Size-m_Position;
 if(size==0)
 	size=available;
-SIZE_T copy=Min(size, available);
-ZeroMemory(&m_Buffer[m_Position], copy);
+SIZE_T copy=TypeHelper::Min(size, available);
+MemoryHelper::Fill(&m_Buffer[m_Position], copy, 0);
 m_Position+=copy;
 return copy;
 }

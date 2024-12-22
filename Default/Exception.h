@@ -57,6 +57,13 @@ public:
 	InvalidArgumentException(): Exception(Status::InvalidArgument) {}
 };
 
+class InvalidContextException: public Exception
+{
+public:
+	// Con-/Destructors
+	InvalidContextException(): Exception(Status::InvalidContext) {}
+};
+
 class NotImplementedException: public Exception
 {
 public:

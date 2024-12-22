@@ -105,13 +105,13 @@ buf->Code=PROPERTY_REQUEST;
 buf->Tag=tag;
 buf->BufferSize=prop_size;
 buf->Status=0;
-CopyMemory(buf->Data, prop, prop_size);
-ZeroMemory(&buf->Data[prop_size], sizeof(UINT));
+MemoryHelper::Copy(buf->Data, prop, prop_size);
+MemoryHelper::Fill(&buf->Data[prop_size], sizeof(UINT), 0);
 UINT addr=(UINT)(SIZE_T)buf;
 Write(MailBoxChannel::Properties, addr);
 if(!Read(MailBoxChannel::Properties, addr))
 	return false;
-CopyMemory(prop, &buf->Data, prop_size);
+MemoryHelper::Copy(prop, &buf->Data, prop_size);
 return true;
 }
 
@@ -127,8 +127,8 @@ addr&=0xFFFFFFF0;
 addr|=(UINT)ch;
 while(1)
 	{
-	while(Bits::Get(mbox->STATUS, STATUS::EMPTY));
-	if(Bits::Get(mbox->READ)==addr)
+	while(BitHelper::Get(mbox->STATUS, STATUS::EMPTY));
+	if(BitHelper::Get(mbox->READ)==addr)
 		return true;
 	}
 return false;
@@ -139,8 +139,8 @@ VOID MailBox::Write(MailBoxChannel ch, UINT addr)
 auto mbox=(MAILBOX_REGS*)ARM_MAILBOX_BASE;
 addr&=0xFFFFFFF0;
 addr|=(UINT)ch;
-while(Bits::Get(mbox->STATUS, STATUS::FULL));
-Bits::Write(mbox->WRITE, addr);
+while(BitHelper::Get(mbox->STATUS, STATUS::FULL));
+BitHelper::Write(mbox->WRITE, addr);
 }
 
 }}

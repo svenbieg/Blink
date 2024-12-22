@@ -46,7 +46,6 @@ public:
 
 	// Modification
 	SIZE_T Fill(UINT Value, SIZE_T Size=0);
-	SIZE_T Zero(SIZE_T Size=0);
 
 private:
 	// Common

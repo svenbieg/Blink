@@ -22,8 +22,6 @@
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.targets" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)AsmHelper.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)BitHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Arm\MailBox.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Arm\Gpio.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\DeviceTree.h" />
@@ -38,7 +36,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Tasks.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)MemoryHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\stddef.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Settings.h" />

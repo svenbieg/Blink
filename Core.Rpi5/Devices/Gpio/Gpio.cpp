@@ -101,7 +101,7 @@ BOOL Gpio::DigitalRead(BYTE pin)
 assert(pin<GPIO_PIN_COUNT);
 GPIO_REGS* gpio=(GPIO_REGS*)RP1_GPIO0_BASE;
 REG& status_reg=gpio->PIN[pin].STATUS;
-UINT value=Bits::Get(status_reg, GPIO_STATUS_INFILTERED);
+UINT value=BitHelper::Get(status_reg, GPIO_STATUS_INFILTERED);
 return value!=0;
 }
 
@@ -112,11 +112,11 @@ GPIO_REGS* gpio=(GPIO_REGS*)RP1_GPIO0_BASE;
 REG& ctrl_reg=gpio->PIN[pin].CTRL;
 if(set)
 	{
-	Bits::Set(ctrl_reg, GPIO_CTRL_OUTOVER);
+	BitHelper::Set(ctrl_reg, GPIO_CTRL_OUTOVER);
 	}
 else
 	{
-	Bits::Set(ctrl_reg, GPIO_CTRL_OUTOVER, GPIO_CTRL_OUTOVER_LOW);
+	BitHelper::Set(ctrl_reg, GPIO_CTRL_OUTOVER, GPIO_CTRL_OUTOVER_LOW);
 	}
 }
 
@@ -127,45 +127,45 @@ PADS_REGS* pads_bank=(PADS_REGS*)RP1_PADS0_BASE;
 GPIO_REGS* gpio=(GPIO_REGS*)RP1_GPIO0_BASE;
 REG& pad_reg=pads_bank->PIN[pin];
 REG& ctrl_reg=gpio->PIN[pin].CTRL;
-UINT pad=Bits::Get(pad_reg);
-UINT ctrl=Bits::Get(ctrl_reg);
-Bits::Set(pad, PADS_PULL, (UINT)pull);
+UINT pad=BitHelper::Get(pad_reg);
+UINT ctrl=BitHelper::Get(ctrl_reg);
+BitHelper::Set(pad, PADS_PULL, (UINT)pull);
 switch(mode)
 	{
 	case PinMode::Input:
 		{
-		Bits::Set(pad, PADS_OUTPUT_DISABLE);
-		Bits::Set(pad, PADS_INPUT_ENABLE);
-		Bits::Set(ctrl, GPIO_CTRL_OEOVER, GPIO_CTRL_OEOVER_DISABLE);
-		Bits::Set(ctrl, GPIO_CTRL_FUNCSEL);
+		BitHelper::Set(pad, PADS_OUTPUT_DISABLE);
+		BitHelper::Set(pad, PADS_INPUT_ENABLE);
+		BitHelper::Set(ctrl, GPIO_CTRL_OEOVER, GPIO_CTRL_OEOVER_DISABLE);
+		BitHelper::Set(ctrl, GPIO_CTRL_FUNCSEL);
 		break;
 		}
 	case PinMode::Output:
 		{
-		Bits::Clear(pad, PADS_OUTPUT_DISABLE);
-		Bits::Clear(pad, PADS_INPUT_ENABLE);
-		Bits::Set(ctrl, GPIO_CTRL_OEOVER|GPIO_CTRL_FUNCSEL);
+		BitHelper::Clear(pad, PADS_OUTPUT_DISABLE);
+		BitHelper::Clear(pad, PADS_INPUT_ENABLE);
+		BitHelper::Set(ctrl, GPIO_CTRL_OEOVER|GPIO_CTRL_FUNCSEL);
 		break;
 		}
 	default:
 		{
 		UINT func=(UINT)mode-(UINT)PinMode::Alt0;
-		Bits::Clear(pad, PADS_OUTPUT_DISABLE);
-		Bits::Set(pad, PADS_INPUT_ENABLE);
-		Bits::Clear(ctrl, GPIO_CTRL_INOVER|GPIO_CTRL_OEOVER|GPIO_CTRL_OUTOVER|GPIO_CTRL_FUNCSEL);
-		Bits::Set(ctrl, func);
+		BitHelper::Clear(pad, PADS_OUTPUT_DISABLE);
+		BitHelper::Set(pad, PADS_INPUT_ENABLE);
+		BitHelper::Clear(ctrl, GPIO_CTRL_INOVER|GPIO_CTRL_OEOVER|GPIO_CTRL_OUTOVER|GPIO_CTRL_FUNCSEL);
+		BitHelper::Set(ctrl, func);
 		break;
 		}
 	}
-Bits::Write(pad_reg, pad);
-Bits::Write(ctrl_reg, ctrl);
+BitHelper::Write(pad_reg, pad);
+BitHelper::Write(ctrl_reg, ctrl);
 }
 
 VOID Gpio::SetPullMode(BYTE pin, PullMode pull)
 {
 assert(pin<GPIO_PIN_COUNT);
 PADS_REGS* pads_bank=(PADS_REGS*)RP1_PADS0_BASE;
-Bits::Set(pads_bank->PIN[pin], PADS_PULL, (UINT)pull);
+BitHelper::Set(pads_bank->PIN[pin], PADS_PULL, (UINT)pull);
 }
 
 }}

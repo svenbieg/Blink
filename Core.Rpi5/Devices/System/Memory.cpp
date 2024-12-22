@@ -105,7 +105,7 @@ __asm volatile("mrs %0, sctlr_el1": "=r" (sctlr_el1));
 constexpr SIZE_T SCTLR_I=(1<<12);
 constexpr SIZE_T SCTLR_C=(1<<2);
 constexpr SIZE_T SCTLR_M=(1<<0);
-Bits::Set(sctlr_el1, SCTLR_I|SCTLR_C|SCTLR_M);
+BitHelper::Set(sctlr_el1, SCTLR_I|SCTLR_C|SCTLR_M);
 __asm volatile("msr sctlr_el1, %0":: "r" (sctlr_el1): "memory");
 __asm volatile("isb; nop; nop; nop; nop"::: "memory");
 }
@@ -117,7 +117,7 @@ Enable();
 SIZE_T bss_start=(SIZE_T)&__bss_start;
 SIZE_T bss_end=(SIZE_T)&__bss_end;
 SIZE_T bss_size=bss_end-bss_start;
-ZeroMemory(&__bss_start, bss_size);
+MemoryHelper::Fill(&__bss_start, bss_size, 0);
 SIZE_T heap_start=(SIZE_T)&__heap_start;
 SIZE_T heap_end=UNCACHED_BASE;
 SIZE_T heap_size=heap_end-heap_start;

@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Core/Application.h"
+#include "Firmware/Platform.h"
 
 
 //===========
@@ -23,7 +23,7 @@ namespace Blink {
 // Application
 //=============
 
-class Application: public Core::Application
+class Application: public Firmware::Application
 {
 public:
 	// Con-/Destructors

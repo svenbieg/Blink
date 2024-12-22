@@ -2,6 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <CompilerFlags>$(CompilerFlags) -mcpu=cortex-a76 -mlittle-endian</CompilerFlags>
+    <!--<CompilerFlags>$(CompilerFlags) -fexec-charset=ISO-8859-1</CompilerFlags>-->
     <!--<IncludePath>$(IncludePath);$(CompilerPath)$(CompilerName)\include\</IncludePath>-->
     <!--<IncludePath>$(IncludePath);$(CompilerPath)$(CompilerName)\include\c++\$(CompilerVersion)\</IncludePath>-->
     <!--<IncludePath>$(IncludePath);$(CompilerPath)$(CompilerName)\include\c++\$(CompilerVersion)\$(CompilerName)\</IncludePath>-->

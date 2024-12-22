@@ -5,15 +5,15 @@
 #pragma once
 
 
+//======================
+// Forward-Declarations
+//======================
+
+#include "MemoryHelper.h"
+
+
 //=======
 // Using
 //=======
 
-#include "Core/Platform.h"
-
-
-//========
-// Common
-//========
-
-#include "MemoryHelper.h"
+#include "Firmware/Platform.h"

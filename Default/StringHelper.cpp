@@ -77,7 +77,7 @@ if(size==0)
 	size=UINT_MAX;
 UINT end=size-1;
 if(copy)
-	end=Min(end, copy);
+	end=TypeHelper::Min(end, copy);
 UINT pos=0;
 for(; pos<end; pos++)
 	{
@@ -397,7 +397,7 @@ if(!buf)
 	return count;
 if(pos>=size)
 	return 0;
-UINT print=Min(size-pos, count);
+UINT print=TypeHelper::Min(size-pos, count);
 for(UINT u=0; u<print; u++)
 	buf[pos++]=CharToChar<_buf_t, _char_t>(c);
 return print;
@@ -587,7 +587,7 @@ INT ex=0;
 INT num=32;
 if(f>=max)
 	{
-	for(UINT u=0; u<ArraySize(exps); u++)
+	for(UINT u=0; u<TypeHelper::ArraySize(exps); u++)
 		{
 		if(f>=exps[u])
 			{
@@ -600,7 +600,7 @@ if(f>=max)
 	}
 if(f<min)
 	{
-	for(UINT u=0; u<ArraySize(exps); u++)
+	for(UINT u=0; u<TypeHelper::ArraySize(exps); u++)
 		{
 		if(f<negs[u])
 			{
@@ -623,7 +623,7 @@ INT ex=0;
 INT num=256;
 if(f>=max)
 	{
-	for(UINT u=0; u<ArraySize(exps); u++)
+	for(UINT u=0; u<TypeHelper::ArraySize(exps); u++)
 		{
 		if(f>=exps[u])
 			{
@@ -636,7 +636,7 @@ if(f>=max)
 	}
 if(f<min)
 	{
-	for(UINT u=0; u<ArraySize(exps); u++)
+	for(UINT u=0; u<TypeHelper::ArraySize(exps); u++)
 		{
 		if(f<negs[u])
 			{
@@ -653,8 +653,8 @@ template <class _float_t> VOID FloatSplit(_float_t f, UINT& integral, UINT& deci
 {
 _float_t mul[]={ 1e0f, 1e1f, 1e2f, 1e3f, 1e4f, 1e5f, 1e6f, 1e7f, 1e8f, 1e9f };
 _float_t div[]={ 1e0f, 1e-1f, 1e-2f, 1e-3f, 1e-4f, 1e-5f };
-UINT sel=Min(width, ArraySize(mul)-1);
-UINT prec=Min(precision, ArraySize(div)-1);
+UINT sel=TypeHelper::Min(width, TypeHelper::ArraySize(mul)-1);
+UINT prec=TypeHelper::Min(precision, TypeHelper::ArraySize(div)-1);
 exponent=FloatNormalize<_float_t>(f, mul[sel], div[prec]);
 integral=(UINT)f;
 _float_t remainder=f-(_float_t)integral;

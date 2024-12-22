@@ -19,7 +19,7 @@ using namespace Concurrency;
 // Namespace
 //===========
 
-namespace Core {
+namespace Firmware {
 
 
 //========
@@ -30,7 +30,7 @@ Application* Application::Current=nullptr;
 
 INT Application::Run()
 {
-DispatchedQueue::Begin();
+DispatchedQueue::Enter();
 return 0;
 }
 
@@ -45,7 +45,7 @@ DispatchedQueue::Exit();
 //============================
 
 Application::Application(LPCSTR name):
-Name(name)
+m_Name(name)
 {
 Current=this;
 }

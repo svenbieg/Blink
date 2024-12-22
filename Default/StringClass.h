@@ -31,7 +31,7 @@ public:
 	template <class... _args_t> String(LPCSTR Format, _args_t... Arguments): m_Buffer(nullptr)
 		{
 		UnknownClass args[]={ Arguments... };
-		VariableArguments vargs(args, ArraySize(args));
+		VariableArguments vargs(args, TypeHelper::ArraySize(args));
 		UINT len=StringHelper::PrintArgs((LPSTR)nullptr, 0, Format, vargs);
 		m_Buffer=new TCHAR[len+1];
 		StringHelper::PrintArgs(m_Buffer, len+1, Format, vargs);
@@ -57,7 +57,7 @@ public:
 	template <class... _args_t> inline UINT Scan(LPCSTR Format, _args_t... Arguments)
 		{
 		UnknownClass args[]={ Arguments... };
-		VariableArguments vargs(args, ArraySize(args));
+		VariableArguments vargs(args, TypeHelper::ArraySize(args));
 		return StringHelper::ScanArgs(m_Buffer, Format, vargs);
 		}
 	Handle<String> ToString()override;
@@ -104,6 +104,7 @@ public:
 	Handle(Handle&& Move)noexcept: _base_t(std::forward<Handle>(Move)) {}
 	Handle(LPCSTR Value) { Create(new String(Value)); }
 	Handle(LPCWSTR Value) { Create(new String(Value)); }
+	template <class... _args_t> Handle(LPCSTR Format, _args_t... Arguments) { Create(new String(Format, Arguments...)); }
 
 	// Access
 	inline operator BOOL()const override { return m_Object&&m_Object->GetLength(); }

@@ -23,3 +23,10 @@ typedef unsigned __longlong int size_t;
 typedef size_t SIZE_T;
 
 typedef unsigned __longlong int FILE_SIZE;
+
+
+//========
+// Macros
+//========
+
+#define offsetof(type, member) __builtin_offsetof(type, member)

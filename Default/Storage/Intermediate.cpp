@@ -97,8 +97,8 @@ while(pos<size)
 		m_Written.Wait(lock);
 		continue;
 		}
-	SIZE_T copy=Min(size-pos, available);
-	CopyMemory(&dst[pos], &m_First->Buffer[m_Offset], copy);
+	SIZE_T copy=TypeHelper::Min(size-pos, available);
+	MemoryHelper::Copy(&dst[pos], &m_First->Buffer[m_Offset], copy);
 	m_Offset+=copy;
 	pos+=copy;
 	}
@@ -136,8 +136,8 @@ while(pos<size)
 		m_Last=current;
 		}
 	SIZE_T available=m_BlockSize-current->Size;
-	SIZE_T copy=Min(size-pos, available);
-	CopyMemory(&current->Buffer[current->Size], &src[pos], copy);
+	SIZE_T copy=TypeHelper::Min(size-pos, available);
+	MemoryHelper::Copy(&current->Buffer[current->Size], &src[pos], copy);
 	current->Size+=copy;
 	pos+=copy;
 	}

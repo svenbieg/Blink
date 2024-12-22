@@ -25,11 +25,11 @@ UINT Shift;
 }BIT_FIELD;
 
 
-//======
-// Bits
-//======
+//============
+// Bit-Helper
+//============
 
-class Bits
+class BitHelper
 {
 public:
 	// Common
@@ -57,9 +57,9 @@ public:
 		{
 		return Operand&Mask;
 		}
-	static inline UINT Get(volatile UINT& Operand, BIT_FIELD const& Bits)
+	static inline UINT Get(volatile UINT& Operand, BIT_FIELD const& BitHelper)
 		{
-		return (Operand>>Bits.Shift)&Bits.Mask;
+		return (Operand>>BitHelper.Shift)&BitHelper.Mask;
 		}
 	static inline VOID Set(volatile UINT& Operand, UINT Mask)
 		{
@@ -83,25 +83,25 @@ public:
 		value|=Value;
 		Operand=value;
 		}
-	static inline VOID Set(volatile WORD& Operand, BIT_FIELD const& Bits, WORD Value)
+	static inline VOID Set(volatile WORD& Operand, BIT_FIELD const& BitHelper, WORD Value)
 		{
 		WORD value=Operand;
-		value&=~(Bits.Mask<<Bits.Shift);
-		value|=(Value<<Bits.Shift);
+		value&=~(BitHelper.Mask<<BitHelper.Shift);
+		value|=(Value<<BitHelper.Shift);
 		Operand=value;
 		}
-	static inline VOID Set(volatile UINT& Operand, BIT_FIELD const& Bits, UINT Value)
+	static inline VOID Set(volatile UINT& Operand, BIT_FIELD const& BitHelper, UINT Value)
 		{
 		UINT value=Operand;
-		value&=~(Bits.Mask<<Bits.Shift);
-		value|=(Value<<Bits.Shift);
+		value&=~(BitHelper.Mask<<BitHelper.Shift);
+		value|=(Value<<BitHelper.Shift);
 		Operand=value;
 		}
-	static inline VOID Set(volatile UINT64& Operand, BIT_FIELD const& Bits, UINT64 Value)
+	static inline VOID Set(volatile UINT64& Operand, BIT_FIELD const& BitHelper, UINT64 Value)
 		{
 		UINT64 value=Operand;
-		value&=~((UINT64)Bits.Mask<<Bits.Shift);
-		value|=(Value<<Bits.Shift);
+		value&=~((UINT64)BitHelper.Mask<<BitHelper.Shift);
+		value|=(Value<<BitHelper.Shift);
 		Operand=value;
 		}
 	static inline VOID Switch(volatile UINT& Operand, UINT Mask)

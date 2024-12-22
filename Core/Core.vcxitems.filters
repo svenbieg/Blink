@@ -127,10 +127,13 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\string.h">
       <Filter>Runtime</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\cstring">
-      <Filter>Runtime</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\MainTask.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\DispatchedHandler.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\DispatchedQueue.h">
       <Filter>Concurrency</Filter>
     </ClInclude>
   </ItemGroup>
@@ -162,6 +165,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\unwind.cpp">
       <Filter>Runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\DispatchedQueue.cpp">
+      <Filter>Concurrency</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

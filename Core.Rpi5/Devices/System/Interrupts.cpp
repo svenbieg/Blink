@@ -78,12 +78,12 @@ constexpr UINT GICC_IAR_IRQ_MASK=0x3FF;
 extern "C" VOID HandleInterrupt()noexcept
 {
 auto gicc=(GICC_REGS*)ARM_GICC_BASE;
-UINT iar=Bits::Get(gicc->IAR);
-UINT irq=Bits::Get(iar, GICC_IAR_IRQ_MASK);
+UINT iar=BitHelper::Get(gicc->IAR);
+UINT irq=BitHelper::Get(iar, GICC_IAR_IRQ_MASK);
 if(irq>=IRQ_COUNT)
 	return;
 Interrupts::HandleInterrupt(irq);
-Bits::Write(gicc->EOIR, iar);
+BitHelper::Write(gicc->EOIR, iar);
 }
 
 
@@ -104,7 +104,7 @@ assert(irq<IRQ_COUNT);
 auto gicd=(GICD_REGS*)ARM_GICD_BASE;
 UINT reg=irq/32;
 UINT mask=1<<(irq%32);
-Bits::Set(gicd->CLEAR_ENABLED[reg], mask);
+BitHelper::Set(gicd->CLEAR_ENABLED[reg], mask);
 }
 
 VOID Interrupts::Enable()noexcept
@@ -120,7 +120,7 @@ assert(irq<IRQ_COUNT);
 auto gicd=(GICD_REGS*)ARM_GICD_BASE;
 UINT reg=irq/32;
 UINT mask=1<<(irq%32);
-Bits::Set(gicd->SET_ENABLED[reg], mask);
+BitHelper::Set(gicd->SET_ENABLED[reg], mask);
 }
 
 VOID Interrupts::HandleInterrupt(UINT irq)noexcept
@@ -135,26 +135,26 @@ s_DisableCount[core]--;
 VOID Interrupts::Initialize()noexcept
 {
 auto gicd=(GICD_REGS*)ARM_GICD_BASE;
-Bits::Write(gicd->CTRL, GICD_CTRL_DISABLE);
+BitHelper::Write(gicd->CTRL, GICD_CTRL_DISABLE);
 for(UINT u=0; u<IRQ_COUNT/32; u++)
 	{
-	Bits::Write(gicd->CLEAR_ENABLED[u], 0xFFFFFFFF);
-	Bits::Write(gicd->CLEAR_PENDING[u], 0xFFFFFFFF);
-	Bits::Write(gicd->CLEAR_ACTIVE[u], 0xFFFFFFFF);
+	BitHelper::Write(gicd->CLEAR_ENABLED[u], 0xFFFFFFFF);
+	BitHelper::Write(gicd->CLEAR_PENDING[u], 0xFFFFFFFF);
+	BitHelper::Write(gicd->CLEAR_ACTIVE[u], 0xFFFFFFFF);
 	}
 for(UINT u=0; u<IRQ_COUNT/4; u++)
 	{
-	Bits::Write(gicd->PRIORITY[u], GICD_PRIORITY_DEFAULT);
-	Bits::Write(gicd->TARGET[u], GICD_TARGET_CORE0);
+	BitHelper::Write(gicd->PRIORITY[u], GICD_PRIORITY_DEFAULT);
+	BitHelper::Write(gicd->TARGET[u], GICD_TARGET_CORE0);
 	}
 for(UINT u=0; u<IRQ_COUNT/16; u++)
 	{
-	Bits::Write(gicd->CONFIG[u], GICD_CONFIG_LEVEL_TRIGGERED);
+	BitHelper::Write(gicd->CONFIG[u], GICD_CONFIG_LEVEL_TRIGGERED);
 	}
-Bits::Write(gicd->CTRL, GICD_CTRL_ENABLE_GROUP0);
+BitHelper::Write(gicd->CTRL, GICD_CTRL_ENABLE_GROUP0);
 auto gicc=(GICC_REGS*)ARM_GICC_BASE;
-Bits::Write(gicc->PMR, GICC_PMR_PRIORITY);
-Bits::Write(gicc->CTRL, GICC_CTRL_ENABLE);
+BitHelper::Write(gicc->PMR, GICC_PMR_PRIORITY);
+BitHelper::Write(gicc->CTRL, GICC_CTRL_ENABLE);
 for(UINT core=0; core<CPU_COUNT; core++)
 	s_DisableCount[core]=1;
 }
@@ -166,16 +166,16 @@ UINT reg=irq/4;
 UINT id=irq%4;
 UINT mask=0xF<<id;
 UINT value=(UINT)target<<id;
-Bits::Set(gicd->TARGET[reg], mask, value);
+BitHelper::Set(gicd->TARGET[reg], mask, value);
 }
 
 VOID Interrupts::Send(UINT irq, IrqTarget target)noexcept
 {
 auto gicd=(GICD_REGS*)ARM_GICD_BASE;
 UINT value=0;
-Bits::Set(value, GICD_SGIR_CPU_TARGET_LIST, (UINT)target);
-Bits::Set(value, irq);
-Bits::Write(gicd->SGIR, value);
+BitHelper::Set(value, GICD_SGIR_CPU_TARGET_LIST, (UINT)target);
+BitHelper::Set(value, irq);
+BitHelper::Write(gicd->SGIR, value);
 }
 
 VOID Interrupts::SetHandler(UINT irq, IRQ_HANDLER handler, VOID* param)noexcept

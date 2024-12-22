@@ -77,7 +77,7 @@ public:
 	static inline UINT Print(_char_t* Buffer, UINT Size, LPCSTR Format, _args_t... Arguments)
 		{
 		UnknownClass args[]={ Arguments... };
-		VariableArguments vargs(args, ArraySize(args));
+		VariableArguments vargs(args, TypeHelper::ArraySize(args));
 		return StringHelper::PrintArgs(Buffer, Size, Format, vargs);
 		}
 	static UINT PrintArgs(LPSTR Buffer, UINT Size, LPCSTR Format, VariableArguments const& Arguments);
@@ -98,7 +98,7 @@ public:
 	static inline UINT Scan(_char_t const* String, LPCSTR Format, _args_t... Arguments)
 		{
 		UnknownClass args[]={ Arguments... };
-		VariableArguments vargs(args, ArraySize(args));
+		VariableArguments vargs(args, TypeHelper::ArraySize(args));
 		return StringHelper::ScanArgs(String, Format, vargs);
 		}
 	static UINT ScanArgs(LPCSTR String, LPCSTR Format, VariableArguments& Arguments);

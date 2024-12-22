@@ -46,9 +46,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\stddef.h">
       <Filter>Runtime</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)BitHelper.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)AsmHelper.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)MemoryHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">

@@ -9,7 +9,7 @@
 // Namespace
 //===========
 
-namespace Core {
+namespace Firmware {
 
 
 //=============
@@ -21,13 +21,15 @@ class Application: public Object
 public:
 	// Common
 	static Application* Current;
-	LPCSTR Name;
-	virtual INT Run();
-	virtual VOID Quit();
+	INT Run();
+	VOID Quit();
 
 protected:
 	// Con-/Destructors
 	Application(LPCSTR Name);
+
+	// Common
+	Handle<String> m_Name;
 };
 
 }

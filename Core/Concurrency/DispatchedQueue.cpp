@@ -39,7 +39,7 @@ s_Last=handler;
 s_Signal.Trigger();
 }
 
-VOID DispatchedQueue::Begin()
+VOID DispatchedQueue::Enter()
 {
 s_Waiting=true;
 while(Wait())
@@ -51,6 +51,11 @@ VOID DispatchedQueue::Exit()
 s_Waiting=false;
 s_Signal.Cancel();
 }
+
+
+//================
+// Common Private
+//================
 
 VOID DispatchedQueue::Run()
 {
@@ -78,11 +83,6 @@ if(!s_Waiting)
 	return false;
 return s_Signal.WaitInternal();
 }
-
-
-//================
-// Common Private
-//================
 
 DispatchedHandler* DispatchedQueue::s_First=nullptr;
 DispatchedHandler* DispatchedQueue::s_Last=nullptr;

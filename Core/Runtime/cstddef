@@ -5,13 +5,6 @@
 #pragma once
 
 
-//========
-// Macros
-//========
-
-#define offsetof(type, member) __builtin_offsetof(type, member)
-
-
 //===========
 // Namespace
 //===========

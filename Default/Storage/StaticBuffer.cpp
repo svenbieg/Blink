@@ -48,9 +48,9 @@ if(m_Size>m_Position)
 	available=m_Size-m_Position;
 SIZE_T copy=size;
 if(available)
-	copy=Min(size, available);
+	copy=TypeHelper::Min(size, available);
 if(buf)
-	CopyMemory(buf, &m_Buffer[m_Position], copy);
+	MemoryHelper::Copy(buf, &m_Buffer[m_Position], copy);
 m_Position+=copy;
 return copy;
 }
@@ -67,8 +67,8 @@ if(m_Size>m_Position)
 	available=m_Size-m_Position;
 SIZE_T copy=size;
 if(available)
-	copy=Min(size, available);
-CopyMemory(&m_Buffer[m_Position], buf, copy);
+	copy=TypeHelper::Min(size, available);
+MemoryHelper::Copy(&m_Buffer[m_Position], buf, copy);
 m_Position+=copy;
 return copy;
 }
@@ -103,27 +103,10 @@ if(size==0)
 	size=available;
 SIZE_T copy=size;
 if(available)
-	copy=Min(size, available);
+	copy=TypeHelper::Min(size, available);
 if(!copy)
 	return 0;
-FillMemory(&m_Buffer[m_Position], copy, value);
-m_Position+=copy;
-return copy;
-}
-
-SIZE_T StaticBuffer::Zero(SIZE_T size)
-{
-SIZE_T available=0;
-if(m_Size>m_Position)
-	available=m_Size-m_Position;
-if(size==0)
-	size=available;
-SIZE_T copy=size;
-if(available)
-	copy=Min(size, available);
-if(!copy)
-	return 0;
-ZeroMemory(&m_Buffer[m_Position], copy);
+MemoryHelper::Fill(&m_Buffer[m_Position], copy, value);
 m_Position+=copy;
 return copy;
 }

@@ -151,7 +151,7 @@ return g_SerialPort[id];
 BOOL SerialPort::Poll()
 {
 auto uart=(PL011_REGS*)m_Address;
-return Bits::Get(uart->FLAGS, FLAG_RX_EMPTY)==0;
+return BitHelper::Get(uart->FLAGS, FLAG_RX_EMPTY)==0;
 }
 
 
@@ -162,7 +162,7 @@ return Bits::Get(uart->FLAGS, FLAG_RX_EMPTY)==0;
 SIZE_T SerialPort::Available()
 {
 auto uart=(PL011_REGS*)m_Address;
-if(Bits::Get(uart->FLAGS, FLAG_RX_EMPTY))
+if(BitHelper::Get(uart->FLAGS, FLAG_RX_EMPTY))
 	return 0;
 return 1;
 }
@@ -184,7 +184,7 @@ VOID SerialPort::Flush()
 {
 auto uart=(PL011_REGS*)m_Address;
 UINT64 timeout=SystemTimer::GetTickCount64()+UART_TIMEOUT;
-while(Bits::Get(uart->FLAGS, FLAG_BUSY))
+while(BitHelper::Get(uart->FLAGS, FLAG_BUSY))
 	{
 	if(SystemTimer::GetTickCount64()>timeout)
 		throw TimeoutException();
@@ -217,23 +217,23 @@ if(UArtInfo[id].RX_PIN)
 	Gpio::SetPinMode(UArtInfo[id].RX_PIN, UArtInfo[id].RX_ALT, PullMode::PullUp);
 	}
 auto uart=(PL011_REGS*)UArtInfo[id].BASE;
-Bits::Clear(uart->CTRL, CTRL_ENABLE);
+BitHelper::Clear(uart->CTRL, CTRL_ENABLE);
 UINT timeout=SystemTimer::GetTickCount64()+UART_TIMEOUT;
-while(Bits::Get(uart->FLAGS, FLAG_BUSY))
+while(BitHelper::Get(uart->FLAGS, FLAG_BUSY))
 	{
 	if(SystemTimer::GetTickCount64()>timeout)
 		throw DeviceNotReadyException();
 	}
-Bits::Clear(uart->LCRH, LCRH_FIFO_ENABLE);
+BitHelper::Clear(uart->LCRH, LCRH_FIFO_ENABLE);
 UINT clock=UART_CLOCK_RP1;
 if(id==10)
 	clock=UART_CLOCK_ARM;
-Bits::Write(uart->IMSC, 0);
-Bits::Write(uart->ICR, 0x7FF);
-Bits::Write(uart->IBRD, BaudInt(clock, (UINT)baud));
-Bits::Write(uart->FBRD, BaudFrac(clock, (UINT)baud));
-Bits::Write(uart->LCRH, LCRH_WORD_LEN_8|LCRH_FIFO_ENABLE);
-Bits::Set(uart->CTRL, CTRL_RX_ENABLE|CTRL_TX_ENABLE|CTRL_ENABLE);
+BitHelper::Write(uart->IMSC, 0);
+BitHelper::Write(uart->ICR, 0x7FF);
+BitHelper::Write(uart->IBRD, BaudInt(clock, (UINT)baud));
+BitHelper::Write(uart->FBRD, BaudFrac(clock, (UINT)baud));
+BitHelper::Write(uart->LCRH, LCRH_WORD_LEN_8|LCRH_FIFO_ENABLE);
+BitHelper::Set(uart->CTRL, CTRL_RX_ENABLE|CTRL_TX_ENABLE|CTRL_ENABLE);
 }
 
 
@@ -245,24 +245,24 @@ BYTE SerialPort::Read()
 {
 auto uart=(PL011_REGS*)m_Address;
 UINT64 timeout=SystemTimer::GetTickCount64()+UART_TIMEOUT;
-while(Bits::Get(uart->FLAGS, FLAG_RX_EMPTY))
+while(BitHelper::Get(uart->FLAGS, FLAG_RX_EMPTY))
 	{
 	if(SystemTimer::GetTickCount64()>timeout)
 		throw TimeoutException();
 	}
-return (BYTE)Bits::Get(uart->DATA);
+return (BYTE)BitHelper::Get(uart->DATA);
 }
 
 VOID SerialPort::Write(BYTE value)
 {
 auto uart=(PL011_REGS*)m_Address;
 UINT64 timeout=SystemTimer::GetTickCount64()+UART_TIMEOUT;
-while(Bits::Get(uart->FLAGS, FLAG_TX_FULL))
+while(BitHelper::Get(uart->FLAGS, FLAG_TX_FULL))
 	{
 	if(SystemTimer::GetTickCount64()>timeout)
 		throw TimeoutException();
 	}
-Bits::Write(uart->DATA, value);
+BitHelper::Write(uart->DATA, value);
 }
 
 }}

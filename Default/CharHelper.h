@@ -116,6 +116,10 @@ public:
 	static CHAR ToAnsi(WCHAR Char);
 	static CHAR ToCapital(CHAR Char);
 	static WCHAR ToCapital(WCHAR Char);
+	static CHAR ToCapitalAnsi(CHAR Char);
+	static CHAR ToCapitalAnsi(WCHAR Char);
+	static WCHAR ToCapitalUnicode(CHAR Char);
+	static WCHAR ToCapitalUnicode(WCHAR Char);
 	#ifdef _UNICODE
 	static inline TCHAR ToChar(CHAR Char) { return ToUnicode(Char); }
 	static inline TCHAR ToChar(WCHAR Char) { return Char; }

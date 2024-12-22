@@ -7,6 +7,7 @@
     <CompilerFlags>$(CompilerFlags) -fdata-sections -ffunction-sections</CompilerFlags>
     <CompilerFlags>$(CompilerFlags) -fno-builtin -funwind-tables -nostartfiles</CompilerFlags>
     <!--<CompilerFlags>$(CompilerFlags) -fexec-charset=ISO-8859-1</CompilerFlags>-->
+    <!--<CompilerFlags>$(CompilerFlags) -finput-charset=ISO-8859-1</CompilerFlags>-->
     <CompilerFlags>$(CompilerFlags) -nostdinc</CompilerFlags>
     <CompilerFlagsCpp>$(CompilerFlagsCpp) -nostdinc++</CompilerFlagsCpp>
     <CompilerFlagsCpp>$(CompilerFlagsCpp) -std=c++17</CompilerFlagsCpp>

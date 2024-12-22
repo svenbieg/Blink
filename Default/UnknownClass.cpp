@@ -11,7 +11,7 @@
 
 UnknownClass::UnknownClass(UnknownClass const& value): m_BaseInfo(value.m_BaseInfo)
 {
-CopyMemory(m_Buffer, value.m_Buffer, 8);
+MemoryHelper::Copy(m_Buffer, value.m_Buffer, 8);
 }
 
 UnknownClass::UnknownClass(INT value):

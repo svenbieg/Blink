@@ -92,7 +92,7 @@ public:
 	// Modification
 	virtual VOID Clear()
 		{
-		ZeroMemory(m_Items, m_Count*sizeof(_item_t));
+		MemoryHelper::Fill(m_Items, m_Count*sizeof(_item_t));
 		}
 	virtual VOID Fill(_item_t const& Item)
 		{
