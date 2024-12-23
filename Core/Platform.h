@@ -18,4 +18,3 @@
 //========
 
 #include "Concurrency/Scheduler.h"
-#include "TypeInfo.h"

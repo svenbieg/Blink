@@ -2,21 +2,21 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <!--<AdditionalLinkerFlags>$(AdditionalLinkerFlags) -lgcc -lm -lstdc++</AdditionalLinkerFlags>-->
+    <AdditionalLinkerFlags>$(AdditionalLinkerFlags) -lgcc -lm -lstdc++</AdditionalLinkerFlags>
     <CompilerFlags Condition="'$(Configuration)'=='Debug'">$(CompilerFlags) -g</CompilerFlags>
     <CompilerFlags>$(CompilerFlags) -fdata-sections -ffunction-sections</CompilerFlags>
     <CompilerFlags>$(CompilerFlags) -fno-builtin -funwind-tables -nostartfiles</CompilerFlags>
     <!--<CompilerFlags>$(CompilerFlags) -fexec-charset=ISO-8859-1</CompilerFlags>-->
     <!--<CompilerFlags>$(CompilerFlags) -finput-charset=ISO-8859-1</CompilerFlags>-->
-    <CompilerFlags>$(CompilerFlags) -nostdinc</CompilerFlags>
-    <CompilerFlagsCpp>$(CompilerFlagsCpp) -nostdinc++</CompilerFlagsCpp>
+    <!--<CompilerFlags>$(CompilerFlags) -nostdinc</CompilerFlags>-->
+    <!--<CompilerFlagsCpp>$(CompilerFlagsCpp) -nostdinc++</CompilerFlagsCpp>-->
     <CompilerFlagsCpp>$(CompilerFlagsCpp) -std=c++17</CompilerFlagsCpp>
     <CompilerFlagsCpp>$(CompilerFlagsCpp) -Wno-multichar</CompilerFlagsCpp>
-    <!--<LibPath>$(CompilerPath)lib\gcc\$(CompilerName)\$(CompilerVersion)\</LibPath>-->
+    <LibPath>$(CompilerPath)lib\gcc\$(CompilerName)\$(CompilerVersion)\</LibPath>
     <LinkerFlags>$(LinkerFlags) --eh-frame-hdr</LinkerFlags>
     <LinkerFlags>$(LinkerFlags) --gc-sections</LinkerFlags>
-    <LinkerFlags>$(LinkerFlags) -nostdlib</LinkerFlags>
-    <!--<LinkerFlags Condition="'$(LibPath)'!=''">$(LinkerFlags) -L$(LibPath)</LinkerFlags>-->
+    <!--<LinkerFlags>$(LinkerFlags) -nostdlib</LinkerFlags>-->
+    <LinkerFlags Condition="'$(LibPath)'!=''">$(LinkerFlags) -L$(LibPath)</LinkerFlags>
     <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(SolutionDir);$(ProjectDir)</NMakeIncludeSearchPath>
     <NMakePreprocessorDefinitions Condition="'$(Configuration)'=='Debug'">$(NMakePreprocessorDefinitions);_DEBUG</NMakePreprocessorDefinitions>
   </PropertyGroup>

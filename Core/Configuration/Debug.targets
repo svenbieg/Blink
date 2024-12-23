@@ -3,14 +3,7 @@
 
   <Target Name="OpenOcdSetup" DependsOnTargets="InstallOpenOcd">
     <MakeDir Directories="$(SolutionDir)\.vscode" />
-    <ItemGroup>
-      <OpenOcdLines Include="source [find interface/cmsis-dap.cfg]" />
-      <OpenOcdLines Include="source [find target/rp2040.cfg]" Condition="'$(Platform)'=='Pico'" />
-      <OpenOcdLines Include="source [find target/bcm2712.cfg]" Condition="'$(Platform)'=='Rpi5'" />
-      <OpenOcdLines Include="init" />
-      <OpenOcdLines Include="reset halt" />
-    </ItemGroup>
-    <WriteLinesToFile File="$(SolutionDir)\.vscode\openocd.cfg" Lines="@(OpenOcdLines)" Overwrite="true" />
+    <Copy SourceFiles="$(SolutionDir)Core.$(Platform)\Configuration\Debugger.cfg" DestinationFiles="$(SolutionDir)\.vscode\openocd.cfg" />
   </Target>
 
   <Target Name="VsCodeSetup" DependsOnTargets="OpenOcdSetup;NinjaSetup">

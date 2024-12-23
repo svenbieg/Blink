@@ -40,24 +40,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\Task.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskLock.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\assert.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\cmath" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\condition_variable" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\cstddef" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\cxxabi.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\heap.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\mutex" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\new" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\shared_mutex" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\stdbool.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\stdexcept" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\stdint.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\stdlib.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\string.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\type_traits" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\unwind.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\utility" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)TypeInfo.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\CriticalSection.cpp" />
@@ -66,11 +53,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Scheduler.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Signal.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Task.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\cxxabi.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\heap.c" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\stdlib.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\unwind.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)TypeInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="$(MSBuildThisFileDirectory)Configuration\PropertySheets\General.xaml" />

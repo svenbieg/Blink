@@ -65,8 +65,8 @@
         <Dependency>$out.d</Dependency>
       </NinjaRules>
       <NinjaRules Include=".elf" Condition="'$(NinjaLink)'!=''">
-        <!--<Command Condition="'$(LibPath)'!=''">$(CompilerPrefix)ld -o $out $FLAGS_LD $SCRIPTS $CRTBEGIN $in -.-start-group $LIBS -.-end-group $CRTEND</Command>-->
-        <Command Condition="'$(LibPath)'!=''">$(CompilerPrefix)ld -o $out $FLAGS_LD $SCRIPTS $in</Command>
+        <Command Condition="'$(LibPath)'!=''">$(CompilerPrefix)ld -o $out $FLAGS_LD $SCRIPTS $CRTBEGIN $in --start-group $LIBS --end-group $CRTEND</Command>
+        <!--<Command Condition="'$(LibPath)'!=''">$(CompilerPrefix)ld -o $out $FLAGS_LD $SCRIPTS $in</Command>-->
         <Command Condition="'$(LibPath)'==''">$(CompilerPrefix)ld -o $out $FLAGS_LD $SCRIPTS $in</Command>
       </NinjaRules>
       <NinjaRules Include=".elf.txt" Condition="'$(NinjaHeaders)'!=''">

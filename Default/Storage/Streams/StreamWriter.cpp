@@ -115,7 +115,7 @@ while(str[pos])
 			INT64 i=0;
 			if(!args.GetAt(arg++, i))
 				return written;
-			written+=PrintInt64(i, flags, width);
+			written+=PrintInt(i, flags, width);
 			continue;
 			}
 		case Format::UInt:
@@ -123,7 +123,7 @@ while(str[pos])
 			UINT64 u=0;
 			if(!args.GetAt(arg++, u))
 				return written;
-			written+=PrintUInt64(u, flags, width);
+			written+=PrintUInt(u, flags, width);
 			continue;
 			}
 		case Format::Hex:
@@ -214,7 +214,7 @@ StringHelper::PrintHex(buf, 32, value, flags, width);
 return DoPrint(m_WriteAnsi, 0, buf);
 }
 
-UINT StreamWriter::PrintHex64(UINT64 value, FormatFlags flags, UINT width)
+UINT StreamWriter::PrintHex(UINT64 value, FormatFlags flags, UINT width)
 {
 CHAR buf[64];
 StringHelper::PrintHex(buf, 64, value, flags, width);
@@ -228,7 +228,7 @@ StringHelper::PrintInt(buf, 32, value, flags, width);
 return DoPrint(m_WriteAnsi, 0, buf);
 }
 
-UINT StreamWriter::PrintInt64(INT64 value, FormatFlags flags, UINT width)
+UINT StreamWriter::PrintInt(INT64 value, FormatFlags flags, UINT width)
 {
 CHAR buf[64];
 StringHelper::PrintInt(buf, 64, value, flags, width);
@@ -242,7 +242,7 @@ StringHelper::PrintUInt(buf, 32, value, flags, width);
 return DoPrint(m_WriteAnsi, 0, buf);
 }
 
-UINT StreamWriter::PrintUInt64(UINT64 value, FormatFlags flags, UINT width)
+UINT StreamWriter::PrintUInt(UINT64 value, FormatFlags flags, UINT width)
 {
 CHAR buf[64];
 StringHelper::PrintUInt(buf, 64, value, flags, width);

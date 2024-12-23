@@ -56,11 +56,11 @@ public:
 	UINT PrintDouble(DOUBLE Value, FormatFlags Flags=FormatFlags::None, UINT Width=0, UINT Precision=0);
 	UINT PrintFloat(FLOAT Value, FormatFlags Flags=FormatFlags::None, UINT Width=0, UINT Precision=0);
 	UINT PrintHex(UINT Value, FormatFlags Flags=FormatFlags::None, UINT Width=0);
-	UINT PrintHex64(UINT64 Value, FormatFlags Flags=FormatFlags::None, UINT Width=0);
+	UINT PrintHex(UINT64 Value, FormatFlags Flags=FormatFlags::None, UINT Width=0);
 	UINT PrintInt(INT Value, FormatFlags Flags=FormatFlags::None, UINT Width=0);
-	UINT PrintInt64(INT64 Value, FormatFlags Flags=FormatFlags::None, UINT Width=0);
+	UINT PrintInt(INT64 Value, FormatFlags Flags=FormatFlags::None, UINT Width=0);
 	UINT PrintUInt(UINT Value, FormatFlags Flags=FormatFlags::None, UINT Width=0);
-	UINT PrintUInt64(UINT64 Value, FormatFlags Flags=FormatFlags::None, UINT Width=0);
+	UINT PrintUInt(UINT64 Value, FormatFlags Flags=FormatFlags::None, UINT Width=0);
 	VOID SetStream(OutputStream* Stream);
 
 private:

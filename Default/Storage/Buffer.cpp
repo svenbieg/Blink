@@ -29,21 +29,33 @@ m_Position(0),
 m_Size(size)
 {}
 
-Buffer::Buffer(VOID const* buf, SIZE_T size):
-m_Buffer(new BYTE[size]),
+Buffer::Buffer(VOID const* buf, SIZE_T size, BufferOptions options):
+m_Buffer(nullptr),
+m_Options(options),
 m_Position(0),
 m_Size(size)
 {
-MemoryHelper::Copy(m_Buffer, buf, size);
+assert(size!=0);
+switch(options)
+	{
+	case BufferOptions::Static:
+		{
+		m_Buffer=(BYTE*)buf;
+		break;
+		}
+	default:
+		{
+		m_Buffer=new BYTE[size];
+		MemoryHelper::Copy(m_Buffer, buf, size);
+		break;
+		}
+	}
 }
 
 Buffer::~Buffer()
 {
-if(m_Buffer)
-	{
+if(m_Options!=BufferOptions::Static)
 	delete m_Buffer;
-	m_Buffer=nullptr;
-	}
 }
 
 
@@ -70,10 +82,6 @@ return copy;
 //===============
 // Output-Stream
 //===============
-
-VOID Buffer::Flush()
-{
-}
 
 SIZE_T Buffer::Write(VOID const* buf, SIZE_T size)
 {
@@ -108,18 +116,7 @@ SIZE_T available=m_Size-m_Position;
 if(size==0)
 	size=available;
 SIZE_T copy=TypeHelper::Min(size, available);
-MemoryHelper::MemoryHelper::Fill(&m_Buffer[m_Position], copy, value);
-m_Position+=copy;
-return copy;
-}
-
-SIZE_T Buffer::Zero(SIZE_T size)
-{
-SIZE_T available=m_Size-m_Position;
-if(size==0)
-	size=available;
-SIZE_T copy=TypeHelper::Min(size, available);
-MemoryHelper::Fill(&m_Buffer[m_Position], copy, 0);
+MemoryHelper::Fill(&m_Buffer[m_Position], copy, value);
 m_Position+=copy;
 return copy;
 }

@@ -15,15 +15,15 @@
     <Exec Command="winget install --id Git.Git -e --source winget" />
   </Target>
 
-  <Target Name="DownloadOpenOcd" Condition="!Exists('$(TEMP)\openocd-v0.12.0-i686-w64-mingw32.tar.gz')">
+  <Target Name="DownloadOpenOcd" Condition="!Exists('$(TEMP)\openocd-cd9e64a25-i686-w64-mingw32.tar.gz')">
     <Message Text="Downloading OpenOCD..." Importance="High" />
-    <DownloadFile SourceUrl="https://github.com/openocd-org/openocd/releases/download/v0.12.0/openocd-v0.12.0-i686-w64-mingw32.tar.gz" DestinationFolder="$(TEMP)" />
+    <DownloadFile SourceUrl="https://github.com/openocd-org/openocd/releases/download/latest/openocd-cd9e64a25-i686-w64-mingw32.tar.gz" DestinationFolder="$(TEMP)" />
   </Target>
 
   <Target Name="InstallOpenOcd" Condition="!Exists('$(OpenOcdExe)')" DependsOnTargets="DownloadOpenOcd">
     <Message Text="Installing OpenOCD..." Importance="High" />
     <MakeDir Directories="$(OpenOcdPath)" />
-    <Exec Command="tar -x -f $(TEMP)\openocd-v0.12.0-i686-w64-mingw32.tar.gz" WorkingDirectory="$(OpenOcdPath)" />
+    <Exec Command="tar -x -f $(TEMP)\openocd-cd9e64a25-i686-w64-mingw32.tar.gz" WorkingDirectory="$(OpenOcdPath)" />
   </Target>
 
   <Target Name="InstallPython" Condition="!Exists('$(PythonExe)')">

@@ -43,9 +43,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Memory.h">
       <Filter>Devices\System</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\stddef.h">
-      <Filter>Runtime</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">
@@ -69,9 +66,6 @@
     <Filter Include="Devices\System">
       <UniqueIdentifier>{18aeb9f7-bb20-4dd2-b627-eb5e5216577f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Runtime">
-      <UniqueIdentifier>{09a5aa6d-9ce5-42f3-a4c5-bbf41cd19308}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props">
@@ -87,6 +81,9 @@
       <Filter>Configuration</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Default.props">
+      <Filter>Configuration</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Debugger.cfg">
       <Filter>Configuration</Filter>
     </None>
   </ItemGroup>

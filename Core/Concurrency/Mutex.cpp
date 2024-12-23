@@ -130,8 +130,7 @@ VOID Mutex::Unlock()
 {
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
-auto current=Scheduler::s_CurrentTask[core];
-assert(m_Owner==current);
+assert(m_Owner==Scheduler::s_CurrentTask[core]);
 if(!m_Owner->m_Waiting)
 	{
 	m_Owner=nullptr;
@@ -148,8 +147,7 @@ SpinLock lock(Scheduler::s_CriticalSection);
 if(!m_Owner)
 	return;
 UINT core=Cpu::GetId();
-auto current=Scheduler::s_CurrentTask[core];
-assert(m_Owner==current);
+assert(m_Owner==Scheduler::s_CurrentTask[core]);
 if(--m_Owner->m_BlockingCount==0)
 	m_Owner->ClearFlag(TaskFlags::Blocking);
 if(!m_Owner->m_Waiting)

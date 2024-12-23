@@ -21,10 +21,15 @@ namespace Storage {
 	namespace Streams {
 
 
-//========
-// Common
-//========
+//===============
+// Stream-Helper
+//===============
 
-SIZE_T StreamCopy(OutputStream* Destination, InputStream* Source, SIZE_T Size=0);
+class StreamHelper
+{
+public:
+	// Common
+	static SIZE_T Copy(OutputStream* Destination, InputStream* Source, SIZE_T Size=0);
+};
 
 }}

@@ -19,6 +19,17 @@
 namespace Storage {
 
 
+//=========
+// Options
+//=========
+
+enum class BufferOptions
+{
+None=0,
+Static=1
+};
+
+
 //========
 // Buffer
 //========
@@ -28,7 +39,7 @@ class Buffer: public Seekable
 public:
 	// Con-/Destructors
 	Buffer(SIZE_T Size);
-	Buffer(VOID const* Buffer, SIZE_T Size);
+	Buffer(VOID const* Buffer, SIZE_T Size, BufferOptions Options=BufferOptions::None);
 	~Buffer();
 
 	// Input-Stream
@@ -36,7 +47,7 @@ public:
 	SIZE_T Read(VOID* Buffer, SIZE_T Size)override;
 
 	// Output-Stream
-	VOID Flush()override;
+	inline VOID Flush()override {}
 	SIZE_T Write(VOID const* Buffer, SIZE_T Size)override;
 
 	// Seekable
@@ -48,11 +59,11 @@ public:
 
 	// Modification
 	SIZE_T Fill(UINT Value, SIZE_T Size=0);
-	SIZE_T Zero(SIZE_T Size=0);
 
 private:
 	// Common
 	BYTE* m_Buffer;
+	BufferOptions m_Options;
 	SIZE_T m_Position;
 	SIZE_T m_Size;
 };

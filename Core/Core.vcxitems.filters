@@ -90,43 +90,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\heap.h">
       <Filter>Runtime</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\assert.h">
-      <Filter>Runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)TypeInfo.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\cmath">
-      <Filter>Runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\cxxabi.h">
-      <Filter>Runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\new">
-      <Filter>Runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\type_traits">
-      <Filter>Runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\unwind.h">
-      <Filter>Runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\utility">
-      <Filter>Runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\stdbool.h">
-      <Filter>Runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\stdint.h">
-      <Filter>Runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\cstddef">
-      <Filter>Runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\stdlib.h">
-      <Filter>Runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\string.h">
-      <Filter>Runtime</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\MainTask.h">
       <Filter>Concurrency</Filter>
     </ClInclude>
@@ -157,13 +120,6 @@
       <Filter>Runtime</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\heap.c">
-      <Filter>Runtime</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)TypeInfo.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\cxxabi.cpp">
-      <Filter>Runtime</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\unwind.cpp">
       <Filter>Runtime</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\DispatchedQueue.cpp">

@@ -10,13 +10,11 @@
 //=======
 
 #include <heap.h>
-#include "Devices/Arm/MailBox.h"
 #include "Devices/System/Cpu.h"
 #include "BitHelper.h"
 #include "Memory.h"
 #include "Settings.h"
 
-using namespace Devices::Arm;
 using namespace Devices::System;
 
 extern BYTE __bss_start;
@@ -119,12 +117,10 @@ SIZE_T bss_end=(SIZE_T)&__bss_end;
 SIZE_T bss_size=bss_end-bss_start;
 MemoryHelper::Fill(&__bss_start, bss_size, 0);
 SIZE_T heap_start=(SIZE_T)&__heap_start;
-SIZE_T heap_end=UNCACHED_BASE;
+SIZE_T heap_end=RAM_SIZE;
 SIZE_T heap_size=heap_end-heap_start;
 g_heap=heap_create(heap_start, heap_size);
-ARM_MEMORY info;
-MailBox::GetArmMemory(&info);
-heap_reserve(g_heap, info.Size, HIGH_MEM_BASE-info.Size);
+heap_reserve(g_heap, LOW_IO_BASE, HIGH_MEM_BASE-LOW_IO_BASE);
 for(CTOR_PTR* ctor=&__init_array_start; ctor!=&__init_array_end; ctor++)
 	(*ctor)();
 }

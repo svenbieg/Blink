@@ -35,7 +35,10 @@ public:
 	inline ~SharedLock()override
 		{
 		if(m_Mutex)
+			{
 			m_Mutex->UnlockShared();
+			m_Mutex=nullptr; // Compiler-bug: ~ScopedLock() is overridden but called
+			}
 		}
 
 	// Common

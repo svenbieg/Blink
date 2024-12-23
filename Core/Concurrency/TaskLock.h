@@ -35,7 +35,10 @@ public:
 	inline ~TaskLock()override
 		{
 		if(m_Mutex)
+			{
 			m_Mutex->UnlockBlocking();
+			m_Mutex=nullptr; // Compiler-bug: ~ScopedLock() is overridden but called
+			}
 		}
 
 	// Common

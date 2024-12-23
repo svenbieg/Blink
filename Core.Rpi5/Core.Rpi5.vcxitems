@@ -17,6 +17,7 @@
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Default.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props" />
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Debugger.cfg" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Platform.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.targets" />
@@ -37,7 +38,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\stddef.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Settings.h" />
   </ItemGroup>
   <ItemGroup>
