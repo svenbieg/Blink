@@ -1,7 +1,7 @@
 <h1>Blink</h1>
 
 <p>
-This is a bare metal C++ Blink example for Raspberry Pi 5 with a new <a href="https://github.com/svenbieg/Default">standard-library</a>.<br />
+This is a bare metal C++ Blink-example for Raspberry Pi 5 with a new <a href="https://github.com/svenbieg/Default">standard-library</a>.<br />
 The <a href="https://github.com/svenbieg/Scheduler">scheduler</a> provides dynamic prioritization, while the
 <a href="https://github.com/svenbieg/Heap">memory-manager</a><br />
 supports allocation in constant low time.<br />
