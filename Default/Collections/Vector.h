@@ -46,22 +46,13 @@ public:
 	friend Iterator;
 
 	// Con-/Destructors
-	Vector(_size_t Count): m_Count(Count), m_Items(nullptr)
-		{
-		if(m_Count>0)
-			m_Items=new _item_t[m_Count];
-		}
-	Vector(Handle<Vector> Vector): m_Count(Vector->GetCount())
-		{
-		m_Items=operator new(m_Count*sizeof(_item_t));
-		for(_size_t u=0; u<m_Count; u++)
-			new (&m_Items[u]) _item_t(Vector->GetAt(u));
-		}
 	~Vector()
 		{
 		if(m_Items)
 			delete [] m_Items;
 		}
+	static inline Handle<Vector> Create(_size_t Count) { return new Vector(Count); }
+	static inline Handle<Vector> Create(Handle<Vector> const& Copy) { return new Vector(Copy); }
 
 	// Access
 	inline _item_t* Begin() { return m_Items; }
@@ -92,7 +83,7 @@ public:
 	// Modification
 	virtual VOID Clear()
 		{
-		MemoryHelper::Fill(m_Items, m_Count*sizeof(_item_t));
+		MemoryHelper::Fill(m_Items, m_Count*sizeof(_item_t), 0);
 		}
 	virtual VOID Fill(_item_t const& Item)
 		{
@@ -115,6 +106,20 @@ protected:
 	// Common
 	_size_t m_Count;
 	_item_t* m_Items;
+
+private:
+	// Con-/Destructors
+	Vector(_size_t Count): m_Count(Count), m_Items(nullptr)
+		{
+		if(m_Count>0)
+			m_Items=new _item_t[m_Count];
+		}
+	Vector(Handle<Vector> const& Copy): m_Count(Copy->GetCount())
+		{
+		m_Items=operator new(m_Count*sizeof(_item_t));
+		for(_size_t u=0; u<m_Count; u++)
+			new (&m_Items[u]) _item_t(Copy->GetAt(u));
+		}
 };
 
 

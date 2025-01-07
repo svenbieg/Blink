@@ -21,15 +21,6 @@ namespace Storage {
 	namespace Virtual {
 
 
-//==================
-// Con-/Destructors
-//==================
-
-Directory::Directory(Handle<String> path):
-Storage::Directory(path)
-{}
-
-
 //========
 // Common
 //========
@@ -77,14 +68,14 @@ if(m_Map.clear())
 // Storage.Directory
 //===================
 
+Handle<Storage::DirectoryIterator> Directory::Begin()
+{
+return new DirectoryIterator(this);
+}
+
 Handle<Storage::File> Directory::CreateFile(Handle<String> path, FileCreateMode create, FileAccessMode access, FileShareMode share)
 {
 return nullptr;
-}
-
-Handle<Storage::DirectoryIterator> Directory::First()
-{
-return new DirectoryIterator(this);
 }
 
 Handle<Object> Directory::Get(Handle<String> path)
@@ -98,7 +89,7 @@ while(PathHelper::IsSeparator(path_ptr[pos]))
 UINT uclen=PathHelper::GetComponentLength(&path_ptr[pos]);
 if(!uclen)
 	return this;
-Handle<String> name=new String(uclen, &path_ptr[pos]);
+auto name=String::Create(uclen, &path_ptr[pos]);
 pos+=uclen;
 auto obj=m_Map.get(name);
 if(!obj)
@@ -112,9 +103,18 @@ return nullptr;
 }
 
 
-//===========================
-// Iterator Con-/Destructors
-//===========================
+//==========================
+// Con-/Destructors Private
+//==========================
+
+Directory::Directory(Handle<String> path):
+Storage::Directory(path)
+{}
+
+
+//==========
+// Iterator
+//==========
 
 DirectoryIterator::DirectoryIterator(Handle<Directory> dir):
 m_Directory(dir),

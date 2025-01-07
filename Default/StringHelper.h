@@ -50,12 +50,19 @@ public:
 	static UINT Append(LPSTR Destination, UINT Size, LPCSTR String, LPCSTR Append);
 	static INT Compare(LPCSTR Value1, LPCSTR Value2, UINT Length=0, BOOL CaseSensitive=true);
 	static INT Compare(LPCSTR Value1, LPCWSTR Value2, UINT Length=0, BOOL CaseSensitive=true);
+	static INT Compare(LPCSTR Value1, Handle<String> const& Value2, UINT Length=0, BOOL CaseSensitive=true);
 	static INT Compare(LPCWSTR Value1, LPCSTR Value2, UINT Length=0, BOOL CaseSensitive=true);
 	static INT Compare(LPCWSTR Value1, LPCWSTR Value2, UINT Length=0, BOOL CaseSensitive=true);
+	static INT Compare(LPCWSTR Value1, Handle<String> const& Value2, UINT Length=0, BOOL CaseSensitive=true);
+	static INT Compare(Handle<String> const& Value1, LPCSTR Value2, UINT Length=0, BOOL CaseSensitive=true);
+	static INT Compare(Handle<String> const& Value1, LPCWSTR Value2, UINT Length=0, BOOL CaseSensitive=true);
+	static INT Compare(Handle<String> const& Value1, Handle<String> const& Value2, UINT Length=0, BOOL CaseSensitive=true);
 	static UINT Copy(LPSTR Destination, UINT Size, LPCSTR Source, UINT Length=0);
 	static UINT Copy(LPSTR Destination, UINT Size, LPCWSTR Source, UINT Length=0);
+	static UINT Copy(LPSTR Destination, UINT Size, Handle<String> const& Source, UINT Length=0);
 	static UINT Copy(LPWSTR Destination, UINT Size, LPCSTR Source, UINT Length=0);
 	static UINT Copy(LPWSTR Destination, UINT Size, LPCWSTR Source, UINT Length=0);
+	static UINT Copy(LPWSTR Destination, UINT Size, Handle<String> const& Source, UINT Length=0);
 	static BOOL Find(LPCSTR String, LPCSTR Find, UINT* Position=nullptr, BOOL CaseSensitive=true);
 	static BOOL Find(LPCSTR String, LPCWSTR Find, UINT* Position=nullptr, BOOL CaseSensitive=true);
 	static BOOL Find(LPCWSTR String, LPCSTR Find, UINT* Position=nullptr, BOOL CaseSensitive=true);
@@ -72,13 +79,19 @@ public:
 	static UINT Length(LPCWSTR String);
 	static UINT Length(LPCSTR String, UINT Max);
 	static UINT Length(LPCWSTR String, UINT Max);
-	static UINT LowerCase(LPSTR Destination, UINT Size, LPCSTR String);
-	template <class _char_t, class... _args_t>
-	static inline UINT Print(_char_t* Buffer, UINT Size, LPCSTR Format, _args_t... Arguments)
+	static UINT Length(LPCSTR Format, VariableArguments const& Arguments);
+	template <class... _args_t> static inline UINT Length(LPCSTR Format, _args_t... Arguments)
 		{
 		UnknownClass args[]={ Arguments... };
 		VariableArguments vargs(args, TypeHelper::ArraySize(args));
-		return StringHelper::PrintArgs(Buffer, Size, Format, vargs);
+		return Length(Format, vargs);
+		}
+	static UINT LowerCase(LPSTR Destination, UINT Size, LPCSTR String);
+	template <class _char_t, class... _args_t> static inline UINT Print(_char_t* Buffer, UINT Size, LPCSTR Format, _args_t... Arguments)
+		{
+		UnknownClass args[]={ Arguments... };
+		VariableArguments vargs(args, TypeHelper::ArraySize(args));
+		return PrintArgs(Buffer, Size, Format, vargs);
 		}
 	static UINT PrintArgs(LPSTR Buffer, UINT Size, LPCSTR Format, VariableArguments const& Arguments);
 	static UINT PrintArgs(LPWSTR Buffer, UINT Size, LPCSTR Format, VariableArguments const& Arguments);
@@ -94,12 +107,11 @@ public:
 	static UINT PrintUInt(LPSTR Buffer, UINT Size, UINT64 Value, FormatFlags Flags=FormatFlags::None, UINT Width=0);
 	static UINT Replace(LPSTR Destination, UINT Size, LPCSTR String, LPCSTR Find, LPCSTR Replace, BOOL CaseSensitive=true, BOOL Repeat=false);
 	static UINT Replace(LPWSTR Destination, UINT Size, LPCWSTR String, LPCSTR Find, LPCSTR Replace, BOOL CaseSensitive=true, BOOL Repeat=false);
-	template <class _char_t, class... _args_t>
-	static inline UINT Scan(_char_t const* String, LPCSTR Format, _args_t... Arguments)
+	template <class _char_t, class... _args_t> static inline UINT Scan(_char_t const* String, LPCSTR Format, _args_t... Arguments)
 		{
 		UnknownClass args[]={ Arguments... };
 		VariableArguments vargs(args, TypeHelper::ArraySize(args));
-		return StringHelper::ScanArgs(String, Format, vargs);
+		return ScanArgs(String, Format, vargs);
 		}
 	static UINT ScanArgs(LPCSTR String, LPCSTR Format, VariableArguments& Arguments);
 	static UINT ScanArgs(LPCWSTR String, LPCSTR Format, VariableArguments& Arguments);

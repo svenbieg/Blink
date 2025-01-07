@@ -27,6 +27,9 @@ namespace std {
 class shared_mutex: private Concurrency::Mutex
 {
 public:
+	// Using
+	using AccessMode=Concurrency::AccessMode;
+
 	// Friends
 	template <class _mutex_t> friend class shared_lock;
 	template <class _mutex_t> friend class unique_lock;
@@ -36,9 +39,9 @@ public:
 
 	// Common
 	inline void lock() { Lock(); }
-	inline void lock_shared() { LockShared(); }
+	inline void lock_shared() { Lock(AccessMode::ReadOnly); }
 	inline void unlock() { Unlock(); }
-	inline void unlock_shared() { UnlockShared(); }
+	inline void unlock_shared() { Unlock(AccessMode::ReadOnly); }
 };
 
 

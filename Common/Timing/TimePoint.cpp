@@ -45,29 +45,6 @@ constexpr UINT SecondsPerHour=3'600;
 constexpr UINT SecondsPerMinute=60;
 
 
-//==================
-// Con-/Destructors
-//==================
-
-TimePoint::TimePoint():
-TimePoint(nullptr, { 0 })
-{}
-
-TimePoint::TimePoint(TIMEPOINT const& tp):
-TimePoint(nullptr, tp)
-{}
-
-TimePoint::TimePoint(Handle<String> name):
-TimePoint(name, { 0 })
-{}
-
-TimePoint::TimePoint(Handle<String> name, TIMEPOINT const& tp):
-TypedVariable(name, tp)
-{
-UpdateTimer();
-}
-
-
 //========
 // Access
 //========
@@ -212,8 +189,7 @@ return MemoryHelper::Compare(&m_Value, &tp, sizeof(TIMEPOINT))==0;
 
 VOID TimePoint::Clear(BOOL notify)
 {
-TIMEPOINT tp;
-MemoryHelper::Fill(&tp, sizeof(TIMEPOINT), 0);
+TIMEPOINT tp={ 0 };
 Set(tp, notify);
 }
 
@@ -296,7 +272,18 @@ return true;
 VOID TimePoint::Set(TIMEPOINT const& tp, BOOL notify)
 {
 TypedVariable::Set(tp, notify);
-UpdateTimer();
+UpdateClock();
+}
+
+
+//==========================
+// Con-/Destructors Private
+//==========================
+
+TimePoint::TimePoint(Handle<String> name, TIMEPOINT const& tp):
+TypedVariable(name, tp)
+{
+UpdateClock();
 }
 
 
@@ -398,17 +385,23 @@ UINT min=tp.Minute;
 return StringHelper::Print(str, size, "%02u:%02u", hour, min);
 }
 
-VOID TimePoint::UpdateTimer()
+VOID TimePoint::UpdateClock()
 {
 ScopedLock lock(m_Mutex);
-auto clock=Clock::Get();
-clock->Second.Remove(this);
-if(m_Value.Year==0)
+UINT64 ticks=GetTickCount(m_Value);
+if(ticks==0)
 	{
-	UINT64 ticks=0;
-	MemoryHelper::Copy(&ticks, &m_Value, sizeof(UINT64));
-	if(ticks)
-		clock->Second.Add(this, &TimePoint::OnClockSecond);
+	if(m_Clock)
+		{
+		m_Clock->Second.Remove(this);
+		m_Clock=nullptr;
+		}
+	return;
+	}
+if(!m_Clock)
+	{
+	m_Clock=Clock::Get();
+	m_Clock->Second.Add(this, &TimePoint::OnClockSecond);
 	}
 }
 

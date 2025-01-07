@@ -19,11 +19,7 @@
 class String;
 template <class _obj_t> class Handle;
 template <> class Handle<String>;
-
-namespace Details
-{
 template <class _obj_t> class HandleBase;
-}
 
 
 //========
@@ -34,7 +30,8 @@ class Object
 {
 public:
 	// Friends
-	template <class _obj_t> friend class ::Details::HandleBase;
+	template <class _obj_t> friend class Handle;
+	template <class _obj_t> friend class HandleBase;
 
 	// Con-/Destructors
 	virtual ~Object() {}

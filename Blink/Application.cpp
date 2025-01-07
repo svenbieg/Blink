@@ -44,8 +44,8 @@ namespace Blink {
 Application::Application():
 Firmware::Application("Blink")
 {
-auto timer=SystemTimer::Open();
-timer->Tick.Add(this, &Application::OnSystemTimerTick);
+auto timer=SystemTimer::Get();
+timer->Triggered.Add(this, &Application::OnSystemTimerTick);
 }
 
 

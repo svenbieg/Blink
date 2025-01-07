@@ -31,6 +31,12 @@
     <Filter Include="Storage\Encoding\Xml">
       <UniqueIdentifier>{b91b5d0c-ab93-4de4-859b-f7d60e243e34}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Network">
+      <UniqueIdentifier>{6f15d56b-37f7-4ab7-a2a4-6126dd17d6cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\Ip">
+      <UniqueIdentifier>{24f7ae7c-bd23-4792-b954-7234aa85c888}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\Log.h">
@@ -106,6 +112,15 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Culture\LanguageCode.h">
       <Filter>Culture</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Resources\Strings\Status.h">
+      <Filter>Resources\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Resources\Strings\Bool.h">
+      <Filter>Resources\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Network\Ip\IpAddress.h">
+      <Filter>Network\Ip</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Collections\Log.cpp">
@@ -155,6 +170,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Encoding\Xml\XmlNode.cpp">
       <Filter>Storage\Encoding\Xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Network\Ip\IpAddress.cpp">
+      <Filter>Network\Ip</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

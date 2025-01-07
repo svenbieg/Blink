@@ -34,6 +34,7 @@ public:
 	static VOID Led(BOOL On);
 	[[noreturn]] static VOID PowerOff();
 	[[noreturn]] static VOID Reset();
+	[[noreturn]] static VOID Restart();
 	static VOID Reset(ResetDevice Device);
 };
 

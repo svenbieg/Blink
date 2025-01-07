@@ -33,6 +33,7 @@ public:
 	// Common
 	UINT FindChar(LPCSTR Chars);
 	TCHAR LastChar;
+	SIZE_T Read(VOID* Buffer, SIZE_T Size);
 	UINT ReadString(LPSTR Buffer, UINT Size);
 	UINT ReadString(LPWSTR Buffer, UINT Size);
 	UINT ReadString(LPSTR Buffer, UINT Size, CHAR Escape);

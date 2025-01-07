@@ -39,7 +39,7 @@ public:
 	friend DirectoryIterator;
 
 	// Con-/Destructors
-	Directory(Handle<String> Path=nullptr);
+	static inline Handle<Directory> Create(Handle<String> Path=nullptr) { return new Directory(Path); }
 
 	// Common
 	BOOL Add(Handle<String> Name, Handle<Object> Object, BOOL Notify=true);
@@ -50,11 +50,14 @@ public:
 	VOID RemoveAll();
 
 	// Storage.Directory
+	Handle<Storage::DirectoryIterator> Begin()override;
 	Handle<Storage::File> CreateFile(Handle<String> Path, FileCreateMode Create=FileCreateMode::OpenExisting, FileAccessMode Access=FileAccessMode::ReadWrite, FileShareMode Share=FileShareMode::ShareRead)override;
-	Handle<Storage::DirectoryIterator> First()override;
 	Handle<Object> Get(Handle<String> Path)override;
 
 private:
+	// Con-/Destructors
+	Directory(Handle<String> Path);
+
 	// Common
 	Collections::shared_map<Handle<String>, Handle<Object>> m_Map;
 };
@@ -67,8 +70,8 @@ private:
 class DirectoryIterator: public Storage::DirectoryIterator
 {
 public:
-	// Con-/Destructors
-	DirectoryIterator(Handle<Directory> Directory);
+	// Friends
+	friend Directory;
 
 	// Common
 	BOOL Find(Handle<String> Name) { return m_It.find(Name); }
@@ -82,6 +85,9 @@ public:
 	VOID SetPosition(UINT Position) { m_It.set_position(Position); }
 
 private:
+	// Con-/Destructors
+	DirectoryIterator(Handle<Directory> Directory);
+
 	// Common
 	Handle<Directory> m_Directory;
 	typename Collections::shared_map<Handle<String>, Handle<Object>>::iterator m_It;

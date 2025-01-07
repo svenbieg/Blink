@@ -18,15 +18,6 @@ using namespace Culture;
 using namespace Storage::Streams;
 
 
-//==================
-// Con-/Destructors
-//==================
-
-Enum::Enum(Handle<String> name):
-Variable(name)
-{}
-
-
 //========
 // Access
 //========
@@ -34,7 +25,7 @@ Variable(name)
 Handle<EnumIterator> Enum::First()
 {
 auto it=new EnumIterator(this);
-it->First();
+it->Begin();
 return it;
 }
 
@@ -110,18 +101,32 @@ return true;
 }
 
 
-//===========================
-// Iterator Con-/Destructors
-//===========================
+//==========================
+// Con-/Destructors Private
+//==========================
+
+Enum::Enum(Handle<String> name):
+Variable(name)
+{}
+
+
+//==========
+// Iterator
+//==========
+
+EnumIterator::~EnumIterator()
+{
+m_Enum->m_Mutex.Unlock();
+}
+
+
+//==================
+// Iterator Private
+//==================
 
 EnumIterator::EnumIterator(Handle<Enum> henum):
 m_Enum(henum),
 m_It(&henum->m_Values)
 {
 m_Enum->m_Mutex.Lock();
-}
-
-EnumIterator::~EnumIterator()
-{
-m_Enum->m_Mutex.Unlock();
 }

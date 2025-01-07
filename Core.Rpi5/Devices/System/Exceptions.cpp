@@ -45,7 +45,7 @@ UINT core=Cpu::GetId();
 VOID* stack_ptr;
 __asm volatile("mov %0, sp": "=r" (stack_ptr));
 // Todo
-System::Reset();
+System::Restart();
 }
 
 

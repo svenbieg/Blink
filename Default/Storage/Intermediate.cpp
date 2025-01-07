@@ -25,17 +25,14 @@ namespace Storage {
 // Con-/Destructors
 //==================
 
-Intermediate::Intermediate(UINT block_size):
-m_BlockSize(block_size),
-m_First(nullptr),
-m_Free(nullptr),
-m_Last(nullptr),
-m_Offset(0)
-{}
-
 Intermediate::~Intermediate()
 {
 Clear();
+}
+
+Handle<Intermediate> Intermediate::Create(UINT block_size)
+{
+return new Intermediate(block_size);
 }
 
 
@@ -143,6 +140,19 @@ while(pos<size)
 	}
 return pos;
 }
+
+
+//==========================
+// Con-/Destructors Private
+//==========================
+
+Intermediate::Intermediate(UINT block_size):
+m_BlockSize(block_size),
+m_First(nullptr),
+m_Free(nullptr),
+m_Last(nullptr),
+m_Offset(0)
+{}
 
 
 //================

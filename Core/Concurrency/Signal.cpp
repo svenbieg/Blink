@@ -10,9 +10,9 @@
 //=======
 
 #include "Devices/System/Cpu.h"
-#include "MainTask.h"
 #include "Scheduler.h"
 #include "Signal.h"
+#include "SpinLock.h"
 #include "Task.h"
 
 using namespace Devices::System;
@@ -23,6 +23,17 @@ using namespace Devices::System;
 //===========
 
 namespace Concurrency {
+
+
+//==================
+// Con-/Destructors
+//==================
+
+Signal::Signal()
+{}
+
+Signal::~Signal()
+{}
 
 
 //========
@@ -49,7 +60,7 @@ m_WaitingTask=nullptr;
 BOOL Signal::Wait()
 {
 SpinLock lock(Scheduler::s_CriticalSection);
-assert(!Scheduler::IsMainTask()); // Waiting is not allowed in the main-task
+Task::ThrowIfMain();
 UINT core=Cpu::GetId();
 auto task=Scheduler::s_CurrentTask[core];
 Scheduler::SuspendCurrentTask(nullptr);
@@ -67,7 +78,7 @@ return signal;
 BOOL Signal::Wait(UINT timeout)
 {
 assert(timeout!=0);
-assert(!Scheduler::IsMainTask()); // Waiting is not allowed in the main-task
+Task::ThrowIfMain();
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto task=Scheduler::s_CurrentTask[core];
@@ -85,17 +96,13 @@ return signal;
 
 BOOL Signal::Wait(ScopedLock& scoped_lock)
 {
-assert(!Scheduler::IsMainTask()); // Waiting is not allowed in the main-task
+Task::ThrowIfMain();
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto task=Scheduler::s_CurrentTask[core];
 Scheduler::SuspendCurrentTask(nullptr);
 m_WaitingTask=Scheduler::AddParallelTask(m_WaitingTask, task);
-scoped_lock.Unlock();
-lock.Unlock();
-// Waiting...
-scoped_lock.Lock();
-lock.Lock();
+scoped_lock.Yield(lock); // Waiting...
 BOOL signal=(task->m_ResumeTime==0);
 if(!signal)
 	{
@@ -108,17 +115,13 @@ return signal;
 BOOL Signal::Wait(ScopedLock& scoped_lock, UINT timeout)
 {
 assert(timeout!=0);
-assert(!Scheduler::IsMainTask()); // Waiting is not allowed in the main-task
+Task::ThrowIfMain();
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto task=Scheduler::s_CurrentTask[core];
 Scheduler::SuspendCurrentTask(timeout);
 m_WaitingTask=Scheduler::AddParallelTask(m_WaitingTask, task);
-scoped_lock.Unlock();
-lock.Unlock();
-// Waiting...
-scoped_lock.Lock();
-lock.Lock();
+scoped_lock.Yield(lock); // Waiting...
 BOOL signal=(task->m_ResumeTime==0);
 if(!signal)
 	{

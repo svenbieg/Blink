@@ -27,16 +27,11 @@ namespace Collections {
 // Con-/Destructors
 //==================
 
-Settings::Settings()
-{
-m_SettingsMap=new SettingsMap();
-}
-
 Settings::~Settings()
 {
-for(auto it=m_SettingsMap->First(); it->HasCurrent(); it->MoveNext())
+for(auto item: m_Settings)
 	{
-	auto var=it->GetValue();
+	auto var=item.get_value();
 	var->Changed.Remove(this);
 	}
 }
@@ -50,7 +45,7 @@ BOOL Settings::Add(Handle<Variable> var)
 {
 if(!var)
 	return false;
-if(!m_SettingsMap->Add(var->Name, var))
+if(!m_Settings.add(var->Name, var))
 	return false;
 var->Changed.Add(this, &Settings::OnVariableChanged);
 return true;
@@ -73,7 +68,7 @@ while(1)
 	auto name=reader.ReadString(&read, "\xFF");
 	if(!name)
 		break;
-	auto var=m_SettingsMap->Get(name);
+	auto var=m_Settings.get(name);
 	if(var)
 		read+=var->ReadFromStream(stream);
 	if(read<entry_size)
@@ -86,9 +81,9 @@ return size;
 SIZE_T Settings::WriteToStream(OutputStream* stream)
 {
 SIZE_T size=0;
-for(auto it=m_SettingsMap->First(); it->HasCurrent(); it->MoveNext())
+for(auto item: m_Settings)
 	{
-	auto var=it->GetValue();
+	auto var=item.get_value();
 	size+=WriteVariable(stream, var);
 	}
 return size;

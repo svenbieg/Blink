@@ -18,15 +18,6 @@ using namespace Collections;
 using namespace Storage::Streams;
 
 
-//==================
-// Con-/Destructors
-//==================
-
-Flags::Flags(Handle<String> name):
-Variable(name)
-{}
-
-
 //========
 // Access
 //========
@@ -98,15 +89,15 @@ if(str=="0")
 	return true;
 	}
 ScopedLock lock(m_Mutex);
-Handle<StringList> list=new StringList(str);
+auto list=StringList::Create(str);
 BOOL changed=false;
-for(auto it=list->First(); it->HasCurrent(); it->MoveNext())
+for(auto it=list->Begin(); it->HasCurrent(); it->MoveNext())
 	{
 	auto flag=it->GetCurrent();
 	auto p=flag->Begin();
 	if(CharHelper::Compare(p[0], '!')==0)
 		{
-		Handle<String> clear=new String(&p[1]);
+		auto clear=String::Create(&p[1]);
 		if(m_Flags.contains(clear))
 			{
 			m_Flags.remove(clear);
@@ -147,3 +138,12 @@ lock.Unlock();
 if(notify)
 	Changed(this);
 }
+
+
+//==========================
+// Con-/Destructors Private
+//==========================
+
+Flags::Flags(Handle<String> name):
+Variable(name)
+{}

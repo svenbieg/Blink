@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include "SpinLock.h"
 #include "TypeHelper.h"
 
 
@@ -23,7 +24,24 @@ namespace Concurrency {
 // Forward-Declarations
 //======================
 
+class ScopedLock;
+class SharedLock;
 class Task;
+
+
+//========
+// Access
+//========
+
+enum class AccessMode
+{
+ReadOnly
+};
+
+enum class AccessPriority
+{
+High
+};
 
 
 //=======
@@ -33,23 +51,32 @@ class Task;
 class Mutex
 {
 public:
+	// Friends
+	friend ScopedLock;
+	friend SharedLock;
+
 	// Con-/Destructors
 	Mutex(): m_Owner(nullptr) {}
 
 	// Common
 	VOID Lock();
-	VOID LockBlocking();
-	VOID LockShared();
+	VOID Lock(AccessMode);
+	VOID Lock(AccessPriority);
 	BOOL TryLock();
-	BOOL TryLockBlocking();
-	BOOL TryLockShared();
+	BOOL TryLock(AccessMode);
+	BOOL TryLock(AccessPriority);
 	VOID Unlock();
-	VOID UnlockBlocking();
-	VOID UnlockShared();
+	VOID Unlock(AccessMode);
+	VOID Unlock(AccessPriority);
 
 protected:
 	// Common
 	Task* m_Owner;
+
+private:
+	// Common
+	VOID Yield(SpinLock& Lock);
+	VOID Yield(SpinLock& Lock, AccessMode);
 };
 
 }

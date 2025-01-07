@@ -19,19 +19,6 @@
 namespace Storage {
 
 
-//==================
-// Con-/Destructors
-//==================
-
-Workspace::Workspace(Handle<String> name):
-Directory(name)
-{
-m_Directories=new DirectoryList();
-m_Virtual=new Storage::Virtual::Directory("Virtual");
-AddDirectory(m_Virtual);
-}
-
-
 //========
 // Common
 //========
@@ -49,6 +36,11 @@ m_Directories->Append(dir);
 m_Virtual->Add(dir->GetName(), dir);
 }
 
+Handle<DirectoryIterator> Workspace::Begin()
+{
+return m_Virtual->Begin();
+}
+
 Handle<File> Workspace::CreateFile(Handle<String> path, FileCreateMode create, FileAccessMode access, FileShareMode share)
 {
 if(!path||path->IsEmpty())
@@ -60,7 +52,7 @@ while(PathHelper::IsSeparator(str[pos]))
 UINT len=PathHelper::GetComponentLength(&str[pos]);
 if(!len)
 	return nullptr;
-Handle<String> name=new String(len, &str[pos]);
+auto name=String::Create(len, &str[pos]);
 pos+=len;
 if(str[pos]==0)
 	return nullptr;
@@ -73,14 +65,9 @@ if(!dir)
 return dir->CreateFile(&str[pos], create, access, share);
 }
 
-Handle<DirectoryIterator> Workspace::First()
-{
-return m_Virtual->First();
-}
-
 Handle<Object> Workspace::Get(Handle<String> path)
 {
-for(auto it=m_Directories->First(); it->HasCurrent(); it->MoveNext())
+for(auto it=m_Directories->Begin(); it->HasCurrent(); it->MoveNext())
 	{
 	auto dir=it->GetCurrent();
 	auto obj=dir->Get(path);
@@ -88,6 +75,19 @@ for(auto it=m_Directories->First(); it->HasCurrent(); it->MoveNext())
 		return obj;
 	}
 return nullptr;
+}
+
+
+//==========================
+// Con-/Destructors Private
+//==========================
+
+Workspace::Workspace(Handle<String> name):
+Directory(name)
+{
+m_Directories=DirectoryList::Create();
+m_Virtual=Storage::Virtual::Directory::Create("Virtual");
+AddDirectory(m_Virtual);
 }
 
 }

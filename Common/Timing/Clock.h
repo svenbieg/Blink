@@ -26,17 +26,16 @@ namespace Timing {
 
 class Clock: public Object
 {
-private:
+public:
 	// Using
 	using SystemTimer=Devices::Timers::SystemTimer;
 
-public:
 	// Con-/Destructors
 	~Clock();
+	static Handle<Clock> Get();
 
 	// Common
 	Event<Clock> Day;
-	static Handle<Clock> Get();
 	static inline UINT GetDayOfMonth() { return s_Now.DayOfMonth; }
 	static inline UINT GetDayOfWeek() { return s_Now.DayOfWeek; }
 	static inline UINT GetDayOfYear() { return TimePoint::GetDayOfYear(s_Now); }
@@ -52,6 +51,7 @@ public:
 	Event<Clock> Month;
 	static TIMEPOINT const& Now();
 	Event<Clock> Second;
+	VOID SetTime(TIMEPOINT const& Time);
 	Event<Clock> Tick;
 	Event<Clock> TimeSet;
 	static BOOL Update(TIMEPOINT* TimePoint);
@@ -71,8 +71,9 @@ private:
 	VOID OnSystemTimerTick();
 	VOID OnTick();
 	UINT m_Ticks;
+	Handle<SystemTimer> m_Timer;
 	static TIMEPOINT s_Before;
-	static Handle<Clock> s_Current;
+	static Clock* s_Current;
 	static TIMEPOINT s_Now;
 	static UINT64 s_Offset;
 };

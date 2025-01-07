@@ -32,11 +32,14 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)FloatClass.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Guid.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IntegerClasses.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Network\Ip\IpAddress.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Resources\Icons\Icon.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Resources\Strings\Bool.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Resources\Strings\Days.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Resources\Strings\Language.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Resources\Strings\Months.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Resources\Strings\Status.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Resources\Strings\String.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Encoding\Xml\XmlContent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Encoding\Xml\XmlElement.h" />
@@ -61,6 +64,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Enum.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Flags.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Guid.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Network\Ip\IpAddress.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Encoding\Xml\XmlContent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Encoding\Xml\XmlNode.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\FileSize.cpp" />

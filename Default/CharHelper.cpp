@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include <assert.h>
 #include "CharHelper.h"
 
 using namespace Storage::Streams;
@@ -180,7 +181,7 @@ if(c<0x80)
 	if(!stream)
 		return 1;
 	BYTE buf=(BYTE)c;
-	return stream->Write(&buf, 1);
+	return (UINT)stream->Write(&buf, 1);
 	}
 if(c<0x800)
 	{
@@ -189,7 +190,7 @@ if(c<0x800)
 	BYTE buf[2];
 	buf[0]=((c>>6)&0x1F)|0xC0;
 	buf[1]=(c&0x3F)|0x80;
-	return stream->Write(buf, 2);
+	return (UINT)stream->Write(buf, 2);
 	}
 if(!stream)
 	return 3;
@@ -197,7 +198,7 @@ BYTE buf[3];
 buf[0]=((c>>12)&0xF)|0xE0;
 buf[1]=((c>>6)&0x3F)|0x80;
 buf[2]=(c&0x3F)|0x80;
-return stream->Write(buf, 3);
+return (UINT)stream->Write(buf, 3);
 }
 
 
@@ -496,7 +497,7 @@ UINT CharHelper::ReadAnsi(InputStream* stream, WCHAR* c_ptr)
 assert(stream);
 assert(c_ptr);
 CHAR c=0;
-UINT read=stream->Read(&c, sizeof(CHAR));
+UINT read=(UINT)stream->Read(&c, sizeof(CHAR));
 *c_ptr=CharToChar<WCHAR, CHAR>(c);
 return read;
 }
@@ -506,7 +507,7 @@ UINT CharHelper::ReadUnicode(InputStream* stream, CHAR* c_ptr)
 assert(stream);
 assert(c_ptr);
 WCHAR c=0;
-UINT read=stream->Read(&c, sizeof(WCHAR));
+UINT read=(UINT)stream->Read(&c, sizeof(WCHAR));
 *c_ptr=CharToChar<CHAR, WCHAR>(c);
 return read;
 }
@@ -606,27 +607,27 @@ return UnicodeMap[b];
 UINT CharHelper::WriteAnsi(OutputStream* stream, CHAR c)
 {
 assert(stream);
-return stream->Write(&c, sizeof(CHAR));
+return (UINT)stream->Write(&c, sizeof(CHAR));
 }
 
 UINT CharHelper::WriteAnsi(OutputStream* stream, WCHAR wc)
 {
 assert(stream);
 CHAR c=CharToChar<CHAR, WCHAR>(wc);
-return stream->Write(&c, sizeof(CHAR));
+return (UINT)stream->Write(&c, sizeof(CHAR));
 }
 
 UINT CharHelper::WriteUnicode(OutputStream* stream, CHAR c)
 {
 assert(stream);
 WCHAR wc=CharToChar<WCHAR, CHAR>(c);
-return stream->Write(&wc, sizeof(WCHAR));
+return (UINT)stream->Write(&wc, sizeof(WCHAR));
 }
 
 UINT CharHelper::WriteUnicode(OutputStream* stream, WCHAR wc)
 {
 assert(stream);
-return stream->Write(&wc, sizeof(WCHAR));
+return (UINT)stream->Write(&wc, sizeof(WCHAR));
 }
 
 UINT CharHelper::WriteUtf8(OutputStream* stream, CHAR c)

@@ -1138,6 +1138,11 @@ INT StringHelper::Compare(LPCSTR str1, LPCWSTR str2, UINT len, BOOL cs)
 return StringCompare(str1, str2, len, cs);
 }
 
+INT StringHelper::Compare(LPCSTR str1, Handle<String> const& str2, UINT len, BOOL cs)
+{
+return StringCompare(str1, str2? str2->Begin(): nullptr, len, cs);
+}
+
 INT StringHelper::Compare(LPCWSTR str1, LPCSTR str2, UINT len, BOOL cs)
 {
 return StringCompare(str1, str2, len, cs);
@@ -1146,6 +1151,26 @@ return StringCompare(str1, str2, len, cs);
 INT StringHelper::Compare(LPCWSTR str1, LPCWSTR str2, UINT len, BOOL cs)
 {
 return StringCompare(str1, str2, len, cs);
+}
+
+INT StringHelper::Compare(LPCWSTR str1, Handle<String> const& str2, UINT len, BOOL cs)
+{
+return StringCompare(str1, str2? str2->Begin(): nullptr, len, cs);
+}
+
+INT StringHelper::Compare(Handle<String> const& str1, LPCSTR str2, UINT len, BOOL cs)
+{
+return StringCompare(str1? str1->Begin(): nullptr, str2, len, cs);
+}
+
+INT StringHelper::Compare(Handle<String> const& str1, LPCWSTR str2, UINT len, BOOL cs)
+{
+return StringCompare(str1? str1->Begin(): nullptr, str2, len, cs);
+}
+
+INT StringHelper::Compare(Handle<String> const& str1, Handle<String> const& str2, UINT len, BOOL cs)
+{
+return StringCompare(str1? str1->Begin(): nullptr, str2? str2->Begin(): nullptr, len, cs);
 }
 
 UINT StringHelper::Copy(LPSTR dst, UINT size, LPCSTR src, UINT copy)
@@ -1158,6 +1183,13 @@ UINT StringHelper::Copy(LPSTR dst, UINT size, LPCWSTR src, UINT copy)
 return StringCopy(dst, size, src, copy);
 }
 
+UINT StringHelper::Copy(LPSTR dst, UINT size, Handle<String> const& src, UINT copy)
+{
+if(!src)
+	return 0;
+return StringCopy(dst, size, src->Begin(), copy);
+}
+
 UINT StringHelper::Copy(LPWSTR dst, UINT size, LPCSTR src, UINT copy)
 {
 return StringCopy(dst, size, src, copy);
@@ -1166,6 +1198,13 @@ return StringCopy(dst, size, src, copy);
 UINT StringHelper::Copy(LPWSTR dst, UINT size, LPCWSTR src, UINT copy)
 {
 return StringCopy(dst, size, src, copy);
+}
+
+UINT StringHelper::Copy(LPWSTR dst, UINT size, Handle<String> const& src, UINT copy)
+{
+if(!src)
+	return 0;
+return StringCopy(dst, size, src->Begin(), copy);
 }
 
 BOOL StringHelper::Find(LPCSTR str, LPCSTR find, UINT* pos_ptr, BOOL cs)
@@ -1381,6 +1420,11 @@ return StringLength(str, max);
 UINT StringHelper::Length(LPCWSTR str, UINT max)
 {
 return StringLength(str, max);
+}
+
+UINT StringHelper::Length(LPCSTR format, VariableArguments const& args)
+{
+return PrintArgs((LPSTR)nullptr, 0, format, args);
 }
 
 UINT StringHelper::LowerCase(LPSTR dst, UINT size, LPCSTR str)

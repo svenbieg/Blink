@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Collections/Map.h"
+#include "Collections/map.hpp"
 #include "Storage/Streams/InputStream.h"
 #include "Storage/Streams/OutputStream.h"
 #include "Storage/Buffer.h"
@@ -33,10 +33,11 @@ public:
 	// Using
 	using InputStream=Storage::Streams::InputStream;
 	using OutputStream=Storage::Streams::OutputStream;
+	using SettingsMap=Collections::map<Handle<String>, Handle<Variable>>;
 
 	// Con-/Destructors
-	Settings();
 	~Settings();
+	static inline Handle<Settings> Create() { return new Settings(); }
 
 	// Common
 	BOOL Add(Handle<Variable> Variable);
@@ -45,13 +46,13 @@ public:
 	SIZE_T WriteToStream(OutputStream* Stream);
 
 private:
-	// Using
-	using SettingsMap=Collections::Map<Handle<String>, Handle<Variable>>;
+	// Con-/Destructors
+	Settings() {}
 
 	// Common
 	VOID OnVariableChanged();
 	SIZE_T WriteVariable(OutputStream* Stream, Variable* Variable);
-	Handle<SettingsMap> m_SettingsMap;
+	SettingsMap m_Settings;
 };
 
 }

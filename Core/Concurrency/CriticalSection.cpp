@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include <assert.h>
 #include "Devices/System/Cpu.h"
 #include "Devices/System/Interrupts.h"
 #include "CriticalSection.h"

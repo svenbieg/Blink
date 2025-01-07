@@ -30,25 +30,25 @@ public:
 	inline SharedLock(Mutex& Mutex)
 		{
 		m_Mutex=&Mutex;
-		m_Mutex->LockShared();
+		m_Mutex->Lock(AccessMode::ReadOnly);
 		}
 	inline ~SharedLock()override
 		{
 		if(m_Mutex)
 			{
-			m_Mutex->UnlockShared();
+			m_Mutex->Unlock(AccessMode::ReadOnly);
 			m_Mutex=nullptr; // Compiler-bug: ~ScopedLock() is overridden but called
 			}
 		}
 
 	// Common
-	inline VOID Lock()override { m_Mutex->LockShared(); }
-	inline BOOL TryLock()override { return m_Mutex->TryLockShared(); }
-	inline VOID Unlock()override { m_Mutex->UnlockShared(); }
+	inline VOID Lock()override { m_Mutex->Lock(AccessMode::ReadOnly); }
+	inline BOOL TryLock()override { return m_Mutex->TryLock(AccessMode::ReadOnly); }
+	inline VOID Unlock()override { m_Mutex->Unlock(AccessMode::ReadOnly); }
 
 private:
 	// Common
-	Mutex* m_Mutex;
+	inline VOID Yield(SpinLock& Lock)override { m_Mutex->Yield(Lock, AccessMode::ReadOnly); }
 };
 
 }

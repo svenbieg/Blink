@@ -22,7 +22,7 @@ extern BYTE __bss_end;
 
 extern BYTE __heap_start;
 
-extern heap_handle_t g_heap;
+extern heap_t* g_heap;
 
 typedef VOID (*CTOR_PTR)();
 

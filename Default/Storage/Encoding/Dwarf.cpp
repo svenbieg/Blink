@@ -30,9 +30,9 @@ namespace Storage {
 UINT Dwarf::GetEncodedSize(BYTE encoding)
 {
 UINT size=0;
-switch(encoding&0x0F)
+BYTE type=encoding&0x0F;
+switch(type)
 	{
-	case DW_OMIT:
 	case DW_UNSIGNED:
 	case DW_SIGNED:
 		break;
@@ -55,13 +55,13 @@ switch(encoding&0x0F)
 return size;
 }
 
-SIZE_T Dwarf::Read(BYTE const*& dwarf)
+UINT64 Dwarf::Read(BYTE const*& dwarf)
 {
 BYTE encoding=*dwarf++;
 return ReadEncoded(dwarf, encoding);
 }
 
-SIZE_T Dwarf::ReadEncoded(BYTE const*& dwarf, BYTE encoding, SIZE_T relative)
+UINT64 Dwarf::ReadEncoded(BYTE const*& dwarf, BYTE encoding, UINT64 relative)
 {
 SIZE_T ptr_rel=(SIZE_T)dwarf;
 SIZE_T value=0;
@@ -123,9 +123,9 @@ if(FlagHelper::Get(encoding, DW_INDIRECT))
 return value;
 }
 
-SIZE_T Dwarf::ReadSigned(BYTE const*& dwarf)
+INT64 Dwarf::ReadSigned(BYTE const*& dwarf)
 {
-SIZE_T value=0;
+UINT64 value=0;
 UINT shift=0;
 BYTE byte;
 do
@@ -136,23 +136,63 @@ do
 	}
 while(byte&0x80);
 if(byte&0x40)
-	value|=(-1ULL)<<shift;
-return value;
+	value|=(UINT64_MAX)<<shift;
+return (INT64)value;
 }
 
-SIZE_T Dwarf::ReadUnsigned(BYTE const*& dwarf)
+UINT64 Dwarf::ReadUnsigned(BYTE const*& dwarf)
 {
-SIZE_T value=0;
+UINT64 value=0;
 UINT shift=0;
 BYTE byte;
 do
 	{
 	byte=*dwarf++;
-	value|=((SIZE_T)byte&0x7F)<<shift;
+	value|=((UINT64)byte&0x7F)<<shift;
 	shift+=7;
 	}
 while(byte&0x80);
 return value;
+}
+
+UINT Dwarf::ReadUnsigned(InputStream* dwarf, UINT64* value_ptr)
+{
+UINT64 value=0;
+SIZE_T size=0;
+UINT shift=0;
+BYTE byte=0;
+do
+	{
+	size+=dwarf->Read(&byte, 1);
+	value|=((UINT64)byte&0x7F)<<shift;
+	shift+=7;
+	}
+while(byte&0x80);
+if(value_ptr)
+	*value_ptr=value;
+return (UINT)size;
+}
+
+UINT Dwarf::WriteUnsigned(OutputStream* dwarf, UINT64 value)
+{
+UINT size=0;
+do
+	{
+	BYTE byte=(BYTE)value&0x7F;
+	value>>=7;
+	if(value)
+		byte|=0x80;
+	if(dwarf)
+		{
+		size+=(UINT)dwarf->Write(&byte, 1);
+		}
+	else
+		{
+		size++;
+		}
+	}
+while(value);
+return size;
 }
 
 }}

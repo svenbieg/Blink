@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Culture/Language.h"
+#include "Culture/LanguageCode.h"
 #include "TimeSpan.h"
 
 
@@ -68,16 +68,15 @@ class TimePoint: public TypedVariable<TIMEPOINT>
 {
 private:
 	// Using
-	using Language=Culture::Language;
 	using LanguageCode=Culture::LanguageCode;
 	using OutputStream=Storage::Streams::OutputStream;
 
 public:
 	// Con-/Destructors
-	TimePoint();
-	TimePoint(TIMEPOINT const& TimePoint);
-	TimePoint(Handle<String> Name);
-	TimePoint(Handle<String> Name, TIMEPOINT const& TimePoint);
+	static Handle<TimePoint> Create();
+	static Handle<TimePoint> Create(TIMEPOINT const& TimePoint);
+	static Handle<TimePoint> Create(Handle<String> Name);
+	static Handle<TimePoint> Create(Handle<String> Name, TIMEPOINT const& TimePoint);
 
 	// Access
 	static UINT GetDayOfWeek(LPCSTR String);
@@ -86,7 +85,7 @@ public:
 	BOOL IsAbsolute();
 	UINT64 ToSeconds();
 	static UINT64 ToSeconds(TIMEPOINT const& TimePoint);
-	Handle<String> ToString(LanguageCode Language=Language::Current)override;
+	Handle<String> ToString(LanguageCode Language=LanguageCode::None)override;
 	Handle<String> ToString(TimeFormat Format, LanguageCode Language=LanguageCode::None);
 	static Handle<String> ToString(TIMEPOINT const& TimePoint, TimeFormat Format, LanguageCode Language=LanguageCode::None);
 	static UINT ToString(TIMEPOINT const& TimePoint, LPSTR Buffer, UINT Size, TimeFormat Format, LanguageCode Language=LanguageCode::None);
@@ -102,6 +101,9 @@ public:
 	VOID Set(TIMEPOINT const& TimePoint, BOOL Notify=true)override;
 
 private:
+	// Con-/Destructors
+	TimePoint(Handle<String> Name, TIMEPOINT const& TimePoint);
+
 	// Common
 	UINT64 GetTickCount(TIMEPOINT const& TimePoint);
 	VOID OnClockSecond(Clock* Clock);
@@ -109,7 +111,8 @@ private:
 	static UINT ToStringFull(TIMEPOINT const& TimePoint, LPSTR Buffer, UINT Size, LanguageCode Language);
 	static UINT ToStringRelative(UINT64 TickCount, LPSTR Buffer, UINT Size, TimeFormat Format, LanguageCode Language);
 	static UINT ToStringTime(TIMEPOINT const& TimePoint, LPSTR Buffer, UINT Size, LanguageCode Language);
-	VOID UpdateTimer();
+	VOID UpdateClock();
+	Handle<Clock> m_Clock;
 };
 
 }
@@ -120,14 +123,45 @@ private:
 //===================
 
 template <>
-class Handle<Timing::TimePoint>: public Details::VariableHandle<Timing::TimePoint, Timing::TIMEPOINT>
+class Handle<Timing::TimePoint>: public VariableHandle<Timing::TimePoint, Timing::TIMEPOINT>
 {
 public:
 	// Using
-	using _base_t=Details::VariableHandle<Timing::TimePoint, Timing::TIMEPOINT>;
+	using _base_t=VariableHandle<Timing::TimePoint, Timing::TIMEPOINT>;
 	using _base_t::_base_t;
 	using TIMEPOINT=Timing::TIMEPOINT;
 
 	// Modification
 	Handle& operator=(TIMEPOINT const& Value) { Set(Value); return *this; }
 };
+
+
+//==================
+// Con-/Destructors
+//==================
+
+namespace Timing {
+
+inline Handle<TimePoint> TimePoint::Create()
+{
+TIMEPOINT tp={ 0 };
+return new TimePoint(nullptr, tp);
+}
+
+inline Handle<TimePoint> TimePoint::Create(TIMEPOINT const& Value)
+{
+return new TimePoint(nullptr, Value);
+}
+
+inline Handle<TimePoint> TimePoint::Create(Handle<String> Name)
+{
+TIMEPOINT tp={ 0 };
+return new TimePoint(Name, tp);
+}
+
+inline Handle<TimePoint> TimePoint::Create(Handle<String> Name, TIMEPOINT const& Value)
+{
+return new TimePoint(Name, Value);
+}
+
+}

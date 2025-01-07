@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include <assert.h>
 #include "Devices/Timers/SystemTimer.h"
 #include "Timer.h"
 
@@ -25,11 +26,6 @@ namespace Timing {
 //==================
 // Con-/Destructors
 //==================
-
-Timer::Timer():
-m_Interval(0),
-m_NextTime(0)
-{}
 
 Timer::~Timer()
 {
@@ -49,41 +45,52 @@ m_NextTime=SystemTimer::GetTickCount()+time;
 
 VOID Timer::StartOnce(UINT ms)
 {
+assert(ms>=100);
+assert(ms%100==0);
 if(m_Interval!=0)
 	Stop();
-if(ms==0)
-	return;
 m_Interval=ms;
 m_NextTime=SystemTimer::GetTickCount()+ms;
-auto timer=SystemTimer::Open();
-timer->Tick.Add(this, &Timer::OnClockTick);
+m_Clock=Clock::Get();
+m_Clock->Tick.Add(this, &Timer::OnClockTick);
 }
 
 VOID Timer::StartPeriodic(UINT ms)
 {
+assert(ms>=100);
+assert(ms%100==0);
 if(m_Interval!=0)
 	Stop();
-assert(ms>=10);
 m_Interval=-(INT)ms;
 m_NextTime=SystemTimer::GetTickCount()+ms;
-auto timer=SystemTimer::Open();
-timer->Tick.Add(this, &Timer::OnClockTick);
+m_Clock=Clock::Get();
+m_Clock->Tick.Add(this, &Timer::OnClockTick);
 }
 
 VOID Timer::Stop()
 {
-if(m_Interval==0)
+if(!m_Clock)
 	return;
-auto timer=SystemTimer::Open();
-timer->Tick.Remove(this);
 m_Interval=0;
 m_NextTime=0;
+m_Clock->Tick.Remove(this);
+m_Clock=nullptr;
 }
+
+
+//==========================
+// Con-/Destructors Private
+//==========================
+
+Timer::Timer():
+m_Interval(0),
+m_NextTime(0)
+{}
 
 
 //================
 // Common Private
-//=================
+//================
 
 VOID Timer::DoTrigger()
 {
@@ -97,7 +104,10 @@ if(m_NextTime>now)
 	return;
 Triggered(this);
 if(m_Interval>0)
+	{
 	Stop();
+	return;
+	}
 UINT time=m_Interval>0? m_Interval: -m_Interval;
 m_NextTime=now+time;
 }

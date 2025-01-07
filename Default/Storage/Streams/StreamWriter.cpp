@@ -279,6 +279,13 @@ switch(format)
 	}
 }
 
+SIZE_T StreamWriter::Write(VOID const* buf, SIZE_T size)
+{
+if(!m_Stream)
+	return 0;
+return m_Stream->Write(buf, size);
+}
+
 
 //================
 // Common Private

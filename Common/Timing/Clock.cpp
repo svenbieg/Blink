@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Concurrency/MainTask.h"
+#include "Concurrency/DispatchedQueue.h"
 #include "Devices/Timers/SystemTimer.h"
 #include "Clock.h"
 
@@ -30,13 +30,13 @@ namespace Timing {
 
 Clock::~Clock()
 {
-SystemTimer::Open()->Tick.Remove(this);
+if(m_Timer)
+	{
+	m_Timer->Triggered.Remove(this);
+	m_Timer=nullptr;
+	}
+s_Current=nullptr;
 }
-
-
-//========
-// Common
-//========
 
 Handle<Clock> Clock::Get()
 {
@@ -44,6 +44,11 @@ if(!s_Current)
 	s_Current=new Clock();
 return s_Current;
 }
+
+
+//========
+// Common
+//========
 
 BOOL Clock::GetTime(TIMEPOINT* time)
 {
@@ -62,6 +67,15 @@ TIMEPOINT const& Clock::Now()
 if(s_Now.Year==0)
 	GetTime(&s_Now);
 return s_Now;
+}
+
+VOID Clock::SetTime(TIMEPOINT const& tp)
+{
+UINT64 now=SystemTimer::GetTickCount()/1000;
+UINT64 secs=TimePoint::ToSeconds(tp);
+s_Offset=secs-now;
+s_Before=s_Now;
+s_Now=tp;
 }
 
 BOOL Clock::Update(TIMEPOINT* tp)
@@ -85,13 +99,14 @@ return true;
 Clock::Clock():
 m_Ticks(0)
 {
+s_Current=this;
 Day.Add(this, &Clock::OnDay);
 Hour.Add(this, &Clock::OnHour);
 Minute.Add(this, &Clock::OnMinute);
 Month.Add(this, &Clock::OnMonth);
 Second.Add(this, &Clock::OnSecond);
-auto timer=SystemTimer::Open();
-timer->Tick.Add(this, &Clock::OnSystemTimerTick);
+m_Timer=SystemTimer::Get();
+m_Timer->Triggered.Add(this, &Clock::OnSystemTimerTick);
 }
 
 
@@ -138,7 +153,7 @@ VOID Clock::OnSystemTimerTick()
 {
 if(++m_Ticks%10)
 	return;
-MainTask::Dispatch(this, &Clock::DoTick);
+DispatchedQueue::Append(this, &Clock::DoTick);
 }
 
 VOID Clock::OnTick()
@@ -156,7 +171,7 @@ Second(this);
 }
 
 TIMEPOINT Clock::s_Before={ 0 };
-Handle<Clock> Clock::s_Current;
+Clock* Clock::s_Current=nullptr;
 TIMEPOINT Clock::s_Now={ 0 };
 UINT64 Clock::s_Offset=0;
 

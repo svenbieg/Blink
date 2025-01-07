@@ -31,12 +31,12 @@ public:
 	~SystemTimer();
 
 	// Common
+	static Handle<SystemTimer> Get();
 	static inline UINT GetTickCount() { return (UINT)(Microseconds64()/1000); }
-	static UINT64 GetTickCount64() { return Microseconds64()/1000; }
+	static inline UINT64 GetTickCount64() { return Microseconds64()/1000; }
 	static inline UINT Microseconds() { return (UINT)Microseconds64(); }
 	static UINT64 Microseconds64();
-	static Handle<SystemTimer> Open();
-	Event<SystemTimer> Tick; // ~10ms (100Hz)
+	Event<SystemTimer> Triggered; // 10ms (100Hz)
 
 private:
 	// Con-/Destructors

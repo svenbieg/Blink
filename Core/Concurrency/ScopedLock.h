@@ -52,6 +52,10 @@ protected:
 
 	// Common
 	Mutex* m_Mutex;
+
+private:
+	// Common
+	virtual inline VOID Yield(SpinLock& Lock) { m_Mutex->Yield(Lock); }
 };
 
 }

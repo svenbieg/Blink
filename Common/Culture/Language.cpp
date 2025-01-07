@@ -40,33 +40,6 @@ return LanguageCode::None;
 }
 
 
-//=============
-// Translation
-//=============
-
-typedef struct
-{
-LNG Language;
-STRING const* String;
-}TRANSLATION;
-
-constexpr TRANSLATION TRANS_LANGUAGE[]=
-	{
-	{ LNG::DE, STR_GERMAN },
-	{ LNG::EN, STR_ENGLISH },
-	{ LNG::None, nullptr }
-	};
-
-
-//==================
-// Con-/Destructors
-//==================
-
-Language::Language(Handle<String> name, LanguageCode lng):
-TypedVariable(name, lng)
-{}
-
-
 //========
 // Common
 //========
@@ -113,5 +86,14 @@ Handle<String> Language::ToStringCode()
 {
 return ToStringCode(m_Value);
 }
+
+
+//==========================
+// Con-/Destructors Private
+//==========================
+
+Language::Language(Handle<String> name, LanguageCode lng):
+TypedVariable(name, lng)
+{}
 
 }

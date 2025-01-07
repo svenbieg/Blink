@@ -16,16 +16,6 @@
 using namespace Storage::Streams;
 
 
-//==================
-// Con-/Destructors
-//==================
-
-StringVariable::StringVariable(Handle<String> name, Handle<String> value):
-Variable(name),
-m_Value(value)
-{}
-
-
 //========
 // Access
 //========
@@ -84,3 +74,13 @@ if(notify)
 	Changed(this);
 return true;
 }
+
+
+//==========================
+// Con-/Destructors Private
+//==========================
+
+StringVariable::StringVariable(Handle<String> name, Handle<String> value):
+Variable(name),
+m_Value(value)
+{}

@@ -30,6 +30,7 @@ public:
 	operator bool()const { return m_Object!=nullptr; }
 	operator _obj_t*()const { return m_Object; }
 	_obj_t* operator->()const { return m_Object; }
+	template <class _convert_t> inline Handle<_convert_t> As()const { return dynamic_cast<_convert_t*>(m_Object); }
 	_obj_t* Get()const { return m_Object; }
 
 	// Modification

@@ -8,6 +8,14 @@
 #pragma once
 
 
+//=======
+// Using
+//=======
+
+#include "Storage/Streams/InputStream.h"
+#include "Storage/Streams/OutputStream.h"
+
+
 //===========
 // Namespace
 //===========
@@ -48,6 +56,10 @@ DW_OMIT=0xFF
 class Dwarf
 {
 public:
+	// Using
+	using InputStream=Storage::Streams::InputStream;
+	using OutputStream=Storage::Streams::OutputStream;
+
 	// Con-/Destructors
 	Dwarf(SIZE_T Position): m_Buffer((BYTE*)Position) {}
 	Dwarf(Dwarf const& Dwarf): m_Buffer(Dwarf.m_Buffer) {}
@@ -56,16 +68,17 @@ public:
 	inline LPCSTR Begin()const { return (LPCSTR)m_Buffer; }
 	static UINT GetEncodedSize(BYTE Encoding);
 	inline SIZE_T GetPosition()const { return (SIZE_T)m_Buffer; }
-	inline SIZE_T Read() { return Read((BYTE const*&)m_Buffer); }
-	static SIZE_T Read(BYTE const*& Dwarf);
+	inline UINT64 Read() { return Read((BYTE const*&)m_Buffer); }
+	static UINT64 Read(BYTE const*& Dwarf);
 	inline BYTE ReadByte() { return *m_Buffer++; }
 	static inline BYTE ReadByte(BYTE const*& Dwarf) { return *Dwarf++; }
-	inline SIZE_T ReadEncoded(BYTE Encoding, SIZE_T Relative=0) { return ReadEncoded((BYTE const*&)m_Buffer, Encoding, Relative); }
-	static SIZE_T ReadEncoded(BYTE const*& Dwarf, BYTE Encoding, SIZE_T Relative=0);
-	inline SIZE_T ReadSigned() { return ReadSigned((BYTE const*&)m_Buffer); }
-	static SIZE_T ReadSigned(BYTE const*& Dwarf);
-	inline SIZE_T ReadUnsigned() { return ReadUnsigned((BYTE const*&)m_Buffer); }
-	static SIZE_T ReadUnsigned(BYTE const*& Dwarf);
+	inline UINT64 ReadEncoded(BYTE Encoding, SIZE_T Relative=0) { return ReadEncoded((BYTE const*&)m_Buffer, Encoding, Relative); }
+	static UINT64 ReadEncoded(BYTE const*& Dwarf, BYTE Encoding, UINT64 Relative=0);
+	inline INT64 ReadSigned() { return ReadSigned((BYTE const*&)m_Buffer); }
+	static INT64 ReadSigned(BYTE const*& Dwarf);
+	inline UINT64 ReadUnsigned() { return ReadUnsigned((BYTE const*&)m_Buffer); }
+	static UINT64 ReadUnsigned(BYTE const*& Dwarf);
+	static UINT ReadUnsigned(InputStream* Dwarf, UINT64* Value);
 	template <typename _value_t> inline _value_t ReadValue()
 		{
 		_value_t value=*(_value_t const*)m_Buffer;
@@ -79,6 +92,7 @@ public:
 		return value;
 		}
 	VOID SetPosition(SIZE_T Position) { m_Buffer=(BYTE*)Position; }
+	static UINT WriteUnsigned(OutputStream* Dwarf, UINT64 Value);
 
 private:
 	// Common

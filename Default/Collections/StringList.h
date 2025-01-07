@@ -26,12 +26,14 @@ namespace Collections {
 class StringList: public List<Handle<String>>
 {
 public:
-	// Using
-	using _base_t=List<Handle<String>>;
-
 	// Con-/Destructors
-	using _base_t::_base_t;
-	StringList(Handle<String> String, CHAR Separator=';');
+	static inline Handle<StringList> Create() { return new StringList(); }
+	static inline Handle<StringList> Create(Handle<String> String, CHAR Separator=';') { return new StringList(String, Separator); }
+
+private:
+	// Con-/Destructors
+	StringList() {}
+	StringList(Handle<String> String, CHAR Separator);
 };
 
 }

@@ -19,6 +19,7 @@ namespace Culture {
 enum class LanguageCode
 {
 None,
+Neutral,
 DE,
 EN
 };

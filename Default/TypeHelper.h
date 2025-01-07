@@ -6,13 +6,6 @@
 
 
 //=======
-// Using
-//=======
-
-#include <stddef.h>
-
-
-//=======
 // Types
 //=======
 
@@ -21,7 +14,10 @@ typedef void VOID;
 typedef decltype(nullptr) nullptr_t;
 
 typedef unsigned char BYTE;
+
 typedef unsigned short int WORD;
+constexpr WORD WORD_MAX=0xFFFF;
+
 typedef unsigned long int DWORD;
 typedef unsigned long long int QWORD;
 
@@ -34,11 +30,13 @@ typedef int INT;
 constexpr INT INT_MAX=0x7FFFFFFF;
 constexpr INT INT_MIN=-0x7FFFFFFF;
 
-typedef unsigned long int UINT;
+typedef unsigned int UINT;
 constexpr UINT UINT_MAX=0xFFFFFFFF;
 
 typedef long long int INT64;
+
 typedef unsigned long long int UINT64;
+constexpr UINT64 UINT64_MAX=0xFFFFFFFFFFFFFFFFULL;
 
 typedef float FLOAT;
 typedef double DOUBLE;
@@ -53,22 +51,25 @@ typedef char const* LPCSTR;
 typedef wchar_t const* LPCWSTR;
 
 #ifdef _UNICODE
+#define _TEXT(s) L#s
 typedef WCHAR TCHAR;
 typedef LPWSTR LPTSTR;
 typedef LPCWSTR LPCTSTR;
 #else
+#define _TEXT(s) #s
 typedef CHAR TCHAR;
 typedef LPSTR LPTSTR;
 typedef LPCSTR LPCTSTR;
 #endif
+#define TEXT(s) _TEXT(s)
 
 
 //========
 // Macros
 //========
 
-#define __str(s) #s
-#define STR(s) __str(s)
+#define _STR(s) #s
+#define STR(s) _STR(s)
 
 
 //=============
@@ -79,6 +80,14 @@ class TypeHelper
 {
 public:
 	// Common
+	template <class _size_t> static inline _size_t AlignDown(_size_t Value, UINT Align)
+		{
+		return Value&~(Align-1);
+		}
+	template <class _size_t> static inline _size_t AlignUp(_size_t Value, UINT Align)
+		{
+		return Value+(Align-Value%Align)%Align;
+		}
 	template <class _item_t, UINT _Count> static constexpr UINT ArraySize(_item_t (&)[_Count])
 		{
 		return _Count;

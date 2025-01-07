@@ -9,7 +9,6 @@
 // Using
 //=======
 
-#include "Handle.h"
 #include "ScopedLock.h"
 
 
@@ -39,7 +38,8 @@ public:
 	friend DispatchedQueue;
 
 	// Con-/Destructors
-	Signal() {}
+	Signal();
+	~Signal();
 
 	// Common
 	inline VOID Cancel() { Trigger(true); }

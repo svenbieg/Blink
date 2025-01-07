@@ -58,6 +58,13 @@ while(1)
 return size;
 }
 
+SIZE_T StreamReader::Read(VOID* buf, SIZE_T size)
+{
+if(!m_Stream)
+	return 0;
+return m_Stream->Read(buf, size);
+}
+
 UINT StreamReader::ReadString(LPSTR buf, UINT size)
 {
 return DoReadString(m_ReadAnsi, buf, size);
@@ -277,7 +284,7 @@ if(size_ptr)
 UINT len=buf.get_count();
 if(!len)
 	return nullptr;
-Handle<String> str=new String(len, nullptr);
+auto str=String::Create(len, nullptr);
 LPTSTR str_ptr=const_cast<LPTSTR>(str->Begin());
 buf.get_many(0, str_ptr, len);
 str_ptr[len]=0;

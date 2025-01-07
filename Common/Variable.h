@@ -14,7 +14,6 @@
 #include "Culture/LanguageCode.h"
 #include "Storage/Streams/InputStream.h"
 #include "Storage/Streams/OutputStream.h"
-#include "StringClass.h"
 
 
 //======================
@@ -138,7 +137,6 @@ protected:
 // Handle
 //========
 
-namespace Details {
 template <class _obj_t, class _value_t> class VariableHandle: public HandleBase<_obj_t>
 {
 public:
@@ -147,8 +145,7 @@ public:
 	using _base_t::_base_t;
 
 	// Access
-	virtual operator _value_t()const { return Get(_value_t()); }
-	_value_t Get(_value_t Default)const
+	_value_t Get(_value_t Default=_value_t())const
 		{
 		if(!_base_t::m_Object)
 			return Default;
@@ -204,7 +201,7 @@ public:
 			}
 		else
 			{
-			_base_t::Create(new _obj_t(Value));
+			_base_t::Create(_obj_t::Create(Value));
 			}
 		}
-};}
+};

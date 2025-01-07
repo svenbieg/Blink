@@ -31,7 +31,7 @@ if(!dst||!src)
 	return 0;
 if(!size)
 	size=src->Available();
-Handle<Buffer> buf=new Buffer(PAGE_SIZE);
+auto buf=Buffer::Create(PAGE_SIZE);
 BYTE* buf_ptr=buf->Begin();
 SIZE_T pos=0;
 while(pos<size)

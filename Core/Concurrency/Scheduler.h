@@ -9,12 +9,9 @@
 // Using
 //=======
 
+#include "CriticalSection.h"
+#include "Mutex.h"
 #include "Settings.h"
-#include "Signal.h"
-#include "SharedLock.h"
-#include "SpinLock.h"
-#include "Task.h"
-#include "TaskLock.h"
 
 
 //===========
@@ -22,6 +19,14 @@
 //===========
 
 namespace Concurrency {
+
+
+//======================
+// Forward-Declarations
+//======================
+
+class Signal;
+class Task;
 
 
 //===========
@@ -38,41 +43,6 @@ public:
 	// Common
 	static VOID AddTask(Task* Task);
 	static VOID Begin();
-	template <class _owner_t, class... _args_t>
-	static inline Handle<Task> CreateTask(VOID (*Procedure)())
-		{
-		auto task=new TaskProcedure(Procedure);
-		AddTask(task);
-		return task;
-		}
-	template <class _owner_t>
-	static inline Handle<Task> CreateTask(_owner_t* Owner, VOID (_owner_t::*Procedure)())
-		{
-		auto task=new TaskMemberProcedure(Owner, Procedure);
-		AddTask(task);
-		return task;
-		}
-	template <class _owner_t>
-	static inline Handle<Task> CreateTask(Handle<_owner_t> Owner, VOID (_owner_t::*Procedure)())
-		{
-		auto task=new TaskMemberProcedure(Owner, Procedure);
-		AddTask(task);
-		return task;
-		}
-	template <class _owner_t, class _lambda_t>
-	static inline Handle<Task> CreateTask(_owner_t* Owner, _lambda_t&& Lambda)
-		{
-		auto task=new TaskLambda<_owner_t, _lambda_t>(Owner, std::forward<_lambda_t>(Lambda));
-		AddTask(task);
-		return task;
-		}
-	template <class _owner_t, class _lambda_t>
-	static inline Handle<Task> CreateTask(Handle<_owner_t> Owner, _lambda_t&& Lambda)
-		{
-		auto task=new TaskLambda<_owner_t, _lambda_t>(Owner, std::forward<_lambda_t>(Lambda));
-		AddTask(task);
-		return task;
-		}
 	static VOID ExitTask();
 	static Handle<Task> GetCurrentTask();
 	static VOID Initialize();

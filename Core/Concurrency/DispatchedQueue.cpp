@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Concurrency/Scheduler.h"
+#include "Concurrency/TaskLock.h"
 #include "DispatchedQueue.h"
 
 
@@ -26,16 +26,8 @@ namespace Concurrency {
 
 VOID DispatchedQueue::Append(DispatchedHandler* handler)
 {
-assert(handler->m_Next==nullptr);
 TaskLock lock(s_Mutex);
-if(!s_Last)
-	{
-	s_First=handler;
-	s_Last=handler;
-	return;
-	}
-s_Last->m_Next=handler;
-s_Last=handler;
+DispatchedHandler::Append(&s_First, handler);
 s_Signal.Trigger();
 }
 
@@ -63,16 +55,9 @@ TaskLock lock(s_Mutex);
 while(s_First)
 	{
 	auto handler=s_First;
-	s_First=nullptr;
-	s_Last=nullptr;
+	s_First=handler->m_Next;
 	lock.Unlock();
-	while(handler)
-		{
-		handler->Run();
-		auto next=handler->m_Next;
-		delete handler;
-		handler=next;
-		}
+	handler->Run();
 	lock.Lock();
 	}
 }
@@ -84,10 +69,9 @@ if(!s_Waiting)
 return s_Signal.WaitInternal();
 }
 
-DispatchedHandler* DispatchedQueue::s_First=nullptr;
-DispatchedHandler* DispatchedQueue::s_Last=nullptr;
+Handle<DispatchedHandler> DispatchedQueue::s_First;
 Mutex DispatchedQueue::s_Mutex;
 Signal DispatchedQueue::s_Signal;
-BOOL DispatchedQueue::s_Waiting=true;
+BOOL DispatchedQueue::s_Waiting=false;
 
 }

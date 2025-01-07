@@ -9,10 +9,12 @@
 // Forward-Declarations
 //======================
 
-typedef unsigned long long int FILE_SIZE;
 typedef unsigned long long int SIZE_T;
+constexpr SIZE_T SIZE_MAX=0xFFFFFFFFFFFFFFFF;
 
-#include "MemoryHelper.h"
+typedef unsigned long long int FILE_SIZE;
+
+constexpr unsigned int PAGE_SIZE=4096;
 
 
 //=======

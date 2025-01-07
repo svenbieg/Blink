@@ -29,13 +29,19 @@ class XmlContent: public XmlElement
 {
 public:
 	// Con-/Destructors
-	XmlContent(XmlNode* Parent, Handle<String> Value);
+	static inline Handle<XmlContent> Create(XmlNode* Parent, Handle<String> Value)
+		{
+		return new XmlContent(Parent, Value);
+		}
 
 	// Common
 	DynamicHandle<XmlContent, String> Value;
 	SIZE_T WriteToStream(OutputStream* Stream, UINT Level)override;
 
 private:
+	// Con-/Destructors
+	XmlContent(XmlNode* Parent, Handle<String> Value);
+
 	// Common
 	VOID OnValueChanged(Handle<String> Value);
 };

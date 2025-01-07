@@ -29,9 +29,12 @@ public:
 	// Using
 	using Node=Collections::Node;
 
+	// Con-/Destructors
+	~DeviceTree();
+
 	// Common
+	static Handle<DeviceTree> Get();
 	Handle<Object> GetProperty(LPCSTR Path);
-	static Handle<DeviceTree> Open();
 
 private:
 	// Con-/Destructors
@@ -39,9 +42,9 @@ private:
 
 	// Common
 	Handle<Node> CreateNode(SIZE_T* Offset);
-	static Handle<DeviceTree> Current;
-	SIZE_T Offset;
-	Handle<Node> Root;
+	SIZE_T m_Offset;
+	Handle<Node> m_Root;
+	static DeviceTree* s_Current;
 };
 
 }

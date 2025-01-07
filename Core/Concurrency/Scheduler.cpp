@@ -15,6 +15,8 @@
 #include "Devices/System/Tasks.h"
 #include "Devices/Timers/SystemTimer.h"
 #include "Scheduler.h"
+#include "SpinLock.h"
+#include "Task.h"
 
 using namespace Devices::System;
 using namespace Devices::Timers;
@@ -86,6 +88,7 @@ for(UINT core=0; core<CPU_COUNT; core++)
 	s_CurrentTask[core]=idle;
 	}
 s_MainTask=new TaskProcedure(MainTask);
+s_MainTask->Then(System::Restart);
 InitializeTask(&s_MainTask->m_StackPointer, &Task::TaskProc, s_MainTask);
 s_CurrentTask[0]=s_MainTask;
 }
@@ -235,8 +238,8 @@ while(1)
 
 VOID Scheduler::MainTask()
 {
-auto timer=SystemTimer::Open();
-timer->Tick.Add(Scheduler::Schedule);
+auto timer=SystemTimer::Get();
+timer->Triggered.Add(Scheduler::Schedule);
 Main();
 }
 

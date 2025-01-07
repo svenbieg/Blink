@@ -37,7 +37,7 @@ public:
 	using TimePoint=Timing::TimePoint;
 
 	// Con-/Destructors
-	Log();
+	static inline Handle<Log> Create() { return new Log(); }
 
 	// Common
 	VOID Clear();
@@ -49,6 +49,9 @@ public:
 	Event<Log> Changed;
 
 private:
+	// Con-/Destructors
+	Log();
+
 	// Common
 	VOID OnTimePointChanged();
 };

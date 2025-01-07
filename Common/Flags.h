@@ -21,7 +21,7 @@ class Flags: public Variable
 {
 public:
 	// Con-/Destructors
-	Flags(Handle<String> Name);
+	static inline Handle<Flags> Create(Handle<String> Name) { return new Flags(Name); }
 
 	// Access
 	BOOL Get(Handle<String> Flag);
@@ -36,6 +36,9 @@ public:
 	VOID Set(Handle<String> Flag, BOOL Notify=true);
 
 private:
+	// Con-/Destructors
+	Flags(Handle<String> Name);
+
 	// Common
 	Collections::index<Handle<String>> m_Flags;
 };

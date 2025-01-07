@@ -30,21 +30,21 @@ public:
 	inline TaskLock(Mutex& Mutex)
 		{
 		m_Mutex=&Mutex;
-		m_Mutex->LockBlocking();
+		m_Mutex->Lock(AccessPriority::High);
 		}
 	inline ~TaskLock()override
 		{
 		if(m_Mutex)
 			{
-			m_Mutex->UnlockBlocking();
+			m_Mutex->Unlock(AccessPriority::High);
 			m_Mutex=nullptr; // Compiler-bug: ~ScopedLock() is overridden but called
 			}
 		}
 
 	// Common
-	inline VOID Lock()override { m_Mutex->LockBlocking(); }
-	inline BOOL TryLock()override { return m_Mutex->TryLockBlocking(); }
-	inline VOID Unlock()override { m_Mutex->UnlockBlocking(); }
+	inline VOID Lock()override { m_Mutex->Lock(AccessPriority::High); }
+	inline BOOL TryLock()override { return m_Mutex->TryLock(AccessPriority::High); }
+	inline VOID Unlock()override { m_Mutex->Unlock(AccessPriority::High); }
 };
 
 }

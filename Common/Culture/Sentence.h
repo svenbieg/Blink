@@ -30,15 +30,20 @@ namespace Culture {
 class Sentence: public Object
 {
 public:
+	// Friends
+	friend class Handle<Sentence>;
+
 	// Using
 	using InputStream=Storage::Streams::InputStream;
 	using OutputStream=Storage::Streams::OutputStream;
 	using STRING=Resources::Strings::STRING;
 
 	// Con-/Destructors
-	Sentence();
-	Sentence(LPCSTR Value);
-	Sentence(STRING const* Value);
+	static Handle<Sentence> Create();
+	static Handle<Sentence> Create(LPCSTR Value);
+	static Handle<Sentence> Create(LPCWSTR Value);
+	static Handle<Sentence> Create(STRING const* Value);
+	static Handle<Sentence> Create(Handle<String> const& Value);
 
 	// Common
 	LPCTSTR Begin(LanguageCode Language=Language::Current);
@@ -54,6 +59,13 @@ public:
 	SIZE_T WriteToStream(OutputStream* Stream)const;
 
 private:
+	// Con-/Destructors
+	Sentence();
+	Sentence(LPCSTR Value);
+	Sentence(LPCWSTR Value);
+	Sentence(STRING const* Value);
+	Sentence(Handle<String> const& Value);
+
 	// Common
 	STRING const* m_String;
 	Collections::map<LanguageCode, Handle<String>> m_Strings;
@@ -67,18 +79,23 @@ private:
 //========
 
 template <>
-class Handle<Culture::Sentence>: public ::Details::HandleBase<Culture::Sentence>
+class Handle<Culture::Sentence>: public HandleBase<Culture::Sentence>
 {
 public:
 	// Using
-	using _base_t=::Details::HandleBase<Culture::Sentence>;
-	using _base_t::_base_t;
+	using _base_t=HandleBase<Culture::Sentence>;
 	using Sentence=Culture::Sentence;
 	using STRING=Resources::Strings::STRING;
 
 	// Con-/Destructors
+	using _base_t::_base_t;
 	Handle(LPCSTR Value) { Create(new Sentence(Value)); }
+	Handle(LPCWSTR Value) { Create(new Sentence(Value)); }
 	Handle(STRING const* Value) { Create(new Sentence(Value)); }
+	Handle(Handle<String> const& Value) { Create(new Sentence(Value)); }
+
+	// Access
+	operator Handle<String>()const { return m_Object->ToString(); }
 
 	// Assignment
 	inline Handle& operator=(STRING const* Value) { Set(new Sentence(Value)); return *this; }
@@ -90,3 +107,37 @@ public:
 	inline BOOL operator<(Handle<Sentence> const& Value)const { return Sentence::Compare(m_Object, Value.m_Object)<0; }
 	inline BOOL operator<=(Handle<Sentence> const& Value)const { return Sentence::Compare(m_Object, Value.m_Object)<=0; }
 };
+
+
+//==================
+// Con-/Destructors
+//==================
+
+namespace Culture {
+
+inline Handle<Sentence> Sentence::Create()
+{
+return new Sentence();
+}
+
+inline Handle<Sentence> Sentence::Create(LPCSTR Value)
+{
+return new Sentence(Value);
+}
+
+inline Handle<Sentence> Sentence::Create(LPCWSTR Value)
+{
+return new Sentence(Value);
+}
+
+inline Handle<Sentence> Sentence::Create(STRING const* Value)
+{
+return new Sentence(Value);
+}
+
+inline Handle<Sentence> Sentence::Create(Handle<String> const& Value)
+{
+return new Sentence(Value);
+}
+
+}

@@ -104,6 +104,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Encoding\Dwarf.h">
       <Filter>Storage\Encoding</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Function.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)StringHelper.cpp" />
@@ -142,6 +143,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Encoding\Dwarf.cpp">
       <Filter>Storage\Encoding</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)PathHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Storage">

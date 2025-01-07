@@ -20,8 +20,11 @@
 class StringVariable: public Variable
 {
 public:
+	// Friends
+	friend class Handle<StringVariable>;
+
 	// Con-/Destructors
-	StringVariable(Handle<String> Name, Handle<String> Value=nullptr);
+	static Handle<StringVariable> Create(Handle<String> Name, Handle<String> Value=nullptr);
 
 	// Access
 	Handle<String> Get();
@@ -35,6 +38,9 @@ public:
 	BOOL Set(Handle<String> Value, BOOL Notify=true);
 
 private:
+	// Con-/Destructors
+	StringVariable(Handle<String> Name, Handle<String> Value);
+
 	// Common
 	Handle<String> m_Value;
 };
@@ -45,14 +51,14 @@ private:
 //========================
 
 template <>
-class Handle<StringVariable>: public ::Details::HandleBase<StringVariable>
+class Handle<StringVariable>: public HandleBase<StringVariable>
 {
 public:
 	// Using
-	using _base_t=::Details::HandleBase<StringVariable>;
-	using _base_t::_base_t;
+	using _base_t=HandleBase<StringVariable>;
 
 	// Con-/Destructors
+	using _base_t::_base_t;
 	Handle(Handle<String> Id, Handle<String> Value) { Create(new StringVariable(Id, Value)); }
 
 	// Access
@@ -182,7 +188,7 @@ public:
 			}
 		else
 			{
-			Create(new StringVariable(Value));
+			Create(new StringVariable(nullptr, Value));
 			}
 		return *this;
 		}
@@ -194,7 +200,7 @@ public:
 			}
 		else
 			{
-			Create(new StringVariable(Value));
+			Create(new StringVariable(nullptr, Value));
 			}
 		return *this;
 		}
@@ -206,8 +212,30 @@ public:
 			}
 		else
 			{
-			Create(new StringVariable(String));
+			Create(new StringVariable(nullptr, String));
+			}
+		return *this;
+		}
+	Handle& operator=(Handle<String> const& String)
+		{
+		if(m_Object)
+			{
+			m_Object->Set(String);
+			}
+		else
+			{
+			Create(new StringVariable(nullptr, String));
 			}
 		return *this;
 		}
 };
+
+
+//==================
+// Con-/Destructors
+//==================
+
+inline Handle<StringVariable> StringVariable::Create(Handle<String> Name, Handle<String> Value)
+{
+return new StringVariable(Name, Value);
+}

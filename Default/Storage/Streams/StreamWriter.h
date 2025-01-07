@@ -48,7 +48,7 @@ public:
 	template <class... _args_t> UINT Print(LPCSTR Format, _args_t... Arguments)
 		{
 		UnknownClass args[]={ Arguments... };
-		VariableArguments vargs(args, ArraySize(args));
+		VariableArguments vargs(args, TypeHelper::ArraySize(args));
 		return Print(Format, vargs);
 		}
 	UINT PrintChar(CHAR Char, UINT Count=1);
@@ -62,6 +62,7 @@ public:
 	UINT PrintUInt(UINT Value, FormatFlags Flags=FormatFlags::None, UINT Width=0);
 	UINT PrintUInt(UINT64 Value, FormatFlags Flags=FormatFlags::None, UINT Width=0);
 	VOID SetStream(OutputStream* Stream);
+	SIZE_T Write(VOID const* Buffer, SIZE_T Size);
 
 private:
 	// Using

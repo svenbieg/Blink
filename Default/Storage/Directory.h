@@ -34,8 +34,8 @@ class Directory: public Object
 {
 public:
 	// Common
+	virtual Handle<DirectoryIterator> Begin()=0;
 	virtual Handle<File> CreateFile(Handle<String> Path, FileCreateMode CreateMode, FileAccessMode AccessMode, FileShareMode ShareMode)=0;
-	virtual Handle<DirectoryIterator> First()=0;
 	virtual Handle<Object> Get(Handle<String> Path)=0;
 	Handle<String> GetName()const;
 	Handle<String> GetPath()const;

@@ -39,7 +39,7 @@ private:
 
 public:
 	// Con-/Destructors
-	XmlNode(XmlNode* Parent);
+	static inline Handle<XmlNode> Create(XmlNode* Parent=nullptr) { return new XmlNode(Parent); }
 
 	// Common
 	Handle<AttributeMap> Attributes;
@@ -51,6 +51,9 @@ public:
 	SIZE_T WriteToStream(OutputStream* Stream, UINT Level)override;
 
 private:
+	// Con-/Destructors
+	XmlNode(XmlNode* Parent);
+
 	// Common
 	VOID OnValueChanged(Handle<String> Value);
 	SIZE_T ReadContent(StreamReader& Reader);

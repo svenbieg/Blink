@@ -31,13 +31,17 @@ public:
 	using PropertyMap=Map<Handle<String>, Handle<Object>>;
 
 	// Con-/Destructors
-	Node(Handle<String> Name=nullptr);
+	static inline Handle<Node> Create(Handle<String> Name=nullptr) { return new Node(Name); }
 
 	// Common
 	Handle<ChildMap> Children;
 	Handle<Object> GetProperty(LPCSTR Path);
 	Handle<String> Name;
 	Handle<PropertyMap> Properties;
+
+private:
+	// Con-/Destructors
+	Node(Handle<String> Name=nullptr);
 };
 
 }

@@ -102,12 +102,8 @@ while(1)
 
 VOID System::Reset()
 {
-__asm volatile("\
-mov	x0, %0\n\
-smc	#0\n\
-":: "r" (PSCI_RESET));
-while(1)
-	Cpu::WaitForInterrupt();
+// Todo: Clear Settings
+Restart();
 }
 
 VOID System::Reset(ResetDevice device)
@@ -119,6 +115,16 @@ BitHelper::Write(reset->INIT_BANK[bank].SET, mask);
 Task::SleepMicroseconds(100);
 BitHelper::Write(reset->INIT_BANK[bank].CLEAR, mask);
 Task::SleepMicroseconds(100);
+}
+
+VOID System::Restart()
+{
+__asm volatile("\
+mov	x0, %0\n\
+smc	#0\n\
+":: "r" (PSCI_RESET));
+while(1)
+	Cpu::WaitForInterrupt();
 }
 
 }}

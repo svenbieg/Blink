@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include <assert.h>
 #include "Devices/System/Cpu.h"
 #include "BitHelper.h"
 #include "Exceptions.h"

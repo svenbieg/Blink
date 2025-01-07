@@ -16,7 +16,6 @@
 // Base-Class
 //============
 
-namespace Details {
 template <class _obj_t> class HandleBase
 {
 public:
@@ -92,6 +91,12 @@ public:
 
 protected:
 	// Common
+	VOID Create(Handle<_obj_t> const& Handle)
+		{
+		m_Object=Handle.m_Object;
+		if(m_Object)
+			m_Object->m_RefCount++;
+		}
 	template <class _convert_t> VOID Create(_convert_t* Object)
 		{
 		m_Object=static_cast<_obj_t*>(Object);
@@ -99,7 +104,7 @@ protected:
 			m_Object->m_RefCount++;
 		}
 	_obj_t* m_Object;
-};}
+};
 
 
 //========
@@ -107,11 +112,11 @@ protected:
 //========
 
 template <class _obj_t>
-class Handle: public ::Details::HandleBase<_obj_t>
+class Handle: public HandleBase<_obj_t>
 {
 public:
 	// Using
-	using _base_t=::Details::HandleBase<_obj_t>;
+	using _base_t=HandleBase<_obj_t>;
 	using _base_t::_base_t;
 
 	// Access

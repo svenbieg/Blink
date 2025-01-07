@@ -303,7 +303,7 @@ for(UINT pos=0; pos<len; pos++)
 return 0;
 }
 
-extern "C" UINT strtoul(LPCSTR str, LPSTR* end_ptr, INT base)
+extern "C" long unsigned int strtoul(LPCSTR str, LPSTR* end_ptr, INT base)
 {
 UINT len=0;
 LPSTR end=*end_ptr;

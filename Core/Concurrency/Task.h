@@ -9,8 +9,12 @@
 // Using
 //=======
 
-#include "Concurrency/DispatchedQueue.h"
+#include <assert.h>
 #include "Devices/System/Cpu.h"
+#include "DispatchedQueue.h"
+#include "Mutex.h"
+#include "Scheduler.h"
+#include "Signal.h"
 
 
 //===========
@@ -24,9 +28,7 @@ namespace Concurrency {
 // Forward-Declarations
 //======================
 
-class Mutex;
 class Scheduler;
-class Signal;
 
 
 //=======
@@ -58,33 +60,46 @@ public:
 	friend Scheduler;
 	friend Signal;
 
+	// Con-/Destructors
+	static Handle<Task> Create(VOID (*Procedure)());
+	template <class _owner_t> static Handle<Task> Create(_owner_t* Owner, VOID (_owner_t::*Procedure)());
+	template <class _owner_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, VOID (_owner_t::*Procedure)());
+	template <class _owner_t, class _lambda_t> static Handle<Task> Create(_owner_t* Owner, _lambda_t&& Lambda);
+	template <class _owner_t, class _lambda_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, _lambda_t&& Lambda);
+
 	// Common
 	VOID Cancel();
 	volatile BOOL Cancelled;
 	static Handle<Task> Get();
 	inline VOID Then(VOID (*Procedure)())
 		{
-		assert(m_Then==nullptr);
-		m_Then=new DispatchedProcedure(Procedure);
+		DispatchedHandler::Append(&m_Then, new DispatchedProcedure(Procedure));
 		}
 	template <class _owner_t> inline VOID Then(_owner_t* Owner, VOID (_owner_t::*Procedure)())
 		{
-		assert(m_Then==nullptr);
-		m_Then=new DispatchedMemberProcedure<_owner_t>(Owner, Procedure);
+		DispatchedHandler::Append(&m_Then, new DispatchedMemberProcedure<_owner_t>(Owner, Procedure));
 		}
-	template <class _owner_t, class... _args_t> inline VOID Then(Handle<_owner_t> Owner, VOID (_owner_t::*Procedure)())
+	template <class _owner_t, class... _args_t> inline VOID Then(Handle<_owner_t> const& Owner, VOID (_owner_t::*Procedure)())
 		{
-		assert(m_Then==nullptr);
-		m_Then=new DispatchedMemberProcedure<_owner_t>(Owner, Procedure);
+		DispatchedHandler::Append(&m_Then, new DispatchedMemberProcedure<_owner_t>(Owner, Procedure));
 		}
 	template <class _owner_t, class _lambda_t> inline VOID Then(_owner_t* Owner, _lambda_t&& Lambda)
 		{
-		assert(m_Then==nullptr);
-		m_Then=new DispatchedLambda(Owner, std::forward<_lambda_t>(Lambda));
+		DispatchedHandler::Append(&m_Then, new DispatchedLambda(Owner, std::forward<_lambda_t>(Lambda)));
+		}
+	template <class _owner_t, class _lambda_t> inline VOID Then(Handle<_owner_t> const& Owner, _lambda_t&& Lambda)
+		{
+		DispatchedHandler::Append(&m_Then, new DispatchedLambda(Owner, std::forward<_lambda_t>(Lambda)));
 		}
 	inline Status GetStatus()const { return m_Status; }
+	Handle<Object> Result;
 	static VOID Sleep(UINT Milliseconds);
 	static VOID SleepMicroseconds(UINT Microseconds);
+	static inline VOID ThrowIfMain()
+		{
+		if(Scheduler::IsMainTask())
+			throw InvalidContextException();
+		}
 	Status Wait();
 
 protected:
@@ -110,7 +125,7 @@ private:
 	Handle<Task> m_Parallel;
 	UINT64 m_ResumeTime;
 	VOID* m_StackPointer;
-	DispatchedHandler* m_Then;
+	Handle<DispatchedHandler> m_Then;
 	Handle<Task> m_Waiting;
 	ALIGN(sizeof(SIZE_T)) BYTE m_Stack[STACK_SIZE];
 };
@@ -181,5 +196,45 @@ private:
 	_lambda_t m_Lambda;
 	Handle<_owner_t> m_Owner;
 };
+
+
+//==================
+// Con-/Destructors
+//==================
+
+inline Handle<Task> Task::Create(VOID (*Procedure)())
+{
+auto task=new TaskProcedure(Procedure);
+Scheduler::AddTask(task);
+return task;
+}
+
+template <class _owner_t> inline Handle<Task> Task::Create(_owner_t* Owner, VOID (_owner_t::*Procedure)())
+{
+auto task=new TaskMemberProcedure(Owner, Procedure);
+Scheduler::AddTask(task);
+return task;
+}
+
+template <class _owner_t> inline Handle<Task> Task::Create(Handle<_owner_t> const& Owner, VOID (_owner_t::*Procedure)())
+{
+auto task=new TaskMemberProcedure(Owner, Procedure);
+Scheduler::AddTask(task);
+return task;
+}
+
+template <class _owner_t, class _lambda_t> inline Handle<Task> Task::Create(_owner_t* Owner, _lambda_t&& Lambda)
+{
+auto task=new TaskLambda<_owner_t, _lambda_t>(Owner, std::forward<_lambda_t>(Lambda));
+Scheduler::AddTask(task);
+return task;
+}
+
+template <class _owner_t, class _lambda_t> inline Handle<Task> Task::Create(Handle<_owner_t> const& Owner, _lambda_t&& Lambda)
+{
+auto task=new TaskLambda<_owner_t, _lambda_t>(Owner, std::forward<_lambda_t>(Lambda));
+Scheduler::AddTask(task);
+return task;
+}
 
 }

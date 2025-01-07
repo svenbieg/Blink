@@ -5,6 +5,13 @@
 #pragma once
 
 
+//=======
+// Using
+//=======
+
+#include "Clock.h"
+
+
 //===========
 // Namespace
 //===========
@@ -20,8 +27,8 @@ class Timer: public Object
 {
 public:
 	// Con-/Destructors
-	Timer();
 	~Timer();
+	static inline Handle<Timer> Create() { return new Timer(); }
 
 	// Common
 	BOOL IsStarted()const { return m_Interval!=0; }
@@ -32,11 +39,15 @@ public:
 	Event<Timer> Triggered;
 
 private:
+	// Con-/Destructors
+	Timer();
+
 	// Common
 	VOID DoTrigger();
 	VOID OnClockTick();
 	INT m_Interval;
 	SIZE_T m_NextTime;
+	Handle<Clock> m_Clock;
 };
 
 }

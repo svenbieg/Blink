@@ -47,6 +47,16 @@ public:
 		auto handler=new Concurrency::DispatchedLambda<_owner_t, _lambda_t>(Owner, std::forward<_lambda_t>(Lambda));
 		Concurrency::DispatchedQueue::Append(handler);
 		}
+	static inline VOID ThrowIf()
+		{
+		if(Scheduler::IsMainTask())
+			throw InvalidContextException();
+		}
+	static inline VOID ThrowIfNot()
+		{
+		if(!Scheduler::IsMainTask())
+			throw InvalidContextException();
+		}
 };
 
 }

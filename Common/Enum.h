@@ -35,7 +35,7 @@ public:
 	friend EnumIterator;
 
 	// Con-/Destructors
-	Enum(Handle<String> Name);
+	static Handle<Enum> Create(Handle<String> Name);
 
 	// Access
 	Handle<EnumIterator> First();
@@ -50,6 +50,9 @@ public:
 	BOOL Set(Handle<Sentence> Value, BOOL Notify=true);
 
 private:
+	// Con-/Destructors
+	Enum(Handle<String> Name);
+
 	// Common
 	Handle<Sentence> m_Value;
 	Collections::index<Handle<Sentence>> m_Values;
@@ -61,11 +64,11 @@ private:
 //=============
 
 template <>
-class Handle<Enum>: public ::Details::HandleBase<Enum>
+class Handle<Enum>: public HandleBase<Enum>
 {
 public:
 	// Using
-	using _base_t=::Details::HandleBase<Enum>;
+	using _base_t=HandleBase<Enum>;
 	using _base_t::_base_t;
 	using Sentence=Culture::Sentence;
 	using STRING=Resources::Strings::STRING;
@@ -103,6 +106,16 @@ public:
 };
 
 
+//==================
+// Con-/Destructors
+//==================
+
+inline Handle<Enum> Enum::Create(Handle<String> Name)
+{
+return new Enum(Name);
+}
+
+
 //==========
 // Iterator
 //==========
@@ -113,8 +126,10 @@ public:
 	// Using
 	using Sentence=Culture::Sentence;
 
+	// Friend
+	friend Enum;
+
 	// Con-/Destructors
-	EnumIterator(Handle<Enum> Enum);
 	~EnumIterator();
 
 	// Access
@@ -123,13 +138,16 @@ public:
 	BOOL HasCurrent()const { return m_It.has_current(); }
 
 	// Navigation
-	BOOL First() { return m_It.begin(); }
-	BOOL Last() { return m_It.rbegin(); }
+	BOOL Begin() { return m_It.begin(); }
+	BOOL End() { return m_It.rbegin(); }
 	BOOL MoveNext() { return m_It.move_next(); }
 	BOOL MovePrevious() { return m_It.move_previous(); }
 	BOOL SetPosition(UINT Position) { return m_It.set_position(Position); }
 
 private:
+	// Con-/Destructors
+	EnumIterator(Handle<Enum> Enum);
+
 	// Common
 	Handle<Enum> m_Enum;
 	typename Collections::index<Handle<Sentence>>::iterator m_It;

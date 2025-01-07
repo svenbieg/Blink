@@ -29,7 +29,7 @@ Name(name)
 if(Name)
 	{
 	if(!Globals)
-		Globals=new VariableList();
+		Globals=VariableList::Create();
 	Globals->Add(Name, this);
 	}
 }

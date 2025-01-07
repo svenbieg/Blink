@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include "Concurrency/Signal.h"
 #include "Storage/Streams/RandomAccessStream.h"
 
 
@@ -27,8 +28,8 @@ class Intermediate: public Streams::RandomAccessStream
 {
 public:
 	// Con-/Destructors
-	Intermediate(UINT BlockSize=PAGE_SIZE);
 	~Intermediate();
+	static Handle<Intermediate> Create(UINT BlockSize=PAGE_SIZE);
 
 	// Common
 	VOID Clear();
@@ -42,6 +43,9 @@ public:
 	SIZE_T Write(VOID const* Buffer, SIZE_T Size)override;
 
 private:
+	// Con-/Destructors
+	Intermediate(UINT BlockSize);
+
 	// Block
 	struct BLOCK
 		{

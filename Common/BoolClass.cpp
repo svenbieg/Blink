@@ -9,20 +9,10 @@
 // Using
 //=======
 
+#include "Resources/Strings/Bool.h"
 #include "BoolClass.h"
 
-
-//==================
-// Con-/Destructors
-//==================
-
-Bool::Bool(BOOL value):
-Bool(nullptr, value)
-{}
-
-Bool::Bool(Handle<String> name, BOOL value):
-TypedVariable(name, value)
-{}
+using namespace Resources::Strings;
 
 
 //==============
@@ -44,45 +34,30 @@ BOOL Bool::FromString(Handle<String> value, BOOL* ptr)
 {
 if(!value)
 	return false;
-if(StringHelper::Compare(value->Begin(), "0", false)==0)
+for(UINT u=0; u<TypeHelper::ArraySize(STR_TRUE); u++)
 	{
-	*ptr=false;
-	return true;
+	if(StringHelper::Compare(value, STR_TRUE[u].Value, false)==0)
+		{
+		*ptr=true;
+		return true;
+		}
 	}
-if(StringHelper::Compare(value->Begin(), "1", false)==0)
+for(UINT u=0; u<TypeHelper::ArraySize(STR_FALSE); u++)
 	{
-	*ptr=true;
-	return true;
-	}
-if(StringHelper::Compare(value->Begin(), "false", false)==0)
-	{
-	*ptr=false;
-	return true;
-	}
-if(StringHelper::Compare(value->Begin(), "true", false)==0)
-	{
-	*ptr=true;
-	return true;
-	}
-if(StringHelper::Compare(value->Begin(), "no", false)==0)
-	{
-	*ptr=false;
-	return true;
-	}
-if(StringHelper::Compare(value->Begin(), "yes", false)==0)
-	{
-	*ptr=true;
-	return true;
-	}
-if(StringHelper::Compare(value->Begin(), "nein", false)==0)
-	{
-	*ptr=false;
-	return true;
-	}
-if(StringHelper::Compare(value->Begin(), "ja", false)==0)
-	{
-	*ptr=true;
-	return true;
+	if(StringHelper::Compare(value, STR_FALSE[u].Value, false)==0)
+		{
+		*ptr=false;
+		return true;
+		}
 	}
 return false;
 }
+
+
+//==========================
+// Con-/Destructors Private
+//==========================
+
+Bool::Bool(Handle<String> name, BOOL value):
+TypedVariable(name, value)
+{}

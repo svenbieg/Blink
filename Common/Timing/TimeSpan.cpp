@@ -19,19 +19,6 @@
 namespace Timing {
 
 
-//==================
-// Con-/Destructors
-//==================
-
-TimeSpan::TimeSpan(UINT sec):
-TimeSpan(nullptr, sec)
-{}
-
-TimeSpan::TimeSpan(Handle<String> name, UINT sec):
-TypedVariable(name, sec)
-{}
-
-
 //========
 // Access
 //========

@@ -9,7 +9,8 @@
 // Using
 //=======
 
-#include "Concurrency/Scheduler.h"
+#include "Concurrency/Task.h"
+#include "Concurrency/TaskLock.h"
 #include "Devices/System/Interrupts.h"
 #include "SystemTimer.h"
 
@@ -48,6 +49,13 @@ s_Current=nullptr;
 // Common
 //========
 
+Handle<SystemTimer> SystemTimer::Get()
+{
+if(!s_Current)
+	s_Current=new SystemTimer();
+return s_Current;
+}
+
 UINT64 SystemTimer::Microseconds64()
 {
 UINT64 cnt_pct;
@@ -57,13 +65,6 @@ __asm volatile("mrs %0, CNTFRQ_EL0": "=r" (cnt_freq));
 return cnt_pct*CLOCK_MHZ/cnt_freq;
 }
 
-Handle<SystemTimer> SystemTimer::Open()
-{
-if(!s_Current)
-	s_Current=new SystemTimer();
-return s_Current;
-}
-
 
 //==========================
 // Con-/Destructors Private
@@ -71,7 +72,7 @@ return s_Current;
 
 SystemTimer::SystemTimer()
 {
-m_Task=Scheduler::CreateTask(this, &SystemTimer::TaskProc);
+m_Task=Task::Create(this, &SystemTimer::TaskProc);
 Interrupts::SetHandler(IRQ_SYSTIMER, HandleInterrupt, this);
 UINT64 cnt_pct;
 __asm volatile("mrs %0, CNTPCT_EL0": "=r" (cnt_pct));
@@ -108,8 +109,7 @@ auto task=Task::Get();
 while(!task->Cancelled)
 	{
 	m_Signal.Wait(lock);
-	if(!task->Cancelled)
-		Tick(this);
+	Triggered(this);
 	}
 Interrupts::SetHandler(IRQ_SYSTIMER, nullptr, nullptr);
 }

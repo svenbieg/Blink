@@ -24,35 +24,6 @@ using namespace Storage::Streams;
 namespace Culture {
 
 
-//==================
-// Con-/Destructors
-//==================
-
-Sentence::Sentence():
-m_String(nullptr)
-{}
-
-Sentence::Sentence(LPCSTR str):
-m_String(nullptr)
-{
-if(!str)
-	return;
-m_Strings.add(Language::Current, str);
-}
-
-Sentence::Sentence(STRING const* str):
-m_String(str)
-{
-if(!str)
-	return;
-while(str->Language!=LanguageCode::None)
-	{
-	m_Strings.add(str->Language, str->Value);
-	str++;
-	}
-}
-
-
 //========
 // Common
 //========
@@ -207,6 +178,51 @@ for(auto it: m_Strings)
 	}
 size+=writer.Print("\0");
 return size;
+}
+
+
+//==========================
+// Con-/Destructors Private
+//==========================
+
+Sentence::Sentence():
+m_String(nullptr)
+{}
+
+Sentence::Sentence(LPCSTR str):
+m_String(nullptr)
+{
+if(!str)
+	return;
+m_Strings.add(Language::Current, str);
+}
+
+Sentence::Sentence(LPCWSTR str):
+m_String(nullptr)
+{
+if(!str)
+	return;
+m_Strings.add(Language::Current, str);
+}
+
+Sentence::Sentence(STRING const* str):
+m_String(str)
+{
+if(!str)
+	return;
+while(str->Language!=LanguageCode::None)
+	{
+	m_Strings.add(str->Language, str->Value);
+	str++;
+	}
+}
+
+Sentence::Sentence(Handle<String> const& str):
+m_String(nullptr)
+{
+if(!str)
+	return;
+m_Strings.add(Language::Current, str);
 }
 
 }

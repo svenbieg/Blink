@@ -25,18 +25,6 @@ namespace Storage {
 		namespace Xml {
 
 
-//==================
-// Con-/Destructors
-//==================
-
-XmlContent::XmlContent(XmlNode* parent, Handle<String> value):
-XmlElement(parent),
-Value(this, value)
-{
-Value.Changed.Add(this, &XmlContent::OnValueChanged);
-}
-
-
 //========
 // Common
 //========
@@ -45,6 +33,18 @@ SIZE_T XmlContent::WriteToStream(OutputStream* stream, UINT level)
 {
 StreamWriter writer(stream);
 return writer.Print(Value);
+}
+
+
+//==========================
+// Con-/Destructors Private
+//==========================
+
+XmlContent::XmlContent(XmlNode* parent, Handle<String> value):
+XmlElement(parent),
+Value(this, value)
+{
+Value.Changed.Add(this, &XmlContent::OnValueChanged);
 }
 
 
