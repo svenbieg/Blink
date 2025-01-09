@@ -1,7 +1,7 @@
 <h1>Blink</h1>
 
 <p>
-Blink example for Raspberry Pi 5 using my bare metal <a href="https://github.com/svenbieg/Core">platform</a>.
+Blink example for Raspberry Pi 5 using my <a href="https://github.com/svenbieg/Scheduler">Firmware-API</a>.
 </p>
 <br />
 
