@@ -22,15 +22,8 @@ using namespace Storage::Streams;
 // Access
 //========
 
-BOOL Flags::Get(Handle<String> flag)
-{
-SharedLock lock(m_Mutex);
-return m_Flags.contains(flag);
-}
-
 Handle<String> Flags::ToString(LanguageCode lng)
 {
-SharedLock lock(m_Mutex);
 Handle<String> flags;
 UINT count=0;
 for(auto it=m_Flags.cbegin(); it.has_current(); it.move_next())
@@ -46,7 +39,7 @@ return flags;
 
 SIZE_T Flags::WriteToStream(OutputStream* stream)
 {
-auto flags=Variable::ToString();
+auto flags=ToString();
 SIZE_T size=0;
 StreamWriter writer(stream);
 size+=writer.Print(flags);
@@ -61,7 +54,6 @@ return size;
 
 VOID Flags::Clear(BOOL notify)
 {
-ScopedLock lock(m_Mutex);
 if(m_Flags.get_count()==0)
 	return;
 m_Flags.clear();
@@ -71,7 +63,6 @@ if(notify)
 
 VOID Flags::Clear(Handle<String> flag, BOOL notify)
 {
-ScopedLock lock(m_Mutex);
 if(!m_Flags.contains(flag))
 	return;
 m_Flags.remove(flag);
@@ -88,7 +79,6 @@ if(str=="0")
 	Clear(notify);
 	return true;
 	}
-ScopedLock lock(m_Mutex);
 auto list=StringList::Create(str);
 BOOL changed=false;
 for(auto it=list->Begin(); it->HasCurrent(); it->MoveNext())
@@ -113,7 +103,6 @@ for(auto it=list->Begin(); it->HasCurrent(); it->MoveNext())
 			}
 		}
 	}
-lock.Unlock();
 if(changed&&notify)
 	Changed(this);
 return true;
@@ -130,20 +119,9 @@ return size;
 
 VOID Flags::Set(Handle<String> flag, BOOL notify)
 {
-ScopedLock lock(m_Mutex);
 if(m_Flags.contains(flag))
 	return;
 m_Flags.set(flag);
-lock.Unlock();
 if(notify)
 	Changed(this);
 }
-
-
-//==========================
-// Con-/Destructors Private
-//==========================
-
-Flags::Flags(Handle<String> name):
-Variable(name)
-{}

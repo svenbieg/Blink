@@ -33,7 +33,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Guid.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IntegerClasses.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Network\Ip\IpAddress.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Resources\Icons\Icon.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Resources\Strings\Bool.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Resources\Strings\Days.h" />
@@ -63,7 +62,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Culture\Sentence.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Enum.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Flags.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)FloatClass.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Guid.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)IntegerClasses.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Network\Ip\IpAddress.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Encoding\Xml\XmlContent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Encoding\Xml\XmlNode.cpp" />
@@ -75,6 +76,5 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Timing\TimePoint.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Timing\Timer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Timing\TimeSpan.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Variable.cpp" />
   </ItemGroup>
 </Project>

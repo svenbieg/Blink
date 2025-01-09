@@ -24,8 +24,9 @@ public:
 	static inline Handle<Flags> Create(Handle<String> Name) { return new Flags(Name); }
 
 	// Access
-	BOOL Get(Handle<String> Flag);
-	Handle<String> ToString(LanguageCode Language)override;
+	inline BOOL Get(Handle<String> Flag) { return m_Flags.contains(Flag); }
+	inline Handle<String> GetName()const override { return m_Name; }
+	Handle<String> ToString(LanguageCode Language=LanguageCode::None)override;
 	SIZE_T WriteToStream(OutputStream* Stream)override;
 
 	// Modification
@@ -37,8 +38,9 @@ public:
 
 private:
 	// Con-/Destructors
-	Flags(Handle<String> Name);
+	Flags(Handle<String> Name): m_Name(Name) {}
 
 	// Common
 	Collections::index<Handle<String>> m_Flags;
+	Handle<String> m_Name;
 };

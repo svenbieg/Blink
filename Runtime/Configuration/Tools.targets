@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?> 
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="CheckComPort">
+    <Exec Command="C:\Windows\System32\mode.com $(ComPort) &gt; nul" IgnoreExitCode="true">
+      <Output PropertyName="CheckComPortExitCode" TaskParameter="ExitCode" />
+    </Exec>
+    <PropertyGroup>
+      <ComPortPresent Condition="'$(CheckComPortExitCode)'=='0'">true</ComPortPresent>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="InstallGit" Condition="!Exists('$(GitExe)')">
+    <Message Text="Installing Git..." Importance="High" />
+    <Exec Command="winget install --id Git.Git -e --source winget" />
+  </Target>
+
+  <Target Name="DownloadOpenOcd" Condition="!Exists('$(TEMP)\openocd-v0.12.0-i686-w64-mingw32.tar.gz')">
+    <Message Text="Downloading OpenOCD..." Importance="High" />
+    <DownloadFile SourceUrl="https://github.com/openocd-org/openocd/releases/download/v0.12.0/openocd-v0.12.0-i686-w64-mingw32.tar.gz" DestinationFolder="$(TEMP)" />
+  </Target>
+
+  <Target Name="InstallOpenOcd" Condition="!Exists('$(OpenOcdExe)')" DependsOnTargets="DownloadOpenOcd">
+    <Message Text="Installing OpenOCD..." Importance="High" />
+    <MakeDir Directories="$(OpenOcdPath)" />
+    <Exec Command="tar -x -f $(TEMP)\openocd-v0.12.0-i686-w64-mingw32.tar.gz" WorkingDirectory="$(OpenOcdPath)" />
+  </Target>
+
+  <Target Name="InstallPython" Condition="!Exists('$(PythonExe)')">
+    <Message Text="Installing Python..." Importance="High" />
+    <Exec Command="winget install --id Python.Python.3.8 -e --source winget" />
+  </Target>
+
+  <Import Project="$(SolutionDir)Runtime.$(Platform)\Configuration\Tools.targets" Condition="Exists('$(SolutionDir)Runtime.$(Platform)\Configuration\Tools.targets')" />
+
+  <Import Project="$(ProjectDir)Configuration\Tools.targets" Condition="Exists('$(ProjectDir)Configuration\Tools.targets')" />
+
+</Project>

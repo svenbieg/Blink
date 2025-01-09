@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)cxxabi.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)unwind.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)start.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\DeviceTree.cpp">
+      <Filter>Devices</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Arm\Gpio.cpp">
+      <Filter>Devices\Arm</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Arm\MailBox.cpp">
+      <Filter>Devices\Arm</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Emmc\EmmcHost.cpp">
+      <Filter>Devices\Emmc</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\Gpio.cpp">
+      <Filter>Devices\Gpio</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Pcie\PcieHost.cpp">
+      <Filter>Devices\Pcie</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Pcie\SouthBridge.cpp">
+      <Filter>Devices\Pcie</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialPort.cpp">
+      <Filter>Devices\Serial</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.cpp">
+      <Filter>Devices\System</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Exceptions.cpp">
+      <Filter>Devices\System</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Interrupts.cpp">
+      <Filter>Devices\System</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Memory.cpp">
+      <Filter>Devices\System</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\System.cpp">
+      <Filter>Devices\System</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.cpp">
+      <Filter>Devices\Timers</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiAdapter.cpp">
+      <Filter>Devices\Wifi</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)cxxabi.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)unwind.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)config.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\DeviceTree.h">
+      <Filter>Devices</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Arm\Gpio.h">
+      <Filter>Devices\Arm</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Arm\MailBox.h">
+      <Filter>Devices\Arm</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Emmc\EmmcCommands.h">
+      <Filter>Devices\Emmc</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Emmc\EmmcHost.h">
+      <Filter>Devices\Emmc</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Emmc\EmmcRegisters.h">
+      <Filter>Devices\Emmc</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\Gpio.h">
+      <Filter>Devices\Gpio</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pcie\PcieHost.h">
+      <Filter>Devices\Pcie</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pcie\PcieRegisters.h">
+      <Filter>Devices\Pcie</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pcie\SouthBridge.h">
+      <Filter>Devices\Pcie</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialPort.h">
+      <Filter>Devices\Serial</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.h">
+      <Filter>Devices\System</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Interrupts.h">
+      <Filter>Devices\System</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Memory.h">
+      <Filter>Devices\System</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Peripherals.h">
+      <Filter>Devices\System</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\System.h">
+      <Filter>Devices\System</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.h">
+      <Filter>Devices\Timers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiAdapter.h">
+      <Filter>Devices\Wifi</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)except.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)task.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)irq.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)cpu.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stddef.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Configuration">
+      <UniqueIdentifier>{39f521e6-3a33-4e5b-8bd0-eee76fb2f4a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices">
+      <UniqueIdentifier>{7f97cd4a-fd26-4c76-a241-adfdccadddce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Arm">
+      <UniqueIdentifier>{18dd74a5-4c3a-40a7-b793-7c5ae2274ac8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Emmc">
+      <UniqueIdentifier>{9e0135a0-1856-45ee-ac95-9b59a98a9f5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Gpio">
+      <UniqueIdentifier>{c28f303d-30b5-455f-9da7-581cc27392fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Pcie">
+      <UniqueIdentifier>{a6797504-af33-4cfd-abd9-84cfcc1a3e2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Serial">
+      <UniqueIdentifier>{94d66419-8f1f-4edc-807c-0e349633d40b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\System">
+      <UniqueIdentifier>{857258f7-700f-4622-8844-54224f715bde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Timers">
+      <UniqueIdentifier>{139bd0a9-020c-4e62-a3a5-3c1279770a5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Wifi">
+      <UniqueIdentifier>{b8bdfb4c-f470-4073-b9b9-9eb88c6b1b88}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props">
+      <Filter>Configuration</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Debugger.cfg">
+      <Filter>Configuration</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Default.props">
+      <Filter>Configuration</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Platform.props">
+      <Filter>Configuration</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.props">
+      <Filter>Configuration</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.targets">
+      <Filter>Configuration</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)linker.ld.in" />
+    <None Include="$(MSBuildThisFileDirectory)start.S" />
+    <None Include="$(MSBuildThisFileDirectory)except.S" />
+    <None Include="$(MSBuildThisFileDirectory)task.S" />
+    <None Include="$(MSBuildThisFileDirectory)irq.S" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="$(MSBuildThisFileDirectory)config.txt" />
+  </ItemGroup>
+</Project>

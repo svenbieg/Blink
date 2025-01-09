@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{9C2293C3-7566-4D7C-B287-8760ED2E059E}</ItemsProjectGuid>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(MSBuildThisFileDirectory)</NMakeIncludeSearchPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)asm.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)assert.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)heap.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stdbool.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stdint.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stdlib.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)string.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)TypeInfo.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)cmath" />
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props" />
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.targets" />
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Debug.targets" />
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Default.props" />
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Default.targets" />
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Platform.props" />
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Platform.targets" />
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.props" />
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.targets" />
+    <None Include="$(MSBuildThisFileDirectory)cstddef" />
+    <None Include="$(MSBuildThisFileDirectory)mutex" />
+    <None Include="$(MSBuildThisFileDirectory)new" />
+    <None Include="$(MSBuildThisFileDirectory)shared_mutex" />
+    <None Include="$(MSBuildThisFileDirectory)stdexcept" />
+    <None Include="$(MSBuildThisFileDirectory)type_traits" />
+    <None Include="$(MSBuildThisFileDirectory)utility" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)heap.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)stdlib.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)TypeInfo.cpp" />
+  </ItemGroup>
+</Project>

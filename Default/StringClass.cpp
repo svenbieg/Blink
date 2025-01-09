@@ -56,7 +56,8 @@ Handle<String> String::Create(LPCSTR Value)
 UINT len=StringHelper::Length(Value);
 UINT size=sizeof(String)+(len+1)*sizeof(TCHAR);
 auto str=(String*)operator new(size);
-new (str) String(len+1, Value);
+LPTSTR buf=(LPTSTR)((SIZE_T)str+sizeof(String));
+new (str) String(buf, len+1, Value);
 return str;
 }
 
@@ -65,7 +66,8 @@ Handle<String> String::Create(LPCWSTR Value)
 UINT len=StringHelper::Length(Value);
 UINT size=sizeof(String)+(len+1)*sizeof(TCHAR);
 auto str=(String*)operator new(size);
-new (str) String(len+1, Value);
+LPTSTR buf=(LPTSTR)((SIZE_T)str+sizeof(String));
+new (str) String(buf, len+1, Value);
 return str;
 }
 
@@ -73,7 +75,8 @@ Handle<String> String::Create(UINT Length, nullptr_t)
 {
 UINT size=sizeof(String)+(Length+1)*sizeof(TCHAR);
 auto str=(String*)operator new(size);
-new (str) String(nullptr);
+LPTSTR buf=(LPTSTR)((SIZE_T)str+sizeof(String));
+new (str) String(buf);
 return str;
 }
 
@@ -82,7 +85,8 @@ Handle<String> String::Create(UINT Length, LPCSTR Value)
 UINT len=StringHelper::Length(Value, Length);
 UINT size=sizeof(String)+(len+1)*sizeof(TCHAR);
 auto str=(String*)operator new(size);
-new (str) String(len+1, Value);
+LPTSTR buf=(LPTSTR)((SIZE_T)str+sizeof(String));
+new (str) String(buf, len+1, Value);
 return str;
 }
 
@@ -91,7 +95,8 @@ Handle<String> String::Create(UINT Length, LPCWSTR Value)
 UINT len=StringHelper::Length(Value, Length);
 UINT size=sizeof(String)+(len+1)*sizeof(TCHAR);
 auto str=(String*)operator new(size);
-new (str) String(len+1, Value);
+LPTSTR buf=(LPTSTR)((SIZE_T)str+sizeof(String));
+new (str) String(buf, len+1, Value);
 return str;
 }
 
@@ -100,7 +105,8 @@ Handle<String> String::Create(LPCSTR Format, VariableArguments const& Arguments)
 UINT len=StringHelper::Length(Format, Arguments);
 UINT size=sizeof(String)+(len+1)*sizeof(TCHAR);
 auto str=(String*)operator new(size);
-new (str) String(len+1, Format, Arguments);
+LPTSTR buf=(LPTSTR)((SIZE_T)str+sizeof(String));
+new (str) String(buf, len+1, Format, Arguments);
 return str;
 }
 
@@ -116,7 +122,7 @@ if(!m_Length)
 return m_Length;
 }
 
-Handle<String> String::ToString()
+Handle<String> String::ToString(LanguageCode lng)
 {
 return this;
 }
@@ -126,18 +132,19 @@ return this;
 // Comparison
 //============
 
-INT String::Compare(String* str)
+INT String::Compare(String* str1, String* str2)
 {
-UINT64 hash=Hash(this);
-UINT64 str_hash=Hash(str);
-if(hash<str_hash)
+UINT64 hash1=Hash(str1);
+UINT64 hash2=Hash(str2);
+if(hash1<hash2)
 	return -1;
-if(hash>str_hash)
+if(hash1>hash2)
 	return 1;
-if(!hash)
+if(!hash1)
 	return 0;
-auto buf=str? str->Begin(): nullptr;
-return StringHelper::Compare(m_Buffer, buf);
+auto buf1=str1? str1->Begin(): nullptr;
+auto buf2=str2? str2->Begin(): nullptr;
+return StringHelper::Compare(buf1, buf2);
 }
 
 

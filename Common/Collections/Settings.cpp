@@ -45,7 +45,7 @@ BOOL Settings::Add(Handle<Variable> var)
 {
 if(!var)
 	return false;
-if(!m_Settings.add(var->Name, var))
+if(!m_Settings.add(var->GetName(), var))
 	return false;
 var->Changed.Add(this, &Settings::OnVariableChanged);
 return true;
@@ -103,7 +103,7 @@ SIZE_T Settings::WriteVariable(OutputStream* stream, Variable* var)
 {
 StreamWriter writer(nullptr);
 UINT entry_size=0;
-entry_size+=(UINT)writer.Print(var->Name);
+entry_size+=(UINT)writer.Print(var->GetName());
 entry_size+=(UINT)writer.PrintChar('\0');
 entry_size+=(UINT)var->WriteToStream(nullptr);
 if(!stream)
@@ -111,7 +111,7 @@ if(!stream)
 writer.SetStream(stream);
 SIZE_T size=0;
 size+=stream->Write(&entry_size, sizeof(UINT));
-size+=writer.Print(var->Name);
+size+=writer.Print(var->GetName());
 size+=writer.PrintChar('\0');
 size+=var->WriteToStream(stream);
 return size;

@@ -78,7 +78,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Resources\Strings\String.h">
       <Filter>Resources\Strings</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Culture\Language.h">
       <Filter>Culture</Filter>
     </ClInclude>
@@ -143,7 +142,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Flags.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Guid.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StringVariable.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Variable.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Culture\Language.cpp">
       <Filter>Culture</Filter>
     </ClCompile>
@@ -174,5 +172,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Network\Ip\IpAddress.cpp">
       <Filter>Network\Ip</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)FloatClass.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)IntegerClasses.cpp" />
   </ItemGroup>
 </Project>

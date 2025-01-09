@@ -28,18 +28,19 @@ class EnumIterator;
 class Enum: public Variable
 {
 public:
-	// Using
-	using Sentence=Culture::Sentence;
-
 	// Friends
 	friend EnumIterator;
+
+	// Using
+	using Sentence=Culture::Sentence;
 
 	// Con-/Destructors
 	static Handle<Enum> Create(Handle<String> Name);
 
 	// Access
-	Handle<EnumIterator> First();
-	Handle<Sentence> Get();
+	Handle<EnumIterator> Begin();
+	inline Handle<Sentence> Get()const { return m_Value; }
+	inline Handle<String> GetName()const override { return m_Name; }
 	Handle<String> ToString(LanguageCode Language)override;
 	SIZE_T WriteToStream(OutputStream* Stream)override;
 
@@ -51,9 +52,10 @@ public:
 
 private:
 	// Con-/Destructors
-	Enum(Handle<String> Name);
+	Enum(Handle<String> Name): m_Name(Name) {}
 
 	// Common
+	Handle<String> m_Name;
 	Handle<Sentence> m_Value;
 	Collections::index<Handle<Sentence>> m_Values;
 };
@@ -64,28 +66,51 @@ private:
 //=============
 
 template <>
-class Handle<Enum>: public HandleBase<Enum>
+class Handle<Enum>
 {
 public:
+	// Friends
+	template <class _friend_t> friend class Handle;
+
 	// Using
-	using _base_t=HandleBase<Enum>;
-	using _base_t::_base_t;
 	using Sentence=Culture::Sentence;
 	using STRING=Resources::Strings::STRING;
 
-	// Access
-	inline operator Handle<Sentence>()const { return Get(); }
-	Handle<Sentence> Get()const
+	// Con-/Destructors
+	Handle(): m_Object(nullptr) {}
+	Handle(nullptr_t): m_Object(nullptr) {}
+	Handle(Enum* Object): m_Object(Object)
 		{
-		if(!m_Object)
-			return nullptr;
-		return m_Object->Get();
+		if(m_Object)
+			m_Object->m_RefCount++;
+		}
+	Handle(Handle const& Copy): Handle(Copy.m_Object) {}
+	Handle(Handle&& Move)noexcept: m_Object(Move.m_Object)
+		{
+		Move.m_Object=nullptr;
+		}
+	~Handle()
+		{
+		if(m_Object)
+			{
+			m_Object->Release();
+			m_Object=nullptr;
+			}
 		}
 
+	// Access
+	inline operator BOOL()const { return m_Object!=nullptr; }
+	inline operator Enum*()const { return m_Object; }
+	inline Enum* operator->()const { return m_Object; }
+	inline operator Handle<Sentence>()const { return m_Object? m_Object->Get(): nullptr; }
+
 	// Comparison
-	inline bool operator==(STRING const* Value)const
+	inline BOOL operator==(nullptr_t)const { return m_Object==nullptr; }
+	inline BOOL operator==(Enum* Object)const { return m_Object==Object; }
+	inline BOOL operator==(Handle const& Compare)const { return m_Object==Compare.m_Object; }
+	inline BOOL operator==(STRING const* Value)const
 		{
-		Handle<Sentence> value=Get();
+		Handle<Sentence> value=m_Object? m_Object->Get(): nullptr;
 		if(!value)
 			{
 			if(Value)
@@ -94,15 +119,39 @@ public:
 			}
 		return value->Compare(Value)==0;
 		}
+	inline BOOL operator!=(nullptr_t)const { return !operator==(nullptr); }
+	inline BOOL operator!=(Enum* Object)const { return !operator==(Object); }
+	inline BOOL operator!=(Handle const& Compare)const { return !operator==(Compare.m_Object); }
 	inline BOOL operator!=(STRING const* Value)const { return !operator==(Value); }
 
 	// Assignment
-	inline Handle& operator=(STRING const* Value)
+	inline Handle& operator=(nullptr_t)
 		{
-		if(m_Object)
-			m_Object->Set(Value);
+		this->~Handle();
 		return *this;
 		}
+	Handle& operator=(Enum* Object)
+		{
+		if(m_Object==Object)
+			return *this;
+		if(m_Object)
+			m_Object->Release();
+		m_Object=Object;
+		if(m_Object)
+			m_Object->m_RefCount++;
+		return *this;
+		}
+	inline Handle& operator=(Handle const& Copy) { return operator=(Copy.m_Object); }
+	inline Handle& operator=(STRING const* Value)
+		{
+		assert(m_Object);
+		m_Object->Set(Value);
+		return *this;
+		}
+
+private:
+	// Common
+	Enum* m_Object;
 };
 
 
@@ -129,9 +178,6 @@ public:
 	// Friend
 	friend Enum;
 
-	// Con-/Destructors
-	~EnumIterator();
-
 	// Access
 	Handle<Sentence> GetCurrent()const { return m_It.get_current(); }
 	UINT GetPosition()const { return m_It.get_position(); }
@@ -146,7 +192,7 @@ public:
 
 private:
 	// Con-/Destructors
-	EnumIterator(Handle<Enum> Enum);
+	EnumIterator(Handle<Enum> Enum): m_Enum(Enum), m_It(&Enum->m_Values) {}
 
 	// Common
 	Handle<Enum> m_Enum;

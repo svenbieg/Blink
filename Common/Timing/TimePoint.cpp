@@ -49,6 +49,13 @@ constexpr UINT SecondsPerMinute=60;
 // Access
 //========
 
+TIMEPOINT TimePoint::Get()
+{
+TIMEPOINT tp=m_Value;
+Reading(this, tp);
+return tp;
+}
+
 UINT TimePoint::GetDayOfWeek(LPCSTR str)
 {
 auto days=STRS_DAYS;
@@ -82,18 +89,6 @@ for(UINT u=0; u<12; u++)
 return 0;
 }
 
-BOOL TimePoint::IsAbsolute()
-{
-SharedLock lock(m_Mutex);
-return m_Value.Year!=0;
-}
-
-UINT64 TimePoint::ToSeconds()
-{
-SharedLock lock(m_Mutex);
-return ToSeconds(m_Value);
-}
-
 UINT64 TimePoint::ToSeconds(TIMEPOINT const& tp)
 {
 if(tp.Year==0)
@@ -113,7 +108,6 @@ return sec;
 
 Handle<String> TimePoint::ToString(LanguageCode lng)
 {
-SharedLock lock(m_Mutex);
 CHAR str[64];
 ToString(m_Value, str, 64, TimeFormat::DateTime, lng);
 return str;
@@ -121,7 +115,6 @@ return str;
 
 Handle<String> TimePoint::ToString(TimeFormat fmt, LanguageCode lng)
 {
-SharedLock lock(m_Mutex);
 CHAR str[64];
 ToString(m_Value, str, 64, fmt, lng);
 return str;
@@ -164,22 +157,11 @@ SIZE_T TimePoint::WriteToStream(OutputStream* stream)
 {
 if(!stream)
 	return sizeof(TIMEPOINT);
-SharedLock lock(m_Mutex);
 TIMEPOINT tp(m_Value);
+Reading(this, tp);
 if(tp.Year==0)
 	MemoryHelper::Fill(&tp, sizeof(TIMEPOINT), 0);
 return stream->Write(&tp, sizeof(TIMEPOINT));
-}
-
-
-//============
-// Comparison
-//============
-
-BOOL TimePoint::operator==(TIMEPOINT const& tp)
-{
-SharedLock lock(m_Mutex);
-return MemoryHelper::Compare(&m_Value, &tp, sizeof(TIMEPOINT))==0;
 }
 
 
@@ -269,10 +251,25 @@ tp->Year=(WORD)year;
 return true;
 }
 
-VOID TimePoint::Set(TIMEPOINT const& tp, BOOL notify)
+SIZE_T TimePoint::ReadFromStream(InputStream* stream, BOOL notify)
 {
-TypedVariable::Set(tp, notify);
-UpdateClock();
+if(!stream)
+	return sizeof(TIMEPOINT);
+TIMEPOINT value;
+SIZE_T size=stream->Read(&value, sizeof(TIMEPOINT));
+if(size==sizeof(TIMEPOINT))
+	Set(value, notify);
+return size;
+}
+
+BOOL TimePoint::Set(TIMEPOINT const& value, BOOL notify)
+{
+if(m_Value==value)
+	return false;
+m_Value=value;
+if(notify)
+	Changed(this);
+return true;
 }
 
 
@@ -280,8 +277,9 @@ UpdateClock();
 // Con-/Destructors Private
 //==========================
 
-TimePoint::TimePoint(Handle<String> name, TIMEPOINT const& tp):
-TypedVariable(name, tp)
+TimePoint::TimePoint(Handle<String> name, TIMEPOINT const& value):
+m_Name(name),
+m_Value(value)
 {
 UpdateClock();
 }
@@ -302,10 +300,8 @@ return ticks;
 
 VOID TimePoint::OnClockSecond(Clock* clock)
 {
-ScopedLock lock(m_Mutex);
 if(!Clock::Update(&m_Value))
 	return;
-lock.Unlock();
 clock->Second.Remove(this);
 Changed(this);
 }
@@ -365,7 +361,7 @@ str[0]=0;
 UINT64 ticks_now=SystemTimer::GetTickCount();
 UINT delta=(UINT)((ticks_now-ticks)/1000);
 CHAR time_span[32];
-TimeSpan::ToString(delta, time_span, 32);
+TimeSpan::ToString(time_span, 32, delta);
 UINT len=0;
 switch(lng)
 	{
@@ -387,7 +383,6 @@ return StringHelper::Print(str, size, "%02u:%02u", hour, min);
 
 VOID TimePoint::UpdateClock()
 {
-ScopedLock lock(m_Mutex);
 UINT64 ticks=GetTickCount(m_Value);
 if(ticks==0)
 	{

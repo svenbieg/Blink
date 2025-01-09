@@ -22,16 +22,23 @@ using namespace Concurrency;
 namespace Firmware {
 
 
+//==================
+// Con-/Destructors
+//==================
+
+Application::~Application()
+{
+s_Current=nullptr;
+}
+
+
 //========
 // Common
 //========
 
-Application* Application::Current=nullptr;
-
-INT Application::Run()
+VOID Application::Run()
 {
 DispatchedQueue::Enter();
-return 0;
 }
 
 VOID Application::Quit()
@@ -44,10 +51,17 @@ DispatchedQueue::Exit();
 // Con-/Destructors Protected
 //============================
 
-Application::Application(LPCSTR name):
+Application::Application(LPCTSTR name):
 m_Name(name)
 {
-Current=this;
+s_Current=this;
 }
+
+
+//================
+// Common Private
+//================
+
+Application* Application::s_Current=nullptr;
 
 }

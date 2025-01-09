@@ -53,8 +53,7 @@ public:
 	static INT Compare(STRING const* String, LPCTSTR Value);
 	static INT Compare(Sentence const* Sentence1, Sentence const* Sentence2);
 	SIZE_T ReadFromStream(InputStream* Stream);
-	inline Handle<String> ToString()override { return this->ToString(Language::Current); }
-	Handle<String> ToString(LanguageCode Language);
+	Handle<String> ToString(LanguageCode Language=LanguageCode::None)override;
 	static LPCWSTR Translate(STRING const* Value, LanguageCode Language=Language::Current);
 	SIZE_T WriteToStream(OutputStream* Stream)const;
 
@@ -79,33 +78,93 @@ private:
 //========
 
 template <>
-class Handle<Culture::Sentence>: public HandleBase<Culture::Sentence>
+class Handle<Culture::Sentence>
 {
 public:
+	// Friends
+	template <class _friend_t> friend class Handle;
+
 	// Using
-	using _base_t=HandleBase<Culture::Sentence>;
 	using Sentence=Culture::Sentence;
 	using STRING=Resources::Strings::STRING;
 
 	// Con-/Destructors
-	using _base_t::_base_t;
-	Handle(LPCSTR Value) { Create(new Sentence(Value)); }
-	Handle(LPCWSTR Value) { Create(new Sentence(Value)); }
-	Handle(STRING const* Value) { Create(new Sentence(Value)); }
-	Handle(Handle<String> const& Value) { Create(new Sentence(Value)); }
+	Handle(): m_Object(nullptr) {}
+	Handle(nullptr_t): m_Object(nullptr) {}
+	Handle(Sentence* Object): m_Object(Object)
+		{
+		if(m_Object)
+			m_Object->m_RefCount++;
+		}
+	Handle(Handle const& Copy): Handle(Copy.m_Object) {}
+	Handle(Handle&& Move)noexcept: m_Object(Move.m_Object)
+		{
+		Move.m_Object=nullptr;
+		}
+	Handle(LPCSTR Value): m_Object(nullptr) { operator=(Value); }
+	Handle(LPCWSTR Value): m_Object(nullptr) { operator=(Value); }
+	Handle(STRING const* Value): m_Object(nullptr) { operator=(Value); }
+	Handle(Handle<String> const& Value): m_Object(nullptr) { operator=(Value); }
+	~Handle()
+		{
+		if(m_Object)
+			{
+			m_Object->Release();
+			m_Object=nullptr;
+			}
+		}
 
 	// Access
-	operator Handle<String>()const { return m_Object->ToString(); }
-
-	// Assignment
-	inline Handle& operator=(STRING const* Value) { Set(new Sentence(Value)); return *this; }
+	inline operator BOOL()const { return m_Object!=nullptr; }
+	inline operator Sentence*()const { return m_Object; }
+	inline Sentence* operator->()const { return m_Object; }
+	operator Handle<String>()const { return m_Object? m_Object->ToString(): nullptr; }
 
 	// Comparison
-	inline BOOL operator==(Sentence* Value)const override { return Sentence::Compare(m_Object, Value)==0; }
-	inline BOOL operator>(Handle<Sentence> const& Value)const { return Sentence::Compare(m_Object, Value.m_Object)>0; }
-	inline BOOL operator>=(Handle<Sentence> const& Value)const { return Sentence::Compare(m_Object, Value.m_Object)>=0; }
-	inline BOOL operator<(Handle<Sentence> const& Value)const { return Sentence::Compare(m_Object, Value.m_Object)<0; }
-	inline BOOL operator<=(Handle<Sentence> const& Value)const { return Sentence::Compare(m_Object, Value.m_Object)<=0; }
+	inline BOOL operator==(Sentence* Value)const { return Sentence::Compare(m_Object, Value)==0; }
+	inline BOOL operator!=(Sentence* Value)const { return Sentence::Compare(m_Object, Value)!=0; }
+	inline BOOL operator>(Sentence* Value)const { return Sentence::Compare(m_Object, Value)>0; }
+	inline BOOL operator>=(Sentence* Value)const { return Sentence::Compare(m_Object, Value)>=0; }
+	inline BOOL operator<(Sentence* Value)const { return Sentence::Compare(m_Object, Value)<0; }
+	inline BOOL operator<=(Sentence* Value)const { return Sentence::Compare(m_Object, Value)<=0; }
+
+	// Assignment
+	inline Handle& operator=(nullptr_t)
+		{
+		this->~Handle();
+		return *this;
+		}
+	Handle& operator=(Sentence* Object)
+		{
+		if(m_Object==Object)
+			return *this;
+		if(m_Object)
+			m_Object->Release();
+		m_Object=Object;
+		if(m_Object)
+			m_Object->m_RefCount++;
+		return *this;
+		}
+	inline Handle& operator=(Handle const& Copy) { return operator=(Copy.m_Object); }
+	inline Handle& operator=(LPCSTR Value)
+		{
+		auto value=Sentence::Create(Value);
+		return operator=(value);
+		}
+	inline Handle& operator=(LPCWSTR Value)
+		{
+		auto value=Sentence::Create(Value);
+		return operator=(value);
+		}
+	inline Handle& operator=(STRING const* Value)
+		{
+		auto value=Sentence::Create(Value);
+		return operator=(value);
+		}
+
+private:
+	// Common
+	Sentence* m_Object;
 };
 
 

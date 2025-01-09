@@ -24,7 +24,7 @@ namespace Culture {
 // Language
 //==========
 
-class Language: public TypedVariable<LanguageCode>
+class Language: public Variable
 {
 public:
 	// Con-/Destructors
@@ -35,17 +35,32 @@ public:
 
 	// Common
 	static LanguageCode Current;
-	static LanguageCode FromString(LPCSTR Language);
-	static LanguageCode FromString(LPCWSTR Language);
-	static Handle<String> ToString(LanguageCode Language=Current, LanguageCode ToLanguage=Current);
-	static Handle<String> ToStringCode(LanguageCode Language=Current);
-	Handle<String> ToString()override;
-	Handle<String> ToString(LanguageCode ToLanguage);
-	Handle<String> ToStringCode();
+
+	// Access
+	LanguageCode Get();
+	static inline LanguageCode Get(Language* Value) { return Value? Value->Get(): LanguageCode::None; }
+	inline Handle<String> GetName()const override { return m_Name; }
+	Event<Variable, LanguageCode&> Reading;
+	inline Handle<String> ToString(LanguageCode Language=LanguageCode::None)override { return ToString(Get(), Language); }
+	static Handle<String> ToString(LanguageCode Language, LanguageCode ToLanguage=Current);
+	inline Handle<String> ToStringCode() { return ToStringCode(Get()); }
+	static Handle<String> ToStringCode(LanguageCode Language);
+	SIZE_T WriteToStream(OutputStream* Stream)override;
+
+	// Common
+	static LanguageCode FromString(LPCSTR Value);
+	static LanguageCode FromString(LPCWSTR Value);
+	static inline LanguageCode FromString(Handle<String> Value) { return FromString(Value? Value->Begin(): nullptr); }
+	SIZE_T ReadFromStream(InputStream* Stream, BOOL Notify=true)override;
+	BOOL Set(LanguageCode Value, BOOL Notify=true);
 
 private:
 	// Con-/Destructors
-	Language(Handle<String> Name, LanguageCode Language);
+	Language(Handle<String> Name, LanguageCode Value): m_Name(Name), m_Value(Value) {}
+
+	// Common
+	Handle<String> m_Name;
+	LanguageCode m_Value;
 };
 
 }

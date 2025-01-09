@@ -1,0 +1,80 @@
+//==============
+// linker.ld.in
+//==============
+
+#include <config.h>
+
+SECTIONS
+{
+. = 0x80000;
+
+.text :
+	{
+	KEEP(*(.text.start))
+	*(.text .text.*)
+	}
+
+.eh_frame_hdr :
+	{
+	__eh_frame_hdr_start = .;
+	KEEP(*(.eh_frame_hdr .eh_frame_hdr.*))
+	}
+
+.eh_frame :
+	{
+	KEEP(*(.eh_frame .eh_frame.*))
+	}
+
+.gcc_except_table :
+	{
+	KEEP(*(.gcc_except_table .gcc_except_table.*))
+	}
+
+.got :
+	{
+	KEEP(*(.got .got.*))
+	}
+
+.stack (NOLOAD) :
+	{
+	. = ALIGN(STACK_SIZE);
+	__stack_start = .;
+	. += CPU_COUNT * STACK_SIZE;
+	__stack_end = .;
+	}
+
+.data :
+	{
+	__init_array_start = .;
+	KEEP(*(.init_array .init_array.*))
+	__init_array_end = .;
+	*(.rodata .rodata.*)
+	*(.data .data.*)
+	}
+
+.bss (NOLOAD) :
+	{
+	__bss_start = .;
+	*(.bss .bss.*)
+	. = ALIGN(8);
+	__bss_end = .;
+	}
+
+.nodata (NOLOAD) :
+	{
+	*(.nodata .nodata.*)
+	}
+
+__end = .;
+__heap_start = .;
+
+/DISCARD/ :
+	{
+	*(.comment)
+	*(.dtors)
+	#ifndef _DEBUG
+	*(.debug_*)
+	#endif
+	}
+
+}

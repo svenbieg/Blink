@@ -1,0 +1,22 @@
+//=========
+// cstddef
+//=========
+
+#pragma once
+
+
+//===========
+// Namespace
+//===========
+
+namespace std {
+
+
+//========
+// Common
+//========
+
+typedef decltype(sizeof(0)) ptrdiff_t;
+typedef decltype(sizeof(0)) size_t;
+
+}

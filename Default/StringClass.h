@@ -58,16 +58,21 @@ public:
 		VariableArguments vargs(args, TypeHelper::ArraySize(args));
 		return StringHelper::ScanArgs(m_Buffer, Format, vargs);
 		}
-	Handle<String> ToString()override;
+	Handle<String> ToString(LanguageCode Language=LanguageCode::None)override;
 
 	// Comparison
-	inline BOOL operator==(String const& String)const { return StringHelper::Compare(m_Buffer, String.m_Buffer)==0; }
-	inline BOOL operator!=(String const& String)const { return StringHelper::Compare(m_Buffer, String.m_Buffer)!=0; }
-	inline BOOL operator>(String const& String)const { return StringHelper::Compare(m_Buffer, String.m_Buffer)>0; }
-	inline BOOL operator>=(String const& String)const { return StringHelper::Compare(m_Buffer, String.m_Buffer)>=0; }
-	inline BOOL operator<(String const& String)const { return StringHelper::Compare(m_Buffer, String.m_Buffer)<0; }
-	inline BOOL operator<=(String const& String)const { return StringHelper::Compare(m_Buffer, String.m_Buffer)<=0; }
-	INT Compare(String* String);
+	inline INT Compare(String* String) { return Compare(this, String); }
+	static INT Compare(String* String1, String* String2);
+	static inline INT Compare(String* String1, LPCSTR String2)
+		{
+		auto str1=String1? String1->m_Buffer: nullptr;
+		return StringHelper::Compare(str1, String2);
+		}
+	static inline INT Compare(String* String1, LPCWSTR String2)
+		{
+		auto str1=String1? String1->m_Buffer: nullptr;
+		return StringHelper::Compare(str1, String2);
+		}
 
 	// Operators
 	Handle<String> Replace(LPCSTR Find, LPCSTR Replace, BOOL CaseSensitive=true, BOOL Repeat=false);
@@ -77,30 +82,28 @@ private:
 	static constexpr UINT64 INVALID_HASH=(1ULL<<63);
 
 	// Con-/Destructors
-	String(nullptr_t): m_Hash(INVALID_HASH), m_Length(0)
+	String(LPTSTR Buffer): m_Buffer(Buffer), m_Hash(INVALID_HASH), m_Length(0)
 		{
 		m_Buffer[0]=0;
 		}
-	String(UINT Size, LPCSTR Value): m_Hash(INVALID_HASH)
+	String(LPTSTR Buffer, UINT Size, LPCSTR Value): m_Buffer(Buffer), m_Hash(INVALID_HASH)
 		{
 		m_Length=StringHelper::Copy(m_Buffer, Size, Value);
 		}
-	String(UINT Size, LPCWSTR Value): m_Hash(INVALID_HASH)
+	String(LPTSTR Buffer, UINT Size, LPCWSTR Value): m_Buffer(Buffer), m_Hash(INVALID_HASH)
 		{
 		m_Length=StringHelper::Copy(m_Buffer, Size, Value);
 		}
-	String(UINT Size, LPCSTR Format, VariableArguments const& Arguments): m_Hash(INVALID_HASH)
+	String(LPTSTR Buffer, UINT Size, LPCSTR Format, VariableArguments const& Arguments): m_Buffer(Buffer), m_Hash(INVALID_HASH)
 		{
 		m_Length=StringHelper::PrintArgs(m_Buffer, Size, Format, Arguments);
 		}
 
 	// Common
 	static UINT64 Hash(String* String);
+	LPTSTR m_Buffer;
 	UINT64 m_Hash;
 	UINT m_Length;
-
-	// Buffer
-	TCHAR m_Buffer[];
 };
 
 
@@ -109,163 +112,94 @@ private:
 //===============
 
 template <>
-class Handle<String>: public HandleBase<String>
+class Handle<String>
 {
 public:
-	// Using
-	using _base_t=HandleBase<String>;
+	// Friends
+	template <class _friend_t> friend class Handle;
 
 	// Con-/Destructors
-	Handle(): _base_t(nullptr) {}
-	Handle(nullptr_t): _base_t(nullptr) {}
-	Handle(String* Object): _base_t(Object) {}
-	Handle(Handle const& Copy): _base_t(Copy) {}
-	Handle(Handle&& Move)noexcept: _base_t(Move.m_Object) { Move.m_Object=nullptr; }
-	Handle(LPCSTR Value) { Create(Value); }
-	Handle(LPCWSTR Value) { Create(Value); }
-	template <class... _args_t> Handle(LPCSTR Format, _args_t... Arguments)
+	Handle(): m_Object(nullptr) {}
+	Handle(nullptr_t): m_Object(nullptr) {}
+	Handle(String* Object): m_Object(Object)
 		{
-		UnknownClass args[]={ Arguments... };
-		VariableArguments vargs(args, TypeHelper::ArraySize(args));
-		Create(Format, vargs);
+		if(m_Object)
+			m_Object->m_RefCount++;
 		}
+	Handle(Handle const& Copy): Handle(Copy.m_Object) {}
+	Handle(Handle&& Move)noexcept: m_Object(Move.m_Object)
+		{
+		Move.m_Object=nullptr;
+		}
+	~Handle()
+		{
+		if(m_Object)
+			{
+			m_Object->Release();
+			m_Object=nullptr;
+			}
+		}
+	Handle(LPCSTR Value): m_Object(nullptr) { operator=(Value); }
+	Handle(LPCWSTR Value): m_Object(nullptr) { operator=(Value); }
 
 	// Access
-	inline operator BOOL()const override { return m_Object&&m_Object->HasValue(); }
+	inline operator BOOL()const { return m_Object&&m_Object->HasValue(); }
+	inline operator String*()const { return m_Object; }
+	inline String* operator->()const { return m_Object; }
 
 	// Comparison
-	inline BOOL operator==(nullptr_t)const override { return !operator BOOL(); }
-	inline BOOL operator==(LPCSTR Value)const
-		{
-		auto str=m_Object? m_Object->Begin(): nullptr;
-		return StringHelper::Compare(str, Value)==0;
-		}
-	inline BOOL operator==(LPCWSTR Value)const
-		{
-		auto str=m_Object? m_Object->Begin(): nullptr;
-		return StringHelper::Compare(str, Value)==0;
-		}
-	inline BOOL operator==(String* Object)const override
-		{
-		if(!m_Object)
-			return StringHelper::Compare((LPCTSTR)nullptr, Object? Object->Begin(): nullptr)==0;
-		return m_Object->Compare(Object)==0;
-		}
-	inline BOOL operator!=(nullptr_t)const { return !operator==(nullptr); }
-	inline BOOL operator!=(LPCSTR Value)const { return !operator==(Value); }
-	inline BOOL operator!=(LPCWSTR Value)const { return !operator==(Value); }
-	inline BOOL operator!=(String* Object)const { return !operator==(Object); }
-	inline BOOL operator>(nullptr_t)const { return (m_Object&&m_Object->HasValue()); }
-	inline BOOL operator>(LPCSTR Value)const
-		{
-		auto str=m_Object? m_Object->Begin(): nullptr;
-		return StringHelper::Compare(str, Value)>0;
-		}
-	inline BOOL operator>(LPCWSTR Value)const
-		{
-		auto str=m_Object? m_Object->Begin(): nullptr;
-		return StringHelper::Compare(str, Value)>0;
-		}
-	inline BOOL operator>(String* Object)const
-		{
-		if(!m_Object)
-			return false;
-		return m_Object->Compare(Object)>0;
-		}
+	inline BOOL operator==(nullptr_t)const { return !operator BOOL(); }
+	inline BOOL operator==(String* Value)const { return String::Compare(m_Object, Value)==0; }
+	inline BOOL operator==(LPCSTR Value)const { return String::Compare(m_Object, Value)==0; }
+	inline BOOL operator==(LPCWSTR Value)const { return String::Compare(m_Object, Value)==0; }
+	inline BOOL operator!=(nullptr_t)const { return operator BOOL(); }
+	inline BOOL operator!=(String* Value)const { return String::Compare(m_Object, Value)!=0; }
+	inline BOOL operator!=(LPCSTR Value)const { return String::Compare(m_Object, Value)!=0; }
+	inline BOOL operator!=(LPCWSTR Value)const { return String::Compare(m_Object, Value)!=0; }
+	inline BOOL operator>(nullptr_t)const { return operator BOOL(); }
+	inline BOOL operator>(String* Value)const { return String::Compare(m_Object, Value)>0; }
+	inline BOOL operator>(LPCSTR Value)const { return String::Compare(m_Object, Value)>0; }
+	inline BOOL operator>(LPCWSTR Value)const { return String::Compare(m_Object, Value)>0; }
 	inline BOOL operator>=(nullptr_t)const { return true; }
-	inline BOOL operator>=(LPCSTR Value)const
-		{
-		auto str=m_Object? m_Object->Begin(): nullptr;
-		return StringHelper::Compare(str, Value)>=0;
-		}
-	inline BOOL operator>=(LPCWSTR Value)const
-		{
-		auto str=m_Object? m_Object->Begin(): nullptr;
-		return StringHelper::Compare(str, Value)>=0;
-		}
-	inline BOOL operator>=(String* Object)const
-		{
-		if(!m_Object)
-			return Object? !Object->HasValue(): true;
-		return m_Object->Compare(Object)>=0;
-		}
+	inline BOOL operator>=(String* Value)const { return String::Compare(m_Object, Value)>=0; }
+	inline BOOL operator>=(LPCSTR Value)const { return String::Compare(m_Object, Value)>=0; }
+	inline BOOL operator>=(LPCWSTR Value)const { return String::Compare(m_Object, Value)>=0; }
 	inline BOOL operator<(nullptr_t)const { return false; }
-	inline BOOL operator<(LPCSTR Value)const
-		{
-		auto str=m_Object? m_Object->Begin(): nullptr;
-		return StringHelper::Compare(str, Value)<0;
-		}
-	inline BOOL operator<(LPCWSTR Value)const
-		{
-		auto str=m_Object? m_Object->Begin(): nullptr;
-		return StringHelper::Compare(str, Value)<0;
-		}
-	inline BOOL operator<(String* Object)const
-		{
-		if(!m_Object)
-			return Object? Object->HasValue(): false;
-		return m_Object->Compare(Object)<0;
-		}
-	inline BOOL operator<=(nullptr_t)const { return !(m_Object&&m_Object->HasValue()); }
-	inline BOOL operator<=(LPCSTR Value)const
-		{
-		auto str=m_Object? m_Object->Begin(): nullptr;
-		return StringHelper::Compare(str, Value)<=0;
-		}
-	inline BOOL operator<=(LPCWSTR Value)const
-		{
-		auto str=m_Object? m_Object->Begin(): nullptr;
-		return StringHelper::Compare(str, Value)<=0;
-		}
-	inline BOOL operator<=(String* Object)const
-		{
-		if(!m_Object)
-			return true;
-		return m_Object->Compare(Object)<=0;
-		}
+	inline BOOL operator<(String* Value)const { return String::Compare(m_Object, Value)<0; }
+	inline BOOL operator<(LPCSTR Value)const { return String::Compare(m_Object, Value)<0; }
+	inline BOOL operator<(LPCWSTR Value)const { return String::Compare(m_Object, Value)<0; }
+	inline BOOL operator<=(nullptr_t)const { return !operator BOOL(); }
+	inline BOOL operator<=(String* Value)const { return String::Compare(m_Object, Value)<=0; }
+	inline BOOL operator<=(LPCSTR Value)const { return String::Compare(m_Object, Value)<=0; }
+	inline BOOL operator<=(LPCWSTR Value)const { return String::Compare(m_Object, Value)<=0; }
 
 	// Assignment
 	inline Handle& operator=(nullptr_t)
 		{
-		Clear();
+		this->~Handle();
 		return *this;
 		}
+	Handle& operator=(String* Object)
+		{
+		if(m_Object==Object)
+			return *this;
+		if(m_Object)
+			m_Object->Release();
+		m_Object=Object;
+		if(m_Object)
+			m_Object->m_RefCount++;
+		return *this;
+		}
+	inline Handle& operator=(Handle const& Copy) { return operator=(Copy.m_Object); }
 	inline Handle& operator=(LPCSTR Value)
 		{
-		Set(Value);
-		return *this;
+		auto str=String::Create(Value);
+		return operator=(str);
 		}
 	inline Handle& operator=(LPCWSTR Value)
 		{
-		Set(Value);
-		return *this;
-		}
-	inline Handle& operator=(Handle const& Copy)
-		{
-		_base_t::Set(Copy.m_Object);
-		return *this;
-		}
-	VOID Set(LPCSTR Value)
-		{
-		if(m_Object)
-			{
-			if(StringHelper::Compare(m_Object->Begin(), Value)==0)
-				return;
-			Clear();
-			}
-		if(Value&&Value[0])
-			Create(Value);
-		}
-	VOID Set(LPCWSTR Value)
-		{
-		if(m_Object)
-			{
-			if(StringHelper::Compare(m_Object->Begin(), Value)==0)
-				return;
-			Clear();
-			}
-		if(Value&&Value[0])
-			Create(Value);
+		auto str=String::Create(Value);
+		return operator=(str);
 		}
 
 	// Operators
@@ -291,22 +225,8 @@ public:
 		}
 
 private:
-	// Con-/Destructors
-	inline VOID Create(LPCSTR Value)
-		{
-		auto str=String::Create(Value);
-		_base_t::Create(str);
-		}
-	inline VOID Create(LPCWSTR Value)
-		{
-		auto str=String::Create(Value);
-		_base_t::Create(str);
-		}
-	inline VOID Create(LPCSTR Format, VariableArguments const& Arguments)
-		{
-		auto str=String::Create(Format, Arguments);
-		_base_t::Create(str);
-		}
+	// Common
+	String* m_Object;
 };
 
 

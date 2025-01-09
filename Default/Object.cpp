@@ -17,7 +17,7 @@
 // Common
 //========
 
-Handle<String> Object::ToString()
+Handle<String> Object::ToString(LanguageCode lng)
 {
 return nullptr;
 }

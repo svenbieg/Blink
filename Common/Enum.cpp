@@ -13,7 +13,6 @@
 #include "Storage/Streams/StreamWriter.h"
 #include "Enum.h"
 
-using namespace Concurrency;
 using namespace Culture;
 using namespace Storage::Streams;
 
@@ -22,28 +21,21 @@ using namespace Storage::Streams;
 // Access
 //========
 
-Handle<EnumIterator> Enum::First()
+Handle<EnumIterator> Enum::Begin()
 {
 auto it=new EnumIterator(this);
 it->Begin();
 return it;
 }
 
-Handle<Sentence> Enum::Get()
-{
-SharedLock lock(m_Mutex);
-return m_Value;
-}
-
 Handle<String> Enum::ToString(LanguageCode lng)
 {
-SharedLock lock(m_Mutex);
+assert(m_Value);
 return m_Value->Begin(lng);
 }
 
 SIZE_T Enum::WriteToStream(OutputStream* stream)
 {
-SharedLock lock(m_Mutex);
 SIZE_T size=0;
 StreamWriter writer(stream);
 size+=writer.Print(m_Value->Begin(LanguageCode::None));
@@ -58,7 +50,6 @@ return size;
 
 VOID Enum::Add(Handle<Sentence> value)
 {
-ScopedLock lock(m_Mutex);
 m_Values.set(value);
 if(!m_Value)
 	m_Value=value;
@@ -88,45 +79,12 @@ return size;
 
 BOOL Enum::Set(Handle<Sentence> value, BOOL notify)
 {
-ScopedLock lock(m_Mutex);
-if(!m_Values.contains(value))
-	return false;
 if(m_Value==value)
 	return true;
+if(!m_Values.contains(value))
+	return false;
 m_Value=value;
-lock.Unlock();
 if(notify)
 	Changed(this);
 return true;
-}
-
-
-//==========================
-// Con-/Destructors Private
-//==========================
-
-Enum::Enum(Handle<String> name):
-Variable(name)
-{}
-
-
-//==========
-// Iterator
-//==========
-
-EnumIterator::~EnumIterator()
-{
-m_Enum->m_Mutex.Unlock();
-}
-
-
-//==================
-// Iterator Private
-//==================
-
-EnumIterator::EnumIterator(Handle<Enum> henum):
-m_Enum(henum),
-m_It(&henum->m_Values)
-{
-m_Enum->m_Mutex.Lock();
 }

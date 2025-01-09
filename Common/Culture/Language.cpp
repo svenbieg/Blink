@@ -46,14 +46,16 @@ return LanguageCode::None;
 
 LanguageCode Language::Current=LanguageCode::None;
 
-LanguageCode Language::FromString(LPCSTR lng)
-{
-return LanguageFromString(lng);
-}
 
-LanguageCode Language::FromString(LPCWSTR lng)
+//========
+// Access
+//========
+
+LanguageCode Language::Get()
 {
-return LanguageFromString(lng);
+LanguageCode value=m_Value;
+Reading(this, value);
+return value;
 }
 
 Handle<String> Language::ToString(LanguageCode lng, LanguageCode lng_to)
@@ -72,28 +74,48 @@ Handle<String> Language::ToStringCode(LanguageCode lng)
 return Sentence::Translate(STR_LANGUAGE_CODE, lng);
 }
 
-Handle<String> Language::ToString()
+SIZE_T Language::WriteToStream(OutputStream* Stream)
 {
-return ToString(m_Value, Current);
-}
-
-Handle<String> Language::ToString(LanguageCode lng_to)
-{
-return ToString(m_Value, lng_to);
-}
-
-Handle<String> Language::ToStringCode()
-{
-return ToStringCode(m_Value);
+if(!Stream)
+	return sizeof(LanguageCode);
+LanguageCode value=Get();
+return Stream->Write(&value, sizeof(LanguageCode));
 }
 
 
-//==========================
-// Con-/Destructors Private
-//==========================
+//==============
+// Modification
+//==============
 
-Language::Language(Handle<String> name, LanguageCode lng):
-TypedVariable(name, lng)
-{}
+LanguageCode Language::FromString(LPCSTR lng)
+{
+return LanguageFromString(lng);
+}
+
+LanguageCode Language::FromString(LPCWSTR lng)
+{
+return LanguageFromString(lng);
+}
+
+SIZE_T Language::ReadFromStream(InputStream* stream, BOOL notify)
+{
+if(!stream)
+	return sizeof(LanguageCode);
+LanguageCode value;
+SIZE_T size=stream->Read(&value, sizeof(LanguageCode));
+if(size==sizeof(LanguageCode))
+	Set(value, notify);
+return size;
+}
+
+BOOL Language::Set(LanguageCode value, BOOL notify)
+{
+if(m_Value==value)
+	return false;
+m_Value=value;
+if(notify)
+	Changed(this);
+return true;
+}
 
 }

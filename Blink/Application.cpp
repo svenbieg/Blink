@@ -25,8 +25,9 @@ using Application=Blink::Application;
 
 INT Main()
 {
-Handle<Application> app=new Application();
-return app->Run();
+auto app=Application::Create();
+app->Run();
+return 0;
 }
 
 
@@ -37,9 +38,9 @@ return app->Run();
 namespace Blink {
 
 
-//==================
-// Con-/Destructors
-//==================
+//==========================
+// Con-/Destructors Private
+//==========================
 
 Application::Application():
 Firmware::Application("Blink")

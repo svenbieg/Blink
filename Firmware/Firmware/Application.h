@@ -19,17 +19,23 @@ namespace Firmware {
 class Application: public Object
 {
 public:
+	// Con-/Destructors
+	~Application();
+
 	// Common
-	static Application* Current;
-	INT Run();
+	static inline Application* Get() { return s_Current; }
+	inline LPCTSTR GetName()const { return m_Name; }
+	VOID Run();
 	VOID Quit();
 
 protected:
 	// Con-/Destructors
-	Application(LPCSTR Name);
+	Application(LPCTSTR Name);
 
+private:
 	// Common
-	Handle<String> m_Name;
+	LPCTSTR m_Name;
+	static Application* s_Current;
 };
 
 }

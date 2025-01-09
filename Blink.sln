@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31512.422
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Core", "Core\Core.vcxitems", "{5246A431-BF83-4EB6-BD97-A664298B76E2}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Default", "Default\Default.vcxitems", "{E356BD3B-D09B-4FDA-ACD2-403372FCEAC1}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Core.Rpi5", "Core.Rpi5\Core.Rpi5.vcxitems", "{4422A24D-5F09-491B-B4F1-48433B26ED3D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Blink", "Blink\Blink.vcxproj", "{0A8C397A-DB1A-41FA-966B-358CE4352EB4}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Common", "Common\Common.vcxitems", "{35B6FC43-74CC-4727-9058-44A0BB340350}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Firmware", "Firmware\Firmware.vcxitems", "{B6B4068B-DC23-4A97-A01A-8B4E2F876CFB}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Runtime", "Runtime\Runtime.vcxitems", "{9C2293C3-7566-4D7C-B287-8760ED2E059E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Runtime.Rpi5", "Runtime.Rpi5\Runtime.Rpi5.vcxitems", "{E31DF348-0424-4DEB-B143-B720C57D828C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,14 +34,14 @@ Global
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Common\Common.vcxitems*{0a8c397a-db1a-41fa-966b-358ce4352eb4}*SharedItemsImports = 4
-		Core.Rpi5\Core.Rpi5.vcxitems*{0a8c397a-db1a-41fa-966b-358ce4352eb4}*SharedItemsImports = 4
-		Core\Core.vcxitems*{0a8c397a-db1a-41fa-966b-358ce4352eb4}*SharedItemsImports = 4
 		Default\Default.vcxitems*{0a8c397a-db1a-41fa-966b-358ce4352eb4}*SharedItemsImports = 4
 		Firmware\Firmware.vcxitems*{0a8c397a-db1a-41fa-966b-358ce4352eb4}*SharedItemsImports = 4
+		Runtime.Rpi5\Runtime.Rpi5.vcxitems*{0a8c397a-db1a-41fa-966b-358ce4352eb4}*SharedItemsImports = 4
+		Runtime\Runtime.vcxitems*{0a8c397a-db1a-41fa-966b-358ce4352eb4}*SharedItemsImports = 4
 		Common\Common.vcxitems*{35b6fc43-74cc-4727-9058-44a0bb340350}*SharedItemsImports = 9
-		Core.Rpi5\Core.Rpi5.vcxitems*{4422a24d-5f09-491b-b4f1-48433b26ed3d}*SharedItemsImports = 9
-		Core\Core.vcxitems*{5246a431-bf83-4eb6-bd97-a664298b76e2}*SharedItemsImports = 9
+		Runtime\Runtime.vcxitems*{9c2293c3-7566-4d7c-b287-8760ed2e059e}*SharedItemsImports = 9
 		Firmware\Firmware.vcxitems*{b6b4068b-dc23-4a97-a01a-8b4e2f876cfb}*SharedItemsImports = 9
+		Runtime.Rpi5\Runtime.Rpi5.vcxitems*{e31df348-0424-4deb-b143-b720c57d828c}*SharedItemsImports = 9
 		Default\Default.vcxitems*{e356bd3b-d09b-4fda-acd2-403372fceac1}*SharedItemsImports = 9
 	EndGlobalSection
 EndGlobal

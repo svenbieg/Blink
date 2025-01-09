@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include "Culture/LanguageCode.h"
 #include "TypeHelper.h"
 
 
@@ -33,11 +34,14 @@ public:
 	template <class _obj_t> friend class Handle;
 	template <class _obj_t> friend class HandleBase;
 
+	// Using
+	using LanguageCode=Culture::LanguageCode;
+
 	// Con-/Destructors
 	virtual ~Object() {}
 
 	// Common
-	virtual Handle<String> ToString();
+	virtual Handle<String> ToString(LanguageCode Language=LanguageCode::None);
 
 protected:
 	// Con-/Destructors

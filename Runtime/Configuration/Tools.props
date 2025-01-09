@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?> 
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <GitPath>C:\Program Files\Git\cmd\</GitPath>
+    <GitExe>$(GitPath)git.exe</GitExe>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NinjaPath>$(VSAPPIDDIR)CommonExtensions\Microsoft\CMake\Ninja\</NinjaPath>
+    <NinjaExe>$(NinjaPath)ninja.exe</NinjaExe>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OpenOcdPath>$(HomePath)gcc\openocd\</OpenOcdPath>
+    <OpenOcdExe>$(OpenOcdPath)bin\openocd.exe</OpenOcdExe>
+    <OpenOcdServer>localhost</OpenOcdServer>
+    <OpenOcdPort>3333</OpenOcdPort>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PythonPath>$(HomePath)AppData\Local\Programs\Python\Python38\</PythonPath>
+    <PythonExe>$(PythonPath)python.exe</PythonExe>
+  </PropertyGroup>
+
+  <Import Project="$(SolutionDir)Runtime.$(Platform)\Configuration\Tools.props" Condition="Exists('$(SolutionDir)Runtime.$(Platform)\Configuration\Tools.props')"/>
+
+  <Import Project="$(ProjectDir)Configuration\Tools.props" Condition="Exists('$(ProjectDir)Configuration\Tools.props')" />
+
+</Project>

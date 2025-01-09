@@ -1,0 +1,44 @@
+//=========
+// utility
+//=========
+
+#pragma once
+
+
+//===========
+// Namespace
+//===========
+
+namespace std {
+
+
+//============
+// Forwarding
+//============
+
+template<class T> constexpr bool is_lvalue_reference=false;
+
+template<class T> constexpr bool is_lvalue_reference<T&> =true;
+
+template<class T> struct remove_reference { using type=T; };
+template<class T> struct remove_reference<T&> { using type=T; };
+template<class T> struct remove_reference<T&&> { using type=T; };
+template<class T> using remove_reference_t=typename remove_reference<T>::type;
+
+template<class T> constexpr T&& forward(remove_reference_t<T>& t)noexcept
+{
+return static_cast<T&&>(t);
+}
+
+template<class T> constexpr T&& forward(remove_reference_t<T>&& t)noexcept
+{
+static_assert(!is_lvalue_reference<T>, "bad forward call");
+return static_cast<T&&>(t);
+}
+
+template<class T> constexpr remove_reference_t<T>&& move(T&& t)noexcept
+{
+return static_cast<remove_reference_t<T>&&>(t);
+};
+
+}

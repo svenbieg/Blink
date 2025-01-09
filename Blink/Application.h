@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Firmware/Platform.h"
+#include "Firmware/Application.h"
 
 
 //===========
@@ -27,9 +27,12 @@ class Application: public Firmware::Application
 {
 public:
 	// Con-/Destructors
-	Application();
+	static inline Handle<Application> Create() { return new Application(); }
 
 private:
+	// Con-/Destructors
+	Application();
+
 	// Common
 	VOID OnSystemTimerTick();
 };
