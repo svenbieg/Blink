@@ -37,7 +37,7 @@ public:
 		if(m_Mutex)
 			{
 			m_Mutex->Unlock(AccessMode::ReadOnly);
-			m_Mutex=nullptr; // Compiler-bug: ~ScopedLock() is overridden but called
+			m_Mutex=nullptr;
 			}
 		}
 
