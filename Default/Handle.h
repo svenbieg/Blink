@@ -83,13 +83,14 @@ private:
 		auto cmp=static_cast<_cmp_t*>(Compare);
 		return Object==cmp;
 		}
-	template <class _set_t> static VOID Set(_set_t** Object, _set_t* To)
+	template <class _set_t, class _convert_t> static VOID Set(_set_t** Object, _convert_t* To)
 		{
-		if(*Object==To)
+		auto to=static_cast<_set_t*>(To);
+		if(*Object==to)
 			return;
 		if(*Object)
 			(*Object)->Release();
-		*Object=To;
+		*Object=to;
 		if(*Object)
 			(*Object)->m_RefCount++;
 		}
