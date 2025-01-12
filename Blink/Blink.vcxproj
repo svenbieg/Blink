@@ -3,17 +3,19 @@
   <Import Project="..\Runtime\Configuration\Platform.props" />
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0A8C397A-DB1A-41FA-966B-358CE4352EB4}</ProjectGuid>
-    <ItemsSccProjectName>$/Examples/Blink</ItemsSccProjectName>
-    <ItemsSccAuxPath>https://svenbieg.visualstudio.com</ItemsSccAuxPath>
-    <ItemsSccLocalPath>.</ItemsSccLocalPath>
-    <ItemsSccProvider>{4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}</ItemsSccProvider>
+    <SccProjectName>$/Examples/Blink/Blink</SccProjectName>
+    <SccAuxPath>https://svenbieg.visualstudio.com</SccAuxPath>
+    <SccLocalPath>.</SccLocalPath>
+    <SccProvider>{4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}</SccProvider>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="..\Runtime\Configuration\Default.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup />
   <ImportGroup Label="ExtensionSettings" />
   <ImportGroup Label="Shared">
     <Import Project="..\Runtime\Runtime.vcxitems" Label="Shared" />
+    <Import Project="..\Runtime.Pico\Runtime.Pico.vcxitems" Label="Shared" Condition="'$(Platform)'=='Pico'" />
     <Import Project="..\Runtime.Rpi5\Runtime.Rpi5.vcxitems" Label="Shared" Condition="'$(Platform)'=='Rpi5'" />
     <Import Project="..\Default\Default.vcxitems" Label="Shared" />
     <Import Project="..\Common\Common.vcxitems" Label="Shared" />
@@ -27,6 +29,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Update="C:\Users\svenb\Projekte\Blink\Runtime.Pico\cstddef">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Update="C:\Users\svenb\Projekte\Blink\Runtime\exception">
+      <FileType>Document</FileType>
+    </ClInclude>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="..\Runtime\Configuration\Platform.targets" />

@@ -85,7 +85,12 @@ m_Context({ 0 }),
 m_Destructor(destr),
 m_Thrown((VOID*)((SIZE_T)this+sizeof(UnwindException))),
 m_Type(type)
-{}
+{
+auto task=Task::Get();
+if(task->m_Exception)
+	delete task->m_Exception;
+task->m_Exception=this;
+}
 
 UnwindException::~UnwindException()
 {
@@ -111,7 +116,7 @@ System::Restart();
 
 VOID UnwindException::Cleanup(SIZE_T landing_pad)
 {
-exc_resume(&Frame, (VOID*)landing_pad, this);
+exc_resume(&Frame, landing_pad, this);
 System::Restart();
 }
 
@@ -124,8 +129,6 @@ return m_Thrown;
 
 VOID UnwindException::Raise()noexcept
 {
-auto task=Task::Get();
-task->m_Exception=this;
 SIZE_T instr_ptr=Registers[EXC_REG_RETURN];
 GetContext(instr_ptr, &m_Context);
 SIZE_T code_offset=m_Context.InstructionPointer-m_Context.FrameStart;
@@ -134,17 +137,18 @@ ParseInstructions(m_Context.FrameInstructions, m_Context.FrameInstructionsLength
 if(m_Context.Personality)
 	{
 	auto func=(__gxx_personality_func_t)m_Context.Personality;
-	func(1, UnwindFlags::ForceUnwind, 0, this, &m_Context);
+	func(0, 0, 0, this, &m_Context);
 	}
-Frame.SP+=m_Context.StackOffset;
-exc_resume(&Frame, (VOID*)_Unwind_Raise, this);
+
+Registers[EXC_REG_STACK]+=m_Context.StackOffset;
+exc_resume(&Frame, (SIZE_T)_Unwind_Raise, this);
 System::Restart();
 }
 
 VOID UnwindException::Resume()noexcept
 {
-Frame.SP+=m_Context.StackOffset;
-exc_resume(&Frame, (VOID*)_Unwind_Raise, this);
+Registers[EXC_REG_STACK]+=m_Context.StackOffset;
+exc_resume(&Frame, (SIZE_T)_Unwind_Raise, this);
 System::Restart();
 }
 
@@ -305,21 +309,39 @@ while(instr.GetPosition()<instr_end)
 	if(pc>=code_offset)
 		break;
 	BYTE op_code=instr.ReadByte();
+	BYTE high_op=op_code&0xC0;
+	if(high_op)
+		{
+		BYTE operand=op_code&0x3F;
+		switch(high_op)
+			{
+			case OP_ADVANCE_LOC:
+				{
+				pc+=operand*context->CodeAlign;
+				break;
+				}
+			case OP_OFFSET:
+				{
+				BYTE reg=operand;
+				INT offset=(INT)instr.ReadUnsigned()*context->DataAlign;
+				SetRegister(context, reg, offset);
+				break;
+				}
+			case OP_RESTORE:
+				{
+				BYTE reg=operand;
+				assert(reg<=EXC_REG_COUNT);
+				Registers[reg]=context->Registers[reg];
+				break;
+				}
+			}
+		continue;
+		}
 	switch(op_code)
 		{
 		case OP_ADVANCE_LOC1:
 			{
 			pc+=(UINT)instr.ReadValue<BYTE>()*context->CodeAlign;
-			break;
-			}
-		case OP_ADVANCE_LOC2:
-			{
-			pc+=(UINT)instr.ReadValue<WORD>()*context->CodeAlign;
-			break;
-			}
-		case OP_ADVANCE_LOC4:
-			{
-			pc+=(UINT)instr.ReadValue<DWORD>()*context->CodeAlign;
 			break;
 			}
 		case OP_DEF_CFA:
@@ -350,35 +372,7 @@ while(instr.GetPosition()<instr_end)
 			break;
 			}
 		default:
-			{
-			BYTE high_op=op_code&0xC0;
-			BYTE operand=op_code&0x3F;
-			switch(high_op)
-				{
-				case OP_ADVANCE_LOC:
-					{
-					pc+=operand*context->CodeAlign;
-					break;
-					}
-				case OP_OFFSET:
-					{
-					BYTE reg=operand;
-					INT offset=(INT)instr.ReadUnsigned()*context->DataAlign;
-					SetRegister(context, reg, offset);
-					break;
-					}
-				case OP_RESTORE:
-					{
-					BYTE reg=operand;
-					assert(reg<=EXC_REG_COUNT);
-					Registers[reg]=context->Registers[reg];
-					break;
-					}
-				default:
-					throw NotImplementedException();
-				}
-			break;
-			}
+			throw NotImplementedException();
 		}
 	}
 }

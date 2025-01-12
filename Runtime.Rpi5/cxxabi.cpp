@@ -68,7 +68,7 @@ exc->Raise();
 System::Restart();
 }
 
-UnwindStatus __gxx_personality_v0(INT version, UnwindFlags flags, UINT64 exc_class, UnwindException* exc, UnwindContext* context)noexcept
+VOID __gxx_personality_v0(INT version, UINT flags, UINT64 exc_class, UnwindException* exc, UnwindContext* context)noexcept
 {
 Dwarf lsda(context->LanguageData);
 SIZE_T frame_start=context->FrameStart;
@@ -103,11 +103,11 @@ while(lsda.GetPosition()<callsite_end)
 	if(instr_offset>cs_end)
 		continue;
 	if(lp_offset==0)
-		return UnwindStatus::ContinueUnwind;
+		return;
 	if(action_id==0)
 		{
 		exc->Cleanup(lp_start+lp_offset);
-		System::Reset();
+		System::Restart();
 		}
 	auto action_pos=actions_pos+(action_id-1);
 	while(action_id)
@@ -116,7 +116,7 @@ while(lsda.GetPosition()<callsite_end)
 		INT64 type_id=action.ReadSigned();
 		assert(type_id>=0);
 		if(type_id==0)
-			return UnwindStatus::ContinueUnwind;
+			return;
 		Dwarf catch_type_entry(types_pos-type_id*type_info_len);
 		auto catch_type=(TypeInfo const*)catch_type_entry.ReadEncoded(types_enc);
 		assert(catch_type!=nullptr);
@@ -125,7 +125,7 @@ while(lsda.GetPosition()<callsite_end)
 		if(catch_type->TryUpcast(thrown_type, &thrown))
 			{
 			exc->Catch(lp_start+lp_offset, type_id, catch_type, thrown);
-			System::Reset();
+			System::Restart();
 			}
 		auto next_action_offset=action.ReadSigned();
 		if(next_action_offset==0)
@@ -133,7 +133,6 @@ while(lsda.GetPosition()<callsite_end)
 		action_pos+=next_action_offset;
 		}
 	}
-return UnwindStatus::ContinueUnwind;
 }
 
 }

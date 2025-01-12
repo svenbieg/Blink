@@ -17,7 +17,7 @@
 //========
 
 #ifndef __size_t
-#define __size_t unsigned __long_long int
+#define __size_t size_t
 #endif
 
 

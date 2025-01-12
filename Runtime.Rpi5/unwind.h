@@ -13,38 +13,6 @@
 #include "TypeInfo.h"
 
 
-//========
-// Status
-//========
-
-enum class UnwindStatus: UINT
-{
-Success,
-ForeignExceptionCaught,
-FatalPhase1Error,
-FatalPhase2Error,
-NormalStop,
-EndOfStack,
-HandlerFound,
-InstallContext,
-ContinueUnwind
-};
-
-
-//=======
-// Flags
-//=======
-
-enum class UnwindFlags: UINT
-{
-SearchPhase=1,
-CleanupPhase=2,
-HandlerFrame=4,
-ForceUnwind=8,
-EndOfStack=8
-};
-
-
 //=========
 // Context
 //=========

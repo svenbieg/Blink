@@ -35,6 +35,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.cpp">
       <Filter>Devices\Timers</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)cxxabi.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)unwind.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -80,6 +81,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)cpu.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stddef.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cstddef" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)cxxabi.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)unwind.h" />
   </ItemGroup>
   <ItemGroup>

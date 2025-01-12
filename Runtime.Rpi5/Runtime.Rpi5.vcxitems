@@ -14,6 +14,7 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)cxxabi.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Arm\Gpio.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Arm\MailBox.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\DeviceTree.cpp" />
@@ -31,6 +32,7 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)cpu.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cstddef" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)cxxabi.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Arm\Gpio.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Arm\MailBox.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\DeviceTree.h" />

@@ -9,7 +9,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)string.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TypeInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)asm.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)cxxabi.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)cmath" />
@@ -53,7 +53,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)TypeInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)new.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)string.c" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)cxxabi.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">
