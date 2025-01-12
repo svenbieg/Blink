@@ -36,7 +36,8 @@
       <CppPropLines Include="%09%22cStandard%22: %22c17%22," />
       <CppPropLines Include="%09%22cppStandard%22: %22c++17%22," />
       <CppPropLines Include="%09%22forcedInclude%22: [ $(ForcedIncludes) ]," />
-      <CppPropLines Include="%09%22configurationProvider%22: %22ms-vscode.cmake-tools%22" />
+      <CppPropLines Include="%09%22configurationProvider%22: %22ms-vscode.cmake-tools%22," />
+      <CppPropLines Include="%09%22intelliSenseMode%22: %22windows-msvc-x86%22" />
       <CppPropLines Include="%09}]" />
       <CppPropLines Include="}" />
     </ItemGroup>

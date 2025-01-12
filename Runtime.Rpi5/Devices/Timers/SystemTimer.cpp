@@ -72,7 +72,7 @@ return cnt_pct*CLOCK_MHZ/cnt_freq;
 
 SystemTimer::SystemTimer()
 {
-m_Task=Task::Create(this, &SystemTimer::TaskProc);
+m_Task=Task::Create(this, &SystemTimer::TaskProc, "systimer");
 Interrupts::SetHandler(IRQ_SYSTIMER, HandleInterrupt, this);
 UINT64 cnt_pct;
 __asm volatile("mrs %0, CNTPCT_EL0": "=r" (cnt_pct));

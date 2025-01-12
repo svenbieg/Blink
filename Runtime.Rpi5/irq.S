@@ -12,7 +12,6 @@
 
 .globl irq_handler
 irq_handler:
-msr daifset, #2
 
 _save_irq_context:
 sub sp, sp, #IRQ_FRAME_SIZE
@@ -43,7 +42,6 @@ _handle_interrupt:
 bl HandleInterrupt
 
 _restore_irq_stack:
-msr daifclr, #2
 ldr x0, [sp, IRQ_STACK_SP]
 mov sp, x0
 

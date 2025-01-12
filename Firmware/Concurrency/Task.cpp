@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include <irq.h>
 #include <task.h>
 #include "Concurrency/TaskLock.h"
 #include "Devices/Timers/SystemTimer.h"
@@ -18,12 +19,28 @@
 using namespace Concurrency;
 using namespace Devices::Timers;
 
+extern BYTE __stack_end;
+
 
 //===========
 // Namespace
 //===========
 
 namespace Concurrency {
+
+
+//==================
+// Con-/Destructors
+//==================
+
+Task::~Task()
+{
+if(m_Exception)
+	{
+	delete m_Exception;
+	m_Exception=nullptr;
+	}
+}
 
 
 //========
@@ -75,6 +92,7 @@ Cancelled(false),
 m_Status(Status::Pending),
 // Private
 m_BlockingCount(0),
+m_Exception(nullptr),
 m_Flags(TaskFlags::None),
 m_Name(name),
 m_ResumeTime(0),
@@ -89,6 +107,14 @@ task_init(&m_StackPointer, TaskProc, this);
 // Common Private
 //================
 
+VOID Task::Switch(UINT core, Task* current, Task* next)
+{
+SIZE_T stack_end=(SIZE_T)&__stack_end;
+auto irq_stack=(IRQ_STACK*)(stack_end-core*STACK_SIZE-sizeof(IRQ_STACK));
+current->m_StackPointer=task_save_context((VOID*)irq_stack->SP);
+irq_stack->SP=task_restore_context(next->m_StackPointer);
+}
+
 VOID Task::TaskProc(VOID* param)
 {
 Handle<Task> task=(Task*)param;
@@ -97,7 +123,7 @@ try
 	{
 	task->Run();
 	}
-catch(Exception& e)
+catch(Exception e)
 	{
 	status=e.GetStatus();
 	}

@@ -9,10 +9,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)string.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TypeInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)asm.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)cxxabi.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)cmath" />
-    <None Include="$(MSBuildThisFileDirectory)cstddef" />
     <None Include="$(MSBuildThisFileDirectory)mutex" />
     <None Include="$(MSBuildThisFileDirectory)new" />
     <None Include="$(MSBuildThisFileDirectory)shared_mutex" />
@@ -51,6 +51,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)heap.c" />
     <ClCompile Include="$(MSBuildThisFileDirectory)stdlib.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TypeInfo.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)new.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)string.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)cxxabi.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">

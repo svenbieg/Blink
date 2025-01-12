@@ -15,8 +15,6 @@
 #include "Concurrency/Task.h"
 #include "Cpu.h"
 
-extern BYTE __stack_end;
-
 
 //===========
 // Namespace
@@ -84,14 +82,6 @@ for(UINT set=0; set<L3_CACHE_SETS; set++)
 		}
 	}
 DataSyncBarrier();
-}
-
-VOID Cpu::SwitchTask(UINT core, Task* current, Task* next)noexcept
-{
-SIZE_T stack_end=(SIZE_T)&__stack_end;
-auto irq_stack=(IRQ_STACK*)(stack_end-core*STACK_SIZE-sizeof(IRQ_STACK));
-current->m_StackPointer=task_save_context((VOID*)irq_stack->SP);
-irq_stack->SP=task_restore_context(next->m_StackPointer);
 }
 
 VOID Cpu::SynchronizeDataAndInstructionCache()noexcept

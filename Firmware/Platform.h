@@ -17,6 +17,7 @@
 //========
 
 #define ALIGN(x) __attribute__((aligned(x)))
+#define ALWAYS_INLINE __attribute__((always_inline)) inline
 #define PACKED __attribute__((packed))
 #define SECTION(x) __attribute__((section(x)))
 

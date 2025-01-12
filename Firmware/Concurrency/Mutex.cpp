@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include "Devices/System/Cpu.h"
 #include "Devices/System/Interrupts.h"
 #include "Mutex.h"
 #include "Scheduler.h"

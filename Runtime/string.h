@@ -12,14 +12,14 @@
 
 #include <stddef.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 
 //========
 // Common
 //========
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 int memcmp(void const* Buffer1, void const* Buffer2, size_t Size);
 void* memcpy(void* Destination, void const* Source, size_t Size);

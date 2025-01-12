@@ -17,11 +17,13 @@
 //========
 
 #ifdef __cplusplus
-extern "C" [[noreturn]] void abort();
-extern "C" void free(void* Buffer);
-extern "C" void* malloc(size_t Size);
-#else
-[[noreturn]] extern void abort();
-extern void free(void* Buffer);
-extern void* malloc(size_t Size);
+extern "C" {
+#endif
+
+[[noreturn]] void abort();
+void free(void* Buffer);
+void* malloc(size_t Size);
+
+#ifdef __cplusplus
+}
 #endif

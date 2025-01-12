@@ -12,13 +12,22 @@
 #include <cstddef>
 
 
+//========
+// Macros
+//========
+
+#ifndef __size_t
+#define __size_t unsigned __long_long int
+#endif
+
+
 //=========
 // Options
 //=========
 
 namespace std
 {
-class nothrow_t;
+class nothrow_t {};
 }
 
 
@@ -26,12 +35,12 @@ class nothrow_t;
 // Operator New
 //==============
 
-void* operator new(std::size_t size);
-void* operator new(std::size_t size, std::nothrow_t const&)noexcept;
-void* operator new[](std::size_t size);
-void* operator new[](std::size_t size, std::nothrow_t const&)noexcept;
+void* operator new(__size_t size);
+void* operator new(__size_t size, std::nothrow_t const&)noexcept;
+void* operator new[](__size_t size);
+void* operator new[](__size_t size, std::nothrow_t const&)noexcept;
 void operator delete(void* buf)noexcept;
-void operator delete(void* buf, std::size_t size)noexcept;
+void operator delete(void* buf, __size_t size)noexcept;
 void operator delete[](void* buf)noexcept;
 
 
@@ -39,4 +48,4 @@ void operator delete[](void* buf)noexcept;
 // Placement New
 //===============
 
-inline void* operator new(std::size_t size, void* obj) { return obj; }
+inline void* operator new(__size_t size, void* obj) { return obj; }

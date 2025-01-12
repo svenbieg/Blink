@@ -10,23 +10,70 @@
 //=======
 
 #include <assert.h>
-#include <except.h>
+#include <cxxabi.h>
 #include <unwind.h>
-#include "Devices/System/Cpu.h"
+#include "Concurrency/Task.h"
 #include "Devices/System/System.h"
 #include "Storage/Encoding/Dwarf.h"
 
+using namespace Concurrency;
 using namespace Devices::System;
 using namespace Storage::Encoding;
 
 extern BYTE __eh_frame_hdr_start;
 
 
-//===========
-// Namespace
-//===========
+//============
+// Operations
+//============
 
-namespace Runtime {
+typedef enum
+{
+OP_NOP=0,
+OP_SET_LOC=1,
+OP_ADVANCE_LOC1=2,
+OP_ADVANCE_LOC2=3,
+OP_ADVANCE_LOC4=4,
+OP_OFFSET_EXTENDED=5,
+OP_RESTORE_EXTENDED=6,
+OP_UNDEFINED=7,
+OP_SAME_VALUE=8,
+OP_REGISTER=9,
+OP_REMEMBER_STATE=10,
+OP_RESTORE_STATE=11,
+OP_DEF_CFA=12,
+OP_DEF_CFA_REGISTER=13,
+OP_DEF_CFA_OFFSET=14,
+OP_DEF_CFA_EXPRESSION=15,
+OP_EXPRESSION=16,
+OP_OFFSET_EXTENDED_SF=17,
+OP_DEF_CFA_SF=18,
+OP_DEF_CFA_OFFSET_SF=19,
+OP_VAL_OFFSET=20,
+OP_VAL_OFFSET_SF=21,
+OP_VAL_EXPRESSION=22,
+OP_AARCH64_NEGATE_RA_STATE=45,
+OP_GNU_ARGS_SIZE=46,
+OP_GNU_NEGATIVE_OFFSET_EXTENDED=47,
+OP_ADVANCE_LOC=64,
+OP_OFFSET=128,
+OP_RESTORE=192,
+}UNWIND_OP;
+
+
+//==========
+// Compiler
+//==========
+
+extern "C" [[noreturn]] VOID _Unwind_Raise(UnwindException* exc)
+{
+exc->Raise();
+}
+
+extern "C" [[noreturn]] VOID _Unwind_Resume(UnwindException* exc)
+{
+exc->Resume();
+}
 
 
 //==================
@@ -34,17 +81,8 @@ namespace Runtime {
 //==================
 
 UnwindException::UnwindException(TypeInfo const* type, Destructor destr):
-// Compiler ???
-m_ExceptionClass(0),
-m_CleanupFunction(nullptr),
-m_Private1(0),
-m_Private2(0),
-// Common
+m_Context({ 0 }),
 m_Destructor(destr),
-m_Registers(),
-m_StackOffset(0),
-m_StackPosition(0),
-m_StackRegister(0),
 m_Thrown((VOID*)((SIZE_T)this+sizeof(UnwindException))),
 m_Type(type)
 {}
@@ -60,37 +98,54 @@ if(m_Destructor)
 // Common
 //========
 
+VOID UnwindException::Catch(SIZE_T landing_pad, UINT type_id, TypeInfo const* type, VOID* thrown)
+{
+m_Thrown=thrown;
+m_Type=type;
+Registers[0]=(SIZE_T)thrown;
+Registers[1]=type_id;
+Registers[EXC_REG_RETURN]=landing_pad;
+exc_restore_context(&Frame);
+System::Restart();
+}
+
+VOID UnwindException::Cleanup(SIZE_T landing_pad)
+{
+exc_resume(&Frame, (VOID*)landing_pad, this);
+System::Restart();
+}
+
 VOID* UnwindException::GetThrownException(TypeInfo const** type)
 {
-*type=m_Type;
+if(type)
+	*type=m_Type;
 return m_Thrown;
 }
 
-UnwindStatus UnwindException::InstallContext(SIZE_T instr_ptr, SIZE_T data0, SIZE_T data1)
+VOID UnwindException::Raise()noexcept
 {
-// Todo
-throw NotImplementedException();
-return UnwindStatus::InstallContext;
+auto task=Task::Get();
+task->m_Exception=this;
+SIZE_T instr_ptr=Registers[EXC_REG_RETURN];
+GetContext(instr_ptr, &m_Context);
+SIZE_T code_offset=m_Context.InstructionPointer-m_Context.FrameStart;
+ParseInstructions(m_Context.CommonInstructions, m_Context.CommonInstructionsLength, -1, &m_Context);
+ParseInstructions(m_Context.FrameInstructions, m_Context.FrameInstructionsLength, code_offset, &m_Context);
+if(m_Context.Personality)
+	{
+	auto func=(__gxx_personality_func_t)m_Context.Personality;
+	func(1, UnwindFlags::ForceUnwind, 0, this, &m_Context);
+	}
+Frame.SP+=m_Context.StackOffset;
+exc_resume(&Frame, (VOID*)_Unwind_Raise, this);
+System::Restart();
 }
 
-
-UnwindStatus UnwindException::InstallHandler(SIZE_T instr_ptr, TypeInfo const* type, VOID* thrown)
+VOID UnwindException::Resume()noexcept
 {
-// Todo
-throw NotImplementedException();
-return UnwindStatus::HandlerFound;
-}
-
-VOID UnwindException::Raise()
-{
-exc_save_context((EXC_FRAME*)m_Registers);
-SIZE_T instr_ptr=m_Registers[EXC_REG_RETURN];
-UnwindContext context={ 0 };
-InitializeContext(instr_ptr, &context);
-if(Step(&context)!=UnwindStatus::ContinueUnwind)
-	System::Restart();
-// Todo
-throw NotImplementedException();
+Frame.SP+=m_Context.StackOffset;
+exc_resume(&Frame, (VOID*)_Unwind_Raise, this);
+System::Restart();
 }
 
 
@@ -98,7 +153,7 @@ throw NotImplementedException();
 // Common Private
 //================
 
-VOID UnwindException::InitializeContext(SIZE_T instr_ptr, UnwindContext* context)
+VOID UnwindException::GetContext(SIZE_T instr_ptr, UnwindContext* context)
 {
 context->InstructionPointer=instr_ptr;
 SIZE_T eh_frame_hdr=(SIZE_T)&__eh_frame_hdr_start;
@@ -147,9 +202,7 @@ VOID UnwindException::ParseCommonInformation(SIZE_T cie_pos, UnwindContext* cont
 {
 Dwarf cie(cie_pos);
 UINT cie_len=cie.ReadValue<UINT>();
-if(cie_len==UINT_MAX)
-	cie_len=cie.ReadValue<UINT64>();
-assert(cie_len>0);
+assert(cie_len>0&&cie_len<UINT_MAX);
 SIZE_T cie_end=cie.GetPosition()+cie_len;
 UINT cie_id=cie.ReadValue<UINT>();
 assert(cie_id==0);
@@ -161,13 +214,10 @@ while(cie.ReadByte());
 context->CodeAlign=(UINT)cie.ReadUnsigned();
 context->DataAlign=(INT)cie.ReadSigned();
 SIZE_T return_reg=(cie_ver==1? cie.ReadByte(): cie.ReadUnsigned());
-assert(return_reg<EXC_REG_COUNT);
-context->ReturnRegister=return_reg;
+assert(return_reg==EXC_REG_RETURN);
 cie.ReadUnsigned();
 context->LanguageEncoding=DW_OMIT;
 CHAR c=*str_args++;
-if(c!='z')
-	c=0;
 while(c)
 	{
 	switch(c)
@@ -257,25 +307,37 @@ while(instr.GetPosition()<instr_end)
 	BYTE op_code=instr.ReadByte();
 	switch(op_code)
 		{
-		case OP_DEF_CFA:
+		case OP_ADVANCE_LOC1:
 			{
-			m_StackRegister=(UINT)instr.ReadUnsigned();
-			m_StackOffset=(INT)instr.ReadUnsigned();
+			pc+=(UINT)instr.ReadValue<BYTE>()*context->CodeAlign;
 			break;
 			}
-		case OP_DEF_CFA_EXPRESSION:
+		case OP_ADVANCE_LOC2:
 			{
-			m_StackExpression=(INT)instr.ReadUnsigned();
+			pc+=(UINT)instr.ReadValue<WORD>()*context->CodeAlign;
+			break;
+			}
+		case OP_ADVANCE_LOC4:
+			{
+			pc+=(UINT)instr.ReadValue<DWORD>()*context->CodeAlign;
+			break;
+			}
+		case OP_DEF_CFA:
+			{
+			UINT reg=(UINT)instr.ReadUnsigned();
+			assert(reg==EXC_REG_STACK);
+			context->StackOffset=(INT)instr.ReadUnsigned();
 			break;
 			}
 		case OP_DEF_CFA_OFFSET:
 			{
-			m_StackOffset=(INT)instr.ReadUnsigned();
+			context->StackOffset=(INT)instr.ReadUnsigned();
 			break;
 			}
 		case OP_DEF_CFA_REGISTER:
 			{
-			m_StackRegister=(UINT)instr.ReadUnsigned();
+			UINT reg=(UINT)instr.ReadUnsigned();
+			assert(reg==EXC_REG_STACK);
 			break;
 			}
 		case OP_NOP:
@@ -283,7 +345,6 @@ while(instr.GetPosition()<instr_end)
 		case OP_VAL_OFFSET:
 			{
 			UINT reg=(UINT)instr.ReadUnsigned();
-			assert(reg<=EXC_REG_COUNT);
 			INT offset=(INT)instr.ReadUnsigned()*context->DataAlign;
 			SetRegister(context, reg, offset);
 			break;
@@ -302,7 +363,6 @@ while(instr.GetPosition()<instr_end)
 				case OP_OFFSET:
 					{
 					BYTE reg=operand;
-					assert(reg<=EXC_REG_COUNT);
 					INT offset=(INT)instr.ReadUnsigned()*context->DataAlign;
 					SetRegister(context, reg, offset);
 					break;
@@ -311,8 +371,8 @@ while(instr.GetPosition()<instr_end)
 					{
 					BYTE reg=operand;
 					assert(reg<=EXC_REG_COUNT);
-					// Todo
-					throw NotImplementedException();
+					Registers[reg]=context->Registers[reg];
+					break;
 					}
 				default:
 					throw NotImplementedException();
@@ -323,26 +383,10 @@ while(instr.GetPosition()<instr_end)
 	}
 }
 
-VOID UnwindException::SetRegister(UnwindContext* context, UINT id, INT offset)
+VOID UnwindException::SetRegister(UnwindContext* context, UINT reg, INT offset)
 {
-// Todo
-throw NotImplementedException();
-}
-
-UnwindStatus UnwindException::Step(UnwindContext* context)
-{
-SIZE_T code_offset=context->InstructionPointer-context->FrameStart;
-ParseInstructions(context->CommonInstructions, context->CommonInstructionsLength, -1, context);
-ParseInstructions(context->FrameInstructions, context->FrameInstructionsLength, code_offset, context);
-// Todo
-throw NotImplementedException();
-return UnwindStatus::ContinueUnwind;
-}
-
-extern "C" VOID _Unwind_Resume(UnwindException* exc)
-{
-// Todo
-throw NotImplementedException();
-}
-
+assert(reg<=EXC_REG_COUNT);
+context->Registers[reg]=Registers[reg];
+SIZE_T stack=Frame.SP+context->StackOffset;
+Registers[reg]=*(SIZE_T*)(stack+offset);
 }

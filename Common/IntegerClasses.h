@@ -59,26 +59,12 @@ public:
 	template <class _friend_t> friend class Handle;
 
 	// Con-/Destructors
-	Handle(): m_Object(nullptr) {}
-	Handle(nullptr_t): m_Object(nullptr) {}
-	Handle(Int32* Object): m_Object(Object)
-		{
-		if(m_Object)
-			m_Object->m_RefCount++;
-		}
-	Handle(Handle const& Copy): Handle(Copy.m_Object) {}
-	Handle(Handle&& Move)noexcept: m_Object(Move.m_Object)
-		{
-		Move.m_Object=nullptr;
-		}
-	~Handle()
-		{
-		if(m_Object)
-			{
-			m_Object->Release();
-			m_Object=nullptr;
-			}
-		}
+	inline Handle(): m_Object(nullptr) {}
+	inline Handle(nullptr_t): m_Object(nullptr) {}
+	inline Handle(Int32* Copy) { Handle<Object>::Create(&m_Object, Copy); }
+	inline Handle(Handle const& Copy): Handle(Copy.m_Object) {}
+	inline Handle(Handle&& Move)noexcept: m_Object(Move.m_Object) { Move.m_Object=nullptr; }
+	inline ~Handle() { Handle<Object>::Clear(&m_Object); }
 
 	// Access
 	inline operator BOOL()const { return Int32::Get(m_Object)!=0; }
@@ -106,22 +92,8 @@ public:
 	inline BOOL operator<=(INT Value)const { return Int32::Get(m_Object)<=Value; }
 
 	// Assignment
-	inline Handle& operator=(nullptr_t)
-		{
-		this->~Handle();
-		return *this;
-		}
-	Handle& operator=(Int32* Object)
-		{
-		if(m_Object==Object)
-			return *this;
-		if(m_Object)
-			m_Object->Release();
-		m_Object=Object;
-		if(m_Object)
-			m_Object->m_RefCount++;
-		return *this;
-		}
+	inline Handle& operator=(nullptr_t) { Handle<Object>::Clear(&m_Object); return *this; }
+	inline Handle& operator=(Int32* Copy) { Handle<Object>::Set(&m_Object, Copy); return *this; }
 	inline Handle& operator=(Handle const& Copy) { return operator=(Copy.m_Object); }
 	Handle& operator=(INT Value)
 		{
@@ -202,26 +174,12 @@ public:
 	template <class _friend_t> friend class Handle;
 
 	// Con-/Destructors
-	Handle(): m_Object(nullptr) {}
-	Handle(nullptr_t): m_Object(nullptr) {}
-	Handle(Int64* Object): m_Object(Object)
-		{
-		if(m_Object)
-			m_Object->m_RefCount++;
-		}
-	Handle(Handle const& Copy): Handle(Copy.m_Object) {}
-	Handle(Handle&& Move)noexcept: m_Object(Move.m_Object)
-		{
-		Move.m_Object=nullptr;
-		}
-	~Handle()
-		{
-		if(m_Object)
-			{
-			m_Object->Release();
-			m_Object=nullptr;
-			}
-		}
+	inline Handle(): m_Object(nullptr) {}
+	inline Handle(nullptr_t): m_Object(nullptr) {}
+	inline Handle(Int64* Copy) { Handle<Object>::Create(&m_Object, Copy); }
+	inline Handle(Handle const& Copy): Handle(Copy.m_Object) {}
+	inline Handle(Handle&& Move)noexcept: m_Object(Move.m_Object) { Move.m_Object=nullptr; }
+	inline ~Handle() { Handle<Object>::Clear(&m_Object); }
 
 	// Access
 	inline operator BOOL()const { return Int64::Get(m_Object)!=0; }
@@ -249,22 +207,8 @@ public:
 	inline BOOL operator<=(INT64 Value)const { return Int64::Get(m_Object)<=Value; }
 
 	// Assignment
-	inline Handle& operator=(nullptr_t)
-		{
-		this->~Handle();
-		return *this;
-		}
-	Handle& operator=(Int64* Object)
-		{
-		if(m_Object==Object)
-			return *this;
-		if(m_Object)
-			m_Object->Release();
-		m_Object=Object;
-		if(m_Object)
-			m_Object->m_RefCount++;
-		return *this;
-		}
+	inline Handle& operator=(nullptr_t) { Handle<Object>::Clear(&m_Object); return *this; }
+	inline Handle& operator=(Int64* Copy) { Handle<Object>::Set(&m_Object, Copy); return *this; }
 	inline Handle& operator=(Handle const& Copy) { return operator=(Copy.m_Object); }
 	Handle& operator=(INT64 Value)
 		{

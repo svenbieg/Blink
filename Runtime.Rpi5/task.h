@@ -12,19 +12,6 @@
 #include <asm.h>
 
 
-//========
-// Common
-//========
-
-#ifndef __ASSEMBLER__
-
-extern "C" VOID task_init(VOID** Stack, VOID (*TaskProc)(VOID*), VOID* Parameter);
-extern "C" SIZE_T task_restore_context(VOID* Stack);
-extern "C" VOID* task_save_context(VOID* Stack);
-
-#endif
-
-
 //=======
 // Frame
 //=======
@@ -52,3 +39,24 @@ STRUCT_FIELD(SIZE_T, 8, TASK_FRAME_, D13)
 STRUCT_FIELD(SIZE_T, 8, TASK_FRAME_, D14)
 STRUCT_FIELD(SIZE_T, 8, TASK_FRAME_, D15)
 STRUCT_END(TASK_FRAME)
+
+
+//========
+// Common
+//========
+
+#ifndef __ASSEMBLER__
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+VOID task_init(VOID** Stack, VOID (*TaskProc)(VOID*), VOID* Parameter);
+SIZE_T task_restore_context(VOID* Stack);
+VOID* task_save_context(VOID* Stack);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif

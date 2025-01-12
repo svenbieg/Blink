@@ -61,26 +61,12 @@ public:
 	template <class _friend_t> friend class Handle;
 
 	// Con-/Destructors
-	Handle(): m_Object(nullptr) {}
-	Handle(nullptr_t): m_Object(nullptr) {}
-	Handle(StringVariable* Object): m_Object(Object)
-		{
-		if(m_Object)
-			m_Object->m_RefCount++;
-		}
-	Handle(Handle const& Copy): Handle(Copy.m_Object) {}
-	Handle(Handle&& Move)noexcept: m_Object(Move.m_Object)
-		{
-		Move.m_Object=nullptr;
-		}
-	~Handle()
-		{
-		if(m_Object)
-			{
-			m_Object->Release();
-			m_Object=nullptr;
-			}
-		}
+	inline Handle(): m_Object(nullptr) {}
+	inline Handle(nullptr_t): m_Object(nullptr) {}
+	inline Handle(StringVariable* Copy) { Handle<Object>::Create(&m_Object, Copy); }
+	inline Handle(Handle const& Copy): Handle(Copy.m_Object) {}
+	inline Handle(Handle&& Move)noexcept: m_Object(Move.m_Object) { Move.m_Object=nullptr; }
+	inline ~Handle() { Handle<Object>::Clear(&m_Object); }
 
 	// Access
 	inline operator BOOL()const { return m_Object!=nullptr; }
@@ -89,62 +75,48 @@ public:
 	operator Handle<String>()const { return m_Object? m_Object->Get(): nullptr; }
 
 	// Comparison
-	BOOL operator==(nullptr_t)const { return StringVariable::Get(m_Object)==nullptr; }
-	BOOL operator==(StringVariable* Value)const { return StringVariable::Get(m_Object)==StringVariable::Get(Value); }
-	BOOL operator==(LPCSTR Value)const { return StringVariable::Get(m_Object)==Value; }
-	BOOL operator==(LPCWSTR Value)const { return StringVariable::Get(m_Object)==Value; }
-	BOOL operator!=(nullptr_t)const { return StringVariable::Get(m_Object)!=nullptr; }
-	BOOL operator!=(StringVariable* Value)const { return StringVariable::Get(m_Object)!=StringVariable::Get(Value); }
-	BOOL operator!=(LPCSTR Value)const { return StringVariable::Get(m_Object)!=Value; }
-	BOOL operator!=(LPCWSTR Value)const { return StringVariable::Get(m_Object)!=Value; }
+	inline BOOL operator==(nullptr_t)const { return StringVariable::Get(m_Object)==nullptr; }
+	inline BOOL operator==(StringVariable* Value)const { return StringVariable::Get(m_Object)==StringVariable::Get(Value); }
+	inline BOOL operator==(LPCSTR Value)const { return StringVariable::Get(m_Object)==Value; }
+	inline BOOL operator==(LPCWSTR Value)const { return StringVariable::Get(m_Object)==Value; }
+	inline BOOL operator!=(nullptr_t)const { return StringVariable::Get(m_Object)!=nullptr; }
+	inline BOOL operator!=(StringVariable* Value)const { return StringVariable::Get(m_Object)!=StringVariable::Get(Value); }
+	inline BOOL operator!=(LPCSTR Value)const { return StringVariable::Get(m_Object)!=Value; }
+	inline BOOL operator!=(LPCWSTR Value)const { return StringVariable::Get(m_Object)!=Value; }
 
 	// Assignment
-	inline Handle& operator=(nullptr_t)
-		{
-		this->~Handle();
-		return *this;
-		}
-	Handle& operator=(StringVariable* Object)
-		{
-		if(m_Object==Object)
-			return *this;
-		if(m_Object)
-			m_Object->Release();
-		m_Object=Object;
-		if(m_Object)
-			m_Object->m_RefCount++;
-		return *this;
-		}
+	inline Handle& operator=(nullptr_t) { Handle<Object>::Clear(&m_Object); return *this; }
+	inline Handle& operator=(StringVariable* Copy) { Handle<Object>::Set(&m_Object, Copy); return *this; }
 	inline Handle& operator=(Handle const& Copy) { return operator=(Copy.m_Object); }
 	inline Handle& operator=(LPCSTR Value)
 		{
-		if(m_Object)
+		if(!m_Object)
 			{
-			m_Object->Set(Value);
-			return *this;
+			auto value=StringVariable::Create(nullptr, Value);
+			return operator=(value);
 			}
-		auto value=StringVariable::Create(nullptr, Value);
-		return operator=(value);
+		m_Object->Set(Value);
+		return *this;
 		}
 	inline Handle& operator=(LPCWSTR Value)
 		{
-		if(m_Object)
+		if(!m_Object)
 			{
-			m_Object->Set(Value);
-			return *this;
+			auto value=StringVariable::Create(nullptr, Value);
+			return operator=(value);
 			}
-		auto value=StringVariable::Create(nullptr, Value);
-		return operator=(value);
+		m_Object->Set(Value);
+		return *this;
 		}
 	inline Handle& operator=(String* Value)
 		{
-		if(m_Object)
+		if(!m_Object)
 			{
-			m_Object->Set(Value);
-			return *this;
+			auto value=StringVariable::Create(nullptr, Value);
+			return operator=(value);
 			}
-		auto value=StringVariable::Create(nullptr, Value);
-		return operator=(value);
+		m_Object->Set(Value);
+		return *this;
 		}
 
 private:

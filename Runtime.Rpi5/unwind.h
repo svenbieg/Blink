@@ -13,13 +13,6 @@
 #include "TypeInfo.h"
 
 
-//===========
-// Namespace
-//===========
-
-namespace Runtime {
-
-
 //========
 // Status
 //========
@@ -52,44 +45,6 @@ EndOfStack=8
 };
 
 
-//============
-// Operations
-//============
-
-typedef enum
-{
-OP_NOP=0,
-OP_SET_LOC=1,
-OP_ADVANCE_LOC1=2,
-OP_ADVANCE_LOC2=3,
-OP_ADVANCE_LOC4=4,
-OP_OFFSET_EXTENDED=5,
-OP_RESTORE_EXTENDED=6,
-OP_UNDEFINED=7,
-OP_SAME_VALUE=8,
-OP_REGISTER=9,
-OP_REMEMBER_STATE=10,
-OP_RESTORE_STATE=11,
-OP_DEF_CFA=12,
-OP_DEF_CFA_REGISTER=13,
-OP_DEF_CFA_OFFSET=14,
-OP_DEF_CFA_EXPRESSION=15,
-OP_EXPRESSION=16,
-OP_OFFSET_EXTENDED_SF=17,
-OP_DEF_CFA_SF=18,
-OP_DEF_CFA_OFFSET_SF=19,
-OP_VAL_OFFSET=20,
-OP_VAL_OFFSET_SF=21,
-OP_VAL_EXPRESSION=22,
-OP_AARCH64_NEGATE_RA_STATE=45,
-OP_GNU_ARGS_SIZE=46,
-OP_GNU_NEGATIVE_OFFSET_EXTENDED=47,
-OP_ADVANCE_LOC=64,
-OP_OFFSET=128,
-OP_RESTORE=192,
-}UNWIND_OP;
-
-
 //=========
 // Context
 //=========
@@ -106,13 +61,15 @@ SIZE_T FrameInstructionsLength;
 SIZE_T FrameStart;
 BOOL HasAugmentation;
 SIZE_T InstructionPointer;
+BOOL IsSignalFrame;
 SIZE_T LanguageData;
 BYTE LanguageEncoding;
 SIZE_T Personality;
 BYTE PointerEncoding;
-BYTE ReturnRegister;
-BOOL IsSignalFrame;
+SIZE_T Registers[EXC_REG_COUNT];
+INT StackOffset;
 }UnwindContext;
+
 
 
 //===========
@@ -123,7 +80,6 @@ class UnwindException
 {
 public:
 	// Using
-	typedef VOID(*CleanupFunction)(UnwindStatus, UnwindException*);
 	typedef VOID(*Destructor)(VOID*);
 
 	// Con-/Destructors
@@ -131,33 +87,26 @@ public:
 	~UnwindException();
 
 	// Common
-	VOID* GetThrownException(TypeInfo const** Type);
-	UnwindStatus InstallContext(SIZE_T Instruction, SIZE_T Data0, SIZE_T Data1);
-	UnwindStatus InstallHandler(SIZE_T Instruction, TypeInfo const* Type, VOID* Thrown);
-	VOID Raise();
+	[[noreturn]] VOID Catch(SIZE_T LandingPad, UINT TypeId, TypeInfo const* Type, VOID* Thrown);
+	[[noreturn]] VOID Cleanup(SIZE_T LandingPad);
+	VOID* GetThrownException(TypeInfo const** Type=nullptr);
+	union
+		{
+		EXC_FRAME Frame;
+		SIZE_T Registers[EXC_REG_COUNT];
+		};
+	[[noreturn]] VOID Raise()noexcept;
+	[[noreturn]] VOID Resume()noexcept;
 
 private:
-	// Compiler ???
-	UINT64 m_ExceptionClass;
-	CleanupFunction m_CleanupFunction;
-	SIZE_T m_Private1;
-	SIZE_T m_Private2;
-
 	// Common
-	VOID InitializeContext(SIZE_T Instruction, UnwindContext* Context);
+	VOID GetContext(SIZE_T Instruction, UnwindContext* Context);
 	VOID ParseCommonInformation(SIZE_T Position, UnwindContext* Context);
 	VOID ParseFrameDescriptor(SIZE_T Position, UnwindContext* Context);
 	VOID ParseInstructions(SIZE_T Position, UINT Length, SIZE_T CodeOffset, UnwindContext* Context);
 	VOID SetRegister(UnwindContext* Context, UINT Register, INT Offset);
-	UnwindStatus Step(UnwindContext* Context);
+	UnwindContext m_Context;
 	Destructor m_Destructor;
-	SIZE_T m_Registers[EXC_REG_COUNT];
-	INT m_StackExpression;
-	INT m_StackOffset;
-	SIZE_T m_StackPosition;
-	UINT m_StackRegister;
 	VOID* m_Thrown;
 	TypeInfo const* m_Type;
 };
-
-}

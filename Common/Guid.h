@@ -107,26 +107,12 @@ public:
 	template <class _friend_t> friend class Handle;
 
 	// Con-/Destructors
-	Handle(): m_Object(nullptr) {}
-	Handle(nullptr_t): m_Object(nullptr) {}
-	Handle(Guid* Object): m_Object(Object)
-		{
-		if(m_Object)
-			m_Object->m_RefCount++;
-		}
-	Handle(Handle const& Copy): Handle(Copy.m_Object) {}
-	Handle(Handle&& Move)noexcept: m_Object(Move.m_Object)
-		{
-		Move.m_Object=nullptr;
-		}
-	~Handle()
-		{
-		if(m_Object)
-			{
-			m_Object->Release();
-			m_Object=nullptr;
-			}
-		}
+	inline Handle(): m_Object(nullptr) {}
+	inline Handle(nullptr_t): m_Object(nullptr) {}
+	inline Handle(Guid* Copy) { Handle<Object>::Create(&m_Object, Copy); }
+	inline Handle(Handle const& Copy): Handle(Copy.m_Object) {}
+	inline Handle(Handle&& Move)noexcept: m_Object(Move.m_Object) { Move.m_Object=nullptr; }
+	inline ~Handle() { Handle<Object>::Clear(&m_Object); }
 
 	// Access
 	inline operator BOOL()const { return m_Object&&m_Object->Get(); }
@@ -154,22 +140,8 @@ public:
 	inline BOOL operator<=(GLOBAL_UNIQUE_ID const& Value)const { return Guid::Get(m_Object)<=Value; }
 
 	// Assignment
-	inline Handle& operator=(nullptr_t)
-		{
-		this->~Handle();
-		return *this;
-		}
-	Handle& operator=(Guid* Object)
-		{
-		if(m_Object==Object)
-			return *this;
-		if(m_Object)
-			m_Object->Release();
-		m_Object=Object;
-		if(m_Object)
-			m_Object->m_RefCount++;
-		return *this;
-		}
+	inline Handle& operator=(nullptr_t) { Handle<Object>::Clear(&m_Object); return *this; }
+	inline Handle& operator=(Guid* Copy) { Handle<Object>::Set(&m_Object, Copy); return *this; }
 	inline Handle& operator=(Handle const& Copy) { return operator=(Copy.m_Object); }
 	Handle& operator=(GLOBAL_UNIQUE_ID const& Value)
 		{

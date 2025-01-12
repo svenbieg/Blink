@@ -18,11 +18,18 @@ using namespace Concurrency;
 using namespace Devices::System;
 
 
+//===========
+// Namespace
+//===========
+
+extern "C" {
+
+
 //=============
 // Entry-Point
 //=============
 
-extern "C" VOID start()
+VOID start()
 {
 #ifdef _DEBUG
 BOOL wait=true;
@@ -34,8 +41,14 @@ Scheduler::Initialize();
 Scheduler::Begin();
 }
 
-extern "C" VOID start_secondary()
+VOID start_secondary()
 {
+#ifdef _DEBUG
+BOOL wait=true;
+while(wait) {}
+#endif
 Memory::Enable();
 Scheduler::Begin();
+}
+
 }

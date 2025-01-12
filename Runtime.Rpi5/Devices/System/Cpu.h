@@ -82,6 +82,12 @@ public:
 			and %0, %0, #3": "=r" (id));
 		return id;
 		}
+	static ALWAYS_INLINE SIZE_T GetStackPointer()noexcept
+		{
+		SIZE_T stack;
+		__asm volatile("mov %0, sp": "=r" (stack));
+		return stack;
+		}
 	static inline VOID InstructionSyncBarrier()noexcept
 		{
 		__asm volatile("isb"::: "memory");
@@ -106,7 +112,6 @@ public:
 		{
 		__asm volatile("stlr %w1, [%0]":: "r" (Address), "r" (Set));
 		}
-	static VOID SwitchTask(UINT Core, Task* Current, Task* Next)noexcept;
 	static VOID SynchronizeDataAndInstructionCache()noexcept;
 	static inline VOID WaitForEvent()noexcept
 		{

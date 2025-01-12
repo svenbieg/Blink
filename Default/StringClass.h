@@ -61,6 +61,12 @@ public:
 	Handle<String> ToString(LanguageCode Language=LanguageCode::None)override;
 
 	// Comparison
+	inline BOOL operator==(String const& String)const { return StringHelper::Compare(m_Buffer, String.m_Buffer)==0; }
+	inline BOOL operator!=(String const& String)const { return StringHelper::Compare(m_Buffer, String.m_Buffer)!=0; }
+	inline BOOL operator>(String const& String)const { return StringHelper::Compare(m_Buffer, String.m_Buffer)>0; }
+	inline BOOL operator>=(String const& String)const { return StringHelper::Compare(m_Buffer, String.m_Buffer)>=0; }
+	inline BOOL operator<(String const& String)const { return StringHelper::Compare(m_Buffer, String.m_Buffer)<0; }
+	inline BOOL operator<=(String const& String)const { return StringHelper::Compare(m_Buffer, String.m_Buffer)<=0; }
 	inline INT Compare(String* String) { return Compare(this, String); }
 	static INT Compare(String* String1, String* String2);
 	static inline INT Compare(String* String1, LPCSTR String2)
@@ -119,28 +125,14 @@ public:
 	template <class _friend_t> friend class Handle;
 
 	// Con-/Destructors
-	Handle(): m_Object(nullptr) {}
-	Handle(nullptr_t): m_Object(nullptr) {}
-	Handle(String* Object): m_Object(Object)
-		{
-		if(m_Object)
-			m_Object->m_RefCount++;
-		}
-	Handle(Handle const& Copy): Handle(Copy.m_Object) {}
-	Handle(Handle&& Move)noexcept: m_Object(Move.m_Object)
-		{
-		Move.m_Object=nullptr;
-		}
-	~Handle()
-		{
-		if(m_Object)
-			{
-			m_Object->Release();
-			m_Object=nullptr;
-			}
-		}
-	Handle(LPCSTR Value): m_Object(nullptr) { operator=(Value); }
-	Handle(LPCWSTR Value): m_Object(nullptr) { operator=(Value); }
+	inline Handle(): m_Object(nullptr) {}
+	inline Handle(nullptr_t): m_Object(nullptr) {}
+	inline Handle(String* Copy) { Handle<Object>::Create(&m_Object, Copy); }
+	inline Handle(Handle const& Copy) { Handle<Object>::Create(&m_Object, Copy.m_Object); }
+	inline Handle(Handle&& Move)noexcept: m_Object(Move.m_Object) { Move.m_Object=nullptr; }
+	inline ~Handle() { Handle<Object>::Clear(&m_Object); }
+	inline Handle(LPCSTR Value): m_Object(nullptr) { operator=(Value); }
+	inline Handle(LPCWSTR Value): m_Object(nullptr) { operator=(Value); }
 
 	// Access
 	inline operator BOOL()const { return m_Object&&m_Object->HasValue(); }
@@ -174,22 +166,8 @@ public:
 	inline BOOL operator<=(LPCWSTR Value)const { return String::Compare(m_Object, Value)<=0; }
 
 	// Assignment
-	inline Handle& operator=(nullptr_t)
-		{
-		this->~Handle();
-		return *this;
-		}
-	Handle& operator=(String* Object)
-		{
-		if(m_Object==Object)
-			return *this;
-		if(m_Object)
-			m_Object->Release();
-		m_Object=Object;
-		if(m_Object)
-			m_Object->m_RefCount++;
-		return *this;
-		}
+	inline Handle& operator=(nullptr_t) { Handle<Object>::Clear(&m_Object); return *this; }
+	inline Handle& operator=(String* Copy) { Handle<Object>::Set(&m_Object, Copy); return *this; }
 	inline Handle& operator=(Handle const& Copy) { return operator=(Copy.m_Object); }
 	inline Handle& operator=(LPCSTR Value)
 		{

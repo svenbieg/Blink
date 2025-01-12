@@ -20,7 +20,6 @@
 class String;
 template <class _obj_t> class Handle;
 template <> class Handle<String>;
-template <class _obj_t> class HandleBase;
 
 
 //========
@@ -32,7 +31,6 @@ class Object
 public:
 	// Friends
 	template <class _obj_t> friend class Handle;
-	template <class _obj_t> friend class HandleBase;
 
 	// Using
 	using LanguageCode=Culture::LanguageCode;

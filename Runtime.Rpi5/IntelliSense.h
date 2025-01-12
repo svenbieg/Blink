@@ -28,6 +28,8 @@
 #define __long long
 #define __long_long long long
 
+#define __size_t unsigned int
+
 #define __SCHAR_MAX__ 0x7F
 #define __SHRT_MAX__ 0x7FFF
 #define __INT_MAX__ 0x7FFFFFFF

@@ -10,7 +10,7 @@
 //=======
 
 #include <assert.h>
-#include "Devices/System/Cpu.h"
+#include <unwind.h>
 #include "DispatchedQueue.h"
 #include "Mutex.h"
 #include "Scheduler.h"
@@ -55,12 +55,13 @@ class Task: public Object
 {
 public:
 	// Friends
-	friend Devices::System::Cpu;
 	friend Mutex;
 	friend Scheduler;
 	friend Signal;
+	friend UnwindException;
 
 	// Con-/Destructors
+	~Task();
 	static Handle<Task> Create(VOID (*Procedure)(), Handle<String> Name="task", UINT StackSize=PAGE_SIZE);
 	template <class _owner_t> static Handle<Task> Create(_owner_t* Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", UINT StackSize=PAGE_SIZE);
 	template <class _owner_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", UINT StackSize=PAGE_SIZE);
@@ -118,9 +119,11 @@ private:
 	inline BOOL GetFlag(TaskFlags Flag)const { return FlagHelper::Get(m_Flags, Flag); }
 	inline VOID SetFlag(TaskFlags Flag) { FlagHelper::Set(m_Flags, Flag); }
 	virtual VOID Run()=0;
+	static VOID Switch(UINT Core, Task* Current, Task* Next);
 	static VOID TaskProc(VOID* Parameter);
 	UINT m_BlockingCount;
 	Signal m_Done;
+	UnwindException* m_Exception;
 	TaskFlags m_Flags;
 	Mutex m_Mutex;
 	Handle<String> m_Name;

@@ -222,7 +222,7 @@ current->m_Next=nullptr;
 if(!current->GetFlag(TaskFlags::Remove))
 	s_WaitingTask=AddWaitingTask(s_WaitingTask, current);
 s_CurrentTask[core]=next;
-Cpu::SwitchTask(core, current, next);
+Task::Switch(core, current, next);
 }
 
 VOID Scheduler::IdleTask()

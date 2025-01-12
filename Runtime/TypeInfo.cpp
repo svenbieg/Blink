@@ -31,7 +31,7 @@ public:
 	// Common
 	inline BOOL IsPublic()const { return FlagHelper::Get(m_Offset, OffsetFlags::Public); }
 	inline BOOL IsVirtual()const { return FlagHelper::Get(m_Offset, OffsetFlags::Virtual); }
-	inline __class_type_info const* GetInfo()const { return m_Info; }
+	inline TypeInfo const* GetInfo()const { return m_Info; }
 	inline UINT GetOffset()const { return m_Offset>>8; }
 	static VOID* Upcast(BaseType const& Type, VOID* Object)
 		{
@@ -52,7 +52,7 @@ private:
 		};
 
 	// Common
-	__class_type_info const* m_Info;
+	TypeInfo const* m_Info;
 	INT m_Offset;
 };
 
@@ -65,7 +65,7 @@ class __class_type_info: public TypeInfo
 {
 public:
 	// Common
-	BOOL TryCatch(TypeInfo const* Type, VOID** Thrown)const noexcept override
+	BOOL TryUpcast(TypeInfo const* Type, VOID** Thrown)const noexcept override
 		{
 		if(*Type==*this)
 			return true;
@@ -82,13 +82,13 @@ class __si_class_type_info: public __class_type_info
 {
 public:
 	// Common
-	BOOL TryUpcast(__class_type_info const* Type, VOID** Object)const noexcept override;
+	BOOL TryUpcast(TypeInfo const* Type, VOID** Object)const noexcept override;
 
 private:
 	__class_type_info const* m_Info;
 };
 
-BOOL __si_class_type_info::TryUpcast(__class_type_info const* type, VOID** obj)const noexcept
+BOOL __si_class_type_info::TryUpcast(TypeInfo const* type, VOID** obj)const noexcept
 {
 if(*m_Info==*type)
 	return true;
@@ -104,7 +104,7 @@ class __vmi_class_type_info: public __class_type_info
 {
 public:
 	// Common
-	virtual BOOL TryUpcast(__class_type_info const* Type, VOID** Object)const noexcept override;
+	virtual BOOL TryUpcast(TypeInfo const* Type, VOID** Object)const noexcept override;
 
 protected:
 	// Common
@@ -113,7 +113,7 @@ protected:
 	BaseType m_BaseType[];
 };
 
-BOOL __vmi_class_type_info::TryUpcast(__class_type_info const* type, VOID** obj)const noexcept
+BOOL __vmi_class_type_info::TryUpcast(TypeInfo const* type, VOID** obj)const noexcept
 {
 for(UINT u=0; u<m_BaseCount; u++)
 	{

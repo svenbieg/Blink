@@ -89,30 +89,16 @@ public:
 	using STRING=Resources::Strings::STRING;
 
 	// Con-/Destructors
-	Handle(): m_Object(nullptr) {}
-	Handle(nullptr_t): m_Object(nullptr) {}
-	Handle(Sentence* Object): m_Object(Object)
-		{
-		if(m_Object)
-			m_Object->m_RefCount++;
-		}
-	Handle(Handle const& Copy): Handle(Copy.m_Object) {}
-	Handle(Handle&& Move)noexcept: m_Object(Move.m_Object)
-		{
-		Move.m_Object=nullptr;
-		}
-	Handle(LPCSTR Value): m_Object(nullptr) { operator=(Value); }
-	Handle(LPCWSTR Value): m_Object(nullptr) { operator=(Value); }
-	Handle(STRING const* Value): m_Object(nullptr) { operator=(Value); }
-	Handle(Handle<String> const& Value): m_Object(nullptr) { operator=(Value); }
-	~Handle()
-		{
-		if(m_Object)
-			{
-			m_Object->Release();
-			m_Object=nullptr;
-			}
-		}
+	inline Handle(): m_Object(nullptr) {}
+	inline Handle(nullptr_t): m_Object(nullptr) {}
+	inline Handle(Sentence* Copy) { Handle<Object>::Create(&m_Object, Copy); }
+	inline Handle(Handle const& Copy): Handle(Copy.m_Object) {}
+	inline Handle(Handle&& Move)noexcept: m_Object(Move.m_Object) { Move.m_Object=nullptr; }
+	inline Handle(LPCSTR Value): m_Object(nullptr) { operator=(Value); }
+	inline Handle(LPCWSTR Value): m_Object(nullptr) { operator=(Value); }
+	inline Handle(STRING const* Value): m_Object(nullptr) { operator=(Value); }
+	inline Handle(Handle<String> const& Value): m_Object(nullptr) { operator=(Value); }
+	inline ~Handle() { Handle<Object>::Clear(&m_Object); }
 
 	// Access
 	inline operator BOOL()const { return m_Object!=nullptr; }
@@ -129,22 +115,8 @@ public:
 	inline BOOL operator<=(Sentence* Value)const { return Sentence::Compare(m_Object, Value)<=0; }
 
 	// Assignment
-	inline Handle& operator=(nullptr_t)
-		{
-		this->~Handle();
-		return *this;
-		}
-	Handle& operator=(Sentence* Object)
-		{
-		if(m_Object==Object)
-			return *this;
-		if(m_Object)
-			m_Object->Release();
-		m_Object=Object;
-		if(m_Object)
-			m_Object->m_RefCount++;
-		return *this;
-		}
+	inline Handle& operator=(nullptr_t) { Handle<Object>::Clear(&m_Object); return *this; }
+	inline Handle& operator=(Sentence* Copy) { Handle<Object>::Set(&m_Object, Copy); return *this; }
 	inline Handle& operator=(Handle const& Copy) { return operator=(Copy.m_Object); }
 	inline Handle& operator=(LPCSTR Value)
 		{

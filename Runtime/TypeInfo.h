@@ -5,16 +5,6 @@
 #pragma once
 
 
-//======================
-// Forward-Declarations
-//======================
-
-namespace __cxxabiv1
-{
-class __class_type_info;
-}
-
-
 //===========
 // Type-Info
 //===========
@@ -22,9 +12,6 @@ class __class_type_info;
 class TypeInfo
 {
 public:
-	// Using
-	using __class_type_info=__cxxabiv1::__class_type_info;
-
 	// Con-/Destructors
 	virtual ~TypeInfo() {}
 
@@ -33,6 +20,5 @@ public:
 
 	// Common
 	LPCSTR Name;
-	virtual BOOL TryCatch(TypeInfo const* Type, VOID** Thrown)const noexcept { return false; }
-	virtual BOOL TryUpcast(__class_type_info const* Type, VOID** Object)const noexcept { return false; }
+	virtual BOOL TryUpcast(TypeInfo const* Type, VOID** Object)const noexcept { return false; }
 };
