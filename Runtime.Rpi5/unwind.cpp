@@ -129,7 +129,7 @@ return m_Thrown;
 
 VOID UnwindException::Raise()noexcept
 {
-SIZE_T instr_ptr=Registers[EXC_REG_RETURN];
+SIZE_T instr_ptr=Registers[EXC_REG_RETURN]-EXC_INSTR_SIZE;
 GetContext(instr_ptr, &m_Context);
 SIZE_T code_offset=m_Context.InstructionPointer-m_Context.FrameStart;
 ParseInstructions(m_Context.CommonInstructions, m_Context.CommonInstructionsLength, -1, &m_Context);
@@ -139,7 +139,6 @@ if(m_Context.Personality)
 	auto func=(__gxx_personality_func_t)m_Context.Personality;
 	func(0, 0, 0, this, &m_Context);
 	}
-
 Registers[EXC_REG_STACK]+=m_Context.StackOffset;
 exc_resume(&Frame, (SIZE_T)_Unwind_Raise, this);
 System::Restart();
