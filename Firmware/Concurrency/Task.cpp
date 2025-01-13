@@ -89,23 +89,22 @@ return m_Status;
 
 Task::Task(Handle<String> name, VOID* stack_end, UINT stack_size):
 Cancelled(false),
-m_Status(Status::Pending),
-// Private
 m_BlockingCount(0),
 m_Exception(nullptr),
 m_Flags(TaskFlags::None),
 m_Name(name),
 m_ResumeTime(0),
 m_StackPointer(stack_end),
-m_StackSize(stack_size)
+m_StackSize(stack_size),
+m_Status(Status::Pending)
 {
 task_init(&m_StackPointer, TaskProc, this);
 }
 
 
-//================
-// Common Private
-//================
+//==================
+// Common Protected
+//==================
 
 VOID Task::Switch(UINT core, Task* current, Task* next)
 {
@@ -126,6 +125,10 @@ try
 catch(Exception e)
 	{
 	status=e.GetStatus();
+	}
+catch(...)
+	{
+	status=Status::Error;
 	}
 ScopedLock lock(task->m_Mutex);
 task->m_Status=status;

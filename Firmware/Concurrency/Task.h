@@ -12,9 +12,10 @@
 #include <assert.h>
 #include <unwind.h>
 #include "DispatchedQueue.h"
-#include "Mutex.h"
 #include "Scheduler.h"
+#include "SharedLock.h"
 #include "Signal.h"
+#include "TaskLock.h"
 
 
 //===========
@@ -62,11 +63,11 @@ public:
 
 	// Con-/Destructors
 	~Task();
-	static Handle<Task> Create(VOID (*Procedure)(), Handle<String> Name="task", UINT StackSize=PAGE_SIZE);
-	template <class _owner_t> static Handle<Task> Create(_owner_t* Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", UINT StackSize=PAGE_SIZE);
-	template <class _owner_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", UINT StackSize=PAGE_SIZE);
-	template <class _owner_t, class _lambda_t> static Handle<Task> Create(_owner_t* Owner, _lambda_t&& Lambda, Handle<String> Name="task", UINT StackSize=PAGE_SIZE);
-	template <class _owner_t, class _lambda_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, _lambda_t&& Lambda, Handle<String> Name="task", UINT StackSize=PAGE_SIZE);
+	static Handle<Task> Create(VOID (*Procedure)(), Handle<String> Name="task", UINT StackSize=STACK_SIZE);
+	template <class _owner_t> static Handle<Task> Create(_owner_t* Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", UINT StackSize=STACK_SIZE);
+	template <class _owner_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", UINT StackSize=STACK_SIZE);
+	template <class _owner_t, class _lambda_t> static Handle<Task> Create(_owner_t* Owner, _lambda_t&& Lambda, Handle<String> Name="task", UINT StackSize=STACK_SIZE);
+	template <class _owner_t, class _lambda_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, _lambda_t&& Lambda, Handle<String> Name="task", UINT StackSize=STACK_SIZE);
 
 	// Common
 	VOID Cancel();
@@ -106,12 +107,6 @@ public:
 protected:
 	// Con-/Destructors
 	Task(Handle<String> Name, VOID* StackEnd, UINT StackSize);
-
-	// Common
-	Status m_Status;
-
-private:
-	// Con-/Destructors
 	static Handle<Task> CreateInternal(VOID (*Procedure)(), Handle<String> Name, UINT StackSize=PAGE_SIZE);
 
 	// Common
@@ -133,6 +128,7 @@ private:
 	UINT64 m_ResumeTime;
 	VOID* m_StackPointer;
 	UINT m_StackSize;
+	Status m_Status;
 	Handle<DispatchedHandler> m_Then;
 	Handle<Task> m_Waiting;
 };

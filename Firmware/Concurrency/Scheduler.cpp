@@ -85,7 +85,6 @@ for(UINT core=0; core<CPU_COUNT; core++)
 	s_CurrentTask[core]=idle;
 	}
 auto main=Task::CreateInternal(MainTask, "main");
-main->Then(System::Restart);
 s_CurrentTask[0]=main;
 s_MainTask=main;
 }
@@ -237,7 +236,12 @@ VOID Scheduler::MainTask()
 {
 auto timer=SystemTimer::Get();
 timer->Triggered.Add(Scheduler::Schedule);
-Main();
+try
+	{
+	Main();
+	}
+catch(...) {}
+System::Restart();
 }
 
 Handle<Task> Scheduler::RemoveParallelTask(Handle<Task> first, Handle<Task> remove)
