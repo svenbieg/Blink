@@ -47,12 +47,7 @@ if(m_Core==core)
 	m_LockCount++;
 	return;
 	}
-while(!Cpu::CompareAndSet(&m_Core, CPU_COUNT, core))
-	{
-	Interrupts::Enable();
-	Cpu::WaitForEvent();
-	Interrupts::Disable();
-	}
+while(!Cpu::CompareAndSet(&m_Core, CPU_COUNT, core)) {}
 m_LockCount++;
 Cpu::DataSyncBarrier();
 }
@@ -84,7 +79,6 @@ if(--m_LockCount==0)
 	{
 	Cpu::StoreAndRelease(&m_Core, CPU_COUNT);
 	Cpu::DataStoreBarrier();
-	Cpu::SetEvent();
 	}
 Interrupts::Enable();
 }
