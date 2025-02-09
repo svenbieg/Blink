@@ -63,6 +63,13 @@ public:
 	DeviceNotReadyException(): Exception(Status::DeviceNotReady) {}
 };
 
+class DivisionByZeroException: public Exception
+{
+public:
+	// Con-/Destructors
+	DivisionByZeroException(): Exception(Status::DivisionByZero) {}
+};
+
 class InvalidArgumentException: public Exception
 {
 public:

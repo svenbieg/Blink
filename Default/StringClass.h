@@ -9,8 +9,6 @@
 // Using
 //=======
 
-#include <new>
-#include <utility>
 #include "Handle.h"
 #include "StringHelper.h"
 
@@ -49,10 +47,27 @@ public:
 		{
 		return StringHelper::Find(m_Buffer, Value, nullptr, CaseSensitive);
 		}
-	UINT GetLength();
+	inline UINT64 GetHash()
+		{
+		if(m_Hash==INVALID_HASH)
+			m_Hash=StringHelper::GetHash(m_Buffer);
+		return m_Hash;
+		}
+	static inline UINT64 GetHash(String* String)
+		{
+		if(!String)
+			return 0;
+		return String->GetHash();
+		}
+	inline UINT GetLength()
+		{
+		if(!m_Length)
+			m_Length=StringHelper::Length(m_Buffer);
+		return m_Length;
+		}
 	inline BOOL HasValue()const { return m_Buffer[0]!=0; }
 	inline BOOL IsEmpty()const { return m_Buffer[0]==0; }
-	template <class... _args_t> UINT Scan(LPCSTR Format, _args_t... Arguments)
+	template <class... _args_t> inline UINT Scan(LPCSTR Format, _args_t... Arguments)
 		{
 		UnknownClass args[]={ Arguments... };
 		VariableArguments vargs(args, TypeHelper::ArraySize(args));
@@ -61,12 +76,6 @@ public:
 	Handle<String> ToString(LanguageCode Language=LanguageCode::None)override;
 
 	// Comparison
-	inline BOOL operator==(String const& String)const { return StringHelper::Compare(m_Buffer, String.m_Buffer)==0; }
-	inline BOOL operator!=(String const& String)const { return StringHelper::Compare(m_Buffer, String.m_Buffer)!=0; }
-	inline BOOL operator>(String const& String)const { return StringHelper::Compare(m_Buffer, String.m_Buffer)>0; }
-	inline BOOL operator>=(String const& String)const { return StringHelper::Compare(m_Buffer, String.m_Buffer)>=0; }
-	inline BOOL operator<(String const& String)const { return StringHelper::Compare(m_Buffer, String.m_Buffer)<0; }
-	inline BOOL operator<=(String const& String)const { return StringHelper::Compare(m_Buffer, String.m_Buffer)<=0; }
 	inline INT Compare(String* String) { return Compare(this, String); }
 	static INT Compare(String* String1, String* String2);
 	static inline INT Compare(String* String1, LPCSTR String2)
@@ -88,25 +97,12 @@ private:
 	static constexpr UINT64 INVALID_HASH=(1ULL<<63);
 
 	// Con-/Destructors
-	String(LPTSTR Buffer): m_Buffer(Buffer), m_Hash(INVALID_HASH), m_Length(0)
-		{
-		m_Buffer[0]=0;
-		}
-	String(LPTSTR Buffer, UINT Size, LPCSTR Value): m_Buffer(Buffer), m_Hash(INVALID_HASH)
-		{
-		m_Length=StringHelper::Copy(m_Buffer, Size, Value);
-		}
-	String(LPTSTR Buffer, UINT Size, LPCWSTR Value): m_Buffer(Buffer), m_Hash(INVALID_HASH)
-		{
-		m_Length=StringHelper::Copy(m_Buffer, Size, Value);
-		}
-	String(LPTSTR Buffer, UINT Size, LPCSTR Format, VariableArguments const& Arguments): m_Buffer(Buffer), m_Hash(INVALID_HASH)
-		{
-		m_Length=StringHelper::PrintArgs(m_Buffer, Size, Format, Arguments);
-		}
+	String(LPTSTR Buffer);
+	String(LPTSTR Buffer, UINT Size, LPCSTR Value);
+	String(LPTSTR Buffer, UINT Size, LPCWSTR Value);
+	String(LPTSTR Buffer, UINT Size, LPCSTR Format, VariableArguments const& Arguments);
 
 	// Common
-	static UINT64 Hash(String* String);
 	LPTSTR m_Buffer;
 	UINT64 m_Hash;
 	UINT m_Length;

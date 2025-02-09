@@ -5,13 +5,6 @@
 #pragma once
 
 
-//=======
-// Using
-//=======
-
-#include "FlagHelper.h"
-
-
 //========
 // Status
 //========
@@ -27,6 +20,7 @@ Aborted,
 AccessDenied,
 ConnectionFailed,
 DeviceNotReady,
+DivisionByZero,
 FileExists,
 FileNotFound,
 InvalidArgument,
@@ -37,18 +31,3 @@ OutOfMemory,
 OutOfRange,
 Timeout
 };
-
-
-//========
-// Common
-//========
-
-inline BOOL Succeeded(Status Status)
-{
-return !FlagHelper::Get(Status, Status::Error);
-}
-
-inline BOOL Failed(Status Status)
-{
-return FlagHelper::Get(Status, Status::Error);
-}

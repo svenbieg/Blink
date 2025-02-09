@@ -13,6 +13,7 @@
 //=======
 
 #include "Dwarf.h"
+#include "FlagHelper.h"
 
 
 //===========

@@ -10,6 +10,7 @@
 //=======
 
 #include "File.h"
+#include "PathHelper.h"
 
 
 //===========

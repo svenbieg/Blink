@@ -10,6 +10,7 @@
 //=======
 
 #include "Directory.h"
+#include "PathHelper.h"
 
 
 //===========

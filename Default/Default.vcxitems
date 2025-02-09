@@ -48,6 +48,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Property.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Status.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StatusHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Buffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Directory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Encoding\Dwarf.h" />

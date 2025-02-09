@@ -72,6 +72,8 @@ public:
 	static BOOL FindChars(LPCSTR String, LPCSTR Find, UINT* Position=nullptr, BOOL CaseSensitive=true);
 	static BOOL FindChars(LPCWSTR String, LPCSTR Find, UINT* Position=nullptr, BOOL CaseSensitive=true);
 	static UINT GetFormat(LPCSTR String, Format& Format, FormatFlags& Flags, UINT& Width, UINT& Precision);
+	static UINT64 GetHash(LPCSTR String);
+	static UINT64 GetHash(LPCWSTR String);
 	static UINT Insert(LPSTR Destination, UINT Size, LPCSTR String, UINT Position, LPCSTR Insert);
 	static inline BOOL IsSet(LPCSTR String) { return String&&String[0]; }
 	static inline BOOL IsSet(LPCWSTR String) { return String&&String[0]; }
