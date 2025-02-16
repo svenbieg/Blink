@@ -39,12 +39,26 @@ while(dst<end)
 	*dst++=*src++;
 }
 
-VOID MemoryHelper::Fill(VOID* dst_ptr, SIZE_T size, UINT value)
+VOID MemoryHelper::Copy(SIZE_T* dst, SIZE_T const* src, SIZE_T size)
 {
-auto dst=(LPSTR)dst_ptr;
+auto end=(SIZE_T*)((SIZE_T)dst+size);
+while(dst<end)
+	*dst++=*src++;
+}
+
+VOID MemoryHelper::Fill(VOID* dst_ptr, SIZE_T size, BYTE value)
+{
+auto dst=(BYTE*)dst_ptr;
 auto end=dst+size;
 while(dst<end)
-	*dst++=(CHAR)value;
+	*dst++=value;
+}
+
+VOID MemoryHelper::Fill(SIZE_T* dst, SIZE_T size, SIZE_T value)
+{
+auto end=(SIZE_T*)((SIZE_T)dst+size);
+while(dst<end)
+	*dst++=value;
 }
 
 VOID MemoryHelper::Move(VOID* dst_ptr, VOID const* src_ptr, SIZE_T size)
