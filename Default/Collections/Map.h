@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "shared_map.hpp"
+#include "map.hpp"
 
 
 //===========
@@ -161,7 +161,7 @@ protected:
 		}
 
 	// Common
-	shared_map<_key_t, _value_t, _size_t, _group_size> m_Map;
+	map<_key_t, _value_t, _size_t, _group_size> m_Map;
 };
 
 
@@ -220,7 +220,7 @@ private:
 	MapIterator(_map_t* Map, _size_t Position): m_It(&Map->m_Map, Position), m_Map(Map) {}
 
 	// Common
-	typename shared_map<_key_t, _value_t, _size_t, _group_size>::iterator m_It;
+	typename map<_key_t, _value_t, _size_t, _group_size>::iterator m_It;
 	Handle<_map_t> m_Map;
 };
 
@@ -256,7 +256,7 @@ private:
 	ConstMapIterator(_map_t* Map, _size_t Position): m_It(&Map->m_Map, Position), m_Map(Map) {}
 
 	// Common
-	typename shared_map<_key_t, _value_t, _size_t, _group_size>::const_iterator m_It;
+	typename map<_key_t, _value_t, _size_t, _group_size>::const_iterator m_It;
 	Handle<_map_t> m_Map;
 };
 

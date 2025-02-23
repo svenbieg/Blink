@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "shared_index.hpp"
+#include "index.hpp"
 
 
 //===========
@@ -149,7 +149,7 @@ private:
 		}
 
 	// Common
-	shared_index<_id_t, _size_t, _group_size> m_Index;
+	index<_id_t, _size_t, _group_size> m_Index;
 };
 
 
@@ -199,7 +199,7 @@ private:
 	IndexIterator(_index_t* Index, _size_t Position): m_It(&Index->m_Index, Position), m_Index(Index) {}
 
 	// Common
-	typename shared_index<_id_t, _size_t, _group_size>::iterator m_It;
+	typename index<_id_t, _size_t, _group_size>::iterator m_It;
 	Handle<_index_t> m_Index;
 };
 
@@ -231,7 +231,7 @@ private:
 	ConstIndexIterator(_index_t* Index, _size_t Position): m_It(&Index->m_Index, Position), m_Index(Index) {}
 
 	// Common
-	typename shared_index<_id_t, _size_t, _group_size>::const_iterator m_It;
+	typename index<_id_t, _size_t, _group_size>::const_iterator m_It;
 	Handle<_index_t> m_Index;
 };
 

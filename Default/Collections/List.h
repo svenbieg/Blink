@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "shared_list.hpp"
+#include "list.hpp"
 
 
 //===========
@@ -187,7 +187,7 @@ protected:
 		}
 
 	// Common
-	shared_list<_item_t, _size_t, _group_size> m_List;
+	list<_item_t, _size_t, _group_size> m_List;
 };
 
 
@@ -263,7 +263,7 @@ private:
 	ListIterator(_list_t* List, _size_t Position): m_It(&List->m_List, Position), m_List(List) {}
 
 	// Common
-	typename shared_list<_item_t, _size_t, _group_size>::iterator m_It;
+	typename list<_item_t, _size_t, _group_size>::iterator m_It;
 	Handle<_list_t> m_List;
 };
 
@@ -294,7 +294,7 @@ private:
 	ConstListIterator(_list_t* List, _size_t Position): m_It(&List->m_List, Position), m_List(List) {}
 
 	// Common
-	typename shared_list<_item_t, _size_t, _group_size>::const_iterator m_It;
+	typename list<_item_t, _size_t, _group_size>::const_iterator m_It;
 	Handle<_list_t> m_List;
 };
 
