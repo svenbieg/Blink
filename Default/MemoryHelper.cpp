@@ -39,9 +39,14 @@ while(dst<end)
 	*dst++=*src++;
 }
 
-VOID MemoryHelper::Copy(SIZE_T* dst, SIZE_T const* src, SIZE_T size)
+VOID MemoryHelper::Copy(SIZE_T* dst, SIZE_T const* src, SIZE_T count)
 {
-auto end=(SIZE_T*)((SIZE_T)dst+size);
+while(count--)
+	*dst++=*src++;
+}
+
+VOID MemoryHelper::Copy(SIZE_T* dst, SIZE_T* end, SIZE_T const* src)
+{
 while(dst<end)
 	*dst++=*src++;
 }
@@ -54,9 +59,14 @@ while(dst<end)
 	*dst++=value;
 }
 
-VOID MemoryHelper::Fill(SIZE_T* dst, SIZE_T size, SIZE_T value)
+VOID MemoryHelper::Fill(SIZE_T* dst, SIZE_T count, SIZE_T value)
 {
-auto end=(SIZE_T*)((SIZE_T)dst+size);
+while(count--)
+	*dst++=value;
+}
+
+VOID MemoryHelper::Fill(SIZE_T* dst, SIZE_T* end, SIZE_T value)
+{
 while(dst<end)
 	*dst++=value;
 }
