@@ -5,6 +5,13 @@
 #pragma once
 
 
+//======================
+// Forward-Declarations
+//======================
+
+#include "TypeHelper.h"
+
+
 //========
 // Common
 //========

@@ -10,7 +10,7 @@
 //=======
 
 #include "Culture/LanguageCode.h"
-#include "TypeHelper.h"
+#include "Devices/System/Cpu.h"
 
 
 //======================
@@ -33,6 +33,7 @@ public:
 	template <class _obj_t> friend class Handle;
 
 	// Using
+	using Cpu=Devices::System::Cpu;
 	using LanguageCode=Culture::LanguageCode;
 
 	// Con-/Destructors
@@ -47,6 +48,14 @@ protected:
 
 private:
 	// Common
-	VOID Release();
-	UINT m_RefCount;
+	inline VOID Refer()
+		{
+		Cpu::InterlockedIncrement(&m_RefCount);
+		}
+	inline VOID Release()
+		{
+		if(Cpu::InterlockedDecrement(&m_RefCount)==0)
+			delete this;
+		}
+	volatile UINT m_RefCount;
 };

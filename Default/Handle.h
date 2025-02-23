@@ -75,7 +75,7 @@ private:
 		{
 		auto to=static_cast<_create_t*>(To);
 		if(to)
-			to->m_RefCount++;
+			to->Refer();
 		*Object=to;
 		}
 	template <class _cmp_t, class _convert_t> static inline BOOL Equal(_cmp_t* Object, _convert_t* Compare)
@@ -92,7 +92,7 @@ private:
 			(*Object)->Release();
 		*Object=to;
 		if(*Object)
-			(*Object)->m_RefCount++;
+			(*Object)->Refer();
 		}
 	_obj_t* m_Object;
 };
