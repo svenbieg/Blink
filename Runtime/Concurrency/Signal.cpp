@@ -60,7 +60,7 @@ m_WaitingTask=nullptr;
 BOOL Signal::Wait()
 {
 SpinLock lock(Scheduler::s_CriticalSection);
-Task::ThrowIfMain();
+assert(!Task::IsMainTask());
 UINT core=Cpu::GetId();
 auto task=Scheduler::s_CurrentTask[core];
 Scheduler::SuspendCurrentTask(nullptr);
@@ -78,7 +78,7 @@ return signal;
 BOOL Signal::Wait(UINT timeout)
 {
 assert(timeout!=0);
-Task::ThrowIfMain();
+assert(!Task::IsMainTask());
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto task=Scheduler::s_CurrentTask[core];
@@ -96,7 +96,7 @@ return signal;
 
 BOOL Signal::Wait(ScopedLock& scoped_lock)
 {
-Task::ThrowIfMain();
+assert(!Task::IsMainTask());
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto task=Scheduler::s_CurrentTask[core];
@@ -115,7 +115,7 @@ return signal;
 BOOL Signal::Wait(ScopedLock& scoped_lock, UINT timeout)
 {
 assert(timeout!=0);
-Task::ThrowIfMain();
+assert(!Task::IsMainTask());
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto task=Scheduler::s_CurrentTask[core];

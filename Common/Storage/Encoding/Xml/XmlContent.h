@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include "DynamicHandle.h"
 #include "XmlElement.h"
 
 

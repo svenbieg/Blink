@@ -11,6 +11,7 @@
 
 #include "Storage/Streams/InputStream.h"
 #include "Storage/Streams/OutputStream.h"
+#include "Event.h"
 
 
 //======================

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Project="$(SolutionDir)Runtime.$(Platform)\Configuration\Debug.props" Condition="Exists('$(SolutionDir)Runtime.$(Platform)\Configuration\Debug.props')" />
+
+  <Import Project="$(ProjectDir)Configuration\Debug.props" Condition="Exists('$(ProjectDir)Configuration\Debug.props')" />
+
+</Project>

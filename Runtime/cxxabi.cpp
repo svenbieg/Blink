@@ -53,10 +53,17 @@ System::Restart();
 
 VOID __cxa_end_catch()noexcept {}
 
+VOID __cxa_end_cleanup()noexcept {}
+
 VOID* __cxa_get_exception_ptr(VOID* thrown)noexcept
 {
 auto exc=(UnwindException*)((SIZE_T)thrown-sizeof(UnwindException));
 return exc->GetThrownException();
+}
+
+VOID __cxa_pure_virtual()
+{
+throw InvalidContextException();
 }
 
 VOID __cxa_throw(VOID* thrown, VOID* type, VOID (*destr)(VOID*))

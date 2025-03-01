@@ -14,12 +14,8 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)cxxabi.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Arm\Gpio.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Arm\MailBox.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\DeviceTree.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\Gpio.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialPort.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Exceptions.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Interrupts.cpp" />
@@ -32,12 +28,8 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)cpu.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cstddef" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)cxxabi.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Arm\Gpio.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Arm\MailBox.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\DeviceTree.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\Gpio.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialPort.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Interrupts.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Memory.h" />

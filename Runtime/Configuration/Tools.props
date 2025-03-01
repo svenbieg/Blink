@@ -12,8 +12,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <OpenOcdPath>$(HomePath)gcc\openocd\</OpenOcdPath>
-    <OpenOcdExe>$(OpenOcdPath)bin\openocd.exe</OpenOcdExe>
+    <OpenOcdPath>$(HomePath)gcc\openocd-x64-standalone\</OpenOcdPath>
+    <OpenOcdExe>$(OpenOcdPath)openocd.exe</OpenOcdExe>
     <OpenOcdServer>localhost</OpenOcdServer>
     <OpenOcdPort>3333</OpenOcdPort>
   </PropertyGroup>

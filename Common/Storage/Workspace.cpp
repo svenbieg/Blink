@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include "PathHelper.h"
 #include "Workspace.h"
 
 

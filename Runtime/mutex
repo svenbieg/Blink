@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Concurrency/ScopedLock.h"
+#include "Concurrency/WriteLock.h"
 
 
 //===========
@@ -43,11 +43,11 @@ public:
 // Unique-Lock
 //=============
 
-template <class _mutex_t> class unique_lock: private Concurrency::ScopedLock
+template <class _mutex_t> class unique_lock: private Concurrency::WriteLock
 {
 public:
 	// Con-/Destructors
-	inline unique_lock(_mutex_t& mutex): ScopedLock(mutex) {}
+	inline unique_lock(_mutex_t& mutex): WriteLock(mutex) {}
 
 	// Common
 	inline void lock() { Lock(); }

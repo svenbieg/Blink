@@ -49,6 +49,7 @@ class UnwindException
 public:
 	// Using
 	typedef VOID(*Destructor)(VOID*);
+	typedef VOID (*Personality)(INT Version, UINT Flags, UINT64 Class, UnwindException* Exception, UnwindContext* Context);
 
 	// Con-/Destructors
 	UnwindException(TypeInfo const* Type, Destructor Destructor);

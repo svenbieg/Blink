@@ -11,6 +11,7 @@
 
 #include <assert.h>
 #include <cstddef>
+#include "FlagHelper.h"
 #include "TypeInfo.h"
 
 

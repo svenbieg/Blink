@@ -11,6 +11,7 @@
 
 #include "Collections/shared_map.hpp"
 #include "Storage/Directory.h"
+#include "Event.h"
 
 
 //===========

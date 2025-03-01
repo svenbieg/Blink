@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Concurrency/SharedLock.h"
+#include "Concurrency/ReadLock.h"
 #include "mutex"
 
 
@@ -49,11 +49,11 @@ public:
 // Shared-Lock
 //=============
 
-template <class _mutex_t> class shared_lock: private Concurrency::SharedLock
+template <class _mutex_t> class shared_lock: private Concurrency::ReadLock
 {
 public:
 	// Con-/Destructors
-	inline shared_lock(_mutex_t& mutex): SharedLock(mutex) {}
+	inline shared_lock(_mutex_t& mutex): ReadLock(mutex) {}
 
 	// Common
 	inline void lock() { Lock(); }

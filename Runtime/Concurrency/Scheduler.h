@@ -10,8 +10,8 @@
 //=======
 
 #include <config.h>
-#include "CriticalSection.h"
-#include "Mutex.h"
+#include "Concurrency/CriticalSection.h"
+#include "Concurrency/Mutex.h"
 
 
 //===========

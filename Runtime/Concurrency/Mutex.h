@@ -24,9 +24,10 @@ namespace Concurrency {
 // Forward-Declarations
 //======================
 
-class ScopedLock;
-class SharedLock;
+class ReadLock;
 class Task;
+class TaskLock;
+class WriteLock;
 
 
 //========
@@ -52,8 +53,9 @@ class Mutex
 {
 public:
 	// Friends
-	friend ScopedLock;
-	friend SharedLock;
+	friend ReadLock;
+	friend TaskLock;
+	friend WriteLock;
 
 	// Con-/Destructors
 	Mutex(): m_Owner(nullptr) {}
@@ -69,14 +71,12 @@ public:
 	VOID Unlock(AccessMode);
 	VOID Unlock(AccessPriority);
 
-protected:
-	// Common
-	Task* m_Owner;
-
 private:
 	// Common
 	VOID Yield(SpinLock& Lock);
-	VOID Yield(SpinLock& Lock, AccessMode);
+	VOID Yield(SpinLock& Lock, AccessMode Access);
+	VOID Yield(SpinLock& Lock, AccessPriority Priority);
+	Task* m_Owner;
 };
 
 }

@@ -20,7 +20,7 @@
 extern "C" {
 #endif
 
-[[noreturn]] void abort();
+void abort();
 void free(void* Buffer);
 void* malloc(size_t Size);
 

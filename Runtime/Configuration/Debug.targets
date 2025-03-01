@@ -22,9 +22,10 @@
       <IncludeDirs Condition="'@(IncludeList)'!=''">@(IncludeList->'%22%(Identity)%22', ', ')</IncludeDirs>
       <IncludeDirs>$([System.String]::Copy('$(IncludeDirs)').Replace('$(SolutionDir)', '${workspaceFolder}/'))</IncludeDirs>
       <IncludeDirs>$([System.String]::Copy('$(IncludeDirs)').Replace('\', '/'))</IncludeDirs>
-      <OpenOcdExePath>$(OpenOcdExe)</OpenOcdExePath>
-      <OpenOcdExePath>$([System.String]::Copy('$(OpenOcdExePath)').Replace('\', '/'))</OpenOcdExePath>
+      <OpenOcdExePath>$([System.String]::Copy('$(OpenOcdExe)').Replace('\', '/'))</OpenOcdExePath>
+      <OpenOcdSearchPath>$([System.String]::Copy('$(OpenOcdPath)scripts').Replace('\', '/'))</OpenOcdSearchPath>
       <PreprocessorDefs Condition="'@(PreprocessorList)'!=''">@(PreprocessorList->'%22%(Identity)%22', ', ')</PreprocessorDefs>
+      <SvdFilePath>$([System.String]::Copy('$(SvdFile)').Replace('\', '/'))</SvdFilePath>
     </PropertyGroup>
     <ItemGroup>
       <CppPropLines Include="{" />
@@ -53,8 +54,10 @@
       <LaunchLines Include="%09%22request%22: %22launch%22," />
       <LaunchLines Include="%09%22type%22: %22cortex-debug%22," />
       <LaunchLines Include="%09%22servertype%22: %22openocd%22," />
+      <LaunchLines Include="%09%22serverArgs%22: [ %22-s%22, %22$(OpenOcdSearchPath)%22 ]," />
       <LaunchLines Include="%09%22configFiles%22: [ %22${workspaceRoot}/.vscode/openocd.cfg%22 ]," />
       <LaunchLines Include="%09%22runToEntryPoint%22: %22start%22," />
+      <LaunchLines Include="%09%22svdFile%22: %22$(SvdFilePath)%22," Condition="'$(SvdFilePath)'!=''"/>
       <LaunchLines Include="%09%22showDevDebugOutput%22: %22none%22" />
       <LaunchLines Include="%09}]" />
       <LaunchLines Include="}" />

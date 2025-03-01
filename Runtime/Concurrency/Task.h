@@ -10,12 +10,17 @@
 //=======
 
 #include <assert.h>
+#include <new>
 #include <unwind.h>
 #include "DispatchedQueue.h"
+#include "Exception.h"
+#include "FlagHelper.h"
 #include "Scheduler.h"
-#include "SharedLock.h"
+#include "ReadLock.h"
 #include "Signal.h"
+#include "Status.h"
 #include "TaskLock.h"
+#include "WriteLock.h"
 
 
 //===========
@@ -74,6 +79,7 @@ public:
 	volatile BOOL Cancelled;
 	static Handle<Task> Get();
 	inline Status GetStatus()const { return m_Status; }
+	static inline BOOL IsMainTask() { return Scheduler::IsMainTask(); }
 	Handle<Object> Result;
 	static VOID Sleep(UINT Milliseconds);
 	static VOID SleepMicroseconds(UINT Microseconds);

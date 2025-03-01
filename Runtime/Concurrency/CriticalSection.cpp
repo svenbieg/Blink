@@ -13,6 +13,7 @@
 #include "Devices/System/Cpu.h"
 #include "Devices/System/Interrupts.h"
 #include "CriticalSection.h"
+#include "SpinLock.h"
 
 using namespace Devices::System;
 
@@ -47,7 +48,11 @@ if(m_Core==core)
 	m_LockCount++;
 	return;
 	}
-while(!Cpu::CompareAndSet(&m_Core, CPU_COUNT, core)) {}
+while(!Cpu::CompareAndSet(&m_Core, CPU_COUNT, core))
+	{
+	Interrupts::Enable();
+	Interrupts::Disable();
+	}
 m_LockCount++;
 Cpu::DataSyncBarrier();
 }
@@ -77,10 +82,29 @@ UINT core=Cpu::GetId();
 assert(m_Core==core);
 if(--m_LockCount==0)
 	{
-	Cpu::StoreAndRelease(&m_Core, CPU_COUNT);
 	Cpu::DataStoreBarrier();
+	Cpu::StoreAndRelease(&m_Core, CPU_COUNT);
+	Interrupts::Enable();
 	}
+}
+
+VOID CriticalSection::Yield()
+{
+UINT core=Cpu::GetId();
+assert(m_Core==core);
+assert(m_LockCount==1);
+m_LockCount--;
+Cpu::DataStoreBarrier();
+Cpu::StoreAndRelease(&m_Core, CPU_COUNT);
 Interrupts::Enable();
+Interrupts::Disable();
+while(!Cpu::CompareAndSet(&m_Core, CPU_COUNT, core))
+	{
+	Interrupts::Disable();
+	Interrupts::Enable();
+	}
+m_LockCount++;
+Cpu::DataSyncBarrier();
 }
 
 }

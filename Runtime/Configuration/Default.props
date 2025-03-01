@@ -25,7 +25,8 @@
 
   <Import Project="$(ProjectDir)Configuration\Default.props" Condition="Exists('$(ProjectDir)Configuration\Default.props')" />
 
-  <Import Project="$(MSBuildThisFileDirectory)Compiler.props" />
   <Import Project="$(MSBuildThisFileDirectory)Tools.props" />
+  <Import Project="$(MSBuildThisFileDirectory)Compiler.props" />
+  <Import Project="$(MSBuildThisFileDirectory)Debug.props" />
 
 </Project>

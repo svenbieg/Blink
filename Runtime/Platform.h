@@ -5,27 +5,21 @@
 #pragma once
 
 
-//=======
-// Using
-//=======
-
-#include "Default/Platform.h"
-
-
-//========
-// Macros
-//========
+//======================
+// Forward-Declarations
+//======================
 
 #define ALIGN(x) __attribute__((aligned(x)))
 #define ALWAYS_INLINE __attribute__((always_inline)) inline
 #define PACKED __attribute__((packed))
 #define SECTION(x) __attribute__((section(x)))
 
+#define IRAM SECTION(".iram")
 #define NO_DATA(align) ALIGN (align) SECTION(".nodata")
 
 
-//========
-// Common
-//========
+//=======
+// Using
+//=======
 
-#include "Concurrency/Task.h"
+#include "Default/Platform.h"

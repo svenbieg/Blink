@@ -12,6 +12,13 @@
 namespace Concurrency {
 
 
+//======================
+// Forward-Declarations
+//======================
+
+class SpinLock;
+
+
 //==================
 // Critical-Section
 //==================
@@ -19,6 +26,9 @@ namespace Concurrency {
 class CriticalSection
 {
 public:
+	// Friends
+	friend SpinLock;
+
 	// Con-/Destructors
 	CriticalSection();
 
@@ -26,6 +36,7 @@ public:
 	VOID Lock();
 	BOOL TryLock();
 	VOID Unlock();
+	VOID Yield();
 
 private:
 	// Common

@@ -75,7 +75,7 @@ while(SystemTimer::Microseconds64()<=end);
 Status Task::Wait()
 {
 Task::ThrowIfMain();
-ScopedLock lock(m_Mutex);
+WriteLock lock(m_Mutex);
 if(m_Status!=Status::Pending)
 	return m_Status;
 m_Done.Wait(lock);
@@ -131,7 +131,7 @@ catch(...)
 	{
 	status=Status::Error;
 	}
-ScopedLock lock(task->m_Mutex);
+WriteLock lock(task->m_Mutex);
 task->m_Status=status;
 task->m_Done.Trigger();
 if(task->m_Then)

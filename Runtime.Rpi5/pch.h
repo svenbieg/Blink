@@ -9,9 +9,9 @@
 // Forward-Declarations
 //======================
 
-#include <stddef.h>
+#include <cstddef>
 
-typedef size_t SIZE_T;
+typedef std::size_t SIZE_T;
 constexpr SIZE_T SIZE_MAX=0xFFFFFFFFFFFFFFFFULL;
 
 typedef SIZE_T FILE_SIZE;
@@ -23,4 +23,4 @@ constexpr unsigned int PAGE_SIZE=4096;
 // Using
 //=======
 
-#include "Firmware/Platform.h"
+#include "Runtime/Platform.h"

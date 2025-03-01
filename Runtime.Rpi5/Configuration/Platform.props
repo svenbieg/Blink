@@ -14,6 +14,7 @@
 
   <PropertyGroup Condition="'$(Platform)'=='Rpi5'">
     <NMakePreprocessorDefinitions>_RPI5</NMakePreprocessorDefinitions>
+    <Vendor>Raspberry</Vendor>
   </PropertyGroup>
 
 </Project>

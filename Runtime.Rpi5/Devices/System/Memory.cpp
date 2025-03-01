@@ -17,8 +17,8 @@
 
 using namespace Devices::System;
 
-extern BYTE __bss_start;
-extern BYTE __bss_end;
+extern SIZE_T __bss_start;
+extern SIZE_T __bss_end;
 
 extern BYTE __heap_start;
 
@@ -112,10 +112,7 @@ VOID Memory::Initialize()
 {
 CreatePageTable();
 Enable();
-SIZE_T bss_start=(SIZE_T)&__bss_start;
-SIZE_T bss_end=(SIZE_T)&__bss_end;
-SIZE_T bss_size=bss_end-bss_start;
-MemoryHelper::Fill(&__bss_start, bss_size, 0);
+MemoryHelper::Fill(&__bss_start, &__bss_end, 0);
 SIZE_T heap_start=(SIZE_T)&__heap_start;
 SIZE_T heap_end=RAM_SIZE;
 SIZE_T heap_size=heap_end-heap_start;

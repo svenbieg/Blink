@@ -136,7 +136,7 @@ ParseInstructions(m_Context.CommonInstructions, m_Context.CommonInstructionsLeng
 ParseInstructions(m_Context.FrameInstructions, m_Context.FrameInstructionsLength, code_offset, &m_Context);
 if(m_Context.Personality)
 	{
-	auto func=(__gxx_personality_func_t)m_Context.Personality;
+	auto func=(Personality)m_Context.Personality;
 	func(0, 0, 0, this, &m_Context);
 	}
 Registers[EXC_REG_STACK]+=m_Context.StackOffset;
@@ -179,13 +179,13 @@ while(entry_first<entry_last)
 	{
 	UINT entry_id=entry_first+(entry_last-entry_first)/2;
 	Dwarf entry(table_pos+entry_id*entry_size);
-	SIZE_T FrameStart=entry.ReadEncoded(table_enc, eh_frame_hdr);
-	if(FrameStart>instr_ptr)
+	SIZE_T frame_start=entry.ReadEncoded(table_enc, eh_frame_hdr);
+	if(frame_start>instr_ptr)
 		{
 		entry_last=entry_id;
 		continue;
 		}
-	if(FrameStart<instr_ptr)
+	if(frame_start<instr_ptr)
 		{
 		entry_first=entry_id+1;
 		continue;
@@ -195,10 +195,10 @@ while(entry_first<entry_last)
 assert(entry_first>0);
 UINT entry_id=entry_first-1;
 Dwarf entry(table_pos+entry_id*entry_size);
-SIZE_T FrameStart=entry.ReadEncoded(table_enc, eh_frame_hdr);
+SIZE_T frame_start=entry.ReadEncoded(table_enc, eh_frame_hdr);
 SIZE_T fde=entry.ReadEncoded(table_enc, eh_frame_hdr);
 ParseFrameDescriptor(fde, context);
-assert(context->FrameStart==FrameStart);
+assert(context->FrameStart==frame_start);
 }
 
 VOID UnwindException::ParseCommonInformation(SIZE_T cie_pos, UnwindContext* context)

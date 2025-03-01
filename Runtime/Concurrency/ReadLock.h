@@ -1,6 +1,6 @@
-//==============
-// SharedLock.h
-//==============
+//============
+// ReadLock.h
+//============
 
 #pragma once
 
@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include "Mutex.h"
 #include "ScopedLock.h"
 
 
@@ -19,20 +20,19 @@
 namespace Concurrency {
 
 
-//=============
-// Shared-Lock
-//=============
+//===========
+// Read-Lock
+//===========
 
-class SharedLock: public ScopedLock
+class ReadLock: public ScopedLock
 {
 public:
 	// Con-/Destructors
-	inline SharedLock(Mutex& Mutex)
+	inline ReadLock(Mutex& Mutex): m_Mutex(&Mutex)
 		{
-		m_Mutex=&Mutex;
 		m_Mutex->Lock(AccessMode::ReadOnly);
 		}
-	inline ~SharedLock()override
+	inline ~ReadLock()
 		{
 		if(m_Mutex)
 			{
@@ -43,12 +43,14 @@ public:
 
 	// Common
 	inline VOID Lock()override { m_Mutex->Lock(AccessMode::ReadOnly); }
+	inline VOID Release() { m_Mutex=nullptr; }
 	inline BOOL TryLock()override { return m_Mutex->TryLock(AccessMode::ReadOnly); }
 	inline VOID Unlock()override { m_Mutex->Unlock(AccessMode::ReadOnly); }
 
 private:
 	// Common
 	inline VOID Yield(SpinLock& Lock)override { m_Mutex->Yield(Lock, AccessMode::ReadOnly); }
+	Mutex* m_Mutex;
 };
 
 }
