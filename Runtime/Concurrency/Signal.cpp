@@ -65,7 +65,7 @@ UINT core=Cpu::GetId();
 auto task=Scheduler::s_CurrentTask[core];
 Scheduler::SuspendCurrentTask(nullptr);
 m_WaitingTask=Scheduler::AddParallelTask(m_WaitingTask, task);
-lock.Yield(); // Waiting...
+lock.Yield();
 BOOL signal=(task->m_ResumeTime==0);
 if(!signal)
 	{
@@ -84,7 +84,7 @@ UINT core=Cpu::GetId();
 auto task=Scheduler::s_CurrentTask[core];
 Scheduler::SuspendCurrentTask(timeout);
 m_WaitingTask=Scheduler::AddParallelTask(m_WaitingTask, task);
-lock.Yield(); // Waiting...
+lock.Yield();
 BOOL signal=(task->m_ResumeTime==0);
 if(!signal)
 	{
@@ -102,12 +102,18 @@ UINT core=Cpu::GetId();
 auto task=Scheduler::s_CurrentTask[core];
 Scheduler::SuspendCurrentTask(nullptr);
 m_WaitingTask=Scheduler::AddParallelTask(m_WaitingTask, task);
-scoped_lock.Yield(lock); // Waiting...
+scoped_lock.Yield(lock);
 BOOL signal=(task->m_ResumeTime==0);
 if(!signal)
 	{
 	m_WaitingTask=Scheduler::RemoveParallelTask(m_WaitingTask, task);
 	task->m_ResumeTime=0;
+	}
+auto spin_lock=dynamic_cast<SpinLock*>(&scoped_lock);
+if(spin_lock&&task->m_BlockingCount==0)
+	{
+	task->SetFlag(TaskFlags::Blocking);
+	task->m_BlockingCount++;
 	}
 return signal;
 }
@@ -121,7 +127,7 @@ UINT core=Cpu::GetId();
 auto task=Scheduler::s_CurrentTask[core];
 Scheduler::SuspendCurrentTask(timeout);
 m_WaitingTask=Scheduler::AddParallelTask(m_WaitingTask, task);
-scoped_lock.Yield(lock); // Waiting...
+scoped_lock.Yield(lock);
 BOOL signal=(task->m_ResumeTime==0);
 if(!signal)
 	{
@@ -143,7 +149,7 @@ UINT core=Cpu::GetId();
 auto task=Scheduler::s_CurrentTask[core];
 Scheduler::SuspendCurrentTask(nullptr);
 m_WaitingTask=Scheduler::AddParallelTask(m_WaitingTask, task);
-lock.Yield(); // Waiting...
+lock.Yield();
 BOOL signal=(task->m_ResumeTime==0);
 if(!signal)
 	{
