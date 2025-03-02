@@ -20,6 +20,13 @@
 namespace Concurrency {
 
 
+//======================
+// Forward-Declarations
+//======================
+
+class Signal;
+
+
 //===========
 // Spin-Lock
 //===========
@@ -27,6 +34,9 @@ namespace Concurrency {
 class SpinLock: public ScopedLock
 {
 public:
+	// Friends
+	friend Signal;
+
 	// Con-/Destructors
 	SpinLock(CriticalSection& CriticalSection);
 	~SpinLock();

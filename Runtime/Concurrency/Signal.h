@@ -24,6 +24,7 @@ namespace Concurrency {
 //======================
 
 class DispatchedQueue;
+class SpinLock;
 class Task;
 
 
@@ -46,6 +47,7 @@ public:
 	VOID Trigger(BOOL Cancel=false);
 	BOOL Wait();
 	BOOL Wait(UINT Timeout);
+	BOOL Wait(SpinLock& Lock);
 	BOOL Wait(ScopedLock& Lock);
 	BOOL Wait(ScopedLock& Lock, UINT Timeout);
 
