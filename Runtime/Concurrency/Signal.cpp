@@ -134,6 +134,12 @@ if(!signal)
 	m_WaitingTask=Scheduler::RemoveParallelTask(m_WaitingTask, task);
 	task->m_ResumeTime=0;
 	}
+auto spin_lock=dynamic_cast<SpinLock*>(&scoped_lock);
+if(spin_lock&&task->m_BlockingCount==0)
+	{
+	task->SetFlag(TaskFlags::Blocking);
+	task->m_BlockingCount++;
+	}
 return signal;
 }
 
