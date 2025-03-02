@@ -42,7 +42,6 @@ if(!m_Owner)
 	}
 Scheduler::SuspendCurrentTask(m_Owner);
 lock.Yield();
-m_Owner=current;
 }
 
 VOID Mutex::Lock(AccessMode)
@@ -72,7 +71,6 @@ else
 	Scheduler::SuspendCurrentTask(waiting);
 	}
 lock.Yield();
-m_Owner=Scheduler::AddParallelTask(m_Owner, current);
 }
 
 VOID Mutex::Lock(AccessPriority)
@@ -93,7 +91,6 @@ if(!m_Owner)
 	}
 Scheduler::SuspendCurrentTask(m_Owner);
 lock.Yield();
-m_Owner=current;
 }
 
 BOOL Mutex::TryLock()
@@ -186,23 +183,79 @@ Scheduler::ResumeTask(waiting);
 
 VOID Mutex::Yield(SpinLock& lock)
 {
-Unlock();
+UINT core=Cpu::GetId();
+auto current=Scheduler::s_CurrentTask[core];
+assert(m_Owner==current);
+auto waiting=m_Owner->m_Waiting;
+m_Owner->m_Waiting=nullptr;
+m_Owner=waiting;
+Scheduler::ResumeTask(waiting);
 lock.Yield();
-Lock();
+if(!m_Owner)
+	{
+	m_Owner=current;
+	return;
+	}
+Scheduler::SuspendCurrentTask(m_Owner);
+lock.Yield();
 }
 
 VOID Mutex::Yield(SpinLock& lock, AccessMode access)
 {
-Unlock(access);
+UINT core=Cpu::GetId();
+auto current=Scheduler::s_CurrentTask[core];
+auto parallel=Scheduler::RemoveParallelTask(m_Owner, current);
+if(parallel)
+	{
+	m_Owner=parallel;
+	}
+else
+	{
+	auto waiting=m_Owner->m_Waiting;
+	m_Owner->m_Waiting=nullptr;
+	m_Owner=waiting;
+	Scheduler::ResumeTask(waiting);
+	}
 lock.Yield();
-Lock(access);
+if(!m_Owner)
+	{
+	m_Owner=current;
+	return;
+	}
+auto waiting=m_Owner;
+while(waiting->m_Waiting)
+	waiting=waiting->m_Waiting;
+if(waiting->GetFlag(TaskFlags::Sharing))
+	{
+	Scheduler::AddParallelTask(waiting, current);
+	if(waiting==m_Owner)
+		return;
+	Scheduler::SuspendCurrentTask(nullptr);
+	}
+else
+	{
+	Scheduler::SuspendCurrentTask(waiting);
+	}
+lock.Yield();
 }
 
 VOID Mutex::Yield(SpinLock& lock, AccessPriority priortiy)
 {
-Unlock(priortiy);
+UINT core=Cpu::GetId();
+auto current=Scheduler::s_CurrentTask[core];
+assert(m_Owner==current);
+auto waiting=m_Owner->m_Waiting;
+m_Owner->m_Waiting=nullptr;
+m_Owner=waiting;
+Scheduler::ResumeTask(waiting);
 lock.Yield();
-Lock(priortiy);
+if(!m_Owner)
+	{
+	m_Owner=current;
+	return;
+	}
+Scheduler::SuspendCurrentTask(m_Owner);
+lock.Yield();
 }
 
 }
