@@ -154,6 +154,27 @@ Handle<Task> Scheduler::AddWaitingTask(Handle<Task> first, Handle<Task> suspend)
 if(!first)
 	return suspend;
 auto current_ptr=&first;
+if(suspend->GetFlag(TaskFlags::Locked))
+	{
+	while(*current_ptr)
+		{
+		auto current=*current_ptr;
+		assert(current!=suspend);
+		if(!current->GetFlag(TaskFlags::Locked))
+			{
+			suspend->m_Waiting=current;
+			*current_ptr=suspend;
+			return first;
+			}
+		if(!current->m_Waiting)
+			{
+			current->m_Waiting=suspend;
+			return first;
+			}
+		current_ptr=&current->m_Waiting;
+		}
+	assert(0);
+	}
 while(*current_ptr)
 	{
 	auto current=*current_ptr;
