@@ -122,6 +122,7 @@ VOID Scheduler::SuspendCurrentTask(UINT ms)
 SpinLock lock(s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
+assert(current!=s_MainTask);
 assert(current->m_Next==nullptr);
 current->ClearFlag(TaskFlags::Owner);
 current->m_ResumeTime=SystemTimer::GetTickCount64()+ms;
@@ -156,6 +157,7 @@ if(!first)
 auto current_ptr=&first;
 if(suspend->GetFlag(TaskFlags::Locked))
 	{
+	assert(suspend->m_ResumeTime==0);
 	while(*current_ptr)
 		{
 		auto current=*current_ptr;
