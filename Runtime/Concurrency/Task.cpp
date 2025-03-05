@@ -89,9 +89,9 @@ return m_Status;
 
 Task::Task(Handle<String> name, VOID* stack_end, UINT stack_size):
 Cancelled(false),
-m_BlockingCount(0),
 m_Exception(nullptr),
 m_Flags(TaskFlags::None),
+m_LockCount(0),
 m_Name(name),
 m_ResumeTime(0),
 m_StackPointer(stack_end),

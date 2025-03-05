@@ -81,8 +81,7 @@ auto current=Scheduler::s_CurrentTask[core];
 if(current)
 	{
 	assert(!current->GetFlag(TaskFlags::Sharing));
-	current->SetFlag(TaskFlags::Blocking);
-	current->m_BlockingCount++;
+	current->Lock();
 	}
 if(!m_Owner)
 	{
@@ -126,8 +125,7 @@ if(m_Owner)
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 assert(!current->GetFlag(TaskFlags::Sharing));
-current->SetFlag(TaskFlags::Blocking);
-current->m_BlockingCount++;
+current->Lock();
 m_Owner=current;
 return true;
 }
@@ -168,8 +166,7 @@ if(!m_Owner)
 	return;
 UINT core=Cpu::GetId();
 assert(m_Owner==Scheduler::s_CurrentTask[core]);
-if(--m_Owner->m_BlockingCount==0)
-	m_Owner->ClearFlag(TaskFlags::Blocking);
+m_Owner->Unlock();
 auto waiting=m_Owner->m_Waiting;
 m_Owner->m_Waiting=nullptr;
 m_Owner=waiting;

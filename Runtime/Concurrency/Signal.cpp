@@ -94,29 +94,6 @@ if(!signal)
 return signal;
 }
 
-BOOL Signal::Wait(SpinLock& spin_lock)
-{
-assert(!Task::IsMainTask());
-SpinLock lock(Scheduler::s_CriticalSection);
-UINT core=Cpu::GetId();
-auto task=Scheduler::s_CurrentTask[core];
-Scheduler::SuspendCurrentTask(nullptr);
-m_WaitingTask=Scheduler::AddParallelTask(m_WaitingTask, task);
-spin_lock.Yield(lock);
-BOOL signal=(task->m_ResumeTime==0);
-if(!signal)
-	{
-	m_WaitingTask=Scheduler::RemoveParallelTask(m_WaitingTask, task);
-	task->m_ResumeTime=0;
-	}
-if(task->m_BlockingCount==0)
-	{
-	task->SetFlag(TaskFlags::Blocking);
-	task->m_BlockingCount++;
-	}
-return signal;
-}
-
 BOOL Signal::Wait(ScopedLock& scoped_lock)
 {
 assert(!Task::IsMainTask());

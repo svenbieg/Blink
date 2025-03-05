@@ -44,7 +44,7 @@ class Scheduler;
 enum class TaskFlags: UINT
 {
 None=0,
-Blocking=1,
+Locked=1,
 Switch=2,
 Owner=4,
 Busy=7,
@@ -80,6 +80,11 @@ public:
 	static Handle<Task> Get();
 	inline Status GetStatus()const { return m_Status; }
 	static inline BOOL IsMainTask() { return Scheduler::IsMainTask(); }
+	inline VOID Lock()
+		{
+		FlagHelper::Set(m_Flags, TaskFlags::Locked);
+		m_LockCount++;
+		}
 	Handle<Object> Result;
 	static VOID Sleep(UINT Milliseconds);
 	static VOID SleepMicroseconds(UINT Microseconds);
@@ -108,6 +113,11 @@ public:
 		if(Scheduler::IsMainTask())
 			throw InvalidContextException();
 		}
+	inline VOID Unlock()
+		{
+		if(--m_LockCount==0)
+			FlagHelper::Clear(m_Flags, TaskFlags::Locked);
+		}
 	Status Wait();
 
 protected:
@@ -122,10 +132,10 @@ protected:
 	virtual VOID Run()=0;
 	static VOID Switch(UINT Core, Task* Current, Task* Next);
 	static VOID TaskProc(VOID* Parameter);
-	UINT m_BlockingCount;
 	Signal m_Done;
 	UnwindException* m_Exception;
 	TaskFlags m_Flags;
+	UINT m_LockCount;
 	Mutex m_Mutex;
 	Handle<String> m_Name;
 	Handle<Task> m_Next;
