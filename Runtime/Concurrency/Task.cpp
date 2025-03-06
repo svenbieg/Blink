@@ -59,17 +59,31 @@ Handle<Task> Task::Get()
 return Scheduler::GetCurrentTask();
 }
 
+VOID Task::Lock()
+{
+SpinLock lock(Scheduler::s_CriticalSection);
+FlagHelper::Set(m_Flags, TaskFlags::Locked);
+m_LockCount++;
+}
+
 VOID Task::Sleep(UINT ms)
 {
-Task::ThrowIfMain();
+assert(!Task::IsMainTask());
 Scheduler::SuspendCurrentTask(ms);
 }
 
 VOID Task::SleepMicroseconds(UINT us)
 {
-Task::ThrowIfMain();
+assert(!Task::IsMainTask());
 UINT64 end=SystemTimer::Microseconds64()+us;
 while(SystemTimer::Microseconds64()<=end);
+}
+
+VOID Task::Unlock()
+{
+SpinLock lock(Scheduler::s_CriticalSection);
+if(--m_LockCount==0)
+	FlagHelper::Clear(m_Flags, TaskFlags::Locked);
 }
 
 Status Task::Wait()

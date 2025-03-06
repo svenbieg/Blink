@@ -80,11 +80,7 @@ public:
 	static Handle<Task> Get();
 	inline Status GetStatus()const { return m_Status; }
 	static inline BOOL IsMainTask() { return Scheduler::IsMainTask(); }
-	inline VOID Lock()
-		{
-		FlagHelper::Set(m_Flags, TaskFlags::Locked);
-		m_LockCount++;
-		}
+	VOID Lock();
 	Handle<Object> Result;
 	static VOID Sleep(UINT Milliseconds);
 	static VOID SleepMicroseconds(UINT Microseconds);
@@ -113,11 +109,7 @@ public:
 		if(Scheduler::IsMainTask())
 			throw InvalidContextException();
 		}
-	inline VOID Unlock()
-		{
-		if(--m_LockCount==0)
-			FlagHelper::Clear(m_Flags, TaskFlags::Locked);
-		}
+	VOID Unlock();
 	Status Wait();
 
 protected:

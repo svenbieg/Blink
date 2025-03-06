@@ -39,6 +39,7 @@ public:
 	// Friends
 	friend Mutex;
 	friend Signal;
+	friend Task;
 
 	// Common
 	static VOID AddTask(Task* Task);
