@@ -42,19 +42,17 @@ public:
 	friend Task;
 
 	// Common
-	static VOID AddTask(Task* Task);
 	static VOID Begin();
-	static VOID ExitTask();
 	static Handle<Task> GetCurrentTask();
 	static VOID Initialize();
 	static BOOL IsMainTask();
-	static VOID Schedule();
-	static VOID SuspendCurrentTask(UINT MilliSeconds);
 
 private:
 	// Common
 	static Handle<Task> AddParallelTask(Handle<Task> First, Handle<Task> Parallel);
+	static VOID AddTask(Task* Task);
 	static Handle<Task> AddWaitingTask(Handle<Task> First, Handle<Task> Suspend);
+	static VOID ExitTask();
 	static Handle<Task> GetWaitingTask();
 	static VOID HandleTaskSwitch(VOID* Parameter);
 	static VOID IdleTask();
@@ -63,6 +61,8 @@ private:
 	static Handle<Task> RemoveParallelTask(Handle<Task> First, Handle<Task> Remove);
 	static Handle<Task> RemoveWaitingTask(Handle<Task> First, Handle<Task> Remove);
 	static VOID ResumeTask(Handle<Task> Resume);
+	static VOID Schedule();
+	static VOID SuspendCurrentTask(UINT MilliSeconds);
 	static Handle<Task> SuspendCurrentTask(Handle<Task> Owner);
 	static UINT s_CoreCount;
 	static CriticalSection s_CriticalSection;

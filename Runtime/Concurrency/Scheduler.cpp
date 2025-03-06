@@ -34,16 +34,6 @@ namespace Concurrency {
 // Common
 //========
 
-VOID Scheduler::AddTask(Task* task)
-{
-SpinLock lock(s_CriticalSection);
-UINT core=Cpu::GetId();
-auto current=s_CurrentTask[core];
-current->SetFlag(TaskFlags::Owner);
-task->m_Owner=current;
-s_WaitingTask=AddWaitingTask(s_WaitingTask, task);
-}
-
 VOID Scheduler::Begin()
 {
 SpinLock lock(s_CriticalSection);
@@ -53,17 +43,6 @@ auto task=s_CurrentTask[core];
 lock.Unlock();
 Interrupts::Enable();
 Cpu::SetContext(&Task::TaskProc, task, task->m_StackPointer);
-}
-
-VOID Scheduler::ExitTask()
-{
-SpinLock lock(s_CriticalSection);
-SuspendCurrentTask(nullptr);
-lock.Unlock();
-while(1)
-	{
-	Cpu::WaitForInterrupt();
-	}
 }
 
 Handle<Task> Scheduler::GetCurrentTask()
@@ -97,43 +76,6 @@ auto current=s_CurrentTask[core];
 return current==s_MainTask;
 }
 
-VOID Scheduler::Schedule()
-{
-SpinLock lock(s_CriticalSection);
-if(!s_WaitingTask)
-	return;
-for(UINT u=0; u<s_CoreCount; u++)
-	{
-	UINT core=NextCore();
-	auto current=s_CurrentTask[core];
-	if(FlagHelper::Get(current->m_Flags, TaskFlags::Busy))
-		continue;
-	auto next=GetWaitingTask();
-	if(!next)
-		break;
-	current->SetFlag(TaskFlags::Switch);
-	current->m_Next=next;
-	Interrupts::Send(IRQ_TASK_SWITCH, core);
-	}
-}
-
-VOID Scheduler::SuspendCurrentTask(UINT ms)
-{
-SpinLock lock(s_CriticalSection);
-UINT core=Cpu::GetId();
-auto current=s_CurrentTask[core];
-assert(current!=s_MainTask);
-assert(current->m_Next==nullptr);
-current->ClearFlag(TaskFlags::Owner);
-current->m_ResumeTime=SystemTimer::GetTickCount64()+ms;
-auto next=GetWaitingTask();
-if(!next)
-	next=s_IdleTask[core];
-current->SetFlag(TaskFlags::Switch);
-current->m_Next=next;
-Interrupts::Send(IRQ_TASK_SWITCH, core);
-}
-
 
 //================
 // Common Private
@@ -148,6 +90,16 @@ while(current->m_Parallel)
 	current=current->m_Parallel;
 current->m_Parallel=parallel;
 return first;
+}
+
+VOID Scheduler::AddTask(Task* task)
+{
+SpinLock lock(s_CriticalSection);
+UINT core=Cpu::GetId();
+auto current=s_CurrentTask[core];
+current->SetFlag(TaskFlags::Owner);
+task->m_Owner=current;
+s_WaitingTask=AddWaitingTask(s_WaitingTask, task);
 }
 
 Handle<Task> Scheduler::AddWaitingTask(Handle<Task> first, Handle<Task> suspend)
@@ -195,6 +147,17 @@ while(*current_ptr)
 	current_ptr=&current->m_Waiting;
 	}
 return first;
+}
+
+VOID Scheduler::ExitTask()
+{
+SpinLock lock(s_CriticalSection);
+SuspendCurrentTask(nullptr);
+lock.Unlock();
+while(1)
+	{
+	Cpu::WaitForInterrupt();
+	}
 }
 
 UINT Scheduler::NextCore()
@@ -330,6 +293,43 @@ while(resume)
 	s_WaitingTask=AddWaitingTask(s_WaitingTask, resume);
 	resume=parallel;
 	}
+}
+
+VOID Scheduler::Schedule()
+{
+SpinLock lock(s_CriticalSection);
+if(!s_WaitingTask)
+	return;
+for(UINT u=0; u<s_CoreCount; u++)
+	{
+	UINT core=NextCore();
+	auto current=s_CurrentTask[core];
+	if(FlagHelper::Get(current->m_Flags, TaskFlags::Busy))
+		continue;
+	auto next=GetWaitingTask();
+	if(!next)
+		break;
+	current->SetFlag(TaskFlags::Switch);
+	current->m_Next=next;
+	Interrupts::Send(IRQ_TASK_SWITCH, core);
+	}
+}
+
+VOID Scheduler::SuspendCurrentTask(UINT ms)
+{
+SpinLock lock(s_CriticalSection);
+UINT core=Cpu::GetId();
+auto current=s_CurrentTask[core];
+assert(current!=s_MainTask);
+assert(current->m_Next==nullptr);
+current->ClearFlag(TaskFlags::Owner);
+current->m_ResumeTime=SystemTimer::GetTickCount64()+ms;
+auto next=GetWaitingTask();
+if(!next)
+	next=s_IdleTask[core];
+current->SetFlag(TaskFlags::Switch);
+current->m_Next=next;
+Interrupts::Send(IRQ_TASK_SWITCH, core);
 }
 
 Handle<Task> Scheduler::SuspendCurrentTask(Handle<Task> owner)
