@@ -106,6 +106,9 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Function.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StatusHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Culture\LanguageCode.h">
+      <Filter>Culture</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)StringHelper.cpp" />
@@ -158,6 +161,9 @@
     </Filter>
     <Filter Include="Storage\Encoding">
       <UniqueIdentifier>{0839ad31-9b52-4a75-ae7b-3f6be2828f3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Culture">
+      <UniqueIdentifier>{ebb7f6d6-b3c3-4088-8945-0e08a87c6c1b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

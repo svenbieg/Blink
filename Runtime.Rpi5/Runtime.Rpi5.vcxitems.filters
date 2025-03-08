@@ -2,11 +2,20 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)start.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\DeviceTree.cpp">
+      <Filter>Devices</Filter>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Arm\Gpio.cpp">
       <Filter>Devices\Arm</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Arm\MailBox.cpp">
       <Filter>Devices\Arm</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\Gpio.cpp">
+      <Filter>Devices\Gpio</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialPort.cpp">
+      <Filter>Devices\Serial</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.cpp">
       <Filter>Devices\System</Filter>
@@ -32,11 +41,20 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)config.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\DeviceTree.h">
+      <Filter>Devices</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Arm\Gpio.h">
       <Filter>Devices\Arm</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Arm\MailBox.h">
       <Filter>Devices\Arm</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\Gpio.h">
+      <Filter>Devices\Gpio</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialPort.h">
+      <Filter>Devices\Serial</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.h">
       <Filter>Devices\System</Filter>
@@ -73,6 +91,12 @@
     </Filter>
     <Filter Include="Devices\Arm">
       <UniqueIdentifier>{18dd74a5-4c3a-40a7-b793-7c5ae2274ac8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Gpio">
+      <UniqueIdentifier>{c28f303d-30b5-455f-9da7-581cc27392fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Serial">
+      <UniqueIdentifier>{94d66419-8f1f-4edc-807c-0e349633d40b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Devices\System">
       <UniqueIdentifier>{857258f7-700f-4622-8844-54224f715bde}</UniqueIdentifier>

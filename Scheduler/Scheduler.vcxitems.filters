@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Concurrency">
+      <UniqueIdentifier>{bb1d12b0-dca6-43fd-a637-482b422c099e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\CriticalSection.cpp">
+      <Filter>Concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\DispatchedQueue.cpp">
+      <Filter>Concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Mutex.cpp">
+      <Filter>Concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Scheduler.cpp">
+      <Filter>Concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Signal.cpp">
+      <Filter>Concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\SpinLock.cpp">
+      <Filter>Concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Task.cpp">
+      <Filter>Concurrency</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\CriticalSection.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\DispatchedHandler.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\DispatchedQueue.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\Mutex.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\ReadLock.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\Scheduler.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\ScopedLock.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\Signal.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\SpinLock.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\Task.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskLock.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\WriteLock.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
