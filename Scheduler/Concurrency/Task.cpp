@@ -9,8 +9,6 @@
 // Using
 //=======
 
-#include <irq.h>
-#include <task.h>
 #include "Concurrency/TaskLock.h"
 #include "Devices/Timers/SystemTimer.h"
 #include "Scheduler.h"
@@ -19,8 +17,6 @@
 
 using namespace Concurrency;
 using namespace Devices::Timers;
-
-extern BYTE __stack_end;
 
 
 //===========
@@ -108,22 +104,13 @@ m_StackPointer(stack_end),
 m_StackSize(stack_size),
 m_Status(Status::Pending)
 {
-task_init(&m_StackPointer, TaskProc, this);
+TaskHelper::Initialize(&m_StackPointer, TaskProc, this);
 }
 
 
 //==================
 // Common Protected
 //==================
-
-VOID Task::Switch(UINT core, Task* current, Task* next)
-{
-SIZE_T stack_end=(SIZE_T)&__stack_end;
-auto irq_stack=(IRQ_STACK*)(stack_end-core*STACK_SIZE-sizeof(IRQ_STACK));
-assert(irq_stack->SP-sizeof(TASK_FRAME)>=(SIZE_T)current+sizeof(Task)); // Stack-overflow
-current->m_StackPointer=task_save_context((VOID*)irq_stack->SP);
-irq_stack->SP=task_restore_context(next->m_StackPointer);
-}
 
 VOID Task::TaskProc(VOID* param)
 {

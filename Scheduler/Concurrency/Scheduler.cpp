@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include "Concurrency/TaskHelper.h"
 #include "Devices/System/Cpu.h"
 #include "Devices/System/Interrupts.h"
 #include "Devices/System/System.h"
@@ -200,7 +201,7 @@ current->m_Next=nullptr;
 if(!current->GetFlag(TaskFlags::Remove))
 	s_WaitingTask=AddWaitingTask(s_WaitingTask, current);
 s_CurrentTask[core]=next;
-Task::Switch(core, current, next);
+TaskHelper::Switch(core, current, next);
 }
 
 VOID Scheduler::IdleTask()

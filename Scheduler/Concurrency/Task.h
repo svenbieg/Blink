@@ -12,6 +12,7 @@
 #include <assert.h>
 #include <new>
 #include <unwind.h>
+#include "Concurrency/TaskHelper.h"
 #include "DispatchedQueue.h"
 #include "Exception.h"
 #include "FlagHelper.h"
@@ -58,6 +59,7 @@ public:
 	friend Mutex;
 	friend Scheduler;
 	friend Signal;
+	friend TaskHelper;
 	friend UnwindException;
 
 	// Con-/Destructors
@@ -116,7 +118,6 @@ protected:
 	inline BOOL GetFlag(TaskFlags Flag)const { return FlagHelper::Get(m_Flags, Flag); }
 	inline VOID SetFlag(TaskFlags Flag) { FlagHelper::Set(m_Flags, Flag); }
 	virtual VOID Run()=0;
-	static VOID Switch(UINT Core, Task* Current, Task* Next);
 	static VOID TaskProc(VOID* Parameter);
 	Signal m_Done;
 	UnwindException* m_Exception;
