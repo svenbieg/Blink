@@ -30,13 +30,6 @@
 namespace Concurrency {
 
 
-//======================
-// Forward-Declarations
-//======================
-
-class Scheduler;
-
-
 //=======
 // Flags
 //=======
@@ -49,7 +42,8 @@ Switch=2,
 Owner=4,
 Busy=7,
 Sharing=8,
-Remove=16
+Remove=16,
+Done=32
 };
 
 
@@ -77,7 +71,7 @@ public:
 	// Common
 	VOID Cancel();
 	volatile BOOL Cancelled;
-	static Handle<Task> Get();
+	static inline Handle<Task> Get() { return Scheduler::GetCurrentTask(); }
 	inline Status GetStatus()const { return m_Status; }
 	static inline BOOL IsMainTask() { return Scheduler::IsMainTask(); }
 	VOID Lock();

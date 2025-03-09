@@ -55,11 +55,6 @@ m_Then=nullptr;
 Cancelled=true;
 }
 
-Handle<Task> Task::Get()
-{
-return Scheduler::GetCurrentTask();
-}
-
 VOID Task::Lock()
 {
 SpinLock lock(Scheduler::s_CriticalSection);
@@ -91,7 +86,7 @@ Status Task::Wait()
 {
 Task::ThrowIfMain();
 WriteLock lock(m_Mutex);
-if(m_Status!=Status::Pending)
+if(GetFlag(TaskFlags::Done))
 	return m_Status;
 m_Done.Wait(lock);
 return m_Status;
@@ -142,11 +137,16 @@ catch(Exception e)
 	{
 	status=e.GetStatus();
 	}
+catch(Status s)
+	{
+	status=s;
+	}
 catch(...)
 	{
 	status=Status::Error;
 	}
 WriteLock lock(task->m_Mutex);
+task->SetFlag(TaskFlags::Done);
 task->m_Status=status;
 task->m_Done.Trigger();
 if(task->m_Then)
