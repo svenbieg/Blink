@@ -42,8 +42,9 @@ public:
 	~Signal();
 
 	// Common
-	inline VOID Cancel() { Trigger(true); }
-	VOID Trigger(BOOL Cancel=false);
+	inline VOID Cancel() { Trigger(Status::Aborted); }
+	inline VOID Trigger(BOOL Success) { Trigger(Success? Status::Success: Status::Error); }
+	VOID Trigger(Status Status=Status::Success);
 	BOOL Wait();
 	BOOL Wait(UINT Timeout);
 	BOOL Wait(ScopedLock& Lock);
@@ -51,6 +52,7 @@ public:
 
 private:
 	// Common
+	BOOL Succeeded(Task* Task);
 	BOOL WaitInternal();
 	Handle<Task> m_WaitingTask;
 };

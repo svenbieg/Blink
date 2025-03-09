@@ -13,6 +13,7 @@
 #include "Scheduler.h"
 #include "Signal.h"
 #include "SpinLock.h"
+#include "StatusHelper.h"
 #include "Task.h"
 
 using namespace Devices::System;
@@ -40,7 +41,7 @@ Signal::~Signal()
 // Common
 //========
 
-VOID Signal::Trigger(BOOL cancel)
+VOID Signal::Trigger(Status status)
 {
 SpinLock lock(Scheduler::s_CriticalSection);
 if(!m_WaitingTask)
@@ -49,8 +50,11 @@ auto waiting=m_WaitingTask;
 while(waiting)
 	{
 	if(waiting->m_ResumeTime)
+		{
 		Scheduler::s_WaitingTask=Scheduler::RemoveWaitingTask(Scheduler::s_WaitingTask, waiting);
-	waiting->m_ResumeTime=(cancel? 1: 0);
+		waiting->m_ResumeTime=0;
+		}
+	waiting->m_Status=status;
 	waiting=waiting->m_Parallel;
 	}
 Scheduler::ResumeTask(m_WaitingTask);
@@ -62,73 +66,49 @@ BOOL Signal::Wait()
 SpinLock lock(Scheduler::s_CriticalSection);
 assert(!Task::IsMainTask());
 UINT core=Cpu::GetId();
-auto task=Scheduler::s_CurrentTask[core];
+auto current=Scheduler::s_CurrentTask[core];
 Scheduler::SuspendCurrentTask(nullptr);
-m_WaitingTask=Scheduler::AddParallelTask(m_WaitingTask, task);
+m_WaitingTask=Scheduler::AddParallelTask(m_WaitingTask, current);
 lock.Yield();
-BOOL signal=(task->m_ResumeTime==0);
-if(!signal)
-	{
-	m_WaitingTask=Scheduler::RemoveParallelTask(m_WaitingTask, task);
-	task->m_ResumeTime=0;
-	}
-return signal;
+return Succeeded(current);
 }
 
 BOOL Signal::Wait(UINT timeout)
 {
 assert(timeout!=0);
-assert(!Task::IsMainTask());
 SpinLock lock(Scheduler::s_CriticalSection);
+assert(!Task::IsMainTask());
 UINT core=Cpu::GetId();
-auto task=Scheduler::s_CurrentTask[core];
+auto current=Scheduler::s_CurrentTask[core];
 Scheduler::SuspendCurrentTask(timeout);
-m_WaitingTask=Scheduler::AddParallelTask(m_WaitingTask, task);
+m_WaitingTask=Scheduler::AddParallelTask(m_WaitingTask, current);
 lock.Yield();
-BOOL signal=(task->m_ResumeTime==0);
-if(!signal)
-	{
-	m_WaitingTask=Scheduler::RemoveParallelTask(m_WaitingTask, task);
-	task->m_ResumeTime=0;
-	}
-return signal;
+return Succeeded(current);
 }
 
 BOOL Signal::Wait(ScopedLock& scoped_lock)
 {
-assert(!Task::IsMainTask());
 SpinLock lock(Scheduler::s_CriticalSection);
+assert(!Task::IsMainTask());
 UINT core=Cpu::GetId();
-auto task=Scheduler::s_CurrentTask[core];
+auto current=Scheduler::s_CurrentTask[core];
 Scheduler::SuspendCurrentTask(nullptr);
-m_WaitingTask=Scheduler::AddParallelTask(m_WaitingTask, task);
+m_WaitingTask=Scheduler::AddParallelTask(m_WaitingTask, current);
 scoped_lock.Yield(lock);
-BOOL signal=(task->m_ResumeTime==0);
-if(!signal)
-	{
-	m_WaitingTask=Scheduler::RemoveParallelTask(m_WaitingTask, task);
-	task->m_ResumeTime=0;
-	}
-return signal;
+return Succeeded(current);
 }
 
 BOOL Signal::Wait(ScopedLock& scoped_lock, UINT timeout)
 {
 assert(timeout!=0);
-assert(!Task::IsMainTask());
 SpinLock lock(Scheduler::s_CriticalSection);
+assert(!Task::IsMainTask());
 UINT core=Cpu::GetId();
-auto task=Scheduler::s_CurrentTask[core];
+auto current=Scheduler::s_CurrentTask[core];
 Scheduler::SuspendCurrentTask(timeout);
-m_WaitingTask=Scheduler::AddParallelTask(m_WaitingTask, task);
+m_WaitingTask=Scheduler::AddParallelTask(m_WaitingTask, current);
 scoped_lock.Yield(lock);
-BOOL signal=(task->m_ResumeTime==0);
-if(!signal)
-	{
-	m_WaitingTask=Scheduler::RemoveParallelTask(m_WaitingTask, task);
-	task->m_ResumeTime=0;
-	}
-return signal;
+return Succeeded(current);
 }
 
 
@@ -136,21 +116,32 @@ return signal;
 // Common Private
 //================
 
+BOOL Signal::Succeeded(Task* task)
+{
+if(task->m_ResumeTime!=0)
+	{
+	m_WaitingTask=Scheduler::RemoveParallelTask(m_WaitingTask, task);
+	task->m_ResumeTime=0;
+	task->m_Status=Status::Timeout;
+	}
+return StatusHelper::Succeeded(task->m_Status);
+}
+
 BOOL Signal::WaitInternal()
 {
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
-auto task=Scheduler::s_CurrentTask[core];
+auto current=Scheduler::s_CurrentTask[core];
 Scheduler::SuspendCurrentTask(nullptr);
-m_WaitingTask=Scheduler::AddParallelTask(m_WaitingTask, task);
+m_WaitingTask=Scheduler::AddParallelTask(m_WaitingTask, current);
 lock.Yield();
-BOOL signal=(task->m_ResumeTime==0);
-if(!signal)
+if(current->m_ResumeTime!=0)
 	{
-	m_WaitingTask=Scheduler::RemoveParallelTask(m_WaitingTask, task);
-	task->m_ResumeTime=0;
+	m_WaitingTask=Scheduler::RemoveParallelTask(m_WaitingTask, current);
+	current->m_ResumeTime=0;
+	current->m_Status=Status::Timeout;
 	}
-return signal;
+return StatusHelper::Succeeded(current->m_Status);
 }
 
 }
