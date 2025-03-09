@@ -79,7 +79,8 @@ return false;
 VOID CriticalSection::Unlock()
 {
 UINT core=Cpu::GetId();
-assert(m_Core==core);
+if(m_Core!=core)
+	return;
 if(--m_LockCount==0)
 	{
 	Cpu::DataStoreBarrier();
