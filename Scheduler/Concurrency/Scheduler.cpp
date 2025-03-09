@@ -9,14 +9,14 @@
 // Using
 //=======
 
+#include "Concurrency/Scheduler.h"
+#include "Concurrency/SpinLock.h"
+#include "Concurrency/Task.h"
 #include "Concurrency/TaskHelper.h"
 #include "Devices/System/Cpu.h"
 #include "Devices/System/Interrupts.h"
 #include "Devices/System/System.h"
 #include "Devices/Timers/SystemTimer.h"
-#include "Scheduler.h"
-#include "SpinLock.h"
-#include "Task.h"
 
 using namespace Devices::System;
 using namespace Devices::Timers;

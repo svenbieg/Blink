@@ -9,12 +9,12 @@
 // Using
 //=======
 
+#include "Concurrency/Scheduler.h"
+#include "Concurrency/Signal.h"
+#include "Concurrency/SpinLock.h"
+#include "Concurrency/Task.h"
 #include "Devices/System/Cpu.h"
-#include "Scheduler.h"
-#include "Signal.h"
-#include "SpinLock.h"
 #include "StatusHelper.h"
-#include "Task.h"
 
 using namespace Devices::System;
 

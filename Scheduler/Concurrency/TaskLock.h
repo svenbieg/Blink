@@ -9,8 +9,8 @@
 // Using
 //=======
 
-#include "Mutex.h"
-#include "ScopedLock.h"
+#include "Concurrency/Mutex.h"
+#include "Concurrency/ScopedLock.h"
 
 
 //===========

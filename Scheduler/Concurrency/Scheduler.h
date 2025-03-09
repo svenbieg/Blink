@@ -11,7 +11,6 @@
 
 #include <config.h>
 #include "Concurrency/CriticalSection.h"
-#include "Concurrency/Mutex.h"
 
 
 //===========
@@ -25,6 +24,7 @@ namespace Concurrency {
 // Forward-Declarations
 //======================
 
+class Mutex;
 class Signal;
 class Task;
 

@@ -9,8 +9,8 @@
 // Using
 //=======
 
-#include "CriticalSection.h"
-#include "ScopedLock.h"
+#include "Concurrency/CriticalSection.h"
+#include "Concurrency/ScopedLock.h"
 
 
 //===========

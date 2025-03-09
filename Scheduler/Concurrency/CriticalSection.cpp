@@ -10,10 +10,10 @@
 //=======
 
 #include <assert.h>
+#include "Concurrency/CriticalSection.h"
+#include "Concurrency/SpinLock.h"
 #include "Devices/System/Cpu.h"
 #include "Devices/System/Interrupts.h"
-#include "CriticalSection.h"
-#include "SpinLock.h"
 
 using namespace Devices::System;
 
