@@ -14,6 +14,7 @@
 #include "Concurrency/TaskLock.h"
 #include "Devices/Timers/SystemTimer.h"
 #include "Scheduler.h"
+#include "SpinLock.h"
 #include "Task.h"
 
 using namespace Concurrency;

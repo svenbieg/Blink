@@ -43,7 +43,6 @@ public:
 
 	// Common
 	static VOID Begin();
-	static Handle<Task> GetCurrentTask();
 	static VOID Initialize();
 	static BOOL IsMainTask();
 
@@ -53,6 +52,7 @@ private:
 	static VOID AddTask(Task* Task);
 	static Handle<Task> AddWaitingTask(Handle<Task> First, Handle<Task> Suspend);
 	static VOID ExitTask();
+	static Handle<Task> GetCurrentTask();
 	static Handle<Task> GetWaitingTask();
 	static VOID HandleTaskSwitch(VOID* Parameter);
 	static VOID IdleTask();

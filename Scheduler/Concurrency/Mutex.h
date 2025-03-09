@@ -5,14 +5,6 @@
 #pragma once
 
 
-//=======
-// Using
-//=======
-
-#include "SpinLock.h"
-#include "TypeHelper.h"
-
-
 //===========
 // Namespace
 //===========
@@ -25,6 +17,7 @@ namespace Concurrency {
 //======================
 
 class ReadLock;
+class SpinLock;
 class Task;
 class TaskLock;
 class WriteLock;

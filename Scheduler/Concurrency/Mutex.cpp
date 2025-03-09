@@ -13,6 +13,7 @@
 #include "Devices/System/Interrupts.h"
 #include "Mutex.h"
 #include "Scheduler.h"
+#include "SpinLock.h"
 #include "Task.h"
 
 using namespace Devices::System;

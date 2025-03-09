@@ -45,13 +45,6 @@ Interrupts::Enable();
 Cpu::SetContext(&Task::TaskProc, task, task->m_StackPointer);
 }
 
-Handle<Task> Scheduler::GetCurrentTask()
-{
-SpinLock lock(s_CriticalSection);
-UINT core=Cpu::GetId();
-return s_CurrentTask[core];
-}
-
 VOID Scheduler::Initialize()
 {
 Interrupts::Route(IRQ_TASK_SWITCH, IrqTarget::All);
@@ -160,11 +153,11 @@ while(1)
 	}
 }
 
-UINT Scheduler::NextCore()
+Handle<Task> Scheduler::GetCurrentTask()
 {
-if(++s_CurrentCore==s_CoreCount)
-	s_CurrentCore=0;
-return s_CurrentCore;
+SpinLock lock(s_CriticalSection);
+UINT core=Cpu::GetId();
+return s_CurrentTask[core];
 }
 
 Handle<Task> Scheduler::GetWaitingTask()
@@ -228,6 +221,13 @@ try
 	}
 catch(...) {}
 System::Restart();
+}
+
+UINT Scheduler::NextCore()
+{
+if(++s_CurrentCore==s_CoreCount)
+	s_CurrentCore=0;
+return s_CurrentCore;
 }
 
 Handle<Task> Scheduler::RemoveParallelTask(Handle<Task> first, Handle<Task> remove)
