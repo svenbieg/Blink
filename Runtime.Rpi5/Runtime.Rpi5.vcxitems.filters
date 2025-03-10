@@ -36,6 +36,9 @@
       <Filter>Devices\Timers</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)unwind.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.cpp">
+      <Filter>Concurrency</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
@@ -81,6 +84,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)stddef.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cstddef" />
     <ClInclude Include="$(MSBuildThisFileDirectory)unwind.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">
@@ -103,6 +109,9 @@
     </Filter>
     <Filter Include="Devices\Timers">
       <UniqueIdentifier>{139bd0a9-020c-4e62-a3a5-3c1279770a5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Concurrency">
+      <UniqueIdentifier>{2c500f8a-0e61-4af1-9082-a80b4a4065a6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

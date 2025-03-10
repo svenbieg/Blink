@@ -3,6 +3,10 @@
   <PropertyGroup Label="Globals">
     <HasSharedItems>true</HasSharedItems>
     <ItemsProjectGuid>{E31DF348-0424-4DEB-B143-B720C57D828C}</ItemsProjectGuid>
+    <ItemsSccProjectName>$/Shared/Runtime.Rpi5</ItemsSccProjectName>
+    <ItemsSccAuxPath>https://svenbieg.visualstudio.com</ItemsSccAuxPath>
+    <ItemsSccLocalPath>.</ItemsSccLocalPath>
+    <ItemsSccProvider>{4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}</ItemsSccProvider>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(MSBuildThisFileDirectory)</NMakeIncludeSearchPath>
   </PropertyGroup>
@@ -10,6 +14,7 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Arm\Gpio.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Arm\MailBox.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\DeviceTree.cpp" />
@@ -25,6 +30,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)unwind.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cpu.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cstddef" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Arm\Gpio.h" />

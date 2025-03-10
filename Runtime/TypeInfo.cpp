@@ -75,9 +75,9 @@ public:
 };
 
 
-//==================
-// Single-Inherited
-//==================
+//========================
+// Single-Inherited Class
+//========================
 
 class __si_class_type_info: public __class_type_info
 {
@@ -97,9 +97,9 @@ return m_Info->TryUpcast(type, obj);
 }
 
 
-//=================
-// Multi-Inherited
-//=================
+//=======================
+// Multi-Inherited Class
+//=======================
 
 class __vmi_class_type_info: public __class_type_info
 {
@@ -131,6 +131,45 @@ for(UINT u=0; u<m_BaseCount; u++)
 		return true;
 	}
 return false;
+}
+
+
+//======
+// Enum
+//======
+
+class __enum_type_info: public TypeInfo
+{
+public:
+	// Common
+	BOOL TryUpcast(TypeInfo const* Type, VOID** Thrown)const noexcept override
+		{
+		if(*Type==*this)
+			return true;
+		return Type->TryUpcast(this, Thrown);
+		}
+};
+
+
+//=======================
+// Single-Inherited Enum
+//=======================
+
+class __si_enum_type_info: public __enum_type_info
+{
+public:
+	// Common
+	BOOL TryUpcast(TypeInfo const* Type, VOID** Object)const noexcept override;
+
+private:
+	__enum_type_info const* m_Info;
+};
+
+BOOL __si_enum_type_info::TryUpcast(TypeInfo const* type, VOID** obj)const noexcept
+{
+if(*m_Info==*type)
+	return true;
+return m_Info->TryUpcast(type, obj);
 }
 
 
