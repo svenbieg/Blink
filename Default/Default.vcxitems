@@ -3,10 +3,6 @@
   <PropertyGroup Label="Globals">
     <HasSharedItems>true</HasSharedItems>
     <ItemsProjectGuid>{E356BD3B-D09B-4FDA-ACD2-403372FCEAC1}</ItemsProjectGuid>
-    <ItemsSccProjectName>$/Shared/Default</ItemsSccProjectName>
-    <ItemsSccAuxPath>https://svenbieg.visualstudio.com</ItemsSccAuxPath>
-    <ItemsSccLocalPath>.</ItemsSccLocalPath>
-    <ItemsSccProvider>{4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}</ItemsSccProvider>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(MSBuildThisFileDirectory)</NMakeIncludeSearchPath>
   </PropertyGroup>
