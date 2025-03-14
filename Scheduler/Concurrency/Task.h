@@ -79,7 +79,6 @@ public:
 	VOID Lock();
 	Handle<Object> Result;
 	static VOID Sleep(UINT Milliseconds);
-	static VOID SleepMicroseconds(UINT Microseconds);
 	inline VOID Then(VOID (*Procedure)())
 		{
 		DispatchedHandler::Append(&m_Then, new DispatchedProcedure(Procedure));

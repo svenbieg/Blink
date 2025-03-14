@@ -64,13 +64,6 @@ assert(!Task::IsMainTask());
 Scheduler::SuspendCurrentTask(ms);
 }
 
-VOID Task::SleepMicroseconds(UINT us)
-{
-assert(!Task::IsMainTask());
-UINT64 end=SystemTimer::Microseconds64()+us;
-while(SystemTimer::Microseconds64()<=end);
-}
-
 VOID Task::Unlock()
 {
 SpinLock lock(Scheduler::s_CriticalSection);
