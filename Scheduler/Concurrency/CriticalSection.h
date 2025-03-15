@@ -12,13 +12,6 @@
 namespace Concurrency {
 
 
-//======================
-// Forward-Declarations
-//======================
-
-class SpinLock;
-
-
 //==================
 // Critical-Section
 //==================
@@ -26,9 +19,6 @@ class SpinLock;
 class CriticalSection
 {
 public:
-	// Friends
-	friend SpinLock;
-
 	// Con-/Destructors
 	CriticalSection();
 

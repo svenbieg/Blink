@@ -103,8 +103,8 @@ Interrupts::Enable();
 Interrupts::Disable();
 while(!Cpu::CompareAndSet(&m_Core, CPU_COUNT, core))
 	{
-	Interrupts::Disable();
 	Interrupts::Enable();
+	Interrupts::Disable();
 	}
 m_LockCount++;
 Cpu::DataSyncBarrier();
