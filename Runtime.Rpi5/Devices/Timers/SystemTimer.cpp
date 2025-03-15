@@ -39,8 +39,8 @@ constexpr UINT64 CLOCK_MHZ=1000000;
 
 SystemTimer::~SystemTimer()
 {
+Interrupts::SetHandler(IRQ_SYSTIMER, nullptr, nullptr);
 m_Task->Cancel();
-m_Signal.Trigger();
 s_Current=nullptr;
 }
 
@@ -104,14 +104,13 @@ __asm volatile("msr CNTP_CVAL_EL0, %0": : "r" (cnt_pct+ticks));
 
 VOID SystemTimer::TaskProc()
 {
-TaskLock lock(m_Mutex);
 auto task=Task::Get();
+task->Lock();
 while(!task->Cancelled)
 	{
-	m_Signal.Wait(lock);
-	Triggered(this);
+	m_Signal.Wait();
+	DispatchedQueue::Append(this, [this](){ Triggered(this); });
 	}
-Interrupts::SetHandler(IRQ_SYSTIMER, nullptr, nullptr);
 }
 
 SystemTimer* SystemTimer::s_Current=nullptr;
