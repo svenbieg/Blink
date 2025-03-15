@@ -45,6 +45,7 @@ Interrupts::Disable();
 UINT core=Cpu::GetId();
 if(m_Core==core)
 	{
+	Interrupts::Enable();
 	m_LockCount++;
 	return;
 	}
@@ -63,6 +64,7 @@ Interrupts::Disable();
 UINT core=Cpu::GetId();
 if(m_Core==core)
 	{
+	Interrupts::Enable();
 	m_LockCount++;
 	return true;
 	}
