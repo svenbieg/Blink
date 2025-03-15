@@ -125,11 +125,13 @@ protected:
 	Handle<Task> m_Parallel;
 	UINT64 m_ResumeTime;
 	Signal* m_Signal;
+	Handle<Task> m_Sleeping;
 	VOID* m_StackPointer;
 	UINT m_StackSize;
 	Status m_Status;
 	Handle<DispatchedHandler> m_Then;
 	Handle<Task> m_Waiting;
+	Handle<Task> m_Wakeup;
 };
 
 

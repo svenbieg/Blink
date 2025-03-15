@@ -86,12 +86,22 @@ while(*current_ptr)
 *current_ptr=parallel;
 }
 
-VOID Scheduler::AddSleepingTask(Handle<Task> task, UINT64 resume_time)
+VOID Scheduler::AddSleepingTask(Task* task, UINT64 resume_time)
 {
 TaskLock lock(s_SleepingMutex);
-task->m_ResumeTime=resume_time;
 Handle<Task>& sleeping=s_SleepingTasks.get(resume_time);
-AddParallelTask(&sleeping, task);
+AddSleepingTask(&sleeping, task);
+task->m_ResumeTime=resume_time;
+}
+
+VOID Scheduler::AddSleepingTask(Handle<Task>* current_ptr, Task* task)
+{
+while(*current_ptr)
+	{
+	auto current=*current_ptr;
+	current_ptr=&current->m_Sleeping;
+	}
+*current_ptr=task;
 }
 
 VOID Scheduler::AddTask(Task* task)
@@ -122,6 +132,16 @@ while(*current_ptr)
 	current_ptr=&current->m_Waiting;
 	}
 *current_ptr=waiting;
+}
+
+VOID Scheduler::AddWakeupTask(Handle<Task>* current_ptr, Task* task)
+{
+while(*current_ptr)
+	{
+	auto current=*current_ptr;
+	current_ptr=&current->m_Sleeping;
+	}
+*current_ptr=task;
 }
 
 VOID Scheduler::CancelTask(Task* task)
@@ -170,23 +190,6 @@ for(UINT id=*core_ptr; id<last_id; id++)
 	return true;
 	}
 return false;
-}
-
-Handle<Task> Scheduler::GetSleepingTasks()
-{
-UINT64 time=SystemTimer::GetTickCount64();
-Handle<Task> sleeping;
-TaskLock lock(s_SleepingMutex);
-for(auto it=s_SleepingTasks.begin(); it.has_current(); )
-	{
-	UINT64 resume_time=it.get_key();
-	if(resume_time>time)
-		break;
-	auto resume=it.get_value();
-	it.remove_current();
-	AddParallelTask(&sleeping, resume);
-	}
-return sleeping;
 }
 
 Handle<Task> Scheduler::GetWaitingTask()
@@ -249,12 +252,12 @@ catch(...) {}
 System::Restart();
 }
 
-VOID Scheduler::RemoveParallelTask(Handle<Task>* current_ptr, Task* remove)
+VOID Scheduler::RemoveParallelTask(Handle<Task>* current_ptr, Task* task)
 {
 while(*current_ptr)
 	{
 	auto current=*current_ptr;
-	if(current==remove)
+	if(current==task)
 		{
 		auto parallel=current->m_Parallel;
 		current->m_Parallel=nullptr;
@@ -267,23 +270,19 @@ while(*current_ptr)
 	}
 }
 
-VOID Scheduler::RemoveSleepingTask(Task* task)
+VOID Scheduler::RemoveSleepingTask(Handle<Task>* current_ptr, Task* task)
 {
-UINT64 resume_time=task->m_ResumeTime;
-if(!resume_time)
-	return;
-task->m_ResumeTime=0;
-TaskLock lock(s_SleepingMutex);
-auto sleeping=s_SleepingTasks.get(resume_time);
-assert(sleeping);
-RemoveParallelTask(&sleeping, task);
-if(sleeping)
+while(*current_ptr)
 	{
-	s_SleepingTasks.set(resume_time, sleeping);
-	}
-else
-	{
-	s_SleepingTasks.remove(resume_time);
+	auto current=*current_ptr;
+	if(current==task)
+		{
+		auto sleeping=current->m_Sleeping;
+		current->m_Sleeping=nullptr;
+		*current_ptr=sleeping;
+		break;
+		}
+	current_ptr=&current->m_Sleeping;
 	}
 }
 
@@ -296,7 +295,7 @@ while(resume)
 	{
 	resume->m_Status=status;
 	if(resume->m_ResumeTime)
-		RemoveSleepingTask(resume);
+		AddWakeupTask(&s_WakeupTask, resume);
 	auto parallel=resume->m_Parallel;
 	resume->m_Parallel=nullptr;
 	if(FlagHelper::Get(resume->m_Flags, TaskFlags::Suspended))
@@ -320,14 +319,14 @@ while(resume)
 
 VOID Scheduler::Schedule()
 {
-auto sleeping=GetSleepingTasks();
+auto wakeup=WakeupTasks();
 SpinLock lock(s_CriticalSection);
-while(sleeping)
+while(wakeup)
 	{
-	auto parallel=sleeping->m_Parallel;
-	sleeping->m_Parallel=nullptr;
-	AddWaitingTask(&s_WaitingTask, sleeping);
-	sleeping=parallel;
+	auto next=wakeup->m_Wakeup;
+	wakeup->m_Wakeup=nullptr;
+	AddWaitingTask(&s_WaitingTask, wakeup);
+	wakeup=next;
 	}
 UINT core=GetCurrentCore();
 while(GetNextCore(&core))
@@ -386,6 +385,38 @@ if(owner_ptr)
 	AddWaitingTask(owner_ptr, current);
 }
 
+Handle<Task> Scheduler::WakeupTasks()
+{
+TaskLock sleep_lock(s_SleepingMutex);
+SpinLock lock(s_CriticalSection);
+auto wakeup=s_WakeupTask;
+s_WakeupTask=nullptr;
+lock.Unlock();
+while(wakeup)
+	{
+	auto next=wakeup->m_Wakeup;
+	wakeup->m_Wakeup=nullptr;
+	UINT64 resume_time=wakeup->m_ResumeTime;
+	wakeup->m_ResumeTime=0;
+	Handle<Task>& sleeping=s_SleepingTasks.get(resume_time);
+	RemoveSleepingTask(&sleeping, wakeup);
+	if(!sleeping)
+		s_SleepingTasks.remove(resume_time);
+	wakeup=next;
+	}
+UINT64 time=SystemTimer::GetTickCount64();
+for(auto it=s_SleepingTasks.begin(); it.has_current(); )
+	{
+	UINT64 resume_time=it.get_key();
+	if(resume_time>time)
+		break;
+	auto resume=it.get_value();
+	it.remove_current();
+	AddWakeupTask(&wakeup, resume);
+	}
+return wakeup;
+}
+
 UINT Scheduler::s_CoreCount=0;
 CriticalSection Scheduler::s_CriticalSection;
 UINT Scheduler::s_CurrentCore=0;
@@ -395,5 +426,6 @@ Task* Scheduler::s_MainTask=nullptr;
 Mutex Scheduler::s_SleepingMutex;
 Collections::map<UINT64, Handle<Task>> Scheduler::s_SleepingTasks;
 Handle<Task> Scheduler::s_WaitingTask;
+Handle<Task> Scheduler::s_WakeupTask;
 
 }
