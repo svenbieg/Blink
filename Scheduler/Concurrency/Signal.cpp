@@ -130,7 +130,7 @@ SpinLock lock(Scheduler::s_CriticalSection);
 Scheduler::RemoveParallelTask(&m_WaitingTask, task);
 }
 
-VOID Signal::WaitInternal()
+BOOL Signal::WaitInternal()
 {
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
@@ -140,6 +140,9 @@ Scheduler::SuspendCurrentTask(nullptr);
 Scheduler::AddParallelTask(&m_WaitingTask, current);
 lock.Yield();
 current->m_Signal=nullptr;
+auto status=current->m_Status;
+current->m_Status=Status::Success;
+return StatusHelper::Succeeded(status);
 }
 
 }

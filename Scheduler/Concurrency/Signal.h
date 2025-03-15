@@ -54,7 +54,7 @@ public:
 private:
 	// Common
 	VOID RemoveWaitingTask(Task* Task);
-	VOID WaitInternal();
+	BOOL WaitInternal();
 	Handle<Task> m_WaitingTask;
 };
 
