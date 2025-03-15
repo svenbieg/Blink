@@ -70,7 +70,7 @@ private:
 	static VOID Schedule();
 	static VOID SuspendCurrentTask(UINT MilliSeconds);
 	static VOID SuspendCurrentTask(Handle<Task>* Owner);
-	static Handle<Task> WakeupTasks();
+	static VOID WakeupTasks();
 	static UINT s_CoreCount;
 	static CriticalSection s_CriticalSection;
 	static UINT s_CurrentCore;

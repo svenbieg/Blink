@@ -139,20 +139,26 @@ VOID Scheduler::AddWakeupTask(Handle<Task>* current_ptr, Task* task)
 while(*current_ptr)
 	{
 	auto current=*current_ptr;
-	current_ptr=&current->m_Sleeping;
+	current_ptr=&current->m_Wakeup;
 	}
 *current_ptr=task;
 }
 
 VOID Scheduler::CancelTask(Task* task)
 {
+SpinLock lock(s_CriticalSection);
+BOOL resume=false;
+if(task->m_ResumeTime)
+	resume=true;
 auto signal=task->m_Signal;
 if(signal)
 	{
 	signal->RemoveWaitingTask(task);
 	task->m_Signal=nullptr;
+	resume=true;
 	}
-ResumeTask(task, Status::Aborted);
+if(resume)
+	ResumeTask(task, Status::Aborted);
 }
 
 VOID Scheduler::ExitTask()
@@ -288,8 +294,6 @@ while(*current_ptr)
 
 VOID Scheduler::ResumeTask(Task* resume, Status status)
 {
-if(!resume)
-	return;
 UINT core=GetCurrentCore();
 while(resume)
 	{
@@ -319,15 +323,8 @@ while(resume)
 
 VOID Scheduler::Schedule()
 {
-auto wakeup=WakeupTasks();
+WakeupTasks();
 SpinLock lock(s_CriticalSection);
-while(wakeup)
-	{
-	auto next=wakeup->m_Wakeup;
-	wakeup->m_Wakeup=nullptr;
-	AddWaitingTask(&s_WaitingTask, wakeup);
-	wakeup=next;
-	}
 UINT core=GetCurrentCore();
 while(GetNextCore(&core))
 	{
@@ -385,7 +382,7 @@ if(owner_ptr)
 	AddWaitingTask(owner_ptr, current);
 }
 
-Handle<Task> Scheduler::WakeupTasks()
+VOID Scheduler::WakeupTasks()
 {
 TaskLock sleep_lock(s_SleepingMutex);
 SpinLock lock(s_CriticalSection);
@@ -414,7 +411,15 @@ for(auto it=s_SleepingTasks.begin(); it.has_current(); )
 	it.remove_current();
 	AddWakeupTask(&wakeup, resume);
 	}
-return wakeup;
+sleep_lock.Unlock();
+lock.Lock();
+while(wakeup)
+	{
+	auto next=wakeup->m_Wakeup;
+	wakeup->m_Wakeup=nullptr;
+	AddWaitingTask(&s_WaitingTask, wakeup);
+	wakeup=next;
+	}
 }
 
 UINT Scheduler::s_CoreCount=0;
