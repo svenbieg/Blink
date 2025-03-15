@@ -20,7 +20,6 @@
 #include "Concurrency/TaskLock.h"
 #include "Concurrency/WriteLock.h"
 #include "Exception.h"
-#include "FlagHelper.h"
 #include "Status.h"
 
 
@@ -43,7 +42,7 @@ Switch=2,
 Owner=4,
 Busy=7,
 Sharing=8,
-Remove=16,
+Suspended=16,
 Done=32
 };
 
@@ -113,9 +112,6 @@ protected:
 	static Handle<Task> CreateInternal(VOID (*Procedure)(), Handle<String> Name, UINT StackSize=PAGE_SIZE);
 
 	// Common
-	inline VOID ClearFlag(TaskFlags Flag) { FlagHelper::Clear(m_Flags, Flag); }
-	inline BOOL GetFlag(TaskFlags Flag)const { return FlagHelper::Get(m_Flags, Flag); }
-	inline VOID SetFlag(TaskFlags Flag) { FlagHelper::Set(m_Flags, Flag); }
 	virtual VOID Run()=0;
 	static VOID TaskProc(VOID* Parameter);
 	Signal m_Done;
@@ -128,6 +124,7 @@ protected:
 	Handle<Task> m_Owner;
 	Handle<Task> m_Parallel;
 	UINT64 m_ResumeTime;
+	Signal* m_Signal;
 	VOID* m_StackPointer;
 	UINT m_StackSize;
 	Status m_Status;

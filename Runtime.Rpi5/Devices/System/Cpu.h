@@ -13,6 +13,13 @@ namespace Devices {
 	namespace System {
 
 
+//======================
+// Forward-Declarations
+//======================
+
+class Interrupts;
+
+
 //=====
 // Cpu
 //=====
@@ -20,6 +27,9 @@ namespace Devices {
 class Cpu
 {
 public:
+	// Friends
+	friend Interrupts;
+
 	// Settings
 	static constexpr UINT CACHE_LINE_SIZE=64;
 
@@ -46,14 +56,7 @@ public:
 		{
 		__asm inline volatile("dsb sy"::: "memory");
 		}
-	static ALWAYS_INLINE VOID DisableInterrupts()noexcept
-		{
-		__asm inline volatile("msr daifset, #2");
-		}
-	static ALWAYS_INLINE VOID EnableInterrupts()noexcept
-		{
-		__asm inline volatile("msr daifclr, #2");
-		}
+	static VOID Delay(UINT MicroSeconds);
 	static ALWAYS_INLINE UINT GetId()noexcept
 		{
 		UINT id;
@@ -113,6 +116,17 @@ public:
 	static ALWAYS_INLINE VOID WaitForInterrupt()noexcept
 		{
 		__asm inline volatile("wfi");
+		}
+
+private:
+	// Common
+	static ALWAYS_INLINE VOID DisableInterrupts()noexcept
+		{
+		__asm inline volatile("msr daifset, #2");
+		}
+	static ALWAYS_INLINE VOID EnableInterrupts()noexcept
+		{
+		__asm inline volatile("msr daifclr, #2");
 		}
 };
 

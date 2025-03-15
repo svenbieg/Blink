@@ -24,6 +24,7 @@ namespace Concurrency {
 //======================
 
 class DispatchedQueue;
+class Scheduler;
 class Task;
 
 
@@ -36,6 +37,7 @@ class Signal
 public:
 	// Friends
 	friend DispatchedQueue;
+	friend Scheduler;
 
 	// Con-/Destructors
 	Signal();
@@ -43,17 +45,16 @@ public:
 
 	// Common
 	inline VOID Cancel() { Trigger(Status::Aborted); }
-	inline VOID Trigger(BOOL Success) { Trigger(Success? Status::Success: Status::Error); }
 	VOID Trigger(Status Status=Status::Success);
-	BOOL Wait();
-	BOOL Wait(UINT Timeout);
-	BOOL Wait(ScopedLock& Lock);
-	BOOL Wait(ScopedLock& Lock, UINT Timeout);
+	VOID Wait();
+	VOID Wait(UINT Timeout);
+	VOID Wait(ScopedLock& Lock);
+	VOID Wait(ScopedLock& Lock, UINT Timeout);
 
 private:
 	// Common
-	BOOL Succeeded(Task* Task);
-	BOOL WaitInternal();
+	VOID RemoveWaitingTask(Task* Task);
+	VOID WaitInternal();
 	Handle<Task> m_WaitingTask;
 };
 

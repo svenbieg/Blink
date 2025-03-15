@@ -66,7 +66,8 @@ BOOL DispatchedQueue::Wait()
 {
 if(!s_Waiting)
 	return false;
-return s_Signal.WaitInternal();
+s_Signal.WaitInternal();
+return true;
 }
 
 Handle<DispatchedHandler> DispatchedQueue::s_First;

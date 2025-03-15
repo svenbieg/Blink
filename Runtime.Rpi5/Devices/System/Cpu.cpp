@@ -13,7 +13,10 @@
 #include <irq.h>
 #include <task.h>
 #include "Concurrency/Task.h"
-#include "Cpu.h"
+#include "Devices/System/Cpu.h"
+#include "Devices/Timers/SystemTimer.h"
+
+using namespace Devices::Timers;
 
 
 //===========
@@ -82,6 +85,12 @@ for(UINT set=0; set<L3_CACHE_SETS; set++)
 		}
 	}
 DataSyncBarrier();
+}
+
+VOID Cpu::Delay(UINT us)
+{
+UINT64 end=SystemTimer::Microseconds64()+us;
+while(SystemTimer::Microseconds64()<end);
 }
 
 VOID Cpu::SynchronizeDataAndInstructionCache()noexcept

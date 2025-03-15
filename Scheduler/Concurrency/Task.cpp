@@ -9,11 +9,12 @@
 // Using
 //=======
 
+#include "Concurrency/Scheduler.h"
+#include "Concurrency/SpinLock.h"
+#include "Concurrency/Task.h"
 #include "Concurrency/TaskLock.h"
 #include "Devices/Timers/SystemTimer.h"
-#include "Scheduler.h"
-#include "SpinLock.h"
-#include "Task.h"
+#include "FlagHelper.h"
 
 using namespace Concurrency;
 using namespace Devices::Timers;
@@ -46,9 +47,12 @@ if(m_Exception)
 
 VOID Task::Cancel()
 {
-TaskLock lock(m_Mutex);
-m_Then=nullptr;
+WriteLock lock(m_Mutex);
+if(FlagHelper::Get(m_Flags, TaskFlags::Done))
+	return;
 Cancelled=true;
+m_Status=Status::Aborted;
+Scheduler::CancelTask(this);
 }
 
 VOID Task::Lock()
@@ -73,9 +77,9 @@ if(--m_LockCount==0)
 
 Status Task::Wait()
 {
-Task::ThrowIfMain();
+assert(!Task::IsMainTask());
 WriteLock lock(m_Mutex);
-if(GetFlag(TaskFlags::Done))
+if(FlagHelper::Get(m_Flags, TaskFlags::Done))
 	return m_Status;
 m_Done.Wait(lock);
 return m_Status;
@@ -93,9 +97,10 @@ m_Flags(TaskFlags::None),
 m_LockCount(0),
 m_Name(name),
 m_ResumeTime(0),
+m_Signal(nullptr),
 m_StackPointer(stack_end),
 m_StackSize(stack_size),
-m_Status(Status::Pending)
+m_Status(Status::Success)
 {
 TaskHelper::Initialize(&m_StackPointer, TaskProc, this);
 }
@@ -126,7 +131,7 @@ catch(...)
 	status=Status::Error;
 	}
 WriteLock lock(task->m_Mutex);
-task->SetFlag(TaskFlags::Done);
+FlagHelper::Set(task->m_Flags, TaskFlags::Done);
 task->m_Status=status;
 task->m_Done.Trigger();
 if(task->m_Then)
