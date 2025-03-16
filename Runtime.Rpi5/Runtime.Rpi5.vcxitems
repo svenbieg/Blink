@@ -2,7 +2,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <HasSharedItems>true</HasSharedItems>
-    <ItemsProjectGuid>{E31DF348-0424-4DEB-B143-B720C57D828C}</ItemsProjectGuid>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(MSBuildThisFileDirectory)</NMakeIncludeSearchPath>
   </PropertyGroup>
@@ -10,14 +9,8 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Arm\Gpio.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Arm\MailBox.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\DeviceTree.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\Gpio.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialPort.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Arm\GpioHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Exceptions.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Interrupts.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Memory.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\System.cpp" />
@@ -26,18 +19,13 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)unwind.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)base.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cpu.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cstddef" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Arm\Gpio.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Arm\MailBox.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\DeviceTree.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\Gpio.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialPort.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Arm\GpioHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Interrupts.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Memory.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Peripherals.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\System.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)except.h" />
@@ -57,6 +45,7 @@
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.targets" />
     <None Include="$(MSBuildThisFileDirectory)except.S" />
+    <None Include="$(MSBuildThisFileDirectory)vectors.S" />
     <None Include="$(MSBuildThisFileDirectory)irq.S" />
     <None Include="$(MSBuildThisFileDirectory)linker.ld.in" />
     <None Include="$(MSBuildThisFileDirectory)start.S" />

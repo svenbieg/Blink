@@ -52,7 +52,7 @@ extern "C" {
 #endif
 
 VOID task_init(VOID** Stack, VOID (*TaskProc)(VOID*), VOID* Parameter);
-SIZE_T task_restore_context(VOID* Stack);
+VOID* task_restore_context(VOID* Stack);
 VOID* task_save_context(VOID* Stack);
 
 #ifdef __cplusplus

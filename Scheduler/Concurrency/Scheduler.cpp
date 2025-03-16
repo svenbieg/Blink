@@ -250,11 +250,15 @@ VOID Scheduler::MainTask()
 {
 auto timer=SystemTimer::Get();
 timer->Triggered.Add(Scheduler::Schedule);
+auto status=Status::Success;
 try
 	{
 	Main();
 	}
-catch(...) {}
+catch(...)
+	{
+	status=Status::Error;
+	}
 System::Restart();
 }
 

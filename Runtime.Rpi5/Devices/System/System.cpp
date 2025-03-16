@@ -9,11 +9,11 @@
 // Using
 //=======
 
-#include "Devices/Arm/Gpio.h"
+#include <base.h>
+#include "Devices/Arm/GpioHelper.h"
 #include "Devices/System/Cpu.h"
-#include "Devices/System/Peripherals.h"
+#include "Devices/System/System.h"
 #include "BitHelper.h"
-#include "System.h"
 
 using namespace Devices::Arm;
 
@@ -83,9 +83,8 @@ INIT_BANK_REGS INIT_BANK[2];
 
 VOID System::Led(BOOL on)
 {
-using Gpio=Devices::Arm::Gpio;
-Gpio::SetPinMode(ACTLED_PIN, PinMode::Output);
-Gpio::DigitalWrite(ACTLED_PIN, on);
+GpioHelper::SetPinMode(ACTLED_PIN, PinMode::Output);
+GpioHelper::DigitalWrite(ACTLED_PIN, on);
 }
 
 VOID System::PowerOff()

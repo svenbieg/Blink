@@ -2,7 +2,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <HasSharedItems>true</HasSharedItems>
-    <ItemsProjectGuid>{9C2293C3-7566-4D7C-B287-8760ED2E059E}</ItemsProjectGuid>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(MSBuildThisFileDirectory)</NMakeIncludeSearchPath>
   </PropertyGroup>
@@ -14,6 +13,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)assert.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)BitHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cassert" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cxxabi.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Firmware\Application.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)heap.h" />
@@ -45,6 +45,7 @@
     <None Include="$(MSBuildThisFileDirectory)utility" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)cxxabi.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Firmware\Application.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)heap.c" />

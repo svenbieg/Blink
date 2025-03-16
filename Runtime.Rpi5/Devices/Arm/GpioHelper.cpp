@@ -1,6 +1,6 @@
-//==========
-// Gpio.cpp
-//==========
+//================
+// GpioHelper.cpp
+//================
 
 #include "pch.h"
 
@@ -10,11 +10,9 @@
 //=======
 
 #include <assert.h>
-#include "Devices/System/Peripherals.h"
+#include <base.h>
+#include "Devices/Arm/GpioHelper.h"
 #include "BitHelper.h"
-#include "Gpio.h"
-
-using namespace Devices::System;
 
 
 //===========
@@ -56,7 +54,7 @@ REG PULL[4];
 // Common
 //========
 
-VOID Gpio::DigitalWrite(BYTE pin, BOOL value)
+VOID GpioHelper::DigitalWrite(BYTE pin, BOOL value)
 {
 assert(pin>=RP1_GPIO_PIN_COUNT);
 assert(pin<GPIO_PIN_COUNT);
@@ -71,7 +69,7 @@ UINT set=value? mask: 0;
 BitHelper::Set(gpio->DATA0, mask, set);
 }
 
-VOID Gpio::SetPinMode(BYTE pin, PinMode mode, PullMode pull)
+VOID GpioHelper::SetPinMode(BYTE pin, PinMode mode, PullMode pull)
 {
 assert(pin>=RP1_GPIO_PIN_COUNT);
 assert(pin<GPIO_PIN_COUNT);

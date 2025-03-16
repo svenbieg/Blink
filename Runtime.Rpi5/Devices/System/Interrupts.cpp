@@ -10,6 +10,7 @@
 //=======
 
 #include <assert.h>
+#include <base.h>
 #include "Devices/System/Cpu.h"
 #include "BitHelper.h"
 #include "Interrupts.h"

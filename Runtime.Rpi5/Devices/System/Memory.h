@@ -5,13 +5,6 @@
 #pragma once
 
 
-//=======
-// Using
-//=======
-
-#include "Peripherals.h"
-
-
 //===========
 // Namespace
 //===========
@@ -30,7 +23,8 @@ public:
 	// Common
 	static VOID Enable();
 	static VOID Initialize();
-	template <class _buf_t> inline static _buf_t* Uncached(_buf_t* Buffer) { return (_buf_t*)((SIZE_T)Buffer+UNCACHED_BASE); }
+	static VOID* Uncached(VOID* Buffer);
+	template <class _buf_t> inline static _buf_t* Uncached(_buf_t* Buffer) { return (_buf_t*)Uncached(Buffer); }
 
 private:
 	// Common

@@ -2,71 +2,58 @@
 // except.S
 //==========
 
-#include "except.h"
+#include <except.h>
 
 
 //========
-// Macros
+// Common
 //========
 
-.macro ventry label
-.align 7
-b \label
-.endm
+.globl exc_restore_context
+exc_restore_context:
+ldp x2, x3, [x0, EXC_FRAME_X2]
+ldp x4, x5, [x0, EXC_FRAME_X4]
+ldp x6, x7, [x0, EXC_FRAME_X6]
+ldp x8, x9, [x0, EXC_FRAME_X8]
+ldp x10, x11, [x0, EXC_FRAME_X10]
+ldp x12, x13, [x0, EXC_FRAME_X12]
+ldp x14, x15, [x0, EXC_FRAME_X14]
+ldp x16, x17, [x0, EXC_FRAME_X16]
+ldp x18, x19, [x0, EXC_FRAME_X18]
+ldp x20, x21, [x0, EXC_FRAME_X20]
+ldp x22, x23, [x0, EXC_FRAME_X22]
+ldp x24, x25, [x0, EXC_FRAME_X24]
+ldp x26, x27, [x0, EXC_FRAME_X26]
+ldp x28, x29, [x0, EXC_FRAME_X28]
+ldp x30, x1, [x0, EXC_FRAME_X30]
+mov sp, x1
+ldp x0, x1, [x0, EXC_FRAME_X0]
+ret
 
+.globl exc_resume
+exc_resume:
+ldr x3, [x0, EXC_FRAME_SP]
+mov sp, x3
+mov x0, x2
+br x1
 
-//===================
-// Exception Vectors
-//===================
-
-.align 11
-.globl exception_vectors
-exception_vectors:
-ventry sync_handler // Synchronous EL1T
-ventry irq_handler
-ventry fiq_handler
-ventry error_handler
-
-ventry sync_handler // Synchronous EL1H
-ventry irq_handler
-ventry fiq_handler
-ventry error_handler
-
-ventry invalid_handler // Synchronous 64-bit EL0
-ventry invalid_handler
-ventry invalid_handler
-ventry invalid_handler
-
-ventry invalid_handler // Synchronous 32-bit EL0
-ventry invalid_handler
-ventry invalid_handler
-ventry invalid_handler
-
-
-//====================
-// Exception Handlers
-//====================
-
-sync_handler:
-mov x0, #SYNC_EXCEPTION
-mrs x1, elr_el1
-b err_hang
-
-fiq_handler:
-mov x0, #FIQ_EXCEPTION
-mrs x1, elr_el1
-b err_hang
-
-error_handler:
-mov x0, #ERROR_EXCEPTION
-mrs x1, elr_el1
-b err_hang
-
-invalid_handler:
-mov x0, #INVALID_EXCEPTION
-mrs x1, elr_el1
-b err_hang
-
-err_hang:
-wfe
-b err_hang
+.globl exc_save_context
+exc_save_context:
+stp x0, x1, [x0, EXC_FRAME_X0]
+stp x2, x3, [x0, EXC_FRAME_X2]
+stp x4, x5, [x0, EXC_FRAME_X4]
+stp x6, x7, [x0, EXC_FRAME_X6]
+stp x8, x9, [x0, EXC_FRAME_X8]
+stp x10, x11, [x0, EXC_FRAME_X10]
+stp x12, x13, [x0, EXC_FRAME_X12]
+stp x14, x15, [x0, EXC_FRAME_X14]
+stp x16, x17, [x0, EXC_FRAME_X16]
+stp x18, x19, [x0, EXC_FRAME_X18]
+stp x20, x21, [x0, EXC_FRAME_X20]
+stp x22, x23, [x0, EXC_FRAME_X22]
+stp x24, x25, [x0, EXC_FRAME_X24]
+stp x26, x27, [x0, EXC_FRAME_X26]
+stp x28, x29, [x0, EXC_FRAME_X28]
+mov x1, sp
+stp x30, x1, [x0, EXC_FRAME_X30]
+ret

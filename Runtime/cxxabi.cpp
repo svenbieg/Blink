@@ -19,6 +19,13 @@ using namespace Devices::System;
 using namespace Storage::Encoding;
 
 
+//==========
+// Settings
+//==========
+
+constexpr SIZE_T CATCH_ANY=0x1301FFFF00000000;
+
+
 //===========
 // Namespace
 //===========
@@ -124,11 +131,13 @@ while(lsda.GetPosition()<callsite_end)
 		assert(type_id>=0);
 		if(type_id==0)
 			return;
-		Dwarf catch_type_entry(types_pos-type_id*type_info_len);
-		auto catch_type=(TypeInfo const*)catch_type_entry.ReadEncoded(types_enc);
-		assert(catch_type!=nullptr);
 		TypeInfo const* thrown_type;
 		VOID* thrown=exc->GetThrownException(&thrown_type);
+		Dwarf catch_type_entry(types_pos-type_id*type_info_len);
+		auto catch_id=catch_type_entry.ReadEncoded(types_enc);
+		TypeInfo const* catch_type=thrown_type;
+		if(catch_id!=CATCH_ANY)
+			catch_type=(TypeInfo const*)catch_id;
 		if(catch_type->TryUpcast(thrown_type, &thrown))
 			{
 			exc->Catch(lp_start+lp_offset, type_id, catch_type, thrown);

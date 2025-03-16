@@ -10,7 +10,7 @@
 //=======
 
 #include <config.h>
-#include "Peripherals.h"
+#include <irq.h>
 
 
 //===========

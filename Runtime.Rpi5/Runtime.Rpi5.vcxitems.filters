@@ -2,25 +2,10 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)start.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\DeviceTree.cpp">
-      <Filter>Devices</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Arm\Gpio.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Arm\GpioHelper.cpp">
       <Filter>Devices\Arm</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Arm\MailBox.cpp">
-      <Filter>Devices\Arm</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\Gpio.cpp">
-      <Filter>Devices\Gpio</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialPort.cpp">
-      <Filter>Devices\Serial</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.cpp">
-      <Filter>Devices\System</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Exceptions.cpp">
       <Filter>Devices\System</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Interrupts.cpp">
@@ -36,28 +21,13 @@
       <Filter>Devices\Timers</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)unwind.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.cpp">
-      <Filter>Concurrency</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)config.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\DeviceTree.h">
-      <Filter>Devices</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Arm\Gpio.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Arm\GpioHelper.h">
       <Filter>Devices\Arm</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Arm\MailBox.h">
-      <Filter>Devices\Arm</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\Gpio.h">
-      <Filter>Devices\Gpio</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialPort.h">
-      <Filter>Devices\Serial</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.h">
       <Filter>Devices\System</Filter>
@@ -66,9 +36,6 @@
       <Filter>Devices\System</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Memory.h">
-      <Filter>Devices\System</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Peripherals.h">
       <Filter>Devices\System</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\System.h">
@@ -84,9 +51,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)stddef.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cstddef" />
     <ClInclude Include="$(MSBuildThisFileDirectory)unwind.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.h">
-      <Filter>Concurrency</Filter>
-    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)base.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">
@@ -98,20 +63,11 @@
     <Filter Include="Devices\Arm">
       <UniqueIdentifier>{18dd74a5-4c3a-40a7-b793-7c5ae2274ac8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Devices\Gpio">
-      <UniqueIdentifier>{c28f303d-30b5-455f-9da7-581cc27392fb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Devices\Serial">
-      <UniqueIdentifier>{94d66419-8f1f-4edc-807c-0e349633d40b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Devices\System">
       <UniqueIdentifier>{857258f7-700f-4622-8844-54224f715bde}</UniqueIdentifier>
     </Filter>
     <Filter Include="Devices\Timers">
       <UniqueIdentifier>{139bd0a9-020c-4e62-a3a5-3c1279770a5d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Concurrency">
-      <UniqueIdentifier>{2c500f8a-0e61-4af1-9082-a80b4a4065a6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -135,9 +91,10 @@
     </None>
     <None Include="$(MSBuildThisFileDirectory)linker.ld.in" />
     <None Include="$(MSBuildThisFileDirectory)start.S" />
-    <None Include="$(MSBuildThisFileDirectory)except.S" />
+    <None Include="$(MSBuildThisFileDirectory)vectors.S" />
     <None Include="$(MSBuildThisFileDirectory)task.S" />
     <None Include="$(MSBuildThisFileDirectory)irq.S" />
+    <None Include="$(MSBuildThisFileDirectory)except.S" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="$(MSBuildThisFileDirectory)config.txt" />

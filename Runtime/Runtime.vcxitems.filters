@@ -17,6 +17,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cassert" />
     <ClInclude Include="$(MSBuildThisFileDirectory)BitHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)cmath" />
@@ -67,6 +70,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Firmware\Application.cpp">
       <Filter>Firmware</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.cpp">
+      <Filter>Concurrency</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">
@@ -74,6 +80,9 @@
     </Filter>
     <Filter Include="Firmware">
       <UniqueIdentifier>{720267e1-771f-4d13-8679-2b63e6706f7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Concurrency">
+      <UniqueIdentifier>{c14ccb0d-80cb-4bad-80e4-e21e3db633e3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

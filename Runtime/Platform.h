@@ -23,3 +23,4 @@
 //=======
 
 #include "Default/Platform.h"
+#include "TypeInfo.h"

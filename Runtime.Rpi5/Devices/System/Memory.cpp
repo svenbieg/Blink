@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include <base.h>
 #include <config.h>
 #include <heap.h>
 #include "Devices/System/Cpu.h"
@@ -120,6 +121,11 @@ g_heap=heap_create(heap_start, heap_size);
 heap_reserve(g_heap, LOW_IO_BASE, HIGH_MEM_BASE-LOW_IO_BASE);
 for(CTOR_PTR* ctor=&__init_array_start; ctor!=&__init_array_end; ctor++)
 	(*ctor)();
+}
+
+VOID* Memory::Uncached(VOID* buf)
+{
+return (VOID*)((SIZE_T)buf+UNCACHED_BASE);
 }
 
 

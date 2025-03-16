@@ -11,9 +11,10 @@
     <CompilerFlags>$(CompilerFlags) -fdata-sections -ffunction-sections</CompilerFlags>
     <CompilerFlags>$(CompilerFlags) -fno-builtin -funwind-tables -nostartfiles</CompilerFlags>
     <CompilerFlags>$(CompilerFlags) -nostdinc</CompilerFlags>
+    <CompilerFlags>$(CompilerFlags) -O0</CompilerFlags>
     <CompilerFlagsCpp>$(CompilerFlagsCpp) -std=c++17</CompilerFlagsCpp>
-    <CompilerFlagsCpp>$(CompilerFlagsCpp) -Wno-multichar</CompilerFlagsCpp>
     <CompilerFlagsCpp>$(CompilerFlagsCpp) -nostdinc++</CompilerFlagsCpp>
+    <CompilerFlagsCpp>$(CompilerFlagsCpp) -Wno-multichar</CompilerFlagsCpp>
     <LinkerFlags>$(LinkerFlags) --eh-frame-hdr</LinkerFlags>
     <LinkerFlags>$(LinkerFlags) --gc-sections</LinkerFlags>
     <LinkerFlags>$(LinkerFlags) -nostdlib</LinkerFlags>

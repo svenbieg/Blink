@@ -1,6 +1,6 @@
-//========
-// Gpio.h
-//========
+//==============
+// GpioHelper.h
+//==============
 
 #pragma once
 
@@ -47,7 +47,7 @@ PullUp
 // Gpio
 //======
 
-class Gpio
+class GpioHelper
 {
 public:
 	// Common
