@@ -27,24 +27,13 @@ using namespace Devices::System;
 namespace Concurrency {
 
 
-//==================
-// Con-/Destructors
-//==================
-
-Mutex::Mutex():
-m_Owner(nullptr)
-{}
-
-Mutex::~Mutex()
-{}
-
-
 //========
 // Common
 //========
 
 VOID Mutex::Lock()
 {
+assert(!Interrupts::Active());
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
@@ -54,12 +43,13 @@ if(!m_Owner)
 	m_Owner=current;
 	return;
 	}
-Scheduler::SuspendCurrentTask(m_Owner);
+Scheduler::SuspendCurrentTask(&m_Owner, core, current);
 lock.Yield();
 }
 
 VOID Mutex::Lock(AccessMode)
 {
+assert(!Interrupts::Active());
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
@@ -78,17 +68,18 @@ if(FlagHelper::Get(waiting->m_Flags, TaskFlags::Sharing))
 	Scheduler::AddParallelTask(&waiting, current);
 	if(waiting==m_Owner)
 		return;
-	Scheduler::SuspendCurrentTask(nullptr);
+	Scheduler::SuspendCurrentTask(nullptr, core, current);
 	}
 else
 	{
-	Scheduler::SuspendCurrentTask(waiting);
+	Scheduler::SuspendCurrentTask(&waiting, core, current);
 	}
 lock.Yield();
 }
 
 VOID Mutex::Lock(AccessPriority)
 {
+assert(!Interrupts::Active());
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
@@ -102,12 +93,13 @@ if(!m_Owner)
 	m_Owner=current;
 	return;
 	}
-Scheduler::SuspendCurrentTask(m_Owner);
+Scheduler::SuspendCurrentTask(&m_Owner, core, current);
 lock.Yield();
 }
 
 BOOL Mutex::TryLock()
 {
+assert(!Interrupts::Active());
 SpinLock lock(Scheduler::s_CriticalSection);
 if(m_Owner)
 	return false;
@@ -120,6 +112,7 @@ return true;
 
 BOOL Mutex::TryLock(AccessMode)
 {
+assert(!Interrupts::Active());
 SpinLock lock(Scheduler::s_CriticalSection);
 if(m_Owner&&!FlagHelper::Get(m_Owner->m_Flags, TaskFlags::Sharing))
 	return false;
@@ -133,6 +126,7 @@ return true;
 
 BOOL Mutex::TryLock(AccessPriority)
 {
+assert(!Interrupts::Active());
 SpinLock lock(Scheduler::s_CriticalSection);
 if(m_Owner)
 	return false;
@@ -146,6 +140,7 @@ return true;
 
 VOID Mutex::Unlock()
 {
+assert(!Interrupts::Active());
 SpinLock lock(Scheduler::s_CriticalSection);
 if(!m_Owner)
 	return;
@@ -156,11 +151,13 @@ if(m_Owner!=current)
 auto waiting=m_Owner->m_Waiting;
 m_Owner->m_Waiting=nullptr;
 m_Owner=waiting;
-Scheduler::ResumeTask(waiting);
+if(waiting)
+	Scheduler::ResumeTask(waiting);
 }
 
 VOID Mutex::Unlock(AccessMode)
 {
+assert(!Interrupts::Active());
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
@@ -172,11 +169,13 @@ if(m_Owner)
 auto waiting=owner->m_Waiting;
 owner->m_Waiting=nullptr;
 m_Owner=waiting;
-Scheduler::ResumeTask(waiting);
+if(waiting)
+	Scheduler::ResumeTask(waiting);
 }
 
 VOID Mutex::Unlock(AccessPriority)
 {
+assert(!Interrupts::Active());
 SpinLock lock(Scheduler::s_CriticalSection);
 if(!m_Owner)
 	return;
@@ -188,7 +187,8 @@ m_Owner->Unlock();
 auto waiting=m_Owner->m_Waiting;
 m_Owner->m_Waiting=nullptr;
 m_Owner=waiting;
-Scheduler::ResumeTask(waiting);
+if(waiting)
+	Scheduler::ResumeTask(waiting);
 }
 
 
@@ -204,14 +204,15 @@ assert(m_Owner==current);
 auto waiting=m_Owner->m_Waiting;
 m_Owner->m_Waiting=nullptr;
 m_Owner=waiting;
-Scheduler::ResumeTask(waiting);
+if(waiting)
+	Scheduler::ResumeTask(waiting);
 lock.Yield();
 if(!m_Owner)
 	{
 	m_Owner=current;
 	return;
 	}
-Scheduler::SuspendCurrentTask(m_Owner);
+Scheduler::SuspendCurrentTask(&m_Owner, core, current);
 lock.Yield();
 }
 
@@ -226,7 +227,8 @@ if(!m_Owner)
 	auto waiting=owner->m_Waiting;
 	owner->m_Waiting=nullptr;
 	m_Owner=waiting;
-	Scheduler::ResumeTask(waiting);
+	if(waiting)
+		Scheduler::ResumeTask(waiting);
 	}
 lock.Yield();
 if(!m_Owner)
@@ -242,11 +244,11 @@ if(FlagHelper::Get(waiting->m_Flags, TaskFlags::Sharing))
 	Scheduler::AddParallelTask(&waiting, current);
 	if(waiting==m_Owner)
 		return;
-	Scheduler::SuspendCurrentTask(nullptr);
+	Scheduler::SuspendCurrentTask(nullptr, core, current);
 	}
 else
 	{
-	Scheduler::SuspendCurrentTask(waiting);
+	Scheduler::SuspendCurrentTask(&waiting, core, current);
 	}
 lock.Yield();
 }
@@ -259,14 +261,15 @@ assert(m_Owner==current);
 auto waiting=m_Owner->m_Waiting;
 m_Owner->m_Waiting=nullptr;
 m_Owner=waiting;
-Scheduler::ResumeTask(waiting);
+if(waiting)
+	Scheduler::ResumeTask(waiting);
 lock.Yield();
 if(!m_Owner)
 	{
 	m_Owner=current;
 	return;
 	}
-Scheduler::SuspendCurrentTask(m_Owner);
+Scheduler::SuspendCurrentTask(&m_Owner, core, current);
 lock.Yield();
 }
 

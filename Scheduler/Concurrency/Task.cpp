@@ -92,15 +92,23 @@ return m_Status;
 
 Task::Task(Handle<String> name, VOID* stack_end, UINT stack_size):
 Cancelled(false),
+m_Create(nullptr),
 m_Exception(nullptr),
 m_Flags(TaskFlags::None),
 m_LockCount(0),
 m_Name(name),
+m_Next(nullptr),
+m_Owner(nullptr),
+m_Parallel(nullptr),
+m_Release(nullptr),
 m_ResumeTime(0),
 m_Signal(nullptr),
+m_Sleeping(nullptr),
 m_StackPointer(stack_end),
 m_StackSize(stack_size),
-m_Status(Status::Success)
+m_Status(Status::Success),
+m_Then(nullptr),
+m_Waiting(nullptr)
 {
 TaskHelper::Initialize(&m_StackPointer, TaskProc, this);
 }

@@ -51,8 +51,8 @@ public:
 	friend WriteLock;
 
 	// Con-/Destructors
-	Mutex();
-	~Mutex();
+	Mutex(): m_Owner(nullptr) {}
+	~Mutex() {}
 
 	// Common
 	VOID Lock();
@@ -70,7 +70,7 @@ private:
 	VOID Yield(SpinLock& Lock);
 	VOID Yield(SpinLock& Lock, AccessMode Access);
 	VOID Yield(SpinLock& Lock, AccessPriority Priority);
-	Handle<Task> m_Owner;
+	Task* m_Owner;
 };
 
 }

@@ -10,9 +10,7 @@
 //=======
 
 #include <config.h>
-#include "Collections/map.hpp"
 #include "Concurrency/CriticalSection.h"
-#include "Concurrency/Mutex.h"
 
 
 //===========
@@ -26,6 +24,7 @@ namespace Concurrency {
 // Forward-Declarations
 //======================
 
+class Mutex;
 class Signal;
 class Task;
 
@@ -47,40 +46,48 @@ public:
 	static VOID Initialize();
 	static BOOL IsMainTask();
 
-private:
+protected:
 	// Common
-	static VOID AddParallelTask(Handle<Task>* First, Task* Parallel);
-	static VOID AddSleepingTask(Task* Task, UINT64 ResumeTime);
-	static VOID AddSleepingTask(Handle<Task>* First, Task* Sleeping);
 	static VOID AddTask(Task* Task);
-	static VOID AddWaitingTask(Handle<Task>* First, Task* Waiting);
-	static VOID AddWakeupTask(Handle<Task>* First, Task* Wakeup);
 	static VOID CancelTask(Task* Task);
 	static VOID ExitTask();
+	static Task* GetCurrentTask();
+	static VOID ReleaseTasks();
+	static VOID Schedule();
+	static VOID SuspendCurrentTask(UINT MilliSeconds);
+	static VOID WakeupTasks();
+
+private:
+	// Common
+	static VOID AddCreateTask(Task** First, Task* Task);
+	static VOID AddParallelTask(Task** First, Task* Task);
+	static VOID AddReleaseTask(Task** First, Task* Task);
+	static VOID AddSleepingTask(Task** First, Task* Task);
+	static VOID AddWaitingTask(Task* Task);
+	static VOID AddWaitingTask(Task** First, Task* Task);
+	static VOID CreateTasks();
 	static UINT GetCurrentCore();
-	static Handle<Task> GetCurrentTask();
 	static BOOL GetNextCore(UINT* Core);
-	static Handle<Task> GetWaitingTask();
+	static Task* GetWaitingTask();
 	static VOID HandleTaskSwitch(VOID* Parameter);
 	static VOID IdleTask();
 	static VOID MainTask();
-	static VOID RemoveParallelTask(Handle<Task>* First, Task* Remove);
-	static VOID RemoveSleepingTask(Handle<Task>* First, Task* Sleeping);
+	static VOID RemoveParallelTask(Task** First, Task* Remove);
+	static VOID RemoveSleepingTask(Task** First, Task* Sleeping);
 	static VOID ResumeTask(Task* Resume, Status Status=Status::Success);
-	static VOID Schedule();
-	static VOID SuspendCurrentTask(UINT MilliSeconds);
-	static VOID SuspendCurrentTask(Handle<Task>* Owner);
-	static VOID WakeupTasks();
+	static VOID SuspendCurrentTask(Task** Owner, UINT Core, Task* Current);
 	static UINT s_CoreCount;
+	static Task* s_Create;
 	static CriticalSection s_CriticalSection;
 	static UINT s_CurrentCore;
-	static Handle<Task> s_CurrentTask[CPU_COUNT];
-	static Handle<Task> s_IdleTask[CPU_COUNT];
+	static Task* s_CurrentTask[CPU_COUNT];
+	static Task* s_IdleTask[CPU_COUNT];
 	static Task* s_MainTask;
-	static Mutex s_SleepingMutex;
-	static Collections::map<UINT64, Handle<Task>> s_SleepingTasks;
-	static Handle<Task> s_WaitingTask;
-	static Handle<Task> s_WakeupTask;
+	static Task* s_Release;
+	static Task* s_Sleeping;
+	static Task* s_WaitingFirst;
+	static Task* s_WaitingLast;
+	static Task* s_WaitingLocked;
 };
 
 }

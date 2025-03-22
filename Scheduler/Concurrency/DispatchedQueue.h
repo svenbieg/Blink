@@ -51,12 +51,11 @@ public:
 
 private:
 	// Common
-	static VOID Run();
-	static BOOL Wait();
-	static Handle<DispatchedHandler> s_First;
+	static DispatchedHandler* s_First;
+	static DispatchedHandler* s_Last;
 	static Mutex s_Mutex;
 	static Signal s_Signal;
-	static BOOL s_Waiting;
+	static volatile BOOL s_Waiting;
 };
 
 }

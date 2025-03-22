@@ -30,7 +30,7 @@ class DispatchedQueue;
 // Dispatched-Handler
 //====================
 
-class DispatchedHandler: public Object
+class DispatchedHandler
 {
 public:
 	// Friends
@@ -40,20 +40,14 @@ public:
 	virtual ~DispatchedHandler() {}
 
 	// Common
-	static inline VOID Append(Handle<DispatchedHandler>* Handler, DispatchedHandler* Append)
-		{
-		while(*Handler)
-			Handler=&(*Handler)->m_Next;
-		*Handler=Append;
-		}
 	virtual VOID Run()=0;
 
 protected:
 	// Con-/Destructors
-	DispatchedHandler() {}
+	DispatchedHandler(): m_Next(nullptr) {}
 
 	// Common
-	Handle<DispatchedHandler> m_Next;
+	DispatchedHandler* m_Next;
 };
 
 

@@ -17,6 +17,7 @@
 #include "Concurrency/Scheduler.h"
 #include "Concurrency/ReadLock.h"
 #include "Concurrency/Signal.h"
+#include "Concurrency/SpinLock.h"
 #include "Concurrency/TaskLock.h"
 #include "Concurrency/WriteLock.h"
 #include "Exception.h"
@@ -43,7 +44,8 @@ Owner=4,
 Busy=7,
 Sharing=8,
 Suspended=16,
-Done=32
+Done=32,
+Release=64
 };
 
 
@@ -80,23 +82,28 @@ public:
 	static VOID Sleep(UINT Milliseconds);
 	inline VOID Then(VOID (*Procedure)())
 		{
-		DispatchedHandler::Append(&m_Then, new DispatchedProcedure(Procedure));
+		assert(m_Then==nullptr);
+		m_Then=new DispatchedProcedure(Procedure);
 		}
 	template <class _owner_t> inline VOID Then(_owner_t* Owner, VOID (_owner_t::*Procedure)())
 		{
-		DispatchedHandler::Append(&m_Then, new DispatchedMemberProcedure<_owner_t>(Owner, Procedure));
+		assert(m_Then==nullptr);
+		m_Then=new DispatchedMemberProcedure<_owner_t>(Owner, Procedure);
 		}
 	template <class _owner_t, class... _args_t> inline VOID Then(Handle<_owner_t> const& Owner, VOID (_owner_t::*Procedure)())
 		{
-		DispatchedHandler::Append(&m_Then, new DispatchedMemberProcedure<_owner_t>(Owner, Procedure));
+		assert(m_Then==nullptr);
+		m_Then=new DispatchedMemberProcedure<_owner_t>(Owner, Procedure);
 		}
 	template <class _owner_t, class _lambda_t> inline VOID Then(_owner_t* Owner, _lambda_t&& Lambda)
 		{
-		DispatchedHandler::Append(&m_Then, new DispatchedLambda(Owner, std::forward<_lambda_t>(Lambda)));
+		assert(m_Then==nullptr);
+		m_Then=new DispatchedLambda(Owner, std::forward<_lambda_t>(Lambda));
 		}
 	template <class _owner_t, class _lambda_t> inline VOID Then(Handle<_owner_t> const& Owner, _lambda_t&& Lambda)
 		{
-		DispatchedHandler::Append(&m_Then, new DispatchedLambda(Owner, std::forward<_lambda_t>(Lambda)));
+		assert(m_Then==nullptr);
+		m_Then=new DispatchedLambda(Owner, std::forward<_lambda_t>(Lambda));
 		}
 	static inline VOID ThrowIfMain()
 		{
@@ -109,29 +116,31 @@ public:
 protected:
 	// Con-/Destructors
 	Task(Handle<String> Name, VOID* StackEnd, UINT StackSize);
-	static Handle<Task> CreateInternal(VOID (*Procedure)(), Handle<String> Name, UINT StackSize=PAGE_SIZE);
+	static Task* CreateInternal(VOID (*Procedure)(), Handle<String> Name, UINT StackSize=PAGE_SIZE);
 
 	// Common
 	virtual VOID Run()=0;
 	static VOID TaskProc(VOID* Parameter);
+	Task* m_Create;
 	Signal m_Done;
 	UnwindException* m_Exception;
 	TaskFlags m_Flags;
 	UINT m_LockCount;
 	Mutex m_Mutex;
 	Handle<String> m_Name;
-	Handle<Task> m_Next;
-	Handle<Task> m_Owner;
-	Handle<Task> m_Parallel;
+	Task* m_Next;
+	Task* m_Owner;
+	Task* m_Parallel;
+	Task* m_Release;
 	UINT64 m_ResumeTime;
 	Signal* m_Signal;
-	Handle<Task> m_Sleeping;
+	Task* m_Sleeping;
 	VOID* m_StackPointer;
 	UINT m_StackSize;
 	Status m_Status;
-	Handle<DispatchedHandler> m_Then;
-	Handle<Task> m_Waiting;
-	Handle<Task> m_Wakeup;
+	DispatchedHandler* m_Then;
+	Handle<Task> m_This;
+	Task* m_Waiting;
 };
 
 
@@ -205,22 +214,19 @@ private:
 };
 
 
+
 //==================
 // Con-/Destructors
 //==================
 
 inline Handle<Task> Task::Create(VOID (*Procedure)(), Handle<String> Name, UINT StackSize)
 {
-assert(StackSize%sizeof(SIZE_T)==0);
-UINT size=TypeHelper::AlignUp(sizeof(TaskProcedure), sizeof(SIZE_T))+StackSize;
-auto task=(TaskProcedure*)operator new(size);
-VOID* stack_end=(VOID*)((SIZE_T)task+size);
-new (task) TaskProcedure(Procedure, Name, stack_end, StackSize);
+auto task=CreateInternal(Procedure, Name, StackSize);
 Scheduler::AddTask(task);
 return task;
 }
 
-template <class _owner_t> inline Handle<Task> Task::Create(_owner_t* Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name, UINT StackSize)
+template <class _owner_t> Handle<Task> Task::Create(_owner_t* Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name, UINT StackSize)
 {
 assert(StackSize%sizeof(SIZE_T)==0);
 using _task_t=TaskMemberProcedure<_owner_t>;
@@ -232,7 +238,7 @@ Scheduler::AddTask(task);
 return task;
 }
 
-template <class _owner_t> inline Handle<Task> Task::Create(Handle<_owner_t> const& Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name, UINT StackSize)
+template <class _owner_t> Handle<Task> Task::Create(Handle<_owner_t> const& Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name, UINT StackSize)
 {
 assert(StackSize%sizeof(SIZE_T)==0);
 using _task_t=TaskMemberProcedure<_owner_t>;
@@ -244,7 +250,7 @@ Scheduler::AddTask(task);
 return task;
 }
 
-template <class _owner_t, class _lambda_t> inline Handle<Task> Task::Create(_owner_t* Owner, _lambda_t&& Lambda, Handle<String> Name, UINT StackSize)
+template <class _owner_t, class _lambda_t> Handle<Task> Task::Create(_owner_t* Owner, _lambda_t&& Lambda, Handle<String> Name, UINT StackSize)
 {
 assert(StackSize%sizeof(SIZE_T)==0);
 using _task_t=TaskLambda<_owner_t, _lambda_t>;
@@ -256,7 +262,7 @@ Scheduler::AddTask(task);
 return task;
 }
 
-template <class _owner_t, class _lambda_t> inline Handle<Task> Task::Create(Handle<_owner_t> const& Owner, _lambda_t&& Lambda, Handle<String> Name, UINT StackSize)
+template <class _owner_t, class _lambda_t> Handle<Task> Task::Create(Handle<_owner_t> const& Owner, _lambda_t&& Lambda, Handle<String> Name, UINT StackSize)
 {
 assert(StackSize%sizeof(SIZE_T)==0);
 using _task_t=TaskLambda<_owner_t, _lambda_t>;
@@ -273,7 +279,7 @@ return task;
 // Con-/Destructors Private
 //==========================
 
-inline Handle<Task> Task::CreateInternal(VOID (*Procedure)(), Handle<String> Name, UINT StackSize)
+inline Task* Task::CreateInternal(VOID (*Procedure)(), Handle<String> Name, UINT StackSize)
 {
 assert(StackSize%sizeof(SIZE_T)==0);
 UINT size=TypeHelper::AlignUp(sizeof(TaskProcedure), sizeof(SIZE_T))+StackSize;

@@ -40,8 +40,8 @@ public:
 	friend Scheduler;
 
 	// Con-/Destructors
-	Signal();
-	~Signal();
+	Signal(): m_Waiting(nullptr) {}
+	~Signal() {}
 
 	// Common
 	inline VOID Cancel() { Trigger(Status::Aborted); }
@@ -53,9 +53,8 @@ public:
 
 private:
 	// Common
-	VOID RemoveWaitingTask(Task* Task);
-	BOOL WaitInternal();
-	Handle<Task> m_WaitingTask;
+	VOID WaitInternal(ScopedLock& Lock);
+	Task* m_Waiting;
 };
 
 }
