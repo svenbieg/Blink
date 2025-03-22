@@ -37,7 +37,7 @@ public:
 	static inline UINT64 GetTickCount64() { return Microseconds64()/1000; }
 	static inline UINT Microseconds() { return (UINT)Microseconds64(); }
 	static UINT64 Microseconds64();
-	Event<SystemTimer> Triggered; // 10ms (100Hz)
+	Event<SystemTimer> Triggered; // 10ms (100Hz) in ServiceTask
 
 private:
 	// Con-/Destructors
@@ -45,7 +45,7 @@ private:
 
 	// Common
 	static VOID HandleInterrupt(VOID* Parameter);
-	VOID TaskProc();
+	VOID ServiceTask();
 	Concurrency::Signal m_Signal;
 	Handle<Concurrency::Task> m_Task;
 	static SystemTimer* s_Current;
