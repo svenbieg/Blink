@@ -11,24 +11,21 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)asm.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cxxabi.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Firmware\Application.h">
-      <Filter>Firmware</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cassert" />
     <ClInclude Include="$(MSBuildThisFileDirectory)BitHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.h">
       <Filter>Concurrency</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)cmath" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mutex" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)new" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)shared_mutex" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stdexcept" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)type_traits" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utility" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)cmath" />
-    <None Include="$(MSBuildThisFileDirectory)mutex" />
-    <None Include="$(MSBuildThisFileDirectory)new" />
-    <None Include="$(MSBuildThisFileDirectory)shared_mutex" />
-    <None Include="$(MSBuildThisFileDirectory)stdexcept" />
-    <None Include="$(MSBuildThisFileDirectory)type_traits" />
-    <None Include="$(MSBuildThisFileDirectory)utility" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props">
       <Filter>Configuration</Filter>
     </None>
@@ -67,9 +64,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)new.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)string.c" />
     <ClCompile Include="$(MSBuildThisFileDirectory)cxxabi.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Firmware\Application.cpp">
-      <Filter>Firmware</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.cpp">
       <Filter>Concurrency</Filter>
     </ClCompile>
@@ -77,9 +71,6 @@
   <ItemGroup>
     <Filter Include="Configuration">
       <UniqueIdentifier>{5805ee56-b3cf-456e-b0b7-1b0b424bc3d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Firmware">
-      <UniqueIdentifier>{720267e1-771f-4d13-8679-2b63e6706f7a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Concurrency">
       <UniqueIdentifier>{c14ccb0d-80cb-4bad-80e4-e21e3db633e3}</UniqueIdentifier>
