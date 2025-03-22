@@ -19,10 +19,7 @@
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup />
   <ItemGroup>
-    <ClInclude Include="Application.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="..\Runtime\Configuration\Platform.targets" />
