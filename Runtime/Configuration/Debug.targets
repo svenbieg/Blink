@@ -28,6 +28,16 @@
       <SvdFilePath>$([System.String]::Copy('$(SvdFile)').Replace('\', '/'))</SvdFilePath>
     </PropertyGroup>
     <ItemGroup>
+      <ExtensionsLines Include="{" />
+      <ExtensionsLines Include="%22recommendations%22: [" />
+      <ExtensionsLines Include="%09%22ms-vscode.cpptools%22," />
+      <ExtensionsLines Include="%09%22ms-vscode.cpptools-themes%22," />
+      <ExtensionsLines Include="%09%22marus25.cortex-debug%22" />
+      <ExtensionsLines Include="%09]" />
+      <ExtensionsLines Include="}" />
+    </ItemGroup>
+    <WriteLinesToFile File="$(SolutionDir)\.vscode\extensions.json" Lines="@(ExtensionsLines)" Overwrite="true" />
+    <ItemGroup>
       <CppPropLines Include="{" />
       <CppPropLines Include="%22configurations%22: [" />
       <CppPropLines Include="%09{" />
