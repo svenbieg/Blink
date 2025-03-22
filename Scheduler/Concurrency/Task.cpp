@@ -72,7 +72,10 @@ VOID Task::Unlock()
 {
 SpinLock lock(Scheduler::s_CriticalSection);
 if(--m_LockCount==0)
+	{
 	FlagHelper::Clear(m_Flags, TaskFlags::Locked);
+	Scheduler::ResumeLockedTask();
+	}
 }
 
 Status Task::Wait()

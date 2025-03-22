@@ -117,7 +117,9 @@ UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
 FlagHelper::Set(current->m_Flags, TaskFlags::Release);
 SuspendCurrentTask(nullptr, core, current);
-assert(0);
+lock.Unlock();
+while(1)
+	Cpu::WaitForInterrupt();
 }
 
 Task* Scheduler::GetCurrentTask()
@@ -446,12 +448,19 @@ while(*current_ptr)
 	}
 }
 
+VOID Scheduler::ResumeLockedTask()
+{
+if(!s_WaitingLocked)
+	return;
+auto resume=GetWaitingTask();
+ResumeTask(resume);
+}
+
 VOID Scheduler::ResumeTask(Task* resume, Status status)
 {
 UINT core=GetCurrentCore();
 while(resume)
 	{
-	assert(FlagHelper::Get(resume->m_Flags, TaskFlags::Suspended));
 	FlagHelper::Clear(resume->m_Flags, TaskFlags::Suspended);
 	auto next=resume->m_Parallel;
 	resume->m_Parallel=nullptr;
