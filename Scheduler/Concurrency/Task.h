@@ -70,6 +70,7 @@ public:
 	template <class _owner_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", UINT StackSize=STACK_SIZE);
 	template <class _owner_t, class _lambda_t> static Handle<Task> Create(_owner_t* Owner, _lambda_t&& Lambda, Handle<String> Name="task", UINT StackSize=STACK_SIZE);
 	template <class _owner_t, class _lambda_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, _lambda_t&& Lambda, Handle<String> Name="task", UINT StackSize=STACK_SIZE);
+	template <class _lambda_t> static Handle<Task> Create(nullptr_t Owner, _lambda_t&& Lambda, Handle<String> Name="task", UINT StackSize=STACK_SIZE);
 
 	// Common
 	VOID Cancel();
@@ -98,12 +99,17 @@ public:
 	template <class _owner_t, class _lambda_t> inline VOID Then(_owner_t* Owner, _lambda_t&& Lambda)
 		{
 		assert(m_Then==nullptr);
-		m_Then=new DispatchedLambda(Owner, std::forward<_lambda_t>(Lambda));
+		m_Then=new DispatchedLambda<_owner_t, _lambda_t>(Owner, std::forward<_lambda_t>(Lambda));
 		}
 	template <class _owner_t, class _lambda_t> inline VOID Then(Handle<_owner_t> const& Owner, _lambda_t&& Lambda)
 		{
 		assert(m_Then==nullptr);
-		m_Then=new DispatchedLambda(Owner, std::forward<_lambda_t>(Lambda));
+		m_Then=new DispatchedLambda<_owner_t, _lambda_t>(Owner, std::forward<_lambda_t>(Lambda));
+		}
+	template <class _lambda_t> inline VOID Then(nullptr_t Owner, _lambda_t&& Lambda)
+		{
+		assert(m_Then==nullptr);
+		m_Then=new DispatchedLambda<nullptr_t, _lambda_t>(std::forward<_lambda_t>(Lambda));
 		}
 	static inline VOID ThrowIfMain()
 		{
@@ -213,6 +219,20 @@ private:
 	Handle<_owner_t> m_Owner;
 };
 
+template <class _lambda_t> class TaskLambda<nullptr_t, _lambda_t>: public Task
+{
+public:
+	// Con-/Destructors
+	TaskLambda(_lambda_t&& Lambda, Handle<String> Name, VOID* StackEnd, UINT StackSize):
+		Task(Name, StackEnd, StackSize),
+		m_Lambda(std::move(Lambda))
+		{}
+
+private:
+	// Common
+	VOID Run()override { m_Lambda(); }
+	_lambda_t m_Lambda;
+};
 
 
 //==================
@@ -270,6 +290,18 @@ UINT size=TypeHelper::AlignUp(sizeof(_task_t), sizeof(SIZE_T))+StackSize;
 auto task=(_task_t*)operator new(size);
 VOID* stack_end=(VOID*)((SIZE_T)task+size);
 new (task) _task_t(Owner, std::forward<_lambda_t>(Lambda), Name, stack_end, StackSize);
+Scheduler::AddTask(task);
+return task;
+}
+
+template <class _lambda_t> Handle<Task> Task::Create(nullptr_t Owner, _lambda_t&& Lambda, Handle<String> Name, UINT StackSize)
+{
+assert(StackSize%sizeof(SIZE_T)==0);
+using _task_t=TaskLambda<nullptr_t, _lambda_t>;
+UINT size=TypeHelper::AlignUp(sizeof(_task_t), sizeof(SIZE_T))+StackSize;
+auto task=(_task_t*)operator new(size);
+VOID* stack_end=(VOID*)((SIZE_T)task+size);
+new (task) _task_t(std::forward<_lambda_t>(Lambda), Name, stack_end, StackSize);
 Scheduler::AddTask(task);
 return task;
 }

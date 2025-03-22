@@ -122,4 +122,20 @@ private:
 	Handle<_owner_t> m_Owner;
 };
 
+template <class _lambda_t>
+class DispatchedLambda<nullptr_t, _lambda_t>: public DispatchedHandler
+{
+public:
+	// Con-/Destructors
+	DispatchedLambda(_lambda_t&& Lambda):
+		m_Lambda(std::move(Lambda)) {}
+
+	// Common
+	inline VOID Run()override { m_Lambda(); }
+
+private:
+	// Common
+	_lambda_t m_Lambda;
+};
+
 }
