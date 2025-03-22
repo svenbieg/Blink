@@ -44,7 +44,6 @@ if(!m_Owner)
 	return;
 	}
 Scheduler::SuspendCurrentTask(&m_Owner, core, current);
-lock.Yield();
 }
 
 VOID Mutex::Lock(AccessMode)
@@ -74,7 +73,6 @@ else
 	{
 	Scheduler::SuspendCurrentTask(&waiting, core, current);
 	}
-lock.Yield();
 }
 
 VOID Mutex::Lock(AccessPriority)
@@ -94,7 +92,6 @@ if(!m_Owner)
 	return;
 	}
 Scheduler::SuspendCurrentTask(&m_Owner, core, current);
-lock.Yield();
 }
 
 BOOL Mutex::TryLock()
@@ -146,8 +143,7 @@ if(!m_Owner)
 	return;
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
-if(m_Owner!=current)
-	return;
+assert(m_Owner==current);
 auto waiting=m_Owner->m_Waiting;
 m_Owner->m_Waiting=nullptr;
 m_Owner=waiting;
@@ -181,8 +177,7 @@ if(!m_Owner)
 	return;
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
-if(m_Owner!=current)
-	return;
+assert(m_Owner==current);
 m_Owner->Unlock();
 auto waiting=m_Owner->m_Waiting;
 m_Owner->m_Waiting=nullptr;
