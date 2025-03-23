@@ -162,15 +162,28 @@ if(s_Sleeping)
 		*current_ptr=next;
 		}
 	}
-UINT core=GetCurrentCore();
-while(GetNextCore(&core))
+for(UINT core=0; core<s_CoreCount; core++)
 	{
-	auto next=GetWaitingTask();
-	if(!next)
-		break;
+	if(!s_WaitingFirst)
+		return;
 	auto current=s_CurrentTask[core];
+	if(FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
+		continue;
+	if(current->m_Next)
+		{
+		if(!s_WaitingLocked)
+			continue;
+		auto next=current->m_Next;
+		if(FlagHelper::Get(next->m_Flags, TaskFlags::Locked))
+			continue;
+		auto waiting=GetWaitingTask();
+		AddWaitingTask(next, true);
+		current->m_Next=waiting;
+		continue;
+		}
+	auto waiting=GetWaitingTask();
 	FlagHelper::Set(current->m_Flags, TaskFlags::Switch);
-	current->m_Next=next;
+	current->m_Next=waiting;
 	Interrupts::Send(IRQ_TASK_SWITCH, core);
 	}
 }
@@ -240,7 +253,7 @@ while(*current_ptr)
 *current_ptr=task;
 }
 
-VOID Scheduler::AddWaitingTask(Task* task)
+VOID Scheduler::AddWaitingTask(Task* task, BOOL prepend)
 {
 if(FlagHelper::Get(task->m_Flags, TaskFlags::Locked))
 	{
@@ -258,21 +271,30 @@ if(FlagHelper::Get(task->m_Flags, TaskFlags::Locked))
 		s_WaitingLocked=task;
 		return;
 		}
-	if(!s_WaitingLocked->m_Waiting)
-		{
-		s_WaitingLocked->m_Waiting=task;
-		s_WaitingLast=task;
-		s_WaitingLocked=task;
-		return;
-		}
 	task->m_Waiting=s_WaitingLocked->m_Waiting;
-	s_WaitingLocked=task;
+	s_WaitingLocked->m_Waiting=task;
+	if(!task->m_Waiting)
+		s_WaitingLast=task;
 	return;
 	}
 if(!s_WaitingFirst)
 	{
 	s_WaitingFirst=task;
 	s_WaitingLast=task;
+	return;
+	}
+if(prepend)
+	{
+	if(s_WaitingLocked)
+		{
+		task->m_Waiting=s_WaitingLocked->m_Waiting;
+		s_WaitingLocked->m_Waiting=task;
+		if(!task->m_Waiting)
+			s_WaitingLast=task;
+		return;
+		}
+	task->m_Waiting=s_WaitingFirst;
+	s_WaitingFirst=task;
 	return;
 	}
 s_WaitingLast->m_Waiting=task;
@@ -326,27 +348,6 @@ while(*current_ptr)
 	AddWaitingTask(current);
 	*current_ptr=next;
 	}
-}
-
-UINT Scheduler::GetCurrentCore()
-{
-s_CurrentCore=(s_CurrentCore+1)%s_CoreCount;
-return s_CurrentCore;
-}
-
-BOOL Scheduler::GetNextCore(UINT* core_ptr)
-{
-UINT last_id=s_CurrentCore+s_CoreCount;
-for(UINT id=*core_ptr; id<last_id; id++)
-	{
-	UINT core=id%s_CoreCount;
-	auto current=s_CurrentTask[core];
-	if(FlagHelper::Get(current->m_Flags, TaskFlags::Busy))
-		continue;
-	*core_ptr=core;
-	return true;
-	}
-return false;
 }
 
 Task* Scheduler::GetWaitingTask()
@@ -453,25 +454,41 @@ ResumeTask(resume);
 
 VOID Scheduler::ResumeTask(Task* resume, Status status)
 {
-UINT core=GetCurrentCore();
-while(resume)
+for(UINT core=0; core<s_CoreCount; core++)
 	{
-	FlagHelper::Clear(resume->m_Flags, TaskFlags::Suspended);
-	auto next=resume->m_Parallel;
-	resume->m_Parallel=nullptr;
-	resume->m_Status=status;
-	if(GetNextCore(&core))
+	auto current=s_CurrentTask[core];
+	if(FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
+		continue;
+	if(current->m_Next)
 		{
-		auto current=s_CurrentTask[core];
+		if(!FlagHelper::Get(resume->m_Flags, TaskFlags::Locked))
+			continue;
+		auto next=current->m_Next;
+		if(FlagHelper::Get(next->m_Flags, TaskFlags::Locked))
+			continue;
+		current->m_Next=resume;
+		AddWaitingTask(next, true);
+		}
+	else
+		{
 		FlagHelper::Set(current->m_Flags, TaskFlags::Switch);
 		current->m_Next=resume;
 		Interrupts::Send(IRQ_TASK_SWITCH, core);
 		}
-	else
-		{
-		AddWaitingTask(resume);
-		}
-	resume=next;
+	auto parallel=resume->m_Parallel;
+	FlagHelper::Clear(resume->m_Flags, TaskFlags::Suspended);
+	resume->m_Parallel=nullptr;
+	resume->m_Status=status;
+	resume=parallel;
+	}
+while(resume)
+	{
+	auto parallel=resume->m_Parallel;
+	FlagHelper::Clear(resume->m_Flags, TaskFlags::Suspended);
+	resume->m_Parallel=nullptr;
+	resume->m_Status=status;
+	AddWaitingTask(resume, true);
+	resume=parallel;
 	}
 }
 
@@ -499,7 +516,6 @@ if(owner_ptr)
 UINT Scheduler::s_CoreCount=0;
 Task* Scheduler::s_Create=nullptr;
 CriticalSection Scheduler::s_CriticalSection;
-UINT Scheduler::s_CurrentCore=0;
 Task* Scheduler::s_CurrentTask[CPU_COUNT]={ nullptr };
 Task* Scheduler::s_IdleTask[CPU_COUNT]={ nullptr };
 Task* Scheduler::s_MainTask=nullptr;
