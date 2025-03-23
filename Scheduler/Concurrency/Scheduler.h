@@ -64,7 +64,7 @@ private:
 	static VOID AddWaitingTask(Task* Task, BOOL Prepend=false);
 	static VOID AddWaitingTask(Task** First, Task* Task);
 	static VOID CreateTasks();
-	static UINT GetAvailableCores(UINT* Cores, UINT Max, BOOL Resume);
+	static UINT GetAvailableCores(UINT* Cores, UINT Max);
 	static UINT GetParallelCount(Task* Task, UINT Max);
 	static UINT GetWaitingCount(Task* Task, UINT Max);
 	static Task* GetWaitingTask();
