@@ -46,6 +46,10 @@ public:
 		{
 		Append(new DispatchedLambda<_owner_t, _lambda_t>(Owner, std::forward<_lambda_t>(Lambda)));
 		}
+	template <class _lambda_t> static inline VOID Append(nullptr_t Owner, _lambda_t&& Lambda)
+		{
+		Append(new DispatchedLambda<nullptr_t, _lambda_t>(std::forward<_lambda_t>(Lambda)));
+		}
 	static VOID Enter();
 	static VOID Exit();
 
