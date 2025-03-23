@@ -39,9 +39,13 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)unwind.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)Configuration\bcm2712-rpi-5-b.dtb" />
+    <None Include="$(MSBuildThisFileDirectory)Configuration\branchself.bin" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props" />
-    <None Include="$(MSBuildThisFileDirectory)Configuration\Debugger.cfg" />
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Debug.cfg" />
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Debug.targets" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Default.props" />
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Default.targets" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Platform.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.targets" />
@@ -53,6 +57,6 @@
     <None Include="$(MSBuildThisFileDirectory)task.S" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="$(MSBuildThisFileDirectory)config.txt" />
+    <Text Include="$(MSBuildThisFileDirectory)Configuration\config.txt" />
   </ItemGroup>
 </Project>

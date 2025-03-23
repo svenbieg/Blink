@@ -3,7 +3,7 @@
 
   <Target Name="OpenOcdSetup" DependsOnTargets="InstallOpenOcd">
     <MakeDir Directories="$(SolutionDir)\.vscode" />
-    <Copy SourceFiles="$(SolutionDir)Runtime.$(Platform)\Configuration\Debugger.cfg" DestinationFiles="$(SolutionDir)\.vscode\openocd.cfg" />
+    <Copy SourceFiles="$(SolutionDir)Runtime.$(Platform)\Configuration\Debug.cfg" DestinationFiles="$(SolutionDir)\.vscode\openocd.cfg" />
   </Target>
 
   <Target Name="VsCodeSetup" DependsOnTargets="OpenOcdSetup;NinjaSetup">
@@ -30,8 +30,11 @@
     <ItemGroup>
       <ExtensionsLines Include="{" />
       <ExtensionsLines Include="%22recommendations%22: [" />
+      <ExtensionsLines Include="%09%22be5invis.vscode-icontheme-nomo-dark%22," />
       <ExtensionsLines Include="%09%22ms-vscode.cpptools%22," />
+      <ExtensionsLines Include="%09%22ms-vscode.cpptools-extension-pack%22," />
       <ExtensionsLines Include="%09%22ms-vscode.cpptools-themes%22," />
+      <ExtensionsLines Include="%09%22ms-vscode.cmake-tools%22," />
       <ExtensionsLines Include="%09%22marus25.cortex-debug%22" />
       <ExtensionsLines Include="%09]" />
       <ExtensionsLines Include="}" />

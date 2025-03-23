@@ -1,0 +1,2 @@
+enable_jtag_gpio=1
+kernel=kernel_2712.img

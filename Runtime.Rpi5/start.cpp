@@ -31,10 +31,6 @@ extern "C" {
 
 VOID start()
 {
-#ifdef _DEBUG
-BOOL wait=true;
-while(wait) {}
-#endif
 Memory::Initialize();
 Interrupts::Initialize();
 Scheduler::Initialize();

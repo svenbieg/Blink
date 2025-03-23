@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="SdCardSetup">
+    <MakeDir Directories="$(OutDir)SdCard\" />
+    <Copy SourceFiles="$(SolutionDir)Runtime.Rpi5\Configuration\bcm2712-rpi-5-b.dtb" DestinationFolder="$(OutDir)SdCard\" />
+    <Copy SourceFiles="$(SolutionDir)Runtime.Rpi5\Configuration\branchself.bin" DestinationFiles="$(OutDir)SdCard\kernel_2712.img" />
+    <Copy SourceFiles="$(SolutionDir)Runtime.Rpi5\Configuration\config.txt" DestinationFolder="$(OutDir)SdCard\" />
+  </Target>
+
+</Project>

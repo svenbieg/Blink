@@ -28,7 +28,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {2839EEFA-F398-4B86-8105-DD55ED9E50AE}
+		SolutionGuid = {C03CAE64-5A0E-44BD-B0F9-D3442844954E}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Default\Default.vcxitems*{0a8c397a-db1a-41fa-966b-358ce4352eb4}*SharedItemsImports = 4
