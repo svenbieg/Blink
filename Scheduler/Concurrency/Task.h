@@ -45,6 +45,7 @@ Locked=8,
 Owner=16,
 Sharing=32,
 Suspended=64,
+SuspendedLazy=68,
 Release=128
 };
 

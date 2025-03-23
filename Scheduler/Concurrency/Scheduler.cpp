@@ -535,8 +535,7 @@ UINT core_count=GetAvailableCores(cores, resume_count, true);
 UINT core_id=0;
 while(resume)
 	{
-	FlagHelper::Clear(resume->m_Flags, TaskFlags::Lazy);
-	FlagHelper::Clear(resume->m_Flags, TaskFlags::Suspended);
+	FlagHelper::Clear(resume->m_Flags, TaskFlags::SuspendedLazy);
 	auto parallel=resume->m_Parallel;
 	resume->m_Parallel=nullptr;
 	resume->m_Status=status;
