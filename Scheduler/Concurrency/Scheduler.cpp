@@ -345,7 +345,7 @@ UINT Scheduler::GetAvailableCores(UINT* cores, UINT max, BOOL resume)
 {
 UINT count=0;
 UINT mask=0;
-assert(CPU_COUNT<=32);
+static_assert(CPU_COUNT<=32);
 for(UINT core=0; core<s_CoreCount; core++)
 	{
 	auto current=s_CurrentTask[core];
