@@ -366,8 +366,12 @@ for(UINT core=0; core<s_CoreCount; core++)
 		mask|=(1<<core);
 		continue;
 		}
-	if(current->m_Next)
-		continue;
+	auto next=current->m_Next;
+	if(next)
+		{
+		if(!FlagHelper::Get(next->m_Flags, TaskFlags::Idle))
+			continue;
+		}
 	cores[count++]=core;
 	if(count==max)
 		return count;
