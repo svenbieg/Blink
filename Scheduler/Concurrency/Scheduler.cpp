@@ -376,11 +376,17 @@ for(UINT core=0; core<s_CoreCount; core++)
 	if(mask&(1<<core))
 		continue;
 	auto current=s_CurrentTask[core];
-	if(FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
-		continue;
 	auto next=current->m_Next;
-	if(FlagHelper::Get(next->m_Flags, TaskFlags::Locked))
-		continue;
+	if(next)
+		{
+		if(FlagHelper::Get(next->m_Flags, TaskFlags::Locked))
+			continue;
+		}
+	else
+		{
+		if(FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
+			continue;
+		}
 	cores[count++]=core;
 	if(count==max)
 		break;
