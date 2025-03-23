@@ -362,7 +362,10 @@ for(UINT core=0; core<s_CoreCount; core++)
 		continue;
 	auto current=s_CurrentTask[core];
 	if(FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
+		{
+		mask|=(1<<core);
 		continue;
+		}
 	if(current->m_Next)
 		continue;
 	cores[count++]=core;
