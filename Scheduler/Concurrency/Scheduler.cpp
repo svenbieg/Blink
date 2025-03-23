@@ -178,7 +178,8 @@ for(UINT core_id=0; core_id<core_count; core_id++)
 	current->m_Next=resume;
 	if(next)
 		{
-		AddWaitingTask(next, true);
+		if(!FlagHelper::Get(next->m_Flags, TaskFlags::Idle))
+			AddWaitingTask(next, true);
 		}
 	else
 		{
@@ -530,7 +531,8 @@ while(resume)
 		current->m_Next=resume;
 		if(next)
 			{
-			AddWaitingTask(next, true);
+			if(!FlagHelper::Get(next->m_Flags, TaskFlags::Idle))
+				AddWaitingTask(next, true);
 			}
 		else
 			{
