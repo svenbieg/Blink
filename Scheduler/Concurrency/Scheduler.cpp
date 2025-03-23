@@ -167,10 +167,11 @@ UINT waiting_count=GetWaitingCount(s_WaitingFirst, s_CoreCount);
 if(!waiting_count)
 	return;
 UINT cores[CPU_COUNT];
-UINT core_count=GetAvailableCores(cores, waiting_count);
+UINT core_count=GetAvailableCores(cores, waiting_count, false);
 for(UINT core_id=0; core_id<core_count; core_id++)
 	{
 	auto resume=GetWaitingTask();
+	FlagHelper::Set(resume->m_Flags, TaskFlags::Lazy);
 	FlagHelper::Clear(resume->m_Flags, TaskFlags::Suspended);
 	UINT core=cores[core_id];
 	auto current=s_CurrentTask[core];
@@ -350,7 +351,7 @@ while(*current_ptr)
 	}
 }
 
-UINT Scheduler::GetAvailableCores(UINT* cores, UINT max)
+UINT Scheduler::GetAvailableCores(UINT* cores, UINT max, BOOL resume)
 {
 UINT count=0;
 UINT mask=0;
@@ -377,6 +378,24 @@ for(UINT core=0; core<s_CoreCount; core++)
 	if(current->m_Next)
 		continue;
 	if(FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
+		{
+		mask|=(1UL<<core);
+		continue;
+		}
+	cores[count++]=core;
+	if(count==max)
+		return count;
+	mask|=(1UL<<core);
+	}
+if(!resume)
+	return count;
+for(UINT core=0; core<s_CoreCount; core++)
+	{
+	if(mask&(1UL<<core))
+		continue;
+	auto current=s_CurrentTask[core];
+	auto next=current->m_Next;
+	if(!FlagHelper::Get(next->m_Flags, TaskFlags::Lazy))
 		continue;
 	cores[count++]=core;
 	if(count==max)
@@ -512,10 +531,11 @@ VOID Scheduler::ResumeTask(Task* resume, Status status)
 {
 UINT resume_count=GetParallelCount(resume, s_CoreCount);
 UINT cores[CPU_COUNT];
-UINT core_count=GetAvailableCores(cores, resume_count);
+UINT core_count=GetAvailableCores(cores, resume_count, true);
 UINT core_id=0;
 while(resume)
 	{
+	FlagHelper::Clear(resume->m_Flags, TaskFlags::Lazy);
 	FlagHelper::Clear(resume->m_Flags, TaskFlags::Suspended);
 	auto parallel=resume->m_Parallel;
 	resume->m_Parallel=nullptr;

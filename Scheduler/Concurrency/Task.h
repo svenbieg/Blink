@@ -38,13 +38,14 @@ namespace Concurrency {
 enum class TaskFlags: UINT
 {
 None=0,
-Idle=1,
-Locked=2,
-Owner=4,
-Sharing=8,
-Suspended=16,
-Done=32,
-Release=64
+Done=1,
+Idle=2,
+Lazy=4,
+Locked=8,
+Owner=16,
+Sharing=32,
+Suspended=64,
+Release=128
 };
 
 
