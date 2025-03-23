@@ -367,26 +367,35 @@ for(UINT core=0; core<s_CoreCount; core++)
 	cores[count++]=core;
 	if(count==max)
 		return count;
-	mask|=(1<<core);
+	mask|=(1UL<<core);
+	}
+for(UINT core=0; core<s_CoreCount; core++)
+	{
+	if(mask&(1UL<<core))
+		continue;
+	auto current=s_CurrentTask[core];
+	if(current->m_Next)
+		continue;
+	if(FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
+		{
+		mask|=(1UL<<core);
+		continue;
+		}
+	cores[count++]=core;
+	if(count==max)
+		return count;
+	mask|=(1UL<<core);
 	}
 if(!resume)
 	return count;
 for(UINT core=0; core<s_CoreCount; core++)
 	{
-	if(mask&(1<<core))
+	if(mask&(1UL<<core))
 		continue;
 	auto current=s_CurrentTask[core];
 	auto next=current->m_Next;
-	if(next)
-		{
-		if(FlagHelper::Get(next->m_Flags, TaskFlags::Locked))
-			continue;
-		}
-	else
-		{
-		if(FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
-			continue;
-		}
+	if(FlagHelper::Get(next->m_Flags, TaskFlags::Locked))
+		continue;
 	cores[count++]=core;
 	if(count==max)
 		break;
