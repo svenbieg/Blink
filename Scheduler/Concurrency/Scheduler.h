@@ -52,10 +52,8 @@ protected:
 	static VOID CancelTask(Task* Task);
 	static VOID ExitTask();
 	static Task* GetCurrentTask();
-	static VOID ReleaseTasks();
 	static VOID Schedule();
 	static VOID SuspendCurrentTask(UINT MilliSeconds);
-	static VOID WakeupTasks();
 
 private:
 	// Common

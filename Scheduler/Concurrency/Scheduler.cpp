@@ -129,26 +129,39 @@ UINT core=Cpu::GetId();
 return s_CurrentTask[core];
 }
 
-VOID Scheduler::ReleaseTasks()
-{
-SpinLock lock(s_CriticalSection);
-auto release=s_Release;
-s_Release=nullptr;
-lock.Unlock();
-while(release)
-	{
-	auto next=release->m_Release;
-	release->m_Release=nullptr;
-	release->m_This=nullptr;
-	release=next;
-	}
-}
-
 VOID Scheduler::Schedule()
 {
-ReleaseTasks();
-WakeupTasks();
 SpinLock lock(s_CriticalSection);
+if(s_Release)
+	{
+	auto release=s_Release;
+	s_Release=nullptr;
+	lock.Unlock();
+	while(release)
+		{
+		auto next=release->m_Release;
+		release->m_Release=nullptr;
+		release->m_This=nullptr;
+		release=next;
+		}
+	lock.Lock();
+	}
+if(s_Sleeping)
+	{
+	UINT64 time=SystemTimer::GetTickCount64();
+	auto current_ptr=&s_Sleeping;
+	while(*current_ptr)
+		{
+		auto current=*current_ptr;
+		if(current->m_ResumeTime>time)
+			break;
+		auto next=current->m_Sleeping;
+		current->m_Sleeping=nullptr;
+		current->m_ResumeTime=0;
+		AddWaitingTask(current);
+		*current_ptr=next;
+		}
+	}
 UINT core=GetCurrentCore();
 while(GetNextCore(&core))
 	{
@@ -174,24 +187,6 @@ SuspendCurrentTask(nullptr, core, current);
 lock.Yield();
 if(current->Cancelled)
 	throw AbortException();
-}
-
-VOID Scheduler::WakeupTasks()
-{
-SpinLock lock(s_CriticalSection);
-auto current_ptr=&s_Sleeping;
-UINT64 time=SystemTimer::GetTickCount64();
-while(*current_ptr)
-	{
-	auto current=*current_ptr;
-	if(current->m_ResumeTime>time)
-		break;
-	auto next=current->m_Sleeping;
-	current->m_Sleeping=nullptr;
-	current->m_ResumeTime=0;
-	AddWaitingTask(current);
-	*current_ptr=next;
-	}
 }
 
 
