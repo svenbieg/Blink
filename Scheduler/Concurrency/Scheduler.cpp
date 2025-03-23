@@ -389,8 +389,7 @@ for(UINT core=0; core<s_CoreCount; core++)
 		continue;
 	cores[count++]=core;
 	if(count==max)
-		return count;
-	mask|=(1<<core);
+		break;
 	}
 return count;
 }
