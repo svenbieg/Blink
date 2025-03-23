@@ -174,8 +174,16 @@ for(UINT core_id=0; core_id<core_count; core_id++)
 	FlagHelper::Clear(resume->m_Flags, TaskFlags::Suspended);
 	UINT core=cores[core_id];
 	auto current=s_CurrentTask[core];
+	auto next=current->m_Next;
 	current->m_Next=resume;
-	Interrupts::Send(IRQ_TASK_SWITCH, core);
+	if(next)
+		{
+		AddWaitingTask(next, true);
+		}
+	else
+		{
+		Interrupts::Send(IRQ_TASK_SWITCH, core);
+		}
 	}
 }
 
@@ -349,29 +357,12 @@ static_assert(CPU_COUNT<=32);
 for(UINT core=0; core<s_CoreCount; core++)
 	{
 	auto current=s_CurrentTask[core];
-	if(!FlagHelper::Get(current->m_Flags, TaskFlags::Idle))
-		continue;
-	cores[count++]=core;
-	if(count==max)
-		return count;
-	mask|=(1<<core);
-	}
-for(UINT core=0; core<s_CoreCount; core++)
-	{
-	if(mask&(1<<core))
-		continue;
-	auto current=s_CurrentTask[core];
-	if(FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
-		{
-		mask|=(1<<core);
-		continue;
-		}
+	BOOL idle=FlagHelper::Get(current->m_Flags, TaskFlags::Idle);
 	auto next=current->m_Next;
 	if(next)
-		{
-		if(!FlagHelper::Get(next->m_Flags, TaskFlags::Idle))
-			continue;
-		}
+		idle|=FlagHelper::Get(next->m_Flags, TaskFlags::Idle);
+	if(!idle)
+		continue;
 	cores[count++]=core;
 	if(count==max)
 		return count;
@@ -384,6 +375,8 @@ for(UINT core=0; core<s_CoreCount; core++)
 	if(mask&(1<<core))
 		continue;
 	auto current=s_CurrentTask[core];
+	if(FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
+		continue;
 	auto next=current->m_Next;
 	if(FlagHelper::Get(next->m_Flags, TaskFlags::Locked))
 		continue;
