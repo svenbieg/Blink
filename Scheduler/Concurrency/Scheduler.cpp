@@ -167,7 +167,7 @@ UINT waiting_count=GetWaitingCount(s_WaitingFirst, s_CoreCount);
 if(!waiting_count)
 	return;
 UINT cores[CPU_COUNT];
-UINT core_count=GetAvailableCores(cores, waiting_count);
+UINT core_count=GetAvailableCores(cores, waiting_count, false);
 for(UINT core_id=0; core_id<core_count; core_id++)
 	{
 	auto resume=GetWaitingTask();
@@ -341,7 +341,7 @@ while(*current_ptr)
 	}
 }
 
-UINT Scheduler::GetAvailableCores(UINT* cores, UINT max)
+UINT Scheduler::GetAvailableCores(UINT* cores, UINT max, BOOL resume)
 {
 UINT count=0;
 UINT mask=0;
@@ -377,6 +377,8 @@ for(UINT core=0; core<s_CoreCount; core++)
 		return count;
 	mask|=(1<<core);
 	}
+if(!resume)
+	return count;
 for(UINT core=0; core<s_CoreCount; core++)
 	{
 	if(mask&(1<<core))
@@ -520,7 +522,7 @@ VOID Scheduler::ResumeTask(Task* resume, Status status)
 {
 UINT resume_count=GetParallelCount(resume, s_CoreCount);
 UINT cores[CPU_COUNT];
-UINT core_count=GetAvailableCores(cores, resume_count);
+UINT core_count=GetAvailableCores(cores, resume_count, true);
 UINT core_id=0;
 while(resume)
 	{
