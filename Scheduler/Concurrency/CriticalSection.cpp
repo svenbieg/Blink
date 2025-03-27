@@ -45,7 +45,6 @@ Interrupts::Disable();
 UINT core=Cpu::GetId();
 if(m_Core==core)
 	{
-	Interrupts::Enable();
 	m_LockCount++;
 	return;
 	}
@@ -64,7 +63,6 @@ Interrupts::Disable();
 UINT core=Cpu::GetId();
 if(m_Core==core)
 	{
-	Interrupts::Enable();
 	m_LockCount++;
 	return true;
 	}
@@ -87,8 +85,8 @@ if(--m_LockCount==0)
 	{
 	Cpu::DataStoreBarrier();
 	Cpu::StoreAndRelease(&m_Core, CPU_COUNT);
-	Interrupts::Enable();
 	}
+Interrupts::Enable();
 }
 
 VOID CriticalSection::Yield()
