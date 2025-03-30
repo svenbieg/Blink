@@ -19,22 +19,16 @@ namespace Concurrency {
 class ReadLock;
 class SpinLock;
 class Task;
-class TaskLock;
 class WriteLock;
 
 
-//========
-// Access
-//========
+//=============
+// Access-Mode
+//=============
 
 enum class AccessMode
 {
 ReadOnly
-};
-
-enum class AccessPriority
-{
-High
 };
 
 
@@ -47,7 +41,6 @@ class Mutex
 public:
 	// Friends
 	friend ReadLock;
-	friend TaskLock;
 	friend WriteLock;
 
 	// Con-/Destructors
@@ -55,22 +48,21 @@ public:
 	~Mutex() {}
 
 	// Common
-	VOID Lock();
-	VOID Lock(AccessMode);
-	VOID Lock(AccessPriority);
-	BOOL TryLock();
-	BOOL TryLock(AccessMode);
-	BOOL TryLock(AccessPriority);
-	VOID Unlock();
-	VOID Unlock(AccessMode);
-	VOID Unlock(AccessPriority);
+	virtual VOID Lock();
+	virtual VOID Lock(AccessMode);
+	virtual BOOL TryLock();
+	virtual BOOL TryLock(AccessMode);
+	virtual VOID Unlock();
+	virtual VOID Unlock(AccessMode);
+
+protected:
+	// Common
+	Task* m_Owner;
 
 private:
 	// Common
-	VOID Yield(SpinLock& Lock);
-	VOID Yield(SpinLock& Lock, AccessMode Access);
-	VOID Yield(SpinLock& Lock, AccessPriority Priority);
-	Task* m_Owner;
+	VOID Yield(SpinLock& SchedulerLock);
+	VOID Yield(SpinLock& SchedulerLock, AccessMode Access);
 };
 
 }

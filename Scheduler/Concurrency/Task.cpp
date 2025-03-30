@@ -12,7 +12,6 @@
 #include "Concurrency/Scheduler.h"
 #include "Concurrency/SpinLock.h"
 #include "Concurrency/Task.h"
-#include "Concurrency/TaskLock.h"
 #include "Devices/Timers/SystemTimer.h"
 #include "FlagHelper.h"
 
@@ -74,7 +73,7 @@ SpinLock lock(Scheduler::s_CriticalSection);
 if(--m_LockCount==0)
 	{
 	FlagHelper::Clear(m_Flags, TaskFlags::Locked);
-	Scheduler::ResumeLockedTask();
+	Scheduler::SwitchCurrentTask();
 	}
 }
 
@@ -95,6 +94,7 @@ return m_Status;
 
 Task::Task(Handle<String> name, VOID* stack_end, UINT stack_size):
 Cancelled(false),
+Name(name->Begin()),
 m_Create(nullptr),
 m_Exception(nullptr),
 m_Flags(TaskFlags::None),

@@ -11,6 +11,7 @@
 
 #include <config.h>
 #include "Concurrency/CriticalSection.h"
+#include "Concurrency/Mutex.h"
 
 
 //===========
@@ -24,7 +25,7 @@ namespace Concurrency {
 // Forward-Declarations
 //======================
 
-class Mutex;
+class CriticalMutex;
 class Signal;
 class Task;
 
@@ -37,6 +38,7 @@ class Scheduler
 {
 public:
 	// Friends
+	friend CriticalMutex;
 	friend Mutex;
 	friend Signal;
 	friend Task;
@@ -62,20 +64,23 @@ private:
 	static VOID AddReleaseTask(Task** First, Task* Task);
 	static VOID AddSleepingTask(Task** First, Task* Task);
 	static VOID AddWaitingTask(Task* Task, BOOL Prepend=false);
-	static VOID AddWaitingTask(Task** First, Task* Task);
+	static BOOL AddWaitingTask(Task** First, Task* Task);
+	static BOOL AddWaitingTask(Task** First, Task* Task, AccessMode);
 	static VOID CreateTasks();
-	static UINT GetAvailableCores(UINT* Cores, UINT Max, BOOL Resume);
+	static UINT GetAvailableCores(UINT* Cores, UINT Max);
 	static UINT GetParallelCount(Task* Task, UINT Max);
 	static UINT GetWaitingCount(Task* Task, UINT Max);
 	static Task* GetWaitingTask();
 	static VOID HandleTaskSwitch(VOID* Parameter);
 	static VOID IdleTask();
 	static VOID MainTask();
-	static VOID RemoveParallelTask(Task** First, Task* Remove);
+	static BOOL RemoveParallelTask(Task** First, Task* Remove);
 	static VOID RemoveSleepingTask(Task** First, Task* Sleeping);
-	static VOID ResumeLockedTask();
 	static VOID ResumeTask(Task* Resume, Status Status=Status::Success);
-	static VOID SuspendCurrentTask(Task** Owner, UINT Core, Task* Current);
+	static VOID ResumeTask(UINT Core, Task* Current, Task* Resume);
+	static VOID SuspendCurrentTask(UINT Core, Task* Current, UINT64 ResumeTime=0);
+	static VOID SwitchCurrentTask(BOOL Resume=false);
+	static VOID SwitchCurrentTask(UINT Core, Task* Current, BOOL Resume);
 	static UINT s_CoreCount;
 	static Task* s_Create;
 	static CriticalSection s_CriticalSection;

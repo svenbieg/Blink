@@ -117,7 +117,7 @@ SpinLock lock(s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
 FlagHelper::Set(current->m_Flags, TaskFlags::Release);
-SuspendCurrentTask(nullptr, core, current);
+SuspendCurrentTask(core, current);
 lock.Unlock();
 while(1)
 	Cpu::WaitForInterrupt();
@@ -158,7 +158,7 @@ if(s_Sleeping)
 			break;
 		auto next=current->m_Sleeping;
 		current->m_Sleeping=nullptr;
-		current->m_ResumeTime=0;
+		FlagHelper::Clear(current->m_Flags, TaskFlags::Suspended);
 		AddWaitingTask(current);
 		*current_ptr=next;
 		}
@@ -167,25 +167,17 @@ UINT waiting_count=GetWaitingCount(s_WaitingFirst, s_CoreCount);
 if(!waiting_count)
 	return;
 UINT cores[CPU_COUNT];
-UINT core_count=GetAvailableCores(cores, waiting_count, false);
+UINT core_count=GetAvailableCores(cores, waiting_count);
 for(UINT core_id=0; core_id<core_count; core_id++)
 	{
-	auto resume=GetWaitingTask();
-	FlagHelper::Set(resume->m_Flags, TaskFlags::Lazy);
-	FlagHelper::Clear(resume->m_Flags, TaskFlags::Suspended);
 	UINT core=cores[core_id];
 	auto current=s_CurrentTask[core];
 	auto next=current->m_Next;
+	auto resume=GetWaitingTask();
+	FlagHelper::Clear(resume->m_Flags, TaskFlags::Suspended);
 	current->m_Next=resume;
-	if(next)
-		{
-		if(!FlagHelper::Get(next->m_Flags, TaskFlags::Idle))
-			AddWaitingTask(next, true);
-		}
-	else
-		{
+	if(!next)
 		Interrupts::Send(IRQ_TASK_SWITCH, core);
-		}
 	}
 }
 
@@ -195,9 +187,7 @@ UINT64 resume_time=SystemTimer::GetTickCount64()+ms;
 SpinLock lock(s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
-current->m_ResumeTime=resume_time;
-AddSleepingTask(&s_Sleeping, current);
-SuspendCurrentTask(nullptr, core, current);
+SuspendCurrentTask(core, current, resume_time);
 lock.Yield();
 if(current->Cancelled)
 	throw AbortException();
@@ -302,19 +292,21 @@ s_WaitingLast->m_Waiting=task;
 s_WaitingLast=task;
 }
 
-VOID Scheduler::AddWaitingTask(Task** current_ptr, Task* task)
+BOOL Scheduler::AddWaitingTask(Task** current_ptr, Task* task)
 {
+BOOL suspend=false;
 if(FlagHelper::Get(task->m_Flags, TaskFlags::Locked))
 	{
 	while(*current_ptr)
 		{
+		suspend=true;
 		auto current=*current_ptr;
 		assert(current!=task);
 		if(!FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
 			{
 			task->m_Waiting=current;
 			*current_ptr=task;
-			return;
+			return true;
 			}
 		current_ptr=&current->m_Waiting;
 		}
@@ -323,12 +315,39 @@ else
 	{
 	while(*current_ptr)
 		{
+		suspend=true;
 		auto current=*current_ptr;
 		assert(current!=task);
 		current_ptr=&current->m_Waiting;
 		}
 	}
 *current_ptr=task;
+return suspend;
+}
+
+BOOL Scheduler::AddWaitingTask(Task** current_ptr, Task* task, AccessMode)
+{
+BOOL suspend=false;
+while(*current_ptr)
+	{
+	auto current=*current_ptr;
+	assert(current!=task);
+	if(current->m_Waiting)
+		{
+		suspend=true;
+		current_ptr=&current->m_Waiting;
+		continue;
+		}
+	if(FlagHelper::Get(current->m_Flags, TaskFlags::Sharing))
+		{
+		Scheduler::AddParallelTask(current_ptr, task);
+		return suspend;
+		}
+	current->m_Waiting=task;
+	return true;
+	}
+*current_ptr=task;
+return false;
 }
 
 VOID Scheduler::CreateTasks()
@@ -351,7 +370,7 @@ while(*current_ptr)
 	}
 }
 
-UINT Scheduler::GetAvailableCores(UINT* cores, UINT max, BOOL resume)
+UINT Scheduler::GetAvailableCores(UINT* cores, UINT max)
 {
 UINT count=0;
 UINT mask=0;
@@ -378,24 +397,6 @@ for(UINT core=0; core<s_CoreCount; core++)
 	if(current->m_Next)
 		continue;
 	if(FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
-		{
-		mask|=(1UL<<core);
-		continue;
-		}
-	cores[count++]=core;
-	if(count==max)
-		return count;
-	mask|=(1UL<<core);
-	}
-if(!resume)
-	return count;
-for(UINT core=0; core<s_CoreCount; core++)
-	{
-	if(mask&(1UL<<core))
-		continue;
-	auto current=s_CurrentTask[core];
-	auto next=current->m_Next;
-	if(!FlagHelper::Get(next->m_Flags, TaskFlags::Lazy))
 		continue;
 	cores[count++]=core;
 	if(count==max)
@@ -485,7 +486,7 @@ catch(...)
 System::Restart();
 }
 
-VOID Scheduler::RemoveParallelTask(Task** current_ptr, Task* task)
+BOOL Scheduler::RemoveParallelTask(Task** current_ptr, Task* task)
 {
 while(*current_ptr)
 	{
@@ -497,10 +498,11 @@ while(*current_ptr)
 		parallel->m_Waiting=current->m_Waiting;
 		current->m_Waiting=nullptr;
 		*current_ptr=parallel;
-		break;
+		return true;
 		}
 	current_ptr=&current->m_Parallel;
 	}
+return false;
 }
 
 VOID Scheduler::RemoveSleepingTask(Task** current_ptr, Task* task)
@@ -519,58 +521,53 @@ while(*current_ptr)
 	}
 }
 
-VOID Scheduler::ResumeLockedTask()
-{
-if(!s_WaitingLocked)
-	return;
-auto resume=GetWaitingTask();
-ResumeTask(resume);
-}
-
 VOID Scheduler::ResumeTask(Task* resume, Status status)
 {
-UINT resume_count=GetParallelCount(resume, s_CoreCount);
-UINT cores[CPU_COUNT];
-UINT core_count=GetAvailableCores(cores, resume_count, true);
-UINT core_id=0;
 while(resume)
 	{
-	FlagHelper::Clear(resume->m_Flags, TaskFlags::SuspendedLazy);
+	FlagHelper::Clear(resume->m_Flags, TaskFlags::Suspended);
+	if(resume->m_ResumeTime)
+		{
+		RemoveSleepingTask(&Scheduler::s_Sleeping, resume);
+		resume->m_ResumeTime=0;
+		}
 	auto parallel=resume->m_Parallel;
 	resume->m_Parallel=nullptr;
 	resume->m_Status=status;
-	if(core_id<core_count)
-		{
-		UINT core=cores[core_id++];
-		auto current=s_CurrentTask[core];
-		auto next=current->m_Next;
-		current->m_Next=resume;
-		if(next)
-			{
-			if(!FlagHelper::Get(next->m_Flags, TaskFlags::Idle))
-				AddWaitingTask(next, true);
-			}
-		else
-			{
-			Interrupts::Send(IRQ_TASK_SWITCH, core);
-			}
-		}
-	else
-		{
-		AddWaitingTask(resume, true);
-		}
+	AddWaitingTask(resume, true);
 	resume=parallel;
 	}
+SwitchCurrentTask(true);
 }
 
-VOID Scheduler::SuspendCurrentTask(Task** owner_ptr, UINT core, Task* current)
+VOID Scheduler::ResumeTask(UINT core, Task* current, Task* resume)
 {
+while(resume)
+	{
+	FlagHelper::Clear(resume->m_Flags, TaskFlags::Suspended);
+	auto parallel=resume->m_Parallel;
+	resume->m_Parallel=nullptr;
+	AddWaitingTask(resume, true);
+	resume=parallel;
+	}
+SwitchCurrentTask(core, current, true);
+}
+
+VOID Scheduler::SuspendCurrentTask(UINT core, Task* current, UINT64 resume_time)
+{
+if(FlagHelper::Get(current->m_Flags, TaskFlags::Suspended))
+	return;
+FlagHelper::Set(current->m_Flags, TaskFlags::Suspended);
 if(FlagHelper::Get(current->m_Flags, TaskFlags::Owner))
 	{
 	FlagHelper::Clear(current->m_Flags, TaskFlags::Owner);
 	CreateTasks();
 	}
-FlagHelper::Set(current->m_Flags, TaskFlags::Suspended);
+if(resume_time)
+	{
+	current->m_ResumeTime=resume_time;
+	AddSleepingTask(&s_Sleeping, current);
+	}
 if(!current->m_Next)
 	{
 	auto next=GetWaitingTask();
@@ -579,8 +576,35 @@ if(!current->m_Next)
 	current->m_Next=next;
 	Interrupts::Send(IRQ_TASK_SWITCH, core);
 	}
-if(owner_ptr)
-	AddWaitingTask(owner_ptr, current);
+}
+
+VOID Scheduler::SwitchCurrentTask(BOOL resume)
+{
+UINT core=Cpu::GetId();
+auto current=s_CurrentTask[core];
+SwitchCurrentTask(core, current, resume);
+}
+
+VOID Scheduler::SwitchCurrentTask(UINT core, Task* current, BOOL resume)
+{
+if(FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
+	return;
+if(!s_WaitingFirst)
+	return;
+auto next=current->m_Next;
+if(!next)
+	{
+	current->m_Next=GetWaitingTask();
+	Interrupts::Send(IRQ_TASK_SWITCH, core);
+	return;
+	}
+if(!resume)
+	return;
+if(FlagHelper::Get(next->m_Flags, TaskFlags::Locked))
+	return;
+if(!FlagHelper::Get(next->m_Flags, TaskFlags::Idle))
+	AddWaitingTask(next, true);
+current->m_Next=GetWaitingTask();
 }
 
 UINT Scheduler::s_CoreCount=0;

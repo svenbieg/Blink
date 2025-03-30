@@ -12,13 +12,13 @@
 #include <assert.h>
 #include <new>
 #include <unwind.h>
-#include "Concurrency/TaskHelper.h"
+#include "Concurrency/CriticalMutex.h"
 #include "Concurrency/DispatchedQueue.h"
 #include "Concurrency/Scheduler.h"
 #include "Concurrency/ReadLock.h"
 #include "Concurrency/Signal.h"
 #include "Concurrency/SpinLock.h"
-#include "Concurrency/TaskLock.h"
+#include "Concurrency/TaskHelper.h"
 #include "Concurrency/WriteLock.h"
 #include "Exception.h"
 #include "Status.h"
@@ -40,13 +40,12 @@ enum class TaskFlags: UINT
 None=0,
 Done=1,
 Idle=2,
-Lazy=4,
-Locked=8,
-Owner=16,
-Sharing=32,
-Suspended=64,
-SuspendedLazy=68,
-Release=128
+Locked=4,
+LockedSharing=20,
+Owner=8,
+Sharing=16,
+Suspended=32,
+Release=64
 };
 
 
@@ -58,6 +57,7 @@ class Task: public Object
 {
 public:
 	// Friends
+	friend CriticalMutex;
 	friend Mutex;
 	friend Scheduler;
 	friend Signal;
@@ -80,6 +80,7 @@ public:
 	inline Status GetStatus()const { return m_Status; }
 	static inline BOOL IsMainTask() { return Scheduler::IsMainTask(); }
 	VOID Lock();
+	const LPCTSTR Name;
 	Handle<Object> Result;
 	static VOID Sleep(UINT Milliseconds);
 	inline VOID Then(VOID (*Procedure)())

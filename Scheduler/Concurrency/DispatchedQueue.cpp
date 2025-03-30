@@ -10,7 +10,7 @@
 //=======
 
 #include "Concurrency/DispatchedQueue.h"
-#include "Concurrency/TaskLock.h"
+#include "Concurrency/WriteLock.h"
 
 
 //===========
@@ -26,7 +26,7 @@ namespace Concurrency {
 
 VOID DispatchedQueue::Append(DispatchedHandler* handler)
 {
-TaskLock lock(s_Mutex);
+WriteLock lock(s_Mutex);
 if(!s_First)
 	{
 	s_First=handler;
@@ -42,7 +42,7 @@ s_Signal.Trigger();
 
 VOID DispatchedQueue::Enter()
 {
-TaskLock lock(s_Mutex);
+WriteLock lock(s_Mutex);
 s_Waiting=true;
 while(s_Waiting)
 	{
@@ -63,7 +63,7 @@ while(s_Waiting)
 
 VOID DispatchedQueue::Exit()
 {
-TaskLock lock(s_Mutex);
+WriteLock lock(s_Mutex);
 s_Waiting=false;
 s_Signal.Trigger();
 }
@@ -75,7 +75,7 @@ s_Signal.Trigger();
 
 DispatchedHandler* DispatchedQueue::s_First=nullptr;
 DispatchedHandler* DispatchedQueue::s_Last=nullptr;
-Mutex DispatchedQueue::s_Mutex;
+CriticalMutex DispatchedQueue::s_Mutex;
 Signal DispatchedQueue::s_Signal;
 volatile BOOL DispatchedQueue::s_Waiting=false;
 

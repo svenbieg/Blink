@@ -44,7 +44,7 @@ protected:
 
 private:
 	// Common
-	virtual VOID Yield(SpinLock& Lock)=0;
+	virtual VOID Yield(SpinLock& SchedulerLock)=0;
 };
 
 }

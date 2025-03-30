@@ -10,6 +10,7 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\CriticalMutex.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\CriticalSection.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\DispatchedQueue.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Mutex.cpp" />
@@ -19,6 +20,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Task.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\CriticalMutex.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\CriticalSection.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\DispatchedHandler.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\DispatchedQueue.h" />
@@ -29,7 +31,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\Signal.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\SpinLock.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\Task.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskLock.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\WriteLock.h" />
   </ItemGroup>
 </Project>

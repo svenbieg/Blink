@@ -21,10 +21,13 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Signal.cpp">
       <Filter>Concurrency</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\SpinLock.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Task.cpp">
       <Filter>Concurrency</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Task.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\CriticalMutex.cpp">
+      <Filter>Concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\SpinLock.cpp">
       <Filter>Concurrency</Filter>
     </ClCompile>
   </ItemGroup>
@@ -53,16 +56,16 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\Signal.h">
       <Filter>Concurrency</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\SpinLock.h">
-      <Filter>Concurrency</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\Task.h">
       <Filter>Concurrency</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskLock.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\WriteLock.h">
       <Filter>Concurrency</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\WriteLock.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\CriticalMutex.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\SpinLock.h">
       <Filter>Concurrency</Filter>
     </ClInclude>
   </ItemGroup>

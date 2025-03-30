@@ -9,14 +9,13 @@
 // Using
 //=======
 
-#include "Concurrency/Scheduler.h"
-#include "Concurrency/Signal.h"
-#include "Concurrency/SpinLock.h"
 #include "Concurrency/Task.h"
 #include "Devices/System/Cpu.h"
+#include "Devices/Timers/SystemTimer.h"
 #include "StatusHelper.h"
 
 using namespace Devices::System;
+using namespace Devices::Timers;
 
 
 //===========
@@ -33,16 +32,11 @@ namespace Concurrency {
 VOID Signal::Trigger(Status status)
 {
 SpinLock lock(Scheduler::s_CriticalSection);
-if(!m_Waiting)
-	return;
-auto waiting=m_Waiting;
-m_Waiting=nullptr;
-if(waiting->m_ResumeTime)
+if(m_Waiting)
 	{
-	Scheduler::RemoveSleepingTask(&Scheduler::s_Sleeping, waiting);
-	waiting->m_ResumeTime=0;
+	Scheduler::ResumeTask(m_Waiting, status);
+	m_Waiting=nullptr;
 	}
-Scheduler::ResumeTask(waiting, status);
 }
 
 VOID Signal::Wait()
@@ -53,25 +47,24 @@ UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 current->m_Signal=this;
 Scheduler::AddParallelTask(&m_Waiting, current);
-Scheduler::SuspendCurrentTask(nullptr, core, current);
+Scheduler::SuspendCurrentTask(core, current);
 lock.Yield();
 current->m_Signal=nullptr;
 if(current->Cancelled)
 	throw AbortException();
-if(current->m_ResumeTime)
-	throw TimeoutException();
 }
 
 VOID Signal::Wait(UINT timeout)
 {
 assert(timeout!=0);
 assert(!Task::IsMainTask());
+UINT64 resume_time=SystemTimer::GetTickCount64()+timeout;
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 current->m_Signal=this;
 Scheduler::AddParallelTask(&m_Waiting, current);
-Scheduler::SuspendCurrentTask(timeout);
+Scheduler::SuspendCurrentTask(core, current, resume_time);
 lock.Yield();
 current->m_Signal=nullptr;
 if(current->Cancelled)
@@ -88,25 +81,24 @@ UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 current->m_Signal=this;
 Scheduler::AddParallelTask(&m_Waiting, current);
-Scheduler::SuspendCurrentTask(nullptr, core, current);
+Scheduler::SuspendCurrentTask(core, current);
 scoped_lock.Yield(lock);
 current->m_Signal=nullptr;
 if(current->Cancelled)
 	throw AbortException();
-if(current->m_ResumeTime)
-	throw TimeoutException();
 }
 
 VOID Signal::Wait(ScopedLock& scoped_lock, UINT timeout)
 {
 assert(timeout!=0);
-SpinLock lock(Scheduler::s_CriticalSection);
 assert(!Task::IsMainTask());
+UINT64 resume_time=SystemTimer::GetTickCount64()+timeout;
+SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 current->m_Signal=this;
 Scheduler::AddParallelTask(&m_Waiting, current);
-Scheduler::SuspendCurrentTask(timeout);
+Scheduler::SuspendCurrentTask(core, current, resume_time);
 scoped_lock.Yield(lock);
 current->m_Signal=nullptr;
 if(current->Cancelled)
@@ -127,7 +119,7 @@ UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 current->m_Signal=this;
 Scheduler::AddParallelTask(&m_Waiting, current);
-Scheduler::SuspendCurrentTask(nullptr, core, current);
+Scheduler::SuspendCurrentTask(core, current);
 scoped_lock.Yield(lock);
 current->m_Signal=nullptr;
 }

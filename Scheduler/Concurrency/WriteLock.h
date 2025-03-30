@@ -49,7 +49,7 @@ public:
 
 private:
 	// Common
-	inline VOID Yield(SpinLock& Lock)override { m_Mutex->Yield(Lock); }
+	inline VOID Yield(SpinLock& SchedulerLock)override { m_Mutex->Yield(SchedulerLock); }
 	Mutex* m_Mutex;
 };
 

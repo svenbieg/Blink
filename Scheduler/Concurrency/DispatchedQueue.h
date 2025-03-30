@@ -10,7 +10,7 @@
 //=======
 
 #include "Concurrency/DispatchedHandler.h"
-#include "Concurrency/Mutex.h"
+#include "Concurrency/CriticalMutex.h"
 #include "Concurrency/Signal.h"
 
 
@@ -57,7 +57,7 @@ private:
 	// Common
 	static DispatchedHandler* s_First;
 	static DispatchedHandler* s_Last;
-	static Mutex s_Mutex;
+	static CriticalMutex s_Mutex;
 	static Signal s_Signal;
 	static volatile BOOL s_Waiting;
 };

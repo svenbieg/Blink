@@ -43,11 +43,11 @@ if(m_CriticalSection)
 // Common Private
 //================
 
-VOID SpinLock::Yield(SpinLock& lock)
+VOID SpinLock::Yield(SpinLock& sched_lock)
 {
-Unlock();
-lock.Yield();
-Lock();
+m_CriticalSection->Unlock();
+sched_lock.Yield();
+m_CriticalSection->Lock();
 }
 
 }

@@ -92,9 +92,6 @@ VOID SystemTimer::HandleInterrupt(VOID* param)
 UINT64 cnt_freq;
 __asm volatile("mrs %0, CNTFRQ_EL0": "=r" (cnt_freq));
 UINT64 ticks=cnt_freq/100;
-//UINT64 cnt_val;
-//__asm volatile("mrs %0, CNTP_CVAL_EL0": "=r" (cnt_val));
-//__asm volatile("msr CNTP_CVAL_EL0, %0": : "r" (cnt_val+ticks));
 UINT64 cnt_pct;
 __asm volatile("mrs %0, CNTPCT_EL0": "=r" (cnt_pct));
 __asm volatile("msr CNTP_CVAL_EL0, %0": : "r" (cnt_pct+ticks));

@@ -11,7 +11,8 @@
 
 #include <heap.h>
 #include <stdlib.h>
-#include "Concurrency/TaskLock.h"
+#include "Concurrency/CriticalMutex.h"
+#include "Concurrency/WriteLock.h"
 
 using namespace Concurrency;
 
@@ -23,7 +24,7 @@ using namespace Concurrency;
 VOID* __dso_handle=nullptr;
 
 heap_t* g_heap=nullptr;
-Mutex g_heap_mutex;
+CriticalMutex g_heap_mutex;
 
 
 //===========
@@ -44,13 +45,13 @@ throw AbortException();
 
 void free(void* buf)
 {
-TaskLock lock(g_heap_mutex);
+WriteLock lock(g_heap_mutex);
 heap_free(g_heap, buf);
 }
 
 void* malloc(size_t size)
 {
-TaskLock lock(g_heap_mutex);
+WriteLock lock(g_heap_mutex);
 return heap_alloc(g_heap, size);
 }
 
