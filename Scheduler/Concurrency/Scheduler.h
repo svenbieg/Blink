@@ -64,8 +64,6 @@ private:
 	static VOID AddReleaseTask(Task** First, Task* Task);
 	static VOID AddSleepingTask(Task** First, Task* Task);
 	static VOID AddWaitingTask(Task* Task, BOOL Prepend=false);
-	static BOOL AddWaitingTask(Task** First, Task* Task);
-	static BOOL AddWaitingTask(Task** First, Task* Task, AccessMode);
 	static VOID CreateTasks();
 	static UINT GetAvailableCores(UINT* Cores, UINT Max);
 	static UINT GetParallelCount(Task* Task, UINT Max);

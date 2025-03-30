@@ -39,7 +39,7 @@ if(!current)
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
 FlagHelper::Set(current->m_Flags, TaskFlags::Locked);
 current->m_LockCount++;
-if(Scheduler::AddWaitingTask(&m_Owner, current))
+if(AddWaitingTask(current))
 	Scheduler::SuspendCurrentTask(core, current);
 }
 
@@ -52,7 +52,7 @@ auto current=Scheduler::s_CurrentTask[core];
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
 FlagHelper::Set(current->m_Flags, TaskFlags::LockedSharing);
 current->m_LockCount++;
-if(Scheduler::AddWaitingTask(&m_Owner, current, AccessMode::ReadOnly))
+if(AddWaitingTask(current, AccessMode::ReadOnly))
 	Scheduler::SuspendCurrentTask(core, current);
 }
 

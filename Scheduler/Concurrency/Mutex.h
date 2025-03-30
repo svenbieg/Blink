@@ -57,6 +57,8 @@ public:
 
 protected:
 	// Common
+	BOOL AddWaitingTask(Task* Task);
+	BOOL AddWaitingTask(Task* Task, AccessMode);
 	Task* m_Owner;
 
 private:
