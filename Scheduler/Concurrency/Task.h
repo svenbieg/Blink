@@ -41,11 +41,11 @@ None=0,
 Done=1,
 Idle=2,
 Locked=4,
-LockedSharing=20,
+LockedSharing=36,
 Owner=8,
-Sharing=16,
-Suspended=32,
-Release=64
+Release=16,
+Sharing=32,
+Suspended=64,
 };
 
 

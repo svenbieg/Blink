@@ -100,7 +100,8 @@ if(--m_Owner->m_LockCount==0)
 auto waiting=m_Owner->m_Waiting;
 m_Owner->m_Waiting=nullptr;
 m_Owner=waiting;
-Scheduler::ResumeTask(core, current, m_Owner);
+if(m_Owner)
+	Scheduler::ResumeTask(core, current, m_Owner);
 }
 
 VOID CriticalMutex::Unlock(AccessMode)
@@ -112,18 +113,19 @@ if(!Scheduler::RemoveParallelTask(&m_Owner, current))
 	return;
 FlagHelper::Clear(current->m_Flags, TaskFlags::Sharing);
 if(--current->m_LockCount==0)
+	{
 	FlagHelper::Clear(current->m_Flags, TaskFlags::Locked);
-if(!m_Owner)
-	{
-	auto waiting=current->m_Waiting;
-	current->m_Waiting=nullptr;
-	m_Owner=waiting;
+	if(m_Owner)
+		{
+		Scheduler::SwitchCurrentTask(core, current);
+		return;
+		}
+	}
+auto waiting=current->m_Waiting;
+current->m_Waiting=nullptr;
+m_Owner=waiting;
+if(m_Owner)
 	Scheduler::ResumeTask(core, current, m_Owner);
-	}
-else
-	{
-	Scheduler::ResumeTask(core, current, nullptr);
-	}
 }
 
 }

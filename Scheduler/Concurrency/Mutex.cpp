@@ -88,7 +88,8 @@ if(m_Owner!=current)
 auto waiting=m_Owner->m_Waiting;
 m_Owner->m_Waiting=nullptr;
 m_Owner=waiting;
-Scheduler::ResumeTask(core, current, m_Owner);
+if(m_Owner)
+	Scheduler::ResumeTask(core, current, m_Owner);
 }
 
 VOID Mutex::Unlock(AccessMode)
@@ -99,13 +100,13 @@ auto current=Scheduler::s_CurrentTask[core];
 if(!Scheduler::RemoveParallelTask(&m_Owner, current))
 	return;
 FlagHelper::Clear(current->m_Flags, TaskFlags::Sharing);
-if(!m_Owner)
-	{
-	auto waiting=current->m_Waiting;
-	current->m_Waiting=nullptr;
-	m_Owner=waiting;
+if(m_Owner)
+	return;
+auto waiting=current->m_Waiting;
+current->m_Waiting=nullptr;
+m_Owner=waiting;
+if(m_Owner)
 	Scheduler::ResumeTask(core, current, m_Owner);
-	}
 }
 
 
@@ -121,7 +122,8 @@ assert(m_Owner==current);
 auto waiting=m_Owner->m_Waiting;
 m_Owner->m_Waiting=nullptr;
 m_Owner=waiting;
-Scheduler::ResumeTask(core, current, m_Owner);
+if(m_Owner)
+	Scheduler::ResumeTask(core, current, m_Owner);
 sched_lock.Yield();
 if(Scheduler::AddWaitingTask(&m_Owner, current))
 	{
@@ -141,7 +143,8 @@ if(!m_Owner)
 	auto waiting=current->m_Waiting;
 	current->m_Waiting=nullptr;
 	m_Owner=waiting;
-	Scheduler::ResumeTask(core, current, m_Owner);
+	if(m_Owner)
+		Scheduler::ResumeTask(core, current, m_Owner);
 	}
 sched_lock.Yield();
 if(Scheduler::AddWaitingTask(&m_Owner, current, AccessMode::ReadOnly))

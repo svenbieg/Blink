@@ -79,8 +79,8 @@ private:
 	static VOID ResumeTask(Task* Resume, Status Status=Status::Success);
 	static VOID ResumeTask(UINT Core, Task* Current, Task* Resume);
 	static VOID SuspendCurrentTask(UINT Core, Task* Current, UINT64 ResumeTime=0);
-	static VOID SwitchCurrentTask(BOOL Resume=false);
-	static VOID SwitchCurrentTask(UINT Core, Task* Current, BOOL Resume);
+	static VOID SwitchCurrentTask();
+	static VOID SwitchCurrentTask(UINT Core, Task* Current);
 	static UINT s_CoreCount;
 	static Task* s_Create;
 	static CriticalSection s_CriticalSection;
