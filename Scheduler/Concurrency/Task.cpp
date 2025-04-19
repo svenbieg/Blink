@@ -67,16 +67,6 @@ assert(!Task::IsMainTask());
 Scheduler::SuspendCurrentTask(ms);
 }
 
-VOID Task::Unlock()
-{
-SpinLock lock(Scheduler::s_CriticalSection);
-if(--m_LockCount==0)
-	{
-	FlagHelper::Clear(m_Flags, TaskFlags::Locked);
-	Scheduler::SwitchCurrentTask();
-	}
-}
-
 Status Task::Wait()
 {
 assert(!Task::IsMainTask());

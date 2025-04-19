@@ -118,7 +118,6 @@ public:
 		if(Scheduler::IsMainTask())
 			throw InvalidContextException();
 		}
-	VOID Unlock();
 	Status Wait();
 
 protected:
