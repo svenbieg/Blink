@@ -58,9 +58,9 @@ return s_Current;
 UINT64 SystemTimer::Microseconds64()
 {
 UINT64 cnt_pct;
-__asm volatile("mrs %0, CNTPCT_EL0": "=r" (cnt_pct));
+__asm inline volatile("mrs %0, CNTPCT_EL0": "=r" (cnt_pct));
 UINT64 cnt_freq;
-__asm volatile("mrs %0, CNTFRQ_EL0": "=r" (cnt_freq));
+__asm inline volatile("mrs %0, CNTFRQ_EL0": "=r" (cnt_freq));
 return cnt_pct*CLOCK_MHZ/cnt_freq;
 }
 
@@ -74,12 +74,12 @@ SystemTimer::SystemTimer()
 m_Task=Task::Create(this, &SystemTimer::ServiceTask, "systimer");
 Interrupts::SetHandler(IRQ_SYSTIMER, HandleInterrupt, this);
 UINT64 cnt_pct;
-__asm volatile("mrs %0, CNTPCT_EL0": "=r" (cnt_pct));
+__asm inline volatile("mrs %0, CNTPCT_EL0": "=r" (cnt_pct));
 UINT64 cnt_freq;
-__asm volatile("mrs %0, CNTFRQ_EL0": "=r" (cnt_freq));
+__asm inline volatile("mrs %0, CNTFRQ_EL0": "=r" (cnt_freq));
 UINT64 ticks=cnt_freq/100;
-__asm volatile("msr CNTP_CVAL_EL0, %0": : "r" (cnt_pct+ticks));
-__asm volatile("msr CNTP_CTL_EL0, %0": : "r" (1UL));
+__asm inline volatile("msr CNTP_CVAL_EL0, %0":: "r" (cnt_pct+ticks));
+__asm inline volatile("msr CNTP_CTL_EL0, %0":: "r" (1UL));
 }
 
 
@@ -90,11 +90,11 @@ __asm volatile("msr CNTP_CTL_EL0, %0": : "r" (1UL));
 VOID SystemTimer::HandleInterrupt(VOID* param)
 {
 UINT64 cnt_freq;
-__asm volatile("mrs %0, CNTFRQ_EL0": "=r" (cnt_freq));
+__asm inline volatile("mrs %0, CNTFRQ_EL0": "=r" (cnt_freq));
 UINT64 ticks=cnt_freq/100;
 UINT64 cnt_pct;
-__asm volatile("mrs %0, CNTPCT_EL0": "=r" (cnt_pct));
-__asm volatile("msr CNTP_CVAL_EL0, %0": : "r" (cnt_pct+ticks));
+__asm inline volatile("mrs %0, CNTPCT_EL0": "=r" (cnt_pct));
+__asm inline volatile("msr CNTP_CVAL_EL0, %0":: "r" (cnt_pct+ticks));
 s_Current->m_Signal.Trigger();
 }
 
@@ -105,7 +105,10 @@ task->Lock();
 while(!task->Cancelled)
 	{
 	m_Signal.Wait();
-	Triggered(this);
+	DispatchedQueue::Append(this, [this]()
+		{
+		Triggered(this);
+		});
 	}
 }
 

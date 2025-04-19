@@ -37,7 +37,7 @@ public:
 	static inline UINT64 GetTickCount64() { return Microseconds64()/1000; }
 	static inline UINT Microseconds() { return (UINT)Microseconds64(); }
 	static UINT64 Microseconds64();
-	Event<SystemTimer> Triggered; // 10ms (100Hz) in ServiceTask
+	Event<SystemTimer> Triggered; // 10ms (100Hz)
 
 private:
 	// Con-/Destructors
