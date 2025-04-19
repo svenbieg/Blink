@@ -116,33 +116,27 @@ if(m_Owner)
 
 BOOL Mutex::AddWaitingTask(Task* task)
 {
+BOOL locked=FlagHelper::Get(task->m_Flags, TaskFlags::Locked);
 auto current_ptr=&m_Owner;
 BOOL suspend=false;
-if(FlagHelper::Get(task->m_Flags, TaskFlags::Locked))
+while(*current_ptr)
 	{
-	while(*current_ptr)
+	auto current=*current_ptr;
+	assert(current!=task);
+	auto waiting=current->m_Waiting;
+	if(!waiting)
 		{
-		auto current=*current_ptr;
-		assert(current!=task);
-		if(!FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
-			{
-			task->m_Waiting=current;
-			*current_ptr=task;
-			return true;
-			}
-		suspend=true;
-		current_ptr=&current->m_Waiting;
+		current->m_Waiting=task;
+		return true;
 		}
-	}
-else
-	{
-	while(*current_ptr)
+	suspend=true;
+	if(locked&&!FlagHelper::Get(waiting->m_Flags, TaskFlags::Locked))
 		{
-		auto current=*current_ptr;
-		assert(current!=task);
-		suspend=true;
-		current_ptr=&current->m_Waiting;
+		current->m_Waiting=task;
+		task->m_Waiting=waiting;
+		return true;
 		}
+	current_ptr=&current->m_Waiting;
 	}
 *current_ptr=task;
 return suspend;
@@ -150,37 +144,16 @@ return suspend;
 
 BOOL Mutex::AddWaitingTask(Task* task, AccessMode)
 {
+BOOL locked=FlagHelper::Get(task->m_Flags, TaskFlags::Locked);
 auto current_ptr=&m_Owner;
 BOOL suspend=false;
-if(FlagHelper::Get(task->m_Flags, TaskFlags::Locked))
+while(*current_ptr)
 	{
-	while(*current_ptr)
+	auto current=*current_ptr;
+	assert(current!=task);
+	auto waiting=current->m_Waiting;
+	if(!waiting)
 		{
-		auto current=*current_ptr;
-		assert(current!=task);
-		auto waiting=current->m_Waiting;
-		if(waiting)
-			{
-			if(FlagHelper::Get(waiting->m_Flags, TaskFlags::Sharing))
-				{
-				Scheduler::AddParallelTask(&current->m_Waiting, task);
-				return true;
-				}
-			if(!FlagHelper::Get(waiting->m_Flags, TaskFlags::Locked))
-				{
-				if(FlagHelper::Get(current->m_Flags, TaskFlags::Sharing))
-					{
-					Scheduler::AddParallelTask(current_ptr, task);
-					return suspend;
-					}
-				current->m_Waiting=task;
-				task->m_Waiting=waiting;
-				return true;
-				}
-			suspend=true;
-			current_ptr=&current->m_Waiting;
-			continue;
-			}
 		if(FlagHelper::Get(current->m_Flags, TaskFlags::Sharing))
 			{
 			Scheduler::AddParallelTask(current_ptr, task);
@@ -189,27 +162,19 @@ if(FlagHelper::Get(task->m_Flags, TaskFlags::Locked))
 		current->m_Waiting=task;
 		return true;
 		}
-	}
-else
-	{
-	while(*current_ptr)
+	suspend=true;
+	if(locked&&!FlagHelper::Get(waiting->m_Flags, TaskFlags::Locked))
 		{
-		auto current=*current_ptr;
-		assert(current!=task);
-		if(current->m_Waiting)
+		if(FlagHelper::Get(waiting->m_Flags, TaskFlags::Sharing))
 			{
-			suspend=true;
-			current_ptr=&current->m_Waiting;
-			continue;
-			}
-		if(FlagHelper::Get(current->m_Flags, TaskFlags::Sharing))
-			{
-			Scheduler::AddParallelTask(current_ptr, task);
-			return suspend;
+			Scheduler::AddParallelTask(&current->m_Waiting, task);
+			return true;
 			}
 		current->m_Waiting=task;
+		task->m_Waiting=waiting;
 		return true;
 		}
+	current_ptr=&current->m_Waiting;
 	}
 *current_ptr=task;
 return suspend;

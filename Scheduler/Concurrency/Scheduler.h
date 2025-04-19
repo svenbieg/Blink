@@ -63,7 +63,7 @@ private:
 	static VOID AddParallelTask(Task** First, Task* Task);
 	static VOID AddReleaseTask(Task** First, Task* Task);
 	static VOID AddSleepingTask(Task** First, Task* Task);
-	static VOID AddWaitingTask(Task* Task, BOOL Prepend=false);
+	static VOID AddWaitingTask(Task* Task);
 	static VOID CreateTasks();
 	static UINT GetAvailableCores(UINT* Cores, UINT Max);
 	static UINT GetParallelCount(Task* Task, UINT Max);
@@ -76,9 +76,8 @@ private:
 	static VOID RemoveSleepingTask(Task** First, Task* Sleeping);
 	static VOID ResumeTask(Task* Resume, Status Status=Status::Success);
 	static VOID ResumeTask(UINT Core, Task* Current, Task* Resume);
+	static VOID ResumeWaitingTasks();
 	static VOID SuspendCurrentTask(UINT Core, Task* Current, UINT64 ResumeTime=0);
-	static VOID SwitchCurrentTask();
-	static VOID SwitchCurrentTask(UINT Core, Task* Current);
 	static UINT s_CoreCount;
 	static Task* s_Create;
 	static CriticalSection s_CriticalSection;

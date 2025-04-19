@@ -117,7 +117,7 @@ if(--current->m_LockCount==0)
 	FlagHelper::Clear(current->m_Flags, TaskFlags::Locked);
 	if(m_Owner)
 		{
-		Scheduler::SwitchCurrentTask(core, current);
+		Scheduler::ResumeWaitingTasks();
 		return;
 		}
 	}
