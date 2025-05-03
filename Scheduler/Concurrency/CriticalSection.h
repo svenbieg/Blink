@@ -31,6 +31,7 @@ public:
 private:
 	// Common
 	volatile UINT m_Core;
+	UINT m_LockCount;
 };
 
 }
