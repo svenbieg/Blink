@@ -7,17 +7,10 @@
     <SolutionDir>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..'))\</SolutionDir>
   </PropertyGroup>
 
-  <PropertyGroup Label="Configuration">
-    <ConfigurationType>Makefile</ConfigurationType>
-  </PropertyGroup>
-
   <PropertyGroup>
     <HomePath>$(HOMEDRIVE)$(HOMEPATH)\</HomePath>
     <IntDir>$(SolutionDir)$(Configuration)\$(Platform)\</IntDir>
     <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\</OutDir>
-    <TargetName>$(ProjectName)</TargetName>
-    <TargetExt>.img</TargetExt>
-    <TargetType>Binary</TargetType>
     <Timestamp>$([System.DateTime]::Now.ToString("yyyy-MM-dd HH:mm:ss"))</Timestamp>
   </PropertyGroup>
 
@@ -26,7 +19,6 @@
   <Import Project="$(ProjectDir)Configuration\Default.props" Condition="Exists('$(ProjectDir)Configuration\Default.props')" />
 
   <Import Project="$(MSBuildThisFileDirectory)Tools.props" />
-  <Import Project="$(MSBuildThisFileDirectory)Compiler.props" />
   <Import Project="$(MSBuildThisFileDirectory)Debug.props" />
 
 </Project>

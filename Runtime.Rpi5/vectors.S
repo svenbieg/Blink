@@ -2,6 +2,13 @@
 // vectors.S
 //===========
 
+.section ".text"
+
+
+//=======
+// Using
+//=======
+
 #include <except.h>
 
 

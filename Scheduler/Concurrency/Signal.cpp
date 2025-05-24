@@ -56,7 +56,6 @@ if(current->Cancelled)
 
 VOID Signal::Wait(UINT timeout)
 {
-assert(timeout!=0);
 assert(!Task::IsMainTask());
 UINT64 resume_time=SystemTimer::GetTickCount64()+timeout;
 SpinLock lock(Scheduler::s_CriticalSection);

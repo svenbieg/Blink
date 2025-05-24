@@ -2,6 +2,13 @@
 // except.S
 //==========
 
+.section ".text"
+
+
+//=======
+// Using
+//=======
+
 #include <except.h>
 
 

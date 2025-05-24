@@ -51,9 +51,9 @@ STRUCT_END(TASK_FRAME)
 extern "C" {
 #endif
 
-VOID task_init(VOID** Stack, VOID (*TaskProc)(VOID*), VOID* Parameter);
-VOID* task_restore_context(VOID* Stack);
-VOID* task_save_context(VOID* Stack);
+VOID task_init(SIZE_T* StackPointer, VOID (*TaskProc)(VOID*), VOID* Parameter);
+SIZE_T task_restore_context(SIZE_T StackPointer);
+SIZE_T task_save_context(SIZE_T StackPointer);
 
 #ifdef __cplusplus
 }

@@ -28,9 +28,9 @@ namespace Devices {
 typedef VOID (*IRQ_HANDLER)(VOID* Parameter);
 
 
-//========
-// Target
-//========
+//============
+// IRQ-Target
+//============
 
 enum class IrqTarget
 {

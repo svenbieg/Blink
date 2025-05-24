@@ -10,12 +10,12 @@
 //=======
 
 #include <base.h>
-#include "Devices/Arm/GpioHelper.h"
+#include <io.h>
+#include "Devices/Gpio/GpioHelper.h"
 #include "Devices/System/Cpu.h"
 #include "Devices/System/System.h"
-#include "BitHelper.h"
 
-using namespace Devices::Arm;
+using namespace Devices::Gpio;
 
 
 //===========
@@ -26,37 +26,30 @@ namespace Devices {
 	namespace System {
 
 
-//==============
-// Activity-Led
-//==============
-
-constexpr UINT ACTLED_PIN=41;
-
-
 //===============
 // Power Manager
 //===============
 
 typedef struct
 {
-UINT RES0[6];
-REG RSTC;
-REG RSTS;
-REG WDOG;
-UINT RES1;
-REG PADS[3];
-}PM_REGS;
+rw32_t RES0[6];
+rw32_t RSTC;
+rw32_t RSTS;
+rw32_t WDOG;
+rw32_t RES1;
+rw32_t PADS[3];
+}pm_regs_t;
 
-constexpr UINT PM_PASSWD=(0x5A<<24);
-constexpr UINT PM_FULL_RESET=0x20;
+constexpr uint32_t PM_PASSWD=(0x5A<<24);
+constexpr uint32_t PM_FULL_RESET=0x20;
 
 
 //====================================
 // Power State Coordination Interface
 //====================================
 
-constexpr UINT64 PSCI_POWER_OFF=0x84000008;
-constexpr UINT64 PSCI_RESET=0x84000009;
+constexpr uint64_t PSCI_POWER_OFF=0x84000008;
+constexpr uint64_t PSCI_RESET=0x84000009;
 
 
 //=======
@@ -65,16 +58,16 @@ constexpr UINT64 PSCI_RESET=0x84000009;
 
 typedef struct
 {
-REG SET;
-REG CLEAR;
-REG STATUS;
-UINT RES[3];
-}INIT_BANK_REGS;
+rw32_t SET;
+rw32_t CLEAR;
+rw32_t STATUS;
+rw32_t RES[3];
+}init_bank_regs_t;
 
 typedef struct
 {
-INIT_BANK_REGS INIT_BANK[2];
-}RESET_REGS;
+init_bank_regs_t INIT_BANK[2];
+}reset_regs_t;
 
 
 //========
@@ -83,8 +76,8 @@ INIT_BANK_REGS INIT_BANK[2];
 
 VOID System::Led(BOOL on)
 {
-GpioHelper::SetPinMode(ACTLED_PIN, PinMode::Output);
-GpioHelper::DigitalWrite(ACTLED_PIN, on);
+GpioHelper::SetPinMode(PIN_ACTLED, PinMode::Output);
+GpioHelper::DigitalWrite(PIN_ACTLED, on);
 }
 
 VOID System::PowerOff()
@@ -105,12 +98,12 @@ Restart();
 
 VOID System::Reset(ResetDevice device)
 {
-auto reset=(RESET_REGS*)AXI_RESET_BASE;
+auto reset=(reset_regs_t*)AXI_RESET_BASE;
 UINT bank=(UINT)device/32;
 UINT mask=(UINT)device&0x1F;
-BitHelper::Write(reset->INIT_BANK[bank].SET, mask);
+io_write(reset->INIT_BANK[bank].SET, mask);
 Cpu::Delay(100);
-BitHelper::Write(reset->INIT_BANK[bank].CLEAR, mask);
+io_write(reset->INIT_BANK[bank].CLEAR, mask);
 Cpu::Delay(100);
 }
 

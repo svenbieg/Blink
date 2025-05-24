@@ -2,6 +2,13 @@
 // task.S
 //========
 
+.section ".text"
+
+
+//=======
+// Using
+//=======
+
 #include <irq.h>
 #include <task.h>
 

@@ -91,7 +91,16 @@ public:
 		Dwarf+=sizeof(_value_t);
 		return value;
 		}
+	template <typename _value_t> static inline _value_t ReadValue(InputStream* Dwarf)
+		{
+		_value_t value;
+		SIZE_T read=Dwarf->Read(&value, sizeof(_value_t));
+		if(read!=sizeof(_value_t))
+			throw DeviceNotReadyException();
+		return value;
+		}
 	VOID SetPosition(SIZE_T Position) { m_Buffer=(BYTE*)Position; }
+	static UINT WriteSigned(OutputStream* Dwarf, INT64 Value);
 	static UINT WriteUnsigned(OutputStream* Dwarf, UINT64 Value);
 
 private:

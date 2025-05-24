@@ -50,7 +50,6 @@ typedef wchar_t* LPWSTR;
 typedef char const* LPCSTR;
 typedef wchar_t const* LPCWSTR;
 
-#undef TEXT
 #ifdef _UNICODE
 #define _TEXT(s) L#s
 typedef WCHAR TCHAR;

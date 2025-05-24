@@ -5,19 +5,6 @@
 #pragma once
 
 
-//========
-// Macros
-//========
-
-#ifndef __long
-#define __long
-#endif
-
-#ifndef __long_long
-#define __long_long long
-#endif
-
-
 //===========
 // Namespace
 //===========

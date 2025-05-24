@@ -31,11 +31,6 @@ Unicode,
 UTF8
 };
 
-
-//=================
-// Standard-Format
-//=================
-
 #ifdef UNICODE
 constexpr StreamFormat DefaultStreamFormat=StreamFormat::Unicode;
 #else

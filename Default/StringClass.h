@@ -47,6 +47,8 @@ public:
 		{
 		return StringHelper::Find(m_Buffer, Value, nullptr, CaseSensitive);
 		}
+	inline UINT Copy(LPSTR Buffer, UINT Size) { return StringHelper::Copy(Buffer, Size, m_Buffer); }
+	inline UINT Copy(LPWSTR Buffer, UINT Size) { return StringHelper::Copy(Buffer, Size, m_Buffer); }
 	inline UINT64 GetHash()
 		{
 		if(m_Hash==INVALID_HASH)

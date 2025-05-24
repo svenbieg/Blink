@@ -13,7 +13,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)cxxabi.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cassert" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)BitHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.h">
       <Filter>Concurrency</Filter>
     </ClInclude>
@@ -24,6 +23,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)stdexcept" />
     <ClInclude Include="$(MSBuildThisFileDirectory)type_traits" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utility" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)io.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)bits.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props">
@@ -54,6 +55,9 @@
       <Filter>Configuration</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Debug.props">
+      <Filter>Configuration</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Configuration\NinjaBuild.targets">
       <Filter>Configuration</Filter>
     </None>
   </ItemGroup>

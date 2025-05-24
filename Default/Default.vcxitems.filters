@@ -41,9 +41,6 @@
       <Filter>Collections</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Status.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Volume.h">
-      <Filter>Storage</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\Stream.h">
       <Filter>Storage\Streams</Filter>
     </ClInclude>
@@ -109,6 +106,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Culture\LanguageCode.h">
       <Filter>Culture</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Volume.h">
+      <Filter>Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)BitHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)StringHelper.cpp" />

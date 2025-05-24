@@ -92,13 +92,13 @@ public:
 		{
 		__asm inline volatile("ic iallu"::: "memory");
 		}
-	static ALWAYS_INLINE VOID SetContext(VOID (*TaskProc)(VOID*), VOID* Parameter, VOID* Stack)noexcept
+	static ALWAYS_INLINE VOID SetContext(VOID (*TaskProc)(VOID*), VOID* Parameter, SIZE_T StackPointer)noexcept
 		{
 		__asm inline volatile("\
 			mov x30, %0\n\
 			mov x0, %1\n\
 			mov sp, %2\n\
-			ret":: "r" (TaskProc), "r" (Parameter), "r" (Stack): "x30", "x0");
+			ret":: "r" (TaskProc), "r" (Parameter), "r" (StackPointer): "x30", "x0");
 		}
 	static ALWAYS_INLINE VOID SetEvent()noexcept
 		{

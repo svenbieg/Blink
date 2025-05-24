@@ -9,6 +9,10 @@
 // Macros
 //========
 
+#ifndef __always_inline
+#define __always_inline __attribute__((always_inline)) inline
+#endif
+
 #ifndef __long
 #define __long
 #endif
@@ -26,4 +30,8 @@
 // Types
 //=======
 
+#ifndef __ASSEMBLER__
+
 typedef unsigned __long_long int size_t;
+
+#endif

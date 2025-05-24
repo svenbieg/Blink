@@ -132,7 +132,7 @@ BYTE byte;
 do
 	{
 	byte=*dwarf++;
-	value|=((SIZE_T)byte&0x7F)<<shift;
+	value|=((UINT64)byte&0x7F)<<shift;
 	shift+=7;
 	}
 while(byte&0x80);
@@ -172,6 +172,49 @@ while(byte&0x80);
 if(value_ptr)
 	*value_ptr=value;
 return (UINT)size;
+}
+
+UINT Dwarf::WriteSigned(OutputStream* dwarf, INT64 ivalue)
+{
+BOOL neg=false;
+if(ivalue<0)
+	{
+	ivalue=-ivalue;
+	neg=true;
+	}
+UINT64 value=(UINT64)ivalue;
+UINT size=0;
+do
+	{
+	BYTE byte=(BYTE)value&0x7F;
+	value>>=7;
+	if(value)
+		{
+		byte|=0x80;
+		}
+	else if(neg)
+		{
+		if(byte&0x40)
+			{
+			value=0x80;
+			byte|=0x80;
+			}
+		else
+			{
+			byte|=0x40;
+			}
+		}
+	if(dwarf)
+		{
+		size+=(UINT)dwarf->Write(&byte, 1);
+		}
+	else
+		{
+		size++;
+		}
+	}
+while(value);
+return size;
 }
 
 UINT Dwarf::WriteUnsigned(OutputStream* dwarf, UINT64 value)

@@ -66,12 +66,12 @@ public:
 
 	// Con-/Destructors
 	~Task();
-	static Handle<Task> Create(VOID (*Procedure)(), Handle<String> Name="task", UINT StackSize=STACK_SIZE);
-	template <class _owner_t> static Handle<Task> Create(_owner_t* Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", UINT StackSize=STACK_SIZE);
-	template <class _owner_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", UINT StackSize=STACK_SIZE);
-	template <class _owner_t, class _lambda_t> static Handle<Task> Create(_owner_t* Owner, _lambda_t&& Lambda, Handle<String> Name="task", UINT StackSize=STACK_SIZE);
-	template <class _owner_t, class _lambda_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, _lambda_t&& Lambda, Handle<String> Name="task", UINT StackSize=STACK_SIZE);
-	template <class _lambda_t> static Handle<Task> Create(nullptr_t Owner, _lambda_t&& Lambda, Handle<String> Name="task", UINT StackSize=STACK_SIZE);
+	static Handle<Task> Create(VOID (*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=STACK_SIZE);
+	template <class _owner_t> static Handle<Task> Create(_owner_t* Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=STACK_SIZE);
+	template <class _owner_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=STACK_SIZE);
+	template <class _owner_t, class _lambda_t> static Handle<Task> Create(_owner_t* Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=STACK_SIZE);
+	template <class _owner_t, class _lambda_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=STACK_SIZE);
+	template <class _lambda_t> static Handle<Task> Create(nullptr_t Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=STACK_SIZE);
 
 	// Common
 	VOID Cancel();
@@ -122,8 +122,8 @@ public:
 
 protected:
 	// Con-/Destructors
-	Task(Handle<String> Name, VOID* StackEnd, UINT StackSize);
-	static Task* CreateInternal(VOID (*Procedure)(), Handle<String> Name, UINT StackSize=PAGE_SIZE);
+	Task(Handle<String> Name, SIZE_T StackTop, SIZE_T StackSize);
+	static Task* CreateInternal(VOID (*Procedure)(), Handle<String> Name, SIZE_T StackSize=PAGE_SIZE);
 
 	// Common
 	virtual VOID Run()=0;
@@ -142,8 +142,9 @@ protected:
 	UINT64 m_ResumeTime;
 	Signal* m_Signal;
 	Task* m_Sleeping;
-	VOID* m_StackPointer;
-	UINT m_StackSize;
+	SIZE_T m_StackBottom;
+	SIZE_T m_StackPointer;
+	SIZE_T m_StackSize;
 	Status m_Status;
 	DispatchedHandler* m_Then;
 	Handle<Task> m_This;
@@ -162,8 +163,8 @@ public:
 	typedef VOID (*_proc_t)();
 
 	// Con-/Destructors
-	TaskProcedure(_proc_t Procedure, Handle<String> Name, VOID* StackEnd, UINT StackSize):
-		Task(Name, StackEnd, StackSize),
+	TaskProcedure(_proc_t Procedure, Handle<String> Name, SIZE_T StackTop, SIZE_T StackSize):
+		Task(Name, StackTop, StackSize),
 		m_Procedure(Procedure)
 		{}
 
@@ -185,8 +186,8 @@ public:
 	typedef VOID (_owner_t::*_proc_t)();
 
 	// Con-/Destructors
-	TaskMemberProcedure(_owner_t* Owner, _proc_t Procedure, Handle<String> Name, VOID* StackEnd, UINT StackSize):
-		Task(Name, StackEnd, StackSize),
+	TaskMemberProcedure(_owner_t* Owner, _proc_t Procedure, Handle<String> Name, SIZE_T StackTop, SIZE_T StackSize):
+		Task(Name, StackTop, StackSize),
 		m_Owner(Owner),
 		m_Procedure(Procedure)
 		{}
@@ -207,8 +208,8 @@ template <class _owner_t, class _lambda_t> class TaskLambda: public Task
 {
 public:
 	// Con-/Destructors
-	TaskLambda(_owner_t* Owner, _lambda_t&& Lambda, Handle<String> Name, VOID* StackEnd, UINT StackSize):
-		Task(Name, StackEnd, StackSize),
+	TaskLambda(_owner_t* Owner, _lambda_t&& Lambda, Handle<String> Name, SIZE_T StackTop, SIZE_T StackSize):
+		Task(Name, StackTop, StackSize),
 		m_Lambda(std::move(Lambda)),
 		m_Owner(Owner)
 		{}
@@ -224,8 +225,8 @@ template <class _lambda_t> class TaskLambda<nullptr_t, _lambda_t>: public Task
 {
 public:
 	// Con-/Destructors
-	TaskLambda(_lambda_t&& Lambda, Handle<String> Name, VOID* StackEnd, UINT StackSize):
-		Task(Name, StackEnd, StackSize),
+	TaskLambda(_lambda_t&& Lambda, Handle<String> Name, SIZE_T StackTop, SIZE_T StackSize):
+		Task(Name, StackTop, StackSize),
 		m_Lambda(std::move(Lambda))
 		{}
 
@@ -240,69 +241,69 @@ private:
 // Con-/Destructors
 //==================
 
-inline Handle<Task> Task::Create(VOID (*Procedure)(), Handle<String> Name, UINT StackSize)
+inline Handle<Task> Task::Create(VOID (*Procedure)(), Handle<String> Name, SIZE_T StackSize)
 {
 auto task=CreateInternal(Procedure, Name, StackSize);
 Scheduler::AddTask(task);
 return task;
 }
 
-template <class _owner_t> Handle<Task> Task::Create(_owner_t* Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name, UINT StackSize)
+template <class _owner_t> Handle<Task> Task::Create(_owner_t* Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name, SIZE_T StackSize)
 {
 assert(StackSize%sizeof(SIZE_T)==0);
 using _task_t=TaskMemberProcedure<_owner_t>;
-UINT size=TypeHelper::AlignUp(sizeof(_task_t), sizeof(SIZE_T))+StackSize;
+SIZE_T size=StackSize+TypeHelper::AlignUp(sizeof(_task_t), sizeof(SIZE_T));
 auto task=(_task_t*)operator new(size);
-VOID* stack_end=(VOID*)((SIZE_T)task+size);
-new (task) _task_t(Owner, Procedure, Name, stack_end, StackSize);
+SIZE_T stack_top=(SIZE_T)task+size;
+new (task) _task_t(Owner, Procedure, Name, stack_top, StackSize);
 Scheduler::AddTask(task);
 return task;
 }
 
-template <class _owner_t> Handle<Task> Task::Create(Handle<_owner_t> const& Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name, UINT StackSize)
+template <class _owner_t> Handle<Task> Task::Create(Handle<_owner_t> const& Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name, SIZE_T StackSize)
 {
 assert(StackSize%sizeof(SIZE_T)==0);
 using _task_t=TaskMemberProcedure<_owner_t>;
-UINT size=TypeHelper::AlignUp(sizeof(_task_t), sizeof(SIZE_T))+StackSize;
+SIZE_T size=StackSize+TypeHelper::AlignUp(sizeof(_task_t), sizeof(SIZE_T));
 auto task=(_task_t*)operator new(size);
-VOID* stack_end=(VOID*)((SIZE_T)task+size);
-new (task) _task_t(Owner, Procedure, Name, stack_end, StackSize);
+SIZE_T stack_top=(SIZE_T)task+size;
+new (task) _task_t(Owner, Procedure, Name, stack_top, StackSize);
 Scheduler::AddTask(task);
 return task;
 }
 
-template <class _owner_t, class _lambda_t> Handle<Task> Task::Create(_owner_t* Owner, _lambda_t&& Lambda, Handle<String> Name, UINT StackSize)
+template <class _owner_t, class _lambda_t> Handle<Task> Task::Create(_owner_t* Owner, _lambda_t&& Lambda, Handle<String> Name, SIZE_T StackSize)
 {
 assert(StackSize%sizeof(SIZE_T)==0);
 using _task_t=TaskLambda<_owner_t, _lambda_t>;
-UINT size=TypeHelper::AlignUp(sizeof(_task_t), sizeof(SIZE_T))+StackSize;
+SIZE_T size=StackSize+TypeHelper::AlignUp(sizeof(_task_t), sizeof(SIZE_T));
 auto task=(_task_t*)operator new(size);
-VOID* stack_end=(VOID*)((SIZE_T)task+size);
-new (task) _task_t(Owner, std::forward<_lambda_t>(Lambda), Name, stack_end, StackSize);
+SIZE_T stack_top=(SIZE_T)task+size;
+new (task) _task_t(Owner, std::forward<_lambda_t>(Lambda), Name, stack_top, StackSize);
 Scheduler::AddTask(task);
 return task;
 }
 
-template <class _owner_t, class _lambda_t> Handle<Task> Task::Create(Handle<_owner_t> const& Owner, _lambda_t&& Lambda, Handle<String> Name, UINT StackSize)
+template <class _owner_t, class _lambda_t> Handle<Task> Task::Create(Handle<_owner_t> const& Owner, _lambda_t&& Lambda, Handle<String> Name, SIZE_T StackSize)
 {
 assert(StackSize%sizeof(SIZE_T)==0);
 using _task_t=TaskLambda<_owner_t, _lambda_t>;
-UINT size=TypeHelper::AlignUp(sizeof(_task_t), sizeof(SIZE_T))+StackSize;
+SIZE_T size=StackSize+TypeHelper::AlignUp(sizeof(_task_t), sizeof(SIZE_T));
 auto task=(_task_t*)operator new(size);
-VOID* stack_end=(VOID*)((SIZE_T)task+size);
-new (task) _task_t(Owner, std::forward<_lambda_t>(Lambda), Name, stack_end, StackSize);
+SIZE_T stack_top=(SIZE_T)task+size;
+new (task) _task_t(Owner, std::forward<_lambda_t>(Lambda), Name, stack_top, StackSize);
 Scheduler::AddTask(task);
 return task;
 }
 
-template <class _lambda_t> Handle<Task> Task::Create(nullptr_t Owner, _lambda_t&& Lambda, Handle<String> Name, UINT StackSize)
+template <class _lambda_t> Handle<Task> Task::Create(nullptr_t Owner, _lambda_t&& Lambda, Handle<String> Name, SIZE_T StackSize)
 {
 assert(StackSize%sizeof(SIZE_T)==0);
 using _task_t=TaskLambda<nullptr_t, _lambda_t>;
-UINT size=TypeHelper::AlignUp(sizeof(_task_t), sizeof(SIZE_T))+StackSize;
+SIZE_T size=StackSize+TypeHelper::AlignUp(sizeof(_task_t), sizeof(SIZE_T));
 auto task=(_task_t*)operator new(size);
-VOID* stack_end=(VOID*)((SIZE_T)task+size);
-new (task) _task_t(std::forward<_lambda_t>(Lambda), Name, stack_end, StackSize);
+SIZE_T stack_top=(SIZE_T)task+size;
+new (task) _task_t(std::forward<_lambda_t>(Lambda), Name, stack_top, StackSize);
 Scheduler::AddTask(task);
 return task;
 }
@@ -312,13 +313,13 @@ return task;
 // Con-/Destructors Private
 //==========================
 
-inline Task* Task::CreateInternal(VOID (*Procedure)(), Handle<String> Name, UINT StackSize)
+inline Task* Task::CreateInternal(VOID (*Procedure)(), Handle<String> Name, SIZE_T StackSize)
 {
 assert(StackSize%sizeof(SIZE_T)==0);
-UINT size=TypeHelper::AlignUp(sizeof(TaskProcedure), sizeof(SIZE_T))+StackSize;
+SIZE_T size=StackSize+TypeHelper::AlignUp(sizeof(TaskProcedure), sizeof(SIZE_T));
 auto task=(TaskProcedure*)operator new(size);
-VOID* stack_end=(VOID*)((SIZE_T)task+size);
-new (task) TaskProcedure(Procedure, Name, stack_end, StackSize);
+SIZE_T stack_top=(SIZE_T)task+size;
+new (task) TaskProcedure(Procedure, Name, stack_top, StackSize);
 return task;
 }
 

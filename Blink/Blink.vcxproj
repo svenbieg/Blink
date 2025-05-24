@@ -17,6 +17,7 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
+  <Import Project="..\Runtime\Configuration\Compiler.props" />
   <ItemDefinitionGroup />
   <ItemGroup>
     <ClCompile Include="Main.cpp" />

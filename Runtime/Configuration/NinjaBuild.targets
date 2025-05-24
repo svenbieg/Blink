@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="Build">
+    <PropertyGroup>
+      <BuildCommandLine>"$(MSBuildBinPath)\msbuild.exe"</BuildCommandLine>
+      <BuildCommandLine>$(BuildCommandLine) -t:NinjaBuild</BuildCommandLine>
+      <BuildCommandLine>$(BuildCommandLine) -p:Configuration="$(Configuration)"</BuildCommandLine>
+      <BuildCommandLine>$(BuildCommandLine) -p:Platform="$(Platform)"</BuildCommandLine>
+      <BuildCommandLine>$(BuildCommandLine) -p:NinjaBuild="true"</BuildCommandLine>
+      <BuildCommandLine>$(BuildCommandLine) -nologo -v:m</BuildCommandLine>
+      <BuildCommandLine>$(BuildCommandLine) $(ProjectFileName)</BuildCommandLine>
+    </PropertyGroup>
+    <MakeDir Directories="$(OutDir)" />
+    <Exec Command="$(BuildCommandLine)" WorkingDirectory="$(ProjectDir)" />
+  </Target>
+
+  <Target Name="Clean">
+    <ItemGroup>
+      <CleanLines Include="rd /s /q Debug\$(Platform) 2>nul" />
+      <CleanLines Include="rd /s /q Release\$(Platform) 2>nul" />
+    </ItemGroup>
+    <Exec Command="@(CleanLines->'%(Identity)&amp;')" WorkingDirectory="$(SolutionDir)" />
+  </Target>
+
+  <Target Name="Rebuild" DependsOnTargets="Clean;Build" />
+
+  <Target Name="NinjaBuild" DependsOnTargets="VsCodeSetup;NinjaCompile" />
+
+</Project>

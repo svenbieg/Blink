@@ -12,7 +12,6 @@
 #include "Concurrency/Scheduler.h"
 #include "Concurrency/SpinLock.h"
 #include "Concurrency/Task.h"
-#include "Concurrency/TaskHelper.h"
 #include "Devices/System/Cpu.h"
 #include "Devices/System/Interrupts.h"
 #include "Devices/System/System.h"
@@ -54,14 +53,12 @@ Interrupts::SetHandler(IRQ_TASK_SWITCH, HandleTaskSwitch);
 for(UINT core=0; core<CPU_COUNT; core++)
 	{
 	auto idle=Task::CreateInternal(IdleTask, String::Create("idle%u", core));
-	idle->m_This=idle;
 	FlagHelper::Set(idle->m_Flags, TaskFlags::Idle);
 	FlagHelper::Set(idle->m_Flags, TaskFlags::Suspended);
 	s_IdleTask[core]=idle;
 	s_CurrentTask[core]=idle;
 	}
 auto main=Task::CreateInternal(MainTask, "main");
-main->m_This=main;
 s_CurrentTask[0]=main;
 s_MainTask=main;
 }
@@ -81,7 +78,6 @@ return current==s_MainTask;
 
 VOID Scheduler::AddTask(Task* task)
 {
-task->m_This=task;
 SpinLock lock(s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];

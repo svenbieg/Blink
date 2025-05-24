@@ -2,9 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)start.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Arm\GpioHelper.cpp">
-      <Filter>Devices\Arm</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.cpp">
       <Filter>Devices\System</Filter>
     </ClCompile>
@@ -21,14 +18,14 @@
       <Filter>Devices\Timers</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)unwind.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHelper.cpp">
+      <Filter>Devices\Gpio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)config.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Arm\GpioHelper.h">
-      <Filter>Devices\Arm</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.h">
       <Filter>Devices\System</Filter>
     </ClInclude>
@@ -52,6 +49,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)cstddef" />
     <ClInclude Include="$(MSBuildThisFileDirectory)unwind.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)base.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHelper.h">
+      <Filter>Devices\Gpio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">
@@ -60,14 +60,14 @@
     <Filter Include="Devices">
       <UniqueIdentifier>{7f97cd4a-fd26-4c76-a241-adfdccadddce}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Devices\Arm">
-      <UniqueIdentifier>{18dd74a5-4c3a-40a7-b793-7c5ae2274ac8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Devices\System">
       <UniqueIdentifier>{857258f7-700f-4622-8844-54224f715bde}</UniqueIdentifier>
     </Filter>
     <Filter Include="Devices\Timers">
       <UniqueIdentifier>{139bd0a9-020c-4e62-a3a5-3c1279770a5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Gpio">
+      <UniqueIdentifier>{605f50fa-4556-45f8-bc01-9b5daa298ea6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -92,7 +92,6 @@
     <None Include="$(MSBuildThisFileDirectory)task.S" />
     <None Include="$(MSBuildThisFileDirectory)irq.S" />
     <None Include="$(MSBuildThisFileDirectory)except.S" />
-    <None Include="$(MSBuildThisFileDirectory)Configuration\Debug.cfg" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Debug.targets">
       <Filter>Configuration</Filter>
     </None>
@@ -103,6 +102,9 @@
       <Filter>Configuration</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)Configuration\bcm2712-rpi-5-b.dtb">
+      <Filter>Configuration</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Debug.cfg">
       <Filter>Configuration</Filter>
     </None>
   </ItemGroup>

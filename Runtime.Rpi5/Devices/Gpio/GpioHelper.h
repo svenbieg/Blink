@@ -10,7 +10,14 @@
 //===========
 
 namespace Devices {
-	namespace Arm {
+	namespace Gpio {
+
+
+//======
+// Pins
+//======
+
+constexpr UINT PIN_ACTLED=41;
 
 
 //==========

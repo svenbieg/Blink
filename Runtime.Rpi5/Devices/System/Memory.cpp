@@ -13,8 +13,8 @@
 #include <config.h>
 #include <heap.h>
 #include "Devices/System/Cpu.h"
+#include "Devices/System/Memory.h"
 #include "BitHelper.h"
-#include "Memory.h"
 
 using namespace Devices::System;
 

@@ -2,6 +2,13 @@
 // irq.S
 //=======
 
+.section ".text"
+
+
+//=======
+// Using
+//=======
+
 #include <cpu.h>
 #include <irq.h>
 

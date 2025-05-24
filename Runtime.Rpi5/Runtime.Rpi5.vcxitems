@@ -10,7 +10,7 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Arm\GpioHelper.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Interrupts.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Memory.cpp" />
@@ -23,7 +23,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)base.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cpu.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cstddef" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Arm\GpioHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Interrupts.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Memory.h" />

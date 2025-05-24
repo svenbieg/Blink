@@ -15,6 +15,7 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)BitHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CharHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\cluster.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\Index.h" />

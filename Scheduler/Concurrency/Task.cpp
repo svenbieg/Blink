@@ -82,7 +82,7 @@ return m_Status;
 // Con-/Destructors Protected
 //============================
 
-Task::Task(Handle<String> name, VOID* stack_end, UINT stack_size):
+Task::Task(Handle<String> name, SIZE_T stack_top, SIZE_T stack_size):
 Cancelled(false),
 Name(name->Begin()),
 m_Create(nullptr),
@@ -97,10 +97,12 @@ m_Release(nullptr),
 m_ResumeTime(0),
 m_Signal(nullptr),
 m_Sleeping(nullptr),
-m_StackPointer(stack_end),
+m_StackBottom((SIZE_T)stack_top-stack_size),
+m_StackPointer(stack_top),
 m_StackSize(stack_size),
 m_Status(Status::Success),
 m_Then(nullptr),
+m_This(this),
 m_Waiting(nullptr)
 {
 TaskHelper::Initialize(&m_StackPointer, TaskProc, this);

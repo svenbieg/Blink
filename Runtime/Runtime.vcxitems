@@ -16,6 +16,7 @@
     <None Include="$(MSBuildThisFileDirectory)Configuration\Debug.targets" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Default.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Default.targets" />
+    <None Include="$(MSBuildThisFileDirectory)Configuration\NinjaBuild.targets" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Platform.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Platform.targets" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.props" />
@@ -24,13 +25,14 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)asm.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)assert.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)BitHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)bits.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cassert" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cmath" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cxxabi.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)heap.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)io.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mutex" />
     <ClInclude Include="$(MSBuildThisFileDirectory)new" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
