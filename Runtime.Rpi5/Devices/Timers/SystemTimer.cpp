@@ -105,10 +105,7 @@ task->Lock();
 while(!task->Cancelled)
 	{
 	m_Signal.Wait();
-	DispatchedQueue::Append(this, [this]()
-		{
-		Triggered(this);
-		});
+	Triggered(this);
 	}
 }
 
