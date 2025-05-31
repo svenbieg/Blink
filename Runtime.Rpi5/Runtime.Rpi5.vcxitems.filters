@@ -92,25 +92,8 @@
     <None Include="$(MSBuildThisFileDirectory)task.S" />
     <None Include="$(MSBuildThisFileDirectory)irq.S" />
     <None Include="$(MSBuildThisFileDirectory)except.S" />
-    <None Include="$(MSBuildThisFileDirectory)Configuration\Debug.targets">
-      <Filter>Configuration</Filter>
-    </None>
-    <None Include="$(MSBuildThisFileDirectory)Configuration\Default.targets">
-      <Filter>Configuration</Filter>
-    </None>
-    <None Include="$(MSBuildThisFileDirectory)Configuration\branchself.bin">
-      <Filter>Configuration</Filter>
-    </None>
-    <None Include="$(MSBuildThisFileDirectory)Configuration\bcm2712-rpi-5-b.dtb">
-      <Filter>Configuration</Filter>
-    </None>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Debug.cfg">
       <Filter>Configuration</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="$(MSBuildThisFileDirectory)Configuration\config.txt">
-      <Filter>Configuration</Filter>
-    </Text>
   </ItemGroup>
 </Project>
