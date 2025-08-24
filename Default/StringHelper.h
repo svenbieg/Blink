@@ -63,6 +63,8 @@ public:
 	static UINT Copy(LPWSTR Destination, UINT Size, LPCSTR Source, UINT Length=0);
 	static UINT Copy(LPWSTR Destination, UINT Size, LPCWSTR Source, UINT Length=0);
 	static UINT Copy(LPWSTR Destination, UINT Size, Handle<String> const& Source, UINT Length=0);
+	static UINT Decrypt(LPSTR Destination, UINT Size, BYTE const* Source, LPCSTR Key);
+	static UINT Encrypt(BYTE* Destination, SIZE_T Size, LPCSTR Source, LPCSTR Key);
 	static BOOL Find(LPCSTR String, LPCSTR Find, UINT* Position=nullptr, BOOL CaseSensitive=true);
 	static BOOL Find(LPCSTR String, LPCWSTR Find, UINT* Position=nullptr, BOOL CaseSensitive=true);
 	static BOOL Find(LPCWSTR String, LPCSTR Find, UINT* Position=nullptr, BOOL CaseSensitive=true);
