@@ -40,22 +40,18 @@ public:
 	virtual ~Object() {}
 
 	// Common
+	UINT GetReferenceCount()const { return m_ReferenceCount; }
 	virtual Handle<String> ToString(LanguageCode Language=LanguageCode::None);
 
 protected:
 	// Con-/Destructors
-	Object(): m_RefCount(0) {}
+	Object(): m_ReferenceCount(0) {}
 
-private:
 	// Common
 	inline VOID Refer()
 		{
-		Cpu::InterlockedIncrement(&m_RefCount);
+		Cpu::InterlockedIncrement(&m_ReferenceCount);
 		}
-	inline VOID Release()
-		{
-		if(Cpu::InterlockedDecrement(&m_RefCount)==0)
-			delete this;
-		}
-	volatile UINT m_RefCount;
+	virtual UINT Release();
+	volatile UINT m_ReferenceCount;
 };

@@ -425,6 +425,42 @@ BOOL CharHelper::Equal(WCHAR c1, WCHAR c2, BOOL cs)
 return CharEqual(c1, c2, cs);
 }
 
+BOOL CharHelper::Equal(CHAR c, LPCSTR chars, BOOL cs)
+{
+if(!chars)
+	return false;
+for(UINT u=0; chars[u]; u++)
+	{
+	if(CharEqual(c, chars[u], cs))
+		return true;
+	}
+return false;
+}
+
+BOOL CharHelper::Equal(WCHAR c, LPCSTR chars, BOOL cs)
+{
+if(!chars)
+	return false;
+for(UINT u=0; chars[u]; u++)
+	{
+	if(CharEqual(c, chars[u], cs))
+		return true;
+	}
+return false;
+}
+
+BOOL CharHelper::Equal(WCHAR c, LPCWSTR chars, BOOL cs)
+{
+if(!chars)
+	return false;
+for(UINT u=0; chars[u]; u++)
+	{
+	if(CharEqual(c, chars[u], cs))
+		return true;
+	}
+return false;
+}
+
 BOOL CharHelper::IsAlpha(CHAR c)
 {
 return CharIsAlpha(c);

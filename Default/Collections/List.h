@@ -24,7 +24,6 @@ namespace Collections {
 //======================
 
 template <typename _item_t, typename _size_t, WORD _group_size> class ListIterator;
-template <typename _item_t, typename _size_t, WORD _group_size> class ConstListIterator;
 
 
 //======
@@ -41,31 +40,20 @@ private:
 public:
 	// Using
 	using Iterator=ListIterator<_item_t, _size_t, _group_size>;
-	using ConstIterator=ConstListIterator<_item_t, _size_t, _group_size>;
 
 	// Friends
 	friend Iterator;
-	friend ConstIterator;
 
 	// Con-/Destructors
 	static inline Handle<List> Create() { return new List(); }
 	static inline Handle<List> Create(_list_t const* Copy) { return new List(Copy); }
 
 	// Access
-	inline Handle<Iterator> At(_size_t Position) { return new Iterator(this, Position); }
-	inline Handle<ConstIterator> AtConst(_size_t Position) { return new ConstIterator(this, Position); }
-	inline Handle<Iterator> Begin() { return new Iterator(this, 0); }
-	inline Handle<ConstIterator> BeginConst() { return new ConstIterator(this, 0); }
+	inline Handle<Iterator> Begin(_size_t Position=0) { return new Iterator(this, Position); }
 	inline BOOL Contains(_item_t const& Item) { return m_List.contains(Item); }
 	inline Handle<Iterator> End()
 		{
 		auto it=new Iterator(this, -2);
-		it->End();
-		return it;
-		}
-	inline Handle<ConstIterator> EndConst()
-		{
-		auto it=new ConstIterator(this, -2);
 		it->End();
 		return it;
 		}
@@ -82,6 +70,10 @@ public:
 	// Modification
 	BOOL Add(_item_t const& Item, BOOL Notify=true)
 		{
+		BOOL cancel=false;
+		Adding(this, Item, &cancel);
+		if(cancel)
+			return false;
 		if(m_List.add(Item))
 			{
 			if(Notify)
@@ -94,8 +86,13 @@ public:
 		return false;
 		}
 	Event<List, _item_t> Added;
+	Event<List, _item_t, BOOL*> Adding;
 	VOID Append(_item_t const& Item, BOOL Notify=true)
 		{
+		BOOL cancel=false;
+		Adding(this, Item, &cancel);
+		if(cancel)
+			return;
 		m_List.append(Item);
 		if(Notify)
 			{
@@ -116,6 +113,10 @@ public:
 		}
 	BOOL InsertAt(_size_t Position, _item_t const& Item, BOOL Notify=true)
 		{
+		BOOL cancel=false;
+		Adding(this, Item, &cancel);
+		if(cancel)
+			return false;
 		if(m_List.insert_at(Position, Item))
 			{
 			if(Notify)
@@ -160,7 +161,7 @@ public:
 		auto it=m_List.begin(Position);
 		if(!it.has_current())
 			return false;
-		_item_t item=*it;
+		_item_t item=it.get_current();
 		it.remove_current();
 		Removed(this, item);
 		Changed(this);
@@ -169,12 +170,23 @@ public:
 	Event<List, _item_t> Removed;
 	BOOL SetAt(_size_t Position, _item_t const& Item, BOOL Notify=true)
 		{
-		if(m_List.set_at(Position, Item))
-			{
-			Changed(this);
-			return true;
-			}
-		return false;
+		if(!Notify)
+			return m_List.set_at(Position, Item);
+		auto it=m_List.begin(Position);
+		if(!it.has_current())
+			return false;
+		_item_t item=it.get_current();
+		if(item==Item)
+			return false;
+		BOOL cancel=false;
+		Adding(this, Item, &cancel);
+		if(cancel)
+			return false;
+		it.set_current(Item);
+		Removed(this, item);
+		Added(this, Item);
+		Changed(this);
+		return true;
 		}
 
 protected:
@@ -207,18 +219,13 @@ public:
 	friend _list_t;
 
 	// Access
-	_item_t& GetCurrent()
-		{
-		if(!m_It.has_current())
-			throw OutOfRangeException();
-		return *m_It;
-		}
-	BOOL HasCurrent()const { return m_It.has_current(); }
+	inline _item_t& GetCurrent() { return m_It.get_current(); }
+	inline BOOL HasCurrent()const { return m_It.has_current(); }
 
 	// Navigation
-	BOOL Begin() { return m_It.begin(); }
-	BOOL End() { return m_It.rbegin(); }
-	_size_t GetPosition() { return m_It.get_position(); }
+	inline BOOL Begin() { return m_It.begin(); }
+	inline BOOL End() { return m_It.rbegin(); }
+	inline _size_t GetPosition() { return m_It.get_position(); }
 	BOOL Move(BOOL Forward, BOOL Repeat)
 		{
 		if(Forward)
@@ -241,8 +248,8 @@ public:
 			}
 		return true;
 		}
-	BOOL MoveNext() { return m_It.move_next(); }
-	BOOL MovePrevious() { return m_It.move_previous(); }
+	inline BOOL MoveNext() { return m_It.move_next(); }
+	inline BOOL MovePrevious() { return m_It.move_previous(); }
 
 	// Modification
 	BOOL RemoveCurrent(BOOL Notify=true)
@@ -264,37 +271,6 @@ private:
 
 	// Common
 	typename list<_item_t, _size_t, _group_size>::iterator m_It;
-	Handle<_list_t> m_List;
-};
-
-template <typename _item_t, typename _size_t, WORD _group_size>
-class ConstListIterator: public Object
-{
-private:
-	// Using
-	using _list_t=List<_item_t, _size_t, _group_size>;
-
-public:
-	// Friends
-	friend _list_t;
-
-	// Access
-	_item_t& GetCurrent()const { return *m_It; }
-	BOOL HasCurrent()const { return m_It.has_current(); }
-
-	// Navigation
-	BOOL Begin() { return m_It.begin(); }
-	BOOL End() { return m_It.rbegin(); }
-	_size_t GetPosition() { return m_It.get_position(); }
-	BOOL MoveNext() { return m_It.move_next(); }
-	BOOL MovePrevious() { return m_It.move_previous(); }
-
-private:
-	// Con-/Destructors
-	ConstListIterator(_list_t* List, _size_t Position): m_It(&List->m_List, Position), m_List(List) {}
-
-	// Common
-	typename list<_item_t, _size_t, _group_size>::const_iterator m_It;
 	Handle<_list_t> m_List;
 };
 

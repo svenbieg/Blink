@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "File.h"
+#include "Storage/File.h"
 
 
 //===========
@@ -35,17 +35,14 @@ class Directory: public Object
 public:
 	// Common
 	virtual Handle<DirectoryIterator> Begin()=0;
-	virtual Handle<File> CreateFile(Handle<String> Path, FileCreateMode CreateMode, FileAccessMode AccessMode, FileShareMode ShareMode)=0;
+	virtual Handle<File> CreateFile(Handle<String> Path, FileCreateMode Create, FileAccessMode Access, FileShareMode Share)=0;
 	virtual Handle<Object> Get(Handle<String> Path)=0;
-	Handle<String> GetName()const;
-	Handle<String> GetPath()const;
+	virtual Handle<String> GetName()=0;
+	virtual Handle<Directory> GetParent()const=0;
 
 protected:
 	// Con-/Destructors
-	Directory(Handle<String> Path);
-
-	// Common
-	Handle<String> m_Path;
+	Directory() {}
 };
 
 

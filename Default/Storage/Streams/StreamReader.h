@@ -34,6 +34,8 @@ public:
 	UINT FindChar(LPCSTR Chars);
 	TCHAR LastChar;
 	SIZE_T Read(VOID* Buffer, SIZE_T Size);
+	UINT ReadChar(CHAR* Char=nullptr);
+	UINT ReadChar(WCHAR* Char);
 	UINT ReadString(LPSTR Buffer, UINT Size);
 	UINT ReadString(LPWSTR Buffer, UINT Size);
 	UINT ReadString(LPSTR Buffer, UINT Size, CHAR Escape);
@@ -43,6 +45,7 @@ public:
 	Handle<String> ReadString(SIZE_T* Size=nullptr, LPCSTR Escape=nullptr, LPCSTR Truncate=nullptr);
 	VOID SetStream(InputStream* Stream);
 	UINT Skip(UINT Count=1);
+	UINT Skip(LPCSTR Chars);
 
 private:
 	// Using

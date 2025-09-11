@@ -38,83 +38,77 @@ private:
 class AbortException: public Exception
 {
 public:
-	// Con-/Destructors
 	AbortException(): Exception(Status::Aborted) {}
 };
 
 class AccessDeniedException: public Exception
 {
 public:
-	// Con-/Destructors
 	AccessDeniedException(): Exception(Status::AccessDenied) {}
+};
+
+class BufferOverrunException: public Exception
+{
+public:
+	BufferOverrunException(): Exception(Status::BufferOverrun) {}
 };
 
 class ConnectionFailedException: public Exception
 {
 public:
-	// Con-/Destructors
 	ConnectionFailedException(): Exception(Status::ConnectionFailed) {}
 };
 
 class DeviceNotReadyException: public Exception
 {
 public:
-	// Con-/Destructors
 	DeviceNotReadyException(): Exception(Status::DeviceNotReady) {}
 };
 
 class DivisionByZeroException: public Exception
 {
 public:
-	// Con-/Destructors
 	DivisionByZeroException(): Exception(Status::DivisionByZero) {}
 };
 
 class InvalidArgumentException: public Exception
 {
 public:
-	// Con-/Destructors
 	InvalidArgumentException(): Exception(Status::InvalidArgument) {}
 };
 
 class InvalidContextException: public Exception
 {
 public:
-	// Con-/Destructors
 	InvalidContextException(): Exception(Status::InvalidContext) {}
 };
 
 class NotFoundException: public Exception
 {
 public:
-	// Con-/Destructors
 	NotFoundException(): Exception(Status::NotFound) {}
 };
 
 class NotImplementedException: public Exception
 {
 public:
-	// Con-/Destructors
 	NotImplementedException(): Exception(Status::NotImplemented) {}
 };
 
 class OutOfMemoryException: public Exception
 {
 public:
-	// Con-/Destructors
 	OutOfMemoryException(): Exception(Status::OutOfMemory) {}
 };
 
 class OutOfRangeException: public Exception
 {
 public:
-	// Con-/Destructors
 	OutOfRangeException(): Exception(Status::OutOfRange) {}
 };
 
 class TimeoutException: public Exception
 {
 public:
-	// Con-/Destructors
 	TimeoutException(): Exception(Status::Timeout) {}
 };

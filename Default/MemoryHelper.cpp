@@ -39,7 +39,7 @@ while(dst<end)
 	*dst++=*src++;
 }
 
-VOID MemoryHelper::Copy(SIZE_T* dst, SIZE_T const* src, SIZE_T count)
+VOID MemoryHelper::Copy(UINT* dst, UINT const* src, SIZE_T count)
 {
 while(count--)
 	*dst++=*src++;
@@ -48,6 +48,12 @@ while(count--)
 VOID MemoryHelper::Copy(UINT* dst, UINT* end, UINT const* src)
 {
 while(dst<end)
+	*dst++=*src++;
+}
+
+VOID MemoryHelper::Copy(UINT64* dst, UINT64 const* src, SIZE_T count)
+{
+while(count--)
 	*dst++=*src++;
 }
 

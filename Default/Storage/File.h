@@ -38,7 +38,6 @@ CreateNew
 
 enum class FileAccessMode
 {
-None,
 ReadOnly,
 ReadWrite
 };
@@ -50,7 +49,6 @@ ReadWrite
 
 enum class FileShareMode
 {
-None,
 Exclusive,
 ShareRead,
 ShareWrite
@@ -65,18 +63,13 @@ class File: public Seekable
 {
 public:
 	// Common
-	virtual VOID Close()=0;
-	virtual Status Create(FileCreateMode Create=FileCreateMode::OpenExisting, FileAccessMode Access=FileAccessMode::ReadOnly, FileShareMode Share=FileShareMode::ShareRead)=0;
-	Handle<String> GetName()const;
-	Handle<String> GetPath()const;
+	virtual Handle<String> GetName()=0;
+	virtual Handle<String> GetPath()=0;
 	virtual BOOL SetSize(FILE_SIZE Size)=0;
 
 protected:
 	// Con-/Destructors
-	File(Handle<String> Path);
-
-	// Common
-	Handle<String> m_Path;
+	File() {}
 };
 
 }

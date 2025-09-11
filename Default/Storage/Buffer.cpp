@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include <new>
 #include "Buffer.h"
 
 
@@ -23,20 +24,13 @@ namespace Storage {
 // Con-/Destructors
 //==================
 
-Buffer::~Buffer()
-{
-if(m_Options!=BufferOptions::Static)
-	delete m_Buffer;
-}
-
 Handle<Buffer> Buffer::Create(SIZE_T size)
 {
-return new Buffer(size);
-}
-
-Handle<Buffer> Buffer::Create(VOID const* buf, SIZE_T size, BufferOptions options)
-{
-return new Buffer(buf, size, options);
+UINT buf_size=sizeof(Buffer)+size;
+auto buf=(Buffer*)operator new(buf_size);
+auto buf_ptr=(BYTE*)((SIZE_T)buf+sizeof(Buffer));
+new (buf) Buffer(buf_ptr, size);
+return buf;
 }
 
 
@@ -115,42 +109,10 @@ return copy;
 // Con-/Destructors Private
 //==========================
 
-Buffer::Buffer(SIZE_T size):
-m_Buffer(new BYTE[size]),
-m_Options(BufferOptions::None),
+Buffer::Buffer(BYTE* buf_ptr, SIZE_T size):
+m_Buffer(buf_ptr),
 m_Position(0),
 m_Size(size)
 {}
-
-Buffer::Buffer(VOID const* buf, SIZE_T size, BufferOptions options):
-m_Buffer(nullptr),
-m_Options(options),
-m_Position(0),
-m_Size(size)
-{
-switch(options)
-	{
-	case BufferOptions::Move:
-		{
-		if(size==0)
-			throw InvalidArgumentException();
-		m_Buffer=(BYTE*)buf;
-		break;
-		}
-	case BufferOptions::Static:
-		{
-		m_Buffer=(BYTE*)buf;
-		break;
-		}
-	default:
-		{
-		if(size==0)
-			throw InvalidArgumentException();
-		m_Buffer=new BYTE[size];
-		MemoryHelper::Copy(m_Buffer, buf, size);
-		break;
-		}
-	}
-}
 
 }

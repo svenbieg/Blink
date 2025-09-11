@@ -45,7 +45,10 @@ UINT size=0;
 while(1)
 	{
 	CHAR c=0;
-	size+=m_ReadAnsi(m_Stream, &c);
+	UINT read=m_ReadAnsi(m_Stream, &c);
+	if(!read)
+		break;
+	size+=read;
 	LastChar=CharHelper::ToChar(c);
 	if(c==0)
 		break;
@@ -63,6 +66,24 @@ SIZE_T StreamReader::Read(VOID* buf, SIZE_T size)
 if(!m_Stream)
 	return 0;
 return m_Stream->Read(buf, size);
+}
+
+UINT StreamReader::ReadChar(CHAR* c_ptr)
+{
+CHAR c=0;
+UINT read=CharHelper::ReadAnsi(m_Stream, &c);
+if(c_ptr)
+	*c_ptr=c;
+return read;
+}
+
+UINT StreamReader::ReadChar(WCHAR* wc_ptr)
+{
+WCHAR wc=0;
+UINT read=CharHelper::ReadUnicode(m_Stream, &wc);
+if(wc_ptr)
+	*wc_ptr=wc;
+return read;
 }
 
 UINT StreamReader::ReadString(LPSTR buf, UINT size)
@@ -135,13 +156,41 @@ switch(format)
 
 UINT StreamReader::Skip(UINT count)
 {
-UINT size_ptr=0;
+UINT size=0;
 for(UINT u=0; u<count; u++)
 	{
 	CHAR c=0;
-	size_ptr+=m_ReadAnsi(m_Stream, &c);
+	UINT read=m_ReadAnsi(m_Stream, &c);
+	if(!read)
+		break;
+	size+=read;
 	}
-return size_ptr;
+return size;
+}
+
+UINT StreamReader::Skip(LPCSTR chars)
+{
+UINT size=0;
+while(1)
+	{
+	CHAR c=0;
+	UINT read=m_ReadAnsi(m_Stream, &c);
+	if(!read)
+		break;
+	size+=read;
+	BOOL found=false;
+	for(UINT u=0; chars[u]; u++)
+		{
+		if(c==chars[u])
+			{
+			found=true;
+			break;
+			}
+		}
+	if(found)
+		break;
+	}
+return size;
 }
 
 
@@ -156,8 +205,11 @@ UINT pos=0;
 while(1)
 	{
 	_char_t c=0;
-	read+=read_fn(m_Stream, &c);
+	UINT rd=read_fn(m_Stream, &c);
 	LastChar=CharHelper::ToChar(c);
+	if(!rd)
+		break;
+	read+=rd;
 	buf[pos++]=c;
 	if(!c)
 		break;
@@ -177,8 +229,11 @@ UINT pos=0;
 while(1)
 	{
 	_char_t c=0;
-	read+=read_fn(m_Stream, &c);
+	UINT rd=read_fn(m_Stream, &c);
 	LastChar=CharHelper::ToChar(c);
+	if(!rd)
+		break;
+	read+=rd;
 	if(CharHelper::Equal(c, esc))
 		c=0;
 	buf[pos++]=c;
@@ -200,8 +255,11 @@ UINT pos=0;
 while(1)
 	{
 	_char_t c=0;
-	read+=read_fn(m_Stream, &c);
+	UINT rd=read_fn(m_Stream, &c);
 	LastChar=CharHelper::ToChar(c);
+	if(!rd)
+		break;
+	read+=rd;
 	BOOL skip=false;
 	if(trunc)
 		{
@@ -247,8 +305,11 @@ Collections::list<TCHAR> buf;
 while(1)
 	{
 	TCHAR c=0;
-	read+=read_fn(m_Stream, &c);
+	UINT rd=read_fn(m_Stream, &c);
 	LastChar=c;
+	if(!rd)
+		break;
+	read+=rd;
 	BOOL skip=false;
 	if(trunc)
 		{
@@ -285,9 +346,11 @@ UINT len=buf.get_count();
 if(!len)
 	return nullptr;
 auto str=String::Create(len, nullptr);
-LPTSTR str_ptr=const_cast<LPTSTR>(str->Begin());
+auto str_ptr=str->m_Buffer;
 buf.get_many(0, str_ptr, len);
 str_ptr[len]=0;
+str->m_Hash=StringHelper::GetHash(str_ptr);
+str->m_Length=len;
 return str;
 }
 

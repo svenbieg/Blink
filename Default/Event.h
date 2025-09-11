@@ -101,7 +101,7 @@ public:
 	Event(Event const&)=delete;
 
 	// Access
-	inline operator BOOL() { return this->pFirst!=nullptr; }
+	inline operator BOOL() { return this->m_Handler!=nullptr; }
 	VOID operator()(_sender_t* Sender, _args_t... Arguments) { this->Run(Sender, Arguments...); }
 
 	// Modification

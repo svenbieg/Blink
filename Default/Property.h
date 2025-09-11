@@ -19,7 +19,6 @@ public:
 	Property(Property&&)=delete;
 
 	// Access
-	//inline operator bool()const { return tValue; }
 	inline operator _item_t const&()const { return m_Value; }
 	inline _item_t const& Get()const { return m_Value; }
 

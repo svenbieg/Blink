@@ -9,6 +9,9 @@
 // Using
 //=======
 
+#include "Storage/Encoding/Dwarf.h"
+#include "Storage/Streams/StreamReader.h"
+#include "Storage/Streams/StreamWriter.h"
 #include "Handle.h"
 #include "StringHelper.h"
 
@@ -20,6 +23,16 @@
 class String;
 template <> class Handle<String>;
 
+class StringBuilder;
+
+namespace Storage
+{
+namespace Streams
+	{
+	class StreamReader;
+	}
+}
+
 
 //========
 // String
@@ -28,10 +41,17 @@ template <> class Handle<String>;
 class String: public Object
 {
 public:
+	// Using
+	using StreamReader=Storage::Streams::StreamReader;
+
+	// Friends
+	friend Handle<String>;
+	friend StreamReader;
+	friend StringBuilder;
+
 	// Con-/Destructors
 	static Handle<String> Create(LPCSTR Value);
 	static Handle<String> Create(LPCWSTR Value);
-	static Handle<String> Create(UINT Length, nullptr_t);
 	static Handle<String> Create(UINT Length, LPCSTR Value);
 	static Handle<String> Create(UINT Length, LPCWSTR Value);
 	static Handle<String> Create(LPCSTR Format, VariableArguments const& Arguments);
@@ -49,24 +69,14 @@ public:
 		}
 	inline UINT Copy(LPSTR Buffer, UINT Size) { return StringHelper::Copy(Buffer, Size, m_Buffer); }
 	inline UINT Copy(LPWSTR Buffer, UINT Size) { return StringHelper::Copy(Buffer, Size, m_Buffer); }
-	inline UINT64 GetHash()
-		{
-		if(m_Hash==INVALID_HASH)
-			m_Hash=StringHelper::GetHash(m_Buffer);
-		return m_Hash;
-		}
+	inline UINT64 GetHash() { return m_Hash; }
 	static inline UINT64 GetHash(String* String)
 		{
 		if(!String)
 			return 0;
-		return String->GetHash();
+		return String->m_Hash;
 		}
-	inline UINT GetLength()
-		{
-		if(!m_Length)
-			m_Length=StringHelper::Length(m_Buffer);
-		return m_Length;
-		}
+	inline UINT GetLength()const { return m_Length; }
 	inline BOOL HasValue()const { return m_Buffer[0]!=0; }
 	inline BOOL IsEmpty()const { return m_Buffer[0]==0; }
 	template <class... _args_t> inline UINT Scan(LPCSTR Format, _args_t... Arguments)
@@ -95,14 +105,12 @@ public:
 	Handle<String> Replace(LPCSTR Find, LPCSTR Replace, BOOL CaseSensitive=true, BOOL Repeat=false);
 
 private:
-	// Settings
-	static constexpr UINT64 INVALID_HASH=(1ULL<<63);
-
 	// Con-/Destructors
 	String(LPTSTR Buffer);
 	String(LPTSTR Buffer, UINT Size, LPCSTR Value);
 	String(LPTSTR Buffer, UINT Size, LPCWSTR Value);
 	String(LPTSTR Buffer, UINT Size, LPCSTR Format, VariableArguments const& Arguments);
+	static Handle<String> Create(UINT Length, nullptr_t);
 
 	// Common
 	LPTSTR m_Buffer;
@@ -119,6 +127,13 @@ template <>
 class Handle<String>
 {
 public:
+	// Using
+	using Dwarf=Storage::Encoding::Dwarf;
+	using InputStream=Storage::Streams::InputStream;
+	using OutputStream=Storage::Streams::OutputStream;
+	using StreamReader=Storage::Streams::StreamReader;
+	using StreamWriter=Storage::Streams::StreamWriter;
+
 	// Friends
 	template <class _friend_t> friend class Handle;
 
@@ -128,54 +143,75 @@ public:
 	inline Handle(String* Copy) { Handle<Object>::Create(&m_Object, Copy); }
 	inline Handle(Handle const& Copy) { Handle<Object>::Create(&m_Object, Copy.m_Object); }
 	inline Handle(Handle&& Move)noexcept: m_Object(Move.m_Object) { Move.m_Object=nullptr; }
-	inline ~Handle() { Handle<Object>::Clear(&m_Object); }
 	inline Handle(LPCSTR Value): m_Object(nullptr) { operator=(Value); }
 	inline Handle(LPCWSTR Value): m_Object(nullptr) { operator=(Value); }
+	inline ~Handle() { Handle<Object>::Clear(&m_Object); }
 
 	// Access
-	inline operator BOOL()const { return m_Object&&m_Object->HasValue(); }
+	inline operator bool()const { return m_Object&&m_Object->HasValue(); }
 	inline operator String*()const { return m_Object; }
 	inline String* operator->()const { return m_Object; }
+	SIZE_T WriteToStream(OutputStream* Stream)
+		{
+		if(!m_Object)
+			return Dwarf::WriteUnsigned(Stream, 0U);
+		StreamWriter writer(Stream);
+		SIZE_T size=0;
+		auto len=m_Object->m_Length;
+		size+=Dwarf::WriteUnsigned(Stream, len);
+		size+=writer.Print(len, m_Object->m_Buffer);
+		return size;
+		}
 
 	// Comparison
-	inline BOOL operator==(nullptr_t)const { return !operator BOOL(); }
-	inline BOOL operator==(String* Value)const { return String::Compare(m_Object, Value)==0; }
-	inline BOOL operator==(LPCSTR Value)const { return String::Compare(m_Object, Value)==0; }
-	inline BOOL operator==(LPCWSTR Value)const { return String::Compare(m_Object, Value)==0; }
-	inline BOOL operator!=(nullptr_t)const { return operator BOOL(); }
-	inline BOOL operator!=(String* Value)const { return String::Compare(m_Object, Value)!=0; }
-	inline BOOL operator!=(LPCSTR Value)const { return String::Compare(m_Object, Value)!=0; }
-	inline BOOL operator!=(LPCWSTR Value)const { return String::Compare(m_Object, Value)!=0; }
-	inline BOOL operator>(nullptr_t)const { return operator BOOL(); }
-	inline BOOL operator>(String* Value)const { return String::Compare(m_Object, Value)>0; }
-	inline BOOL operator>(LPCSTR Value)const { return String::Compare(m_Object, Value)>0; }
-	inline BOOL operator>(LPCWSTR Value)const { return String::Compare(m_Object, Value)>0; }
-	inline BOOL operator>=(nullptr_t)const { return true; }
-	inline BOOL operator>=(String* Value)const { return String::Compare(m_Object, Value)>=0; }
-	inline BOOL operator>=(LPCSTR Value)const { return String::Compare(m_Object, Value)>=0; }
-	inline BOOL operator>=(LPCWSTR Value)const { return String::Compare(m_Object, Value)>=0; }
-	inline BOOL operator<(nullptr_t)const { return false; }
-	inline BOOL operator<(String* Value)const { return String::Compare(m_Object, Value)<0; }
-	inline BOOL operator<(LPCSTR Value)const { return String::Compare(m_Object, Value)<0; }
-	inline BOOL operator<(LPCWSTR Value)const { return String::Compare(m_Object, Value)<0; }
-	inline BOOL operator<=(nullptr_t)const { return !operator BOOL(); }
-	inline BOOL operator<=(String* Value)const { return String::Compare(m_Object, Value)<=0; }
-	inline BOOL operator<=(LPCSTR Value)const { return String::Compare(m_Object, Value)<=0; }
-	inline BOOL operator<=(LPCWSTR Value)const { return String::Compare(m_Object, Value)<=0; }
+	inline bool operator==(nullptr_t)const { return !operator bool(); }
+	inline bool operator==(String* Value)const { return String::Compare(m_Object, Value)==0; }
+	inline bool operator==(LPCSTR Value)const { return String::Compare(m_Object, Value)==0; }
+	inline bool operator==(LPCWSTR Value)const { return String::Compare(m_Object, Value)==0; }
+	inline bool operator!=(nullptr_t)const { return operator bool(); }
+	inline bool operator!=(String* Value)const { return String::Compare(m_Object, Value)!=0; }
+	inline bool operator!=(LPCSTR Value)const { return String::Compare(m_Object, Value)!=0; }
+	inline bool operator!=(LPCWSTR Value)const { return String::Compare(m_Object, Value)!=0; }
+	inline bool operator>(nullptr_t)const { return operator bool(); }
+	inline bool operator>(String* Value)const { return String::Compare(m_Object, Value)>0; }
+	inline bool operator>(LPCSTR Value)const { return String::Compare(m_Object, Value)>0; }
+	inline bool operator>(LPCWSTR Value)const { return String::Compare(m_Object, Value)>0; }
+	inline bool operator>=(nullptr_t)const { return true; }
+	inline bool operator>=(String* Value)const { return String::Compare(m_Object, Value)>=0; }
+	inline bool operator>=(LPCSTR Value)const { return String::Compare(m_Object, Value)>=0; }
+	inline bool operator>=(LPCWSTR Value)const { return String::Compare(m_Object, Value)>=0; }
+	inline bool operator<(nullptr_t)const { return false; }
+	inline bool operator<(String* Value)const { return String::Compare(m_Object, Value)<0; }
+	inline bool operator<(LPCSTR Value)const { return String::Compare(m_Object, Value)<0; }
+	inline bool operator<(LPCWSTR Value)const { return String::Compare(m_Object, Value)<0; }
+	inline bool operator<=(nullptr_t)const { return !operator bool(); }
+	inline bool operator<=(String* Value)const { return String::Compare(m_Object, Value)<=0; }
+	inline bool operator<=(LPCSTR Value)const { return String::Compare(m_Object, Value)<=0; }
+	inline bool operator<=(LPCWSTR Value)const { return String::Compare(m_Object, Value)<=0; }
 
 	// Assignment
 	inline Handle& operator=(nullptr_t) { Handle<Object>::Clear(&m_Object); return *this; }
 	inline Handle& operator=(String* Copy) { Handle<Object>::Set(&m_Object, Copy); return *this; }
 	inline Handle& operator=(Handle const& Copy) { return operator=(Copy.m_Object); }
-	inline Handle& operator=(LPCSTR Value)
+	inline Handle& operator=(LPCSTR Value) { return operator=(String::Create(Value)); }
+	inline Handle& operator=(LPCWSTR Value) { return operator=(String::Create(Value)); }
+	SIZE_T ReadFromStream(InputStream* Stream)
 		{
-		auto str=String::Create(Value);
-		return operator=(str);
-		}
-	inline Handle& operator=(LPCWSTR Value)
-		{
-		auto str=String::Create(Value);
-		return operator=(str);
+		StreamReader reader(Stream);
+		SIZE_T size=0;
+		UINT len=0;
+		size+=Dwarf::ReadUnsigned(Stream, &len);
+		if(!len)
+			return size;
+		auto str=String::Create(len, nullptr);
+		auto buf=str->m_Buffer;
+		for(UINT u=0; u<len; u++)
+			size+=reader.ReadChar(&buf[u]);
+		buf[len]=0;
+		str->m_Hash=StringHelper::GetHash(buf);
+		str->m_Length=len;
+		operator=(str);
+		return size;
 		}
 
 	// Operators

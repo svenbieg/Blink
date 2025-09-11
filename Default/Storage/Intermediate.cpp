@@ -21,21 +21,6 @@ using namespace Concurrency;
 namespace Storage {
 
 
-//==================
-// Con-/Destructors
-//==================
-
-Intermediate::~Intermediate()
-{
-Clear();
-}
-
-Handle<Intermediate> Intermediate::Create(UINT block_size)
-{
-return new Intermediate(block_size);
-}
-
-
 //========
 // Common
 //========

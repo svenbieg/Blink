@@ -78,7 +78,30 @@ public:
 	static INT64 ReadSigned(BYTE const*& Dwarf);
 	inline UINT64 ReadUnsigned() { return ReadUnsigned((BYTE const*&)m_Buffer); }
 	static UINT64 ReadUnsigned(BYTE const*& Dwarf);
-	static UINT ReadUnsigned(InputStream* Dwarf, UINT64* Value);
+	template <typename _value_t> static UINT ReadUnsigned(InputStream* Dwarf, _value_t* Value)
+		{
+		if(!Dwarf)
+			throw InvalidArgumentException();
+		_value_t value=0;
+		UINT size=0;
+		UINT shift=0;
+		BYTE byte=0;
+		do
+			{
+			UINT read=(UINT)Dwarf->Read(&byte, 1);
+			if(read!=1)
+				break;
+			if(size==sizeof(_value_t))
+				throw BufferOverrunException();
+			size+=read;
+			value|=((UINT)byte&0x7F)<<shift;
+			shift+=7;
+			}
+		while(byte&0x80);
+		if(Value)
+			*Value=value;
+		return size;
+		}
 	template <typename _value_t> inline _value_t ReadValue()
 		{
 		_value_t value=*(_value_t const*)m_Buffer;
@@ -101,7 +124,29 @@ public:
 		}
 	VOID SetPosition(SIZE_T Position) { m_Buffer=(BYTE*)Position; }
 	static UINT WriteSigned(OutputStream* Dwarf, INT64 Value);
-	static UINT WriteUnsigned(OutputStream* Dwarf, UINT64 Value);
+	template <typename _value_t> static UINT WriteUnsigned(OutputStream* Dwarf, _value_t Value)
+		{
+		UINT size=0;
+		do
+			{
+			if(size==sizeof(_value_t))
+				throw BufferOverrunException();
+			BYTE byte=(BYTE)Value&0x7F;
+			Value>>=7;
+			if(Value)
+				byte|=0x80;
+			if(Dwarf)
+				{
+				size+=(UINT)Dwarf->Write(&byte, 1);
+				}
+			else
+				{
+				size++;
+				}
+			}
+		while(Value);
+		return size;
+		}
 
 private:
 	// Common

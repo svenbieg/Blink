@@ -23,7 +23,7 @@ if(!path)
 UINT pos=0;
 for(; path[pos]; pos++)
 	{
-	if(PathHelper::IsSeparator(path[pos]))
+	if(CharHelper::Equal(path[pos], "\\/"))
 		break;
 	}
 return pos;
@@ -45,7 +45,7 @@ if(len==0)
 UINT pos=len-1;
 for(; pos>0; pos--)
 	{
-	if(PathHelper::IsSeparator(path[pos]))
+	if(CharHelper::Equal(path[pos], "\\/"))
 		return pos+1;
 	}
 return 0;
@@ -94,15 +94,6 @@ UINT len=PathHelper::GetDirectoryLength(path);
 if(path[len]==0)
 	return nullptr;
 return &path[len];
-}
-
-template <class _char_t> BOOL PathIsSeparator(_char_t c)
-{
-if(CharHelper::Compare(c, '\\')==0)
-	return true;
-if(CharHelper::Compare(c, '/')==0)
-	return true;
-return false;
 }
 
 
@@ -175,14 +166,4 @@ return PathGetLastComponent(path);
 LPCWSTR PathHelper::GetLastComponent(LPCWSTR path)
 {
 return PathGetLastComponent(path);
-}
-
-BOOL PathHelper::IsSeparator(CHAR c)
-{
-return PathIsSeparator(c);
-}
-
-BOOL PathHelper::IsSeparator(WCHAR c)
-{
-return PathIsSeparator(c);
 }

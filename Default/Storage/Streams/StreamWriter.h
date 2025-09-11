@@ -34,7 +34,7 @@ public:
 	using FormatFlags=StringHelper::FormatFlags;
 
 	// Con-/Destructors
-	StreamWriter(OutputStream* Stream);
+	StreamWriter(OutputStream* Stream=nullptr);
 
 	// Common
 	UINT Print(LPCSTR Value);
@@ -73,6 +73,7 @@ private:
 	template <class _func_t, class _char_t> UINT DoPrint(_func_t WriteChar, UINT Length, _char_t const* Value);
 	template <class _char_t> UINT DoPrint(_char_t const* Value, FormatFlags Flags, UINT Width);
 	template <class _func_t, class _char_t> UINT DoPrintChar(_func_t WriteChar, _char_t Char, UINT Count);
+	VOID SetStreamFormat(StreamFormat Format);
 
 	OutputStream* m_Stream;
 	ANSI_PROC m_WriteAnsi;

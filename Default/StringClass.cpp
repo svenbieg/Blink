@@ -12,6 +12,8 @@
 #include <new>
 #include "StringClass.h"
 
+using namespace Storage::Streams;
+
 
 //==================
 // Con-/Destructors
@@ -34,15 +36,6 @@ UINT size=sizeof(String)+(len+1)*sizeof(TCHAR);
 auto str=(String*)operator new(size);
 LPTSTR buf=(LPTSTR)((SIZE_T)str+sizeof(String));
 new (str) String(buf, len+1, Value);
-return str;
-}
-
-Handle<String> String::Create(UINT Length, nullptr_t)
-{
-UINT size=sizeof(String)+(Length+1)*sizeof(TCHAR);
-auto str=(String*)operator new(size);
-LPTSTR buf=(LPTSTR)((SIZE_T)str+sizeof(String));
-new (str) String(buf);
 return str;
 }
 
@@ -129,29 +122,38 @@ return str;
 
 String::String(LPTSTR Buffer):
 m_Buffer(Buffer),
-m_Hash(INVALID_HASH),
+m_Hash(0),
 m_Length(0)
 {
 m_Buffer[0]=0;
 }
 
 String::String(LPTSTR Buffer, UINT Size, LPCSTR Value):
-m_Buffer(Buffer),
-m_Hash(INVALID_HASH)
+m_Buffer(Buffer)
 {
 m_Length=StringHelper::Copy(m_Buffer, Size, Value);
+m_Hash=StringHelper::GetHash(m_Buffer);
 }
 
 String::String(LPTSTR Buffer, UINT Size, LPCWSTR Value):
-m_Buffer(Buffer),
-m_Hash(INVALID_HASH)
+m_Buffer(Buffer)
 {
 m_Length=StringHelper::Copy(m_Buffer, Size, Value);
+m_Hash=StringHelper::GetHash(m_Buffer);
 }
 
 String::String(LPTSTR Buffer, UINT Size, LPCSTR Format, VariableArguments const& Arguments):
-m_Buffer(Buffer),
-m_Hash(INVALID_HASH)
+m_Buffer(Buffer)
 {
 m_Length=StringHelper::PrintArgs(m_Buffer, Size, Format, Arguments);
+m_Hash=StringHelper::GetHash(m_Buffer);
+}
+
+Handle<String> String::Create(UINT Length, nullptr_t)
+{
+UINT size=sizeof(String)+(Length+1)*sizeof(TCHAR);
+auto str=(String*)operator new(size);
+LPTSTR buf=(LPTSTR)((SIZE_T)str+sizeof(String));
+new (str) String(buf);
+return str;
 }

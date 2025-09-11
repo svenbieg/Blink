@@ -24,7 +24,6 @@ namespace Collections {
 //======================
 
 template <typename _key_t, typename _value_t, typename _size_t, WORD _group_size> class MapIterator;
-template <typename _key_t, typename _value_t, typename _size_t, WORD _group_size> class ConstMapIterator;
 
 
 //=====
@@ -42,31 +41,20 @@ public:
 	// Using
 	using FindFunction=find_func;
 	using Iterator=MapIterator<_key_t, _value_t, _size_t, _group_size>;
-	using ConstIterator=ConstMapIterator<_key_t, _value_t, _size_t, _group_size>;
 
 	// Friends
 	friend Iterator;
-	friend ConstIterator;
 
 	// Con-/Destructors
 	static inline Handle<Map> Create() { return new Map(); }
 	static inline Handle<Map> Create(_map_t const* Copy) { return new Map(Copy); }
 
 	// Access
-	inline Handle<Iterator> At(UINT Position) { return new Iterator(this, Position); }
-	inline Handle<ConstIterator> AtConst(UINT Position) { return new ConstIterator(this, Position); }
-	inline Handle<Iterator> Begin() { return new Iterator(this, 0); }
-	inline Handle<ConstIterator> BeginConst() { return new ConstIterator(this, 0); }
+	inline Handle<Iterator> Begin(_size_t Position=0) { return new Iterator(this, Position); }
 	inline BOOL Contains(_key_t const& Key) { return m_Map.contains(Key); }
 	inline Handle<Iterator> End()
 		{
 		auto it=new Iterator(this, -2);
-		it->End();
-		return it;
-		}
-	inline Handle<ConstIterator> EndConst()
-		{
-		auto it=new ConstIterator(this, -2);
 		it->End();
 		return it;
 		}
@@ -76,15 +64,9 @@ public:
 		it->Find(Key, Function);
 		return it;
 		}
-	inline Handle<ConstIterator> FindConst(_key_t const& Key, FindFunction Function=FindFunction::equal)
-		{
-		auto it=new ConstIterator(this, -2);
-		it->Find(Key, Function);
-		return it;
-		}
-	inline _value_t Get(_key_t const& Key) { return m_Map.get(Key); }
-	inline _size_t GetCount() { return m_Map.get_count(); }
-	inline BOOL TryGet(_key_t const& Key, _value_t* Value) { return m_Map.try_get(Key, Value); }
+	inline _value_t Get(_key_t const& Key)const { return m_Map.get(Key); }
+	inline _size_t GetCount()const { return m_Map.get_count(); }
+	inline BOOL TryGet(_key_t const& Key, _value_t* Value)const { return m_Map.try_get(Key, Value); }
 
 	// Modification
 	BOOL Add(_key_t const& Key, _value_t const& Value, BOOL Notify=true)
@@ -154,7 +136,7 @@ public:
 protected:
 	// Con-/Destructors
 	Map() {}
-	Map(_map_t* Copy)
+	Map(_map_t const* Copy)
 		{
 		if(Copy)
 			m_Map.copy_from(Copy->m_Map);
@@ -221,42 +203,6 @@ private:
 
 	// Common
 	typename map<_key_t, _value_t, _size_t, _group_size>::iterator m_It;
-	Handle<_map_t> m_Map;
-};
-
-template <typename _key_t, typename _value_t, typename _size_t, WORD _group_size>
-class ConstMapIterator: public Object
-{
-private:
-	// Using
-	using _map_t=Map<_key_t, _value_t, _size_t, _group_size>;
-
-public:
-	// Friends
-	friend _map_t;
-
-	// Using
-	using FindFunction=find_func;
-
-	// Access
-	inline _key_t GetKey()const { return m_It->get_key(); }
-	inline _value_t GetValue()const { return m_It->get_value(); }
-	inline BOOL HasCurrent()const { return m_It.has_current(); }
-
-	// Navigation
-	inline BOOL Begin() { return m_It.begin(); }
-	inline BOOL End() { return m_It.rbegin(); }
-	inline BOOL Find(_key_t const& Key, FindFunction Function=FindFunction::equal) { return m_It.find(Key, Function); }
-	inline _size_t GetPosition() { return m_It.get_position(); }
-	inline BOOL MoveNext() { return m_It.move_next(); }
-	inline BOOL MovePrevious() { return m_It.move_previous(); }
-	
-private:
-	// Con-/Destructors
-	ConstMapIterator(_map_t* Map, _size_t Position): m_It(&Map->m_Map, Position), m_Map(Map) {}
-
-	// Common
-	typename map<_key_t, _value_t, _size_t, _group_size>::const_iterator m_It;
 	Handle<_map_t> m_Map;
 };
 

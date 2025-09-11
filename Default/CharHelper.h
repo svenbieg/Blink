@@ -93,6 +93,9 @@ public:
 	static BOOL Equal(CHAR Char1, WCHAR Char2, BOOL CaseSensitive=true);
 	static BOOL Equal(WCHAR Char1, CHAR Char2, BOOL CaseSensitive=true);
 	static BOOL Equal(WCHAR Char1, WCHAR Char2, BOOL CaseSensitive=true);
+	static BOOL Equal(CHAR Char1, LPCSTR Chars, BOOL CaseSensitive=true);
+	static BOOL Equal(WCHAR Char1, LPCSTR Chars, BOOL CaseSensitive=true);
+	static BOOL Equal(WCHAR Char1, LPCWSTR Chars, BOOL CaseSensitive=true);
 	static BOOL IsAlpha(CHAR Char);
 	static BOOL IsAlpha(WCHAR Char);
 	static BOOL IsBreak(CHAR Char);

@@ -44,15 +44,35 @@ public:
 
 	// Comparison
 	inline BOOL operator==(nullptr_t)const { return m_Object==nullptr; }
-	inline BOOL operator==(_obj_t* Object)const { return m_Object==Object; }
+	inline BOOL operator==(_obj_t* Compare)const { return m_Object==Compare; }
 	inline BOOL operator==(Handle const& Compare)const { return m_Object==Compare.m_Object; }
-	template <class _convert_t> inline BOOL operator==(_convert_t* Object)const { return Equal(m_Object, Object); }
-	template <class _convert_t> inline BOOL operator==(Handle<_convert_t> const& Compare)const { return Equal(m_Object, Compare.m_Object); }
+	template <class _convert_t> inline BOOL operator==(_convert_t* Compare)const { return m_Object==(_obj_t*)Compare; }
+	template <class _convert_t> inline BOOL operator==(Handle<_convert_t> const& Compare)const { return m_Object==(_obj_t*)Compare.m_Object; }
 	inline BOOL operator!=(nullptr_t)const { return !operator==(nullptr); }
-	inline BOOL operator!=(_obj_t* Object)const { return !operator==(Object); }
+	inline BOOL operator!=(_obj_t* Compare)const { return !operator==(Compare); }
 	inline BOOL operator!=(Handle const& Compare)const { return !operator==(Compare.m_Object); }
-	template <class _convert_t> inline BOOL operator!=(_convert_t* Object)const { return !Equal(m_Object, Object); }
-	template <class _convert_t> inline BOOL operator!=(Handle<_convert_t> const& Compare)const { return !Equal(m_Object, Compare.m_Object); }
+	template <class _convert_t> inline BOOL operator!=(_convert_t* Compare)const { return m_Object!=(_obj_t*)Compare; }
+	template <class _convert_t> inline BOOL operator!=(Handle<_convert_t> const& Compare)const { return m_Object!=(_obj_t*)Compare.m_Object; }
+	inline BOOL operator>(nullptr_t)const { return m_Object>nullptr; }
+	inline BOOL operator>(_obj_t* Compare)const { return m_Object>Compare; }
+	inline BOOL operator>(Handle const& Compare)const { return m_Object>Compare.m_Object; }
+	template <class _convert_t> inline BOOL operator>(_convert_t* Compare)const { return m_Object>Compare; }
+	template <class _convert_t> inline BOOL operator>(Handle<_convert_t> const& Compare)const { return m_Object>Compare.m_Object; }
+	inline BOOL operator>=(nullptr_t)const { return m_Object>=nullptr; }
+	inline BOOL operator>=(_obj_t* Compare)const { return m_Object>=Compare; }
+	inline BOOL operator>=(Handle const& Compare)const { return m_Object>=Compare.m_Object; }
+	template <class _convert_t> inline BOOL operator>=(_convert_t* Compare)const { return m_Object>=Compare; }
+	template <class _convert_t> inline BOOL operator>=(Handle<_convert_t> const& Compare)const { return m_Object>=Compare.m_Object; }
+	inline BOOL operator<(nullptr_t)const { return false; }
+	inline BOOL operator<(_obj_t* Compare)const { return m_Object<Compare; }
+	inline BOOL operator<(Handle const& Compare)const { return m_Object<Compare.m_Object; }
+	template <class _convert_t> inline BOOL operator<(_convert_t* Compare)const { return m_Object<Compare; }
+	template <class _convert_t> inline BOOL operator<(Handle<_convert_t> const& Compare)const { return m_Object<Compare.m_Object; }
+	inline BOOL operator<=(nullptr_t)const { return m_Object<=nullptr; }
+	inline BOOL operator<=(_obj_t* Compare)const { return m_Object<=Compare; }
+	inline BOOL operator<=(Handle const& Compare)const { return m_Object<=Compare.m_Object; }
+	template <class _convert_t> inline BOOL operator<=(_convert_t* Compare)const { return m_Object<=Compare; }
+	template <class _convert_t> inline BOOL operator<=(Handle<_convert_t> const& Compare)const { return m_Object<=Compare.m_Object; }
 
 	// Assignment
 	inline Handle& operator=(nullptr_t) { Clear(&m_Object); return *this; }
@@ -77,11 +97,6 @@ private:
 		if(to)
 			to->Refer();
 		*Object=to;
-		}
-	template <class _cmp_t, class _convert_t> static inline BOOL Equal(_cmp_t* Object, _convert_t* Compare)
-		{
-		auto cmp=static_cast<_cmp_t*>(Compare);
-		return Object==cmp;
 		}
 	template <class _set_t, class _convert_t> static VOID Set(_set_t** Object, _convert_t* To)
 		{

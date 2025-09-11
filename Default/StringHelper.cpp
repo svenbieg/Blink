@@ -10,9 +10,12 @@
 //=======
 
 #include <cmath>
+#include "Storage/Streams/StreamWriter.h"
 #include "CharHelper.h"
 #include "FlagHelper.h"
 #include "StringHelper.h"
+
+using namespace Storage::Streams;
 
 using Format=StringHelper::Format;
 using FormatFlags=StringHelper::FormatFlags;
@@ -1217,8 +1220,8 @@ constexpr BYTE ENCRYPT_BACK[256]=
 
 VOID EncryptGenerateKey(BYTE* key, LPCSTR str)
 {
-assert(str!=nullptr);
-assert(str[0]!=0);
+if(!str)
+	throw InvalidArgumentException();
 UINT pos=0;
 UINT len=0;
 while(str[len])
@@ -1824,4 +1827,22 @@ for(; str[pos]; pos++)
 if(dst)
 	dst[pos]=0;
 return pos;
+}
+
+SIZE_T StringHelper::WriteToStream(OutputStream* stream, LPCSTR str)
+{
+SIZE_T size=0;
+StreamWriter writer(stream);
+size+=writer.Print(str);
+size+=writer.PrintChar('\0');
+return size;
+}
+
+SIZE_T StringHelper::WriteToStream(OutputStream* stream, LPCWSTR str)
+{
+SIZE_T size=0;
+StreamWriter writer(stream);
+size+=writer.Print(str);
+size+=writer.PrintChar('\0');
+return size;
 }

@@ -28,8 +28,8 @@ class Intermediate: public Streams::RandomAccessStream
 {
 public:
 	// Con-/Destructors
-	~Intermediate();
-	static Handle<Intermediate> Create(UINT BlockSize=PAGE_SIZE);
+	inline ~Intermediate() { Clear(); }
+	static inline Handle<Intermediate> Create(UINT BlockSize=PAGE_SIZE) { return new Intermediate(BlockSize); }
 
 	// Common
 	VOID Clear();
