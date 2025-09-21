@@ -32,4 +32,9 @@ public:
 	static VOID Fill(UINT64* Destination, SIZE_T Count, UINT64 Value);
 	static VOID Fill(UINT64* Destination, UINT64* End, UINT64 Value);
 	static VOID Move(VOID* Destination, VOID const* Source, SIZE_T Size);
+	static inline VOID Zero(VOID* Destination, SIZE_T Size) { Fill(Destination, Size, 0); }
+	static inline VOID Zero(UINT* Destination, SIZE_T Count) { Fill(Destination, Count, 0); }
+	static inline VOID Zero(UINT* Destination, UINT* End) { Fill(Destination, End, 0); }
+	static inline VOID Zero(UINT64* Destination, SIZE_T Count) { Fill(Destination, Count, 0); }
+	static inline VOID Zero(UINT64* Destination, UINT64* End) { Fill(Destination, End, 0); }
 };

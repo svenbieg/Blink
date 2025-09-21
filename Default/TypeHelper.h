@@ -51,17 +51,17 @@ typedef char const* LPCSTR;
 typedef wchar_t const* LPCWSTR;
 
 #ifdef _UNICODE
-#define _TEXT(s) L#s
+#define _TEXT(s) L##s
+#define TEXT(s) _TEXT(s)
 typedef WCHAR TCHAR;
 typedef LPWSTR LPTSTR;
 typedef LPCWSTR LPCTSTR;
 #else
-#define _TEXT(s) #s
+#define TEXT(s) s
 typedef CHAR TCHAR;
 typedef LPSTR LPTSTR;
 typedef LPCSTR LPCTSTR;
 #endif
-#define TEXT(s) _TEXT(s)
 
 
 //========

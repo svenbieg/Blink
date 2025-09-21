@@ -27,6 +27,7 @@ public:
 
 	// Access
 	operator bool()const { return m_Object!=nullptr; }
+	operator _obj_t*()const { return m_Object; }
 	operator Handle<_obj_t>() { return m_Object; }
 	_obj_t* operator->()const { return m_Object; }
 	Handle<_obj_t> Get()const { return m_Object; }

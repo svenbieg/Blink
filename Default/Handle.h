@@ -83,31 +83,30 @@ public:
 
 private:
 	// Common
-	template <class _clear_t> static VOID Clear(_clear_t** Object)
+	template <class _clear_t> static VOID Clear(_clear_t** Clear)
 		{
-		if(*Object)
-			{
-			(*Object)->Release();
-			*Object=nullptr;
-			}
+		auto obj=static_cast<Object*>(*Clear);
+		*Clear=nullptr;
+		if(obj)
+			obj->Release();
 		}
-	template <class _create_t, class _convert_t> static VOID Create(_create_t** Object, _convert_t* To)
+	template <class _create_t, class _convert_t> static VOID Create(_create_t** Create, _convert_t* Init)
 		{
-		auto to=static_cast<_create_t*>(To);
-		if(to)
-			to->Refer();
-		*Object=to;
+		auto init=static_cast<_create_t*>(Init);
+		if(init)
+			init->Refer();
+		*Create=init;
 		}
-	template <class _set_t, class _convert_t> static VOID Set(_set_t** Object, _convert_t* To)
+	template <class _set_t, class _convert_t> static VOID Set(_set_t** Set, _convert_t* To)
 		{
-		auto to=static_cast<_set_t*>(To);
-		if(*Object==to)
+		if(*Set==To)
 			return;
-		if(*Object)
-			(*Object)->Release();
-		*Object=to;
-		if(*Object)
-			(*Object)->Refer();
+		auto obj=static_cast<Object*>(*Set);
+		*Set=static_cast<_set_t*>(To);
+		if(obj)
+			obj->Release();
+		if(To)
+			To->Refer();
 		}
 	_obj_t* m_Object;
 };
