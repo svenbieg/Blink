@@ -25,6 +25,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)utility" />
     <ClInclude Include="$(MSBuildThisFileDirectory)io.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)bits.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)cstddef" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props">

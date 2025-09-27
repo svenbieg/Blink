@@ -56,7 +56,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Encoding\Dwarf.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\File.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Intermediate.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\PacketBuffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\packet_buf.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\ring_buf.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Seekable.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\StaticBuffer.h" />
@@ -86,7 +86,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Buffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Encoding\Dwarf.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Intermediate.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\PacketBuffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\packet_buf.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\StaticBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamReader.cpp" />

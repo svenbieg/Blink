@@ -16,7 +16,7 @@ namespace std {
 // Common
 //========
 
-typedef __long_long int ptrdiff_t;
-typedef unsigned __long_long size_t;
+typedef __SIZE int ptrdiff_t;
+typedef unsigned __SIZE int size_t;
 
 }

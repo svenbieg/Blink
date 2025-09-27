@@ -42,6 +42,7 @@ void* operator new[](__size_t size, std::nothrow_t const&)noexcept;
 void operator delete(void* buf)noexcept;
 void operator delete(void* buf, __size_t size)noexcept;
 void operator delete[](void* buf)noexcept;
+void operator delete[](void* buf, __size_t size)noexcept;
 
 
 //===============

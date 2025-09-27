@@ -40,13 +40,15 @@ public:
 		};
 	enum class FormatFlags: UINT
 		{
-		Left=1,
 		None=0,
-		Numeric=2,
-		Precision=4,
-		Signed=8,
-		Space=16,
-		Width=32,
+		High=1,
+		Left=2,
+		Low=4,
+		Numeric=8,
+		Precision=16,
+		Signed=32,
+		Space=64,
+		Width=128,
 		Zero=64
 		};
 
@@ -94,7 +96,9 @@ public:
 		VariableArguments vargs(args, TypeHelper::ArraySize(args));
 		return Length(Format, vargs);
 		}
-	static UINT LowerCase(LPSTR Destination, UINT Size, LPCSTR String);
+	static UINT Lowercase(LPSTR String);
+	static UINT Lowercase(LPWSTR String);
+	static UINT Lowercase(LPSTR Destination, UINT Size, LPCSTR String);
 	template <class _char_t, class... _args_t> static inline UINT Print(_char_t* Buffer, UINT Size, LPCSTR Format, _args_t... Arguments)
 		{
 		UnknownClass args[]={ Arguments... };
@@ -137,7 +141,9 @@ public:
 	static UINT ScanUInt(LPCWSTR String, UINT64* Value, UINT Base=10, UINT Length=0);
 	static LPCSTR Truncate(LPCSTR String, LPCSTR Chars);
 	static LPCWSTR Truncate(LPCWSTR String, LPCSTR Chars);
-	static UINT UpperCase(LPSTR Destination, UINT Size, LPCSTR String);
+	static UINT Uppercase(LPSTR String);
+	static UINT Uppercase(LPWSTR String);
+	static UINT Uppercase(LPSTR Destination, UINT Size, LPCSTR String);
 	static SIZE_T WriteToStream(OutputStream* Stream, LPCSTR String);
 	static SIZE_T WriteToStream(OutputStream* Stream, LPCWSTR String);
 };

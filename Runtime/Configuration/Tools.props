@@ -19,7 +19,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <PythonPath>$(HomePath)AppData\Local\Programs\Python\Python38\</PythonPath>
+    <PythonPath>$(HomePath)AppData\Local\Programs\Python\Python39\</PythonPath>
     <PythonExe>$(PythonPath)python.exe</PythonExe>
   </PropertyGroup>
 

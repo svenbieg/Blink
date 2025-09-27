@@ -13,8 +13,11 @@
 #include <stdlib.h>
 #include "Concurrency/CriticalMutex.h"
 #include "Concurrency/WriteLock.h"
+#include "Devices/System/Cpu.h"
+#include "Devices/System/System.h"
 
 using namespace Concurrency;
+using namespace Devices::System;
 
 
 //=========
@@ -38,9 +41,15 @@ extern "C" {
 // Common
 //========
 
-void abort()
+__iram void abort()
 {
 throw AbortException();
+}
+
+void* aligned_alloc(size_t align, size_t size)
+{
+WriteLock lock(g_heap_mutex);
+return heap_alloc_aligned(g_heap, size, align);
 }
 
 void free(void* buf)

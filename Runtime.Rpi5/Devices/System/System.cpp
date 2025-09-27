@@ -76,8 +76,8 @@ init_bank_regs_t INIT_BANK[2];
 
 VOID System::Led(BOOL on)
 {
-GpioHelper::SetPinMode(PIN_ACTLED, PinMode::Output);
-GpioHelper::DigitalWrite(PIN_ACTLED, on);
+GpioHelper::SetPinMode(ArmPin::ActivityLed, ArmPinMode::Output);
+GpioHelper::DigitalWrite(ArmPin::ActivityLed, on);
 }
 
 VOID System::PowerOff()

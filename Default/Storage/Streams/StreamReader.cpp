@@ -9,8 +9,8 @@
 // Using
 //=======
 
-#include "Collections/list.hpp"
-#include "StreamReader.h"
+#include "Storage/Streams/StreamReader.h"
+#include "StringBuilder.h"
 
 
 //===========
@@ -300,8 +300,8 @@ return read;
 
 template <class _func_t> Handle<String> StreamReader::DoReadString(_func_t read_fn, SIZE_T* size_ptr, LPCSTR esc, LPCSTR trunc)
 {
+StringBuilder builder;
 SIZE_T read=0;
-Collections::list<TCHAR> buf;
 while(1)
 	{
 	TCHAR c=0;
@@ -338,20 +338,11 @@ while(1)
 		}
 	if(c==0)
 		break;
-	buf.append(c);
+	builder.Append(c);
 	}
 if(size_ptr)
 	*size_ptr+=read;
-UINT len=buf.get_count();
-if(!len)
-	return nullptr;
-auto str=String::Create(len, nullptr);
-auto str_ptr=str->m_Buffer;
-buf.get_many(0, str_ptr, len);
-str_ptr[len]=0;
-str->m_Hash=StringHelper::GetHash(str_ptr);
-str->m_Length=len;
-return str;
+return builder.ToString();
 }
 
 }}

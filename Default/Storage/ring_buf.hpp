@@ -9,7 +9,6 @@
 // Using
 //=======
 
-#include <assert.h>
 #include <new>
 #include <stdlib.h>
 #include <utility>
@@ -40,11 +39,11 @@ public:
 		}
 	void create(size_t capacity, size_t align=sizeof(size_t))
 		{
-		assert(!m_items);
+		clear();
+		if(m_items)
+			free(m_items);
 		m_capacity=capacity;
-		m_head=0;
 		m_items=(_item_t*)aligned_alloc(align, capacity*sizeof(_item_t));
-		m_tail=0;
 		}
 
 	// Common

@@ -21,8 +21,9 @@ extern "C" {
 #endif
 
 void abort();
-void free(void* Buffer);
-void* malloc(size_t Size);
+void* aligned_alloc(size_t align, size_t size);
+void free(void* buf);
+void* malloc(size_t size);
 
 #ifdef __cplusplus
 }

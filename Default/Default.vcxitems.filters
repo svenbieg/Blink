@@ -116,11 +116,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\ring_buf.hpp">
       <Filter>Storage</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\PacketBuffer.h">
-      <Filter>Storage</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)StringBuilder.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Volume.h">
+      <Filter>Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\packet_buf.h">
       <Filter>Storage</Filter>
     </ClInclude>
   </ItemGroup>
@@ -162,10 +162,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\StringBuffer.cpp">
       <Filter>Storage</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\PacketBuffer.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)StringBuilder.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\packet_buf.cpp">
       <Filter>Storage</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)StringBuilder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Storage">

@@ -96,6 +96,29 @@ if(path[len]==0)
 return &path[len];
 }
 
+template <class _char_t> Handle<String> PathGetName(_char_t const* path)
+{
+if(!path||!path[0])
+	return nullptr;
+UINT len=StringHelper::Length(path);
+UINT end=len;
+for(UINT pos=len-1; pos>0; pos--)
+	{
+	if(CharHelper::Equal(path[pos], '.'))
+		{
+		end=pos;
+		continue;
+		}
+	if(CharHelper::Equal(path[pos], "\\/"))
+		{
+		if(pos+1==end)
+			return nullptr;
+		pos++;
+		return String::Create(end-pos, &path[pos]);
+		}
+	}
+return String::Create(path);
+}
 
 //========
 // Common
@@ -166,4 +189,21 @@ return PathGetLastComponent(path);
 LPCWSTR PathHelper::GetLastComponent(LPCWSTR path)
 {
 return PathGetLastComponent(path);
+}
+
+Handle<String> PathHelper::GetName(LPCSTR path)
+{
+return PathGetName(path);
+}
+
+Handle<String> PathHelper::GetName(LPCWSTR path)
+{
+return PathGetName(path);
+}
+
+Handle<String> PathHelper::GetName(Handle<String> const& path)
+{
+if(!path)
+	return nullptr;
+return GetName(path->Begin());
 }

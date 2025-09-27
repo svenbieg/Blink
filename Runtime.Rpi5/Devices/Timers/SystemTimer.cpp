@@ -9,10 +9,9 @@
 // Using
 //=======
 
-#include <io.h>
 #include "Concurrency/Task.h"
 #include "Devices/System/Interrupts.h"
-#include "SystemTimer.h"
+#include "Devices/Timers/SystemTimer.h"
 
 using namespace Concurrency;
 using namespace Devices::System;
@@ -42,7 +41,7 @@ constexpr UINT64 PERIOD=FREQ_HZ/100;
 
 SystemTimer::~SystemTimer()
 {
-Interrupts::SetHandler(IRQ_SYSTIMER, nullptr);
+Interrupts::SetHandler(Irq::SystemTimer, nullptr);
 m_Task->Cancel();
 s_Current=nullptr;
 }
@@ -81,7 +80,7 @@ return cnt_pct*MHZ/FREQ_HZ;
 SystemTimer::SystemTimer()
 {
 m_Task=Task::Create(this, &SystemTimer::ServiceTask, "systimer");
-Interrupts::SetHandler(IRQ_SYSTIMER, HandleInterrupt, this);
+Interrupts::SetHandler(Irq::SystemTimer, HandleInterrupt, this);
 __asm inline volatile("msr CNTP_TVAL_EL0, %0":: "r" (PERIOD));
 __asm inline volatile("msr CNTP_CTL_EL0, %0":: "r" (1UL));
 }

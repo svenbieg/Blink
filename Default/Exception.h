@@ -95,6 +95,12 @@ public:
 	NotImplementedException(): Exception(Status::NotImplemented) {}
 };
 
+class NullPointerException: public Exception
+{
+public:
+	NullPointerException(): Exception(Status::NullPointer) {}
+};
+
 class OutOfMemoryException: public Exception
 {
 public:

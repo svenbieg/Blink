@@ -29,6 +29,9 @@ public:
 	// Con-/Destructors
 	static inline Handle<StaticBuffer> Create(VOID* Buffer, SIZE_T Size) { return new StaticBuffer(Buffer, Size); }
 
+	// Common
+	VOID Reset() { m_Position=0; }
+
 	// Input-Stream
 	SIZE_T Available()override { return m_Size-m_Position; }
 	SIZE_T Read(VOID* Buffer, SIZE_T Size)override;

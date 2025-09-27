@@ -96,21 +96,21 @@ if(digit<base)
 return false;
 }
 
-template <class _char_t> inline _char_t CharToSmall(_char_t tc)
+template <class _dst_t, class _src_t> inline _dst_t CharToSmall(_src_t tc)
 {
-CHAR c=CharToChar<CHAR, _char_t>(tc);
+CHAR c=CharToChar<_dst_t, _src_t>(tc);
 if(c>='A'&&c<='Z')
-	return CharToChar<CHAR, _char_t>((CHAR)(c+0x20));
+	return CharToChar<_dst_t, CHAR>((CHAR)(c+0x20));
 switch(c)
 	{
 	case Ansi::AE:
-		return CharToChar<CHAR, _char_t>(Ansi::ae);
+		return CharToChar<_dst_t, CHAR>(Ansi::ae);
 	case Ansi::OE:
-		return CharToChar<CHAR, _char_t>(Ansi::oe);
+		return CharToChar<_dst_t, CHAR>(Ansi::oe);
 	case Ansi::UE:
-		return CharToChar<CHAR, _char_t>(Ansi::ue);
+		return CharToChar<_dst_t, CHAR>(Ansi::ue);
 	}
-return tc;
+return CharToChar<_dst_t, _src_t>(tc);
 }
 
 
@@ -290,8 +290,8 @@ CHAR c1=CharToChar<CHAR, _char1_t>(tc1);
 CHAR c2=CharToChar<CHAR, _char2_t>(tc2);
 if(!cs)
 	{
-	c1=CharHelper::ToCapital(c1);
-	c2=CharHelper::ToCapital(c2);
+	c1=CharHelper::ToCapitalAnsi(c1);
+	c2=CharHelper::ToCapitalAnsi(c2);
 	}
 return c1==c2;
 }
@@ -581,14 +581,14 @@ for(UINT u=0; u<128; u++)
 return '_';
 }
 
-CHAR CharHelper::ToCapital(CHAR c)
+TCHAR CharHelper::ToCapital(CHAR c)
 {
-return CharToCapital<CHAR, CHAR>(c);
+return CharToCapital<TCHAR, CHAR>(c);
 }
 
-WCHAR CharHelper::ToCapital(WCHAR c)
+TCHAR CharHelper::ToCapital(WCHAR c)
 {
-return CharToCapital<WCHAR, WCHAR>(c);
+return CharToCapital<TCHAR, WCHAR>(c);
 }
 
 CHAR CharHelper::ToCapitalAnsi(CHAR c)
@@ -611,6 +611,16 @@ WCHAR CharHelper::ToCapitalUnicode(WCHAR c)
 return CharToCapital<WCHAR, WCHAR>(c);
 }
 
+TCHAR CharHelper::ToChar(CHAR c)
+{
+return CharToChar<TCHAR, CHAR>(c);
+}
+
+TCHAR CharHelper::ToChar(WCHAR c)
+{
+return CharToChar<TCHAR, WCHAR>(c);
+}
+
 BOOL CharHelper::ToDigit(CHAR c, UINT* digit_ptr, UINT base)
 {
 return CharToDigit(c, digit_ptr, base);
@@ -621,14 +631,34 @@ BOOL CharHelper::ToDigit(WCHAR c, UINT* digit_ptr, UINT base)
 return CharToDigit(c, digit_ptr, base);
 }
 
-CHAR CharHelper::ToSmall(CHAR c)
+TCHAR CharHelper::ToSmall(CHAR c)
 {
-return CharToSmall(c);
+return CharToSmall<TCHAR, CHAR>(c);
 }
 
-WCHAR CharHelper::ToSmall(WCHAR c)
+TCHAR CharHelper::ToSmall(WCHAR c)
 {
-return CharToSmall(c);
+return CharToSmall<TCHAR, WCHAR>(c);
+}
+
+CHAR CharHelper::ToSmallAnsi(CHAR c)
+{
+return CharToSmall<CHAR, CHAR>(c);
+}
+
+CHAR CharHelper::ToSmallAnsi(WCHAR c)
+{
+return CharToSmall<CHAR, WCHAR>(c);
+}
+
+WCHAR CharHelper::ToSmallUnicode(CHAR c)
+{
+return CharToSmall<WCHAR, CHAR>(c);
+}
+
+WCHAR CharHelper::ToSmallUnicode(WCHAR c)
+{
+return CharToSmall<WCHAR, WCHAR>(c);
 }
 
 WCHAR CharHelper::ToUnicode(CHAR c)

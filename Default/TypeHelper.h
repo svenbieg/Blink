@@ -18,8 +18,8 @@ typedef unsigned char BYTE;
 typedef unsigned short int WORD;
 constexpr WORD WORD_MAX=0xFFFF;
 
-typedef unsigned __long int DWORD;
-typedef unsigned __long_long int QWORD;
+typedef unsigned __LONG int DWORD;
+typedef unsigned __LONG_LONG int QWORD;
 
 typedef int BOOL;
 
@@ -33,9 +33,9 @@ constexpr INT INT_MIN=-0x7FFFFFFF;
 typedef unsigned int UINT;
 constexpr UINT UINT_MAX=0xFFFFFFFF;
 
-typedef __long_long int INT64;
+typedef __LONG_LONG int INT64;
 
-typedef unsigned __long_long int UINT64;
+typedef unsigned __LONG_LONG int UINT64;
 constexpr UINT64 UINT64_MAX=0xFFFFFFFFFFFFFFFFULL;
 
 typedef float FLOAT;

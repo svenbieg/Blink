@@ -41,12 +41,8 @@ namespace Streams
 class String: public Object
 {
 public:
-	// Using
-	using StreamReader=Storage::Streams::StreamReader;
-
 	// Friends
 	friend Handle<String>;
-	friend StreamReader;
 	friend StringBuilder;
 
 	// Con-/Destructors

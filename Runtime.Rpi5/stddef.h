@@ -9,16 +9,20 @@
 // Macros
 //========
 
-#ifndef __always_inline
-#define __always_inline __attribute__((always_inline)) inline
+#ifndef __LONG
+#define __LONG
 #endif
 
-#ifndef __long
-#define __long
+#ifndef __LONG_LONG
+#define __LONG_LONG long
 #endif
 
-#ifndef __long_long
-#define __long_long long
+#ifndef __SIZE
+#define __SIZE long
+#endif
+
+#ifndef __SIZE_T
+#define __SIZE_T unsigned long int
 #endif
 
 #define NULL 0
@@ -32,6 +36,7 @@
 
 #ifndef __ASSEMBLER__
 
-typedef unsigned __long_long int size_t;
+typedef __LONG_LONG int ptrdiff_t;
+typedef unsigned __LONG_LONG int size_t;
 
 #endif

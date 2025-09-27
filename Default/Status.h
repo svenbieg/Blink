@@ -28,6 +28,7 @@ InvalidArgument,
 InvalidContext,
 NotFound,
 NotImplemented,
+NullPointer,
 OutOfMemory,
 OutOfRange,
 Timeout

@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Storage/Streams/OutputStream.h"
+#include "Storage/packet_buf.h"
 
 
 //================
@@ -20,6 +20,7 @@ class StringBuilder
 {
 public:
 	// Con-/Destructors
+	StringBuilder();
 	StringBuilder(UINT Length);
 
 	// Common
@@ -32,33 +33,26 @@ public:
 	Handle<String> ToString();
 
 private:
-	// Common
-	template <class _char_t> UINT AppendChar(_char_t Char)
-		{
-		if(m_Position==m_Size)
-			return 0;
-		m_Buffer[m_Position++]=CharHelper::ToChar(Char);
-		return 1;
-		}
-	template <class _char_t> UINT AppendString(UINT Length, _char_t const* String)
-		{
-		if(!String)
-			return 0;
-		LPTSTR buf=&m_Buffer[m_Position];
-		UINT pos=0;
-		for(; String[pos]; pos++)
-			{
-			if(pos==Length)
-				break;
-			if(m_Position==m_Size)
-				break;
-			buf[pos]=String[pos];
-			m_Position++;
-			}
-		return pos;
-		}
-	LPTSTR m_Buffer;
+	// Functions
+	typedef UINT (StringBuilder::*APPEND_ANSI)(CHAR);
+	typedef UINT (StringBuilder::*APPEND_UNICODE)(WCHAR);
+	typedef VOID (StringBuilder::*INITIALIZE)();
+	typedef Handle<String> (StringBuilder::*TO_STRING)();
+
+	UINT BufferAppendAnsi(CHAR Char);
+	UINT BufferAppendUnicode(WCHAR Char);
+	VOID BufferInitialize();
+	Handle<String> BufferToString();
+	UINT StringAppendAnsi(CHAR Char);
+	UINT StringAppendUnicode(WCHAR Char);
+	VOID StringInitialize();
+	Handle<String> StringToString();
+	APPEND_ANSI m_AppendAnsi;
+	APPEND_UNICODE m_AppendUnicode;
+	Storage::packet_buf m_Buffer;
+	INITIALIZE m_Initialize;
 	UINT m_Position;
 	UINT m_Size;
 	Handle<String> m_String;
+	TO_STRING m_ToString;
 };

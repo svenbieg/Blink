@@ -71,3 +71,9 @@ void operator delete[](void* array)noexcept
 WriteLock lock(g_heap_mutex);
 heap_free(g_heap, array);
 }
+
+void operator delete[](void* array, __size_t)noexcept
+{
+WriteLock lock(g_heap_mutex);
+heap_free(g_heap, array);
+}

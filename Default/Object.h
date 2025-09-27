@@ -48,7 +48,7 @@ protected:
 	Object(): m_ReferenceCount(0) {}
 
 	// Common
-	inline VOID Refer()
+	inline VOID AddReference()
 		{
 		Cpu::InterlockedIncrement(&m_ReferenceCount);
 		}

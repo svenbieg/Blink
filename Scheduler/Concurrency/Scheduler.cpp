@@ -48,8 +48,8 @@ Cpu::SetContext(&Task::TaskProc, task, task->m_StackPointer);
 
 VOID Scheduler::Initialize()
 {
-Interrupts::Route(IRQ_TASK_SWITCH, IrqTarget::All);
-Interrupts::SetHandler(IRQ_TASK_SWITCH, HandleTaskSwitch);
+Interrupts::Route(Irq::TaskSwitch, IrqTarget::All);
+Interrupts::SetHandler(Irq::TaskSwitch, HandleTaskSwitch);
 for(UINT core=0; core<CPU_COUNT; core++)
 	{
 	auto idle=Task::CreateInternal(IdleTask, String::Create("idle%u", core));
@@ -530,7 +530,7 @@ for(UINT core_id=0; core_id<core_count; core_id++)
 	auto resume=GetWaitingTask();
 	FlagHelper::Clear(resume->m_Flags, TaskFlags::Suspended);
 	current->m_Next=resume;
-	Interrupts::Send(IRQ_TASK_SWITCH, core);
+	Interrupts::Send(Irq::TaskSwitch, core);
 	}
 }
 
@@ -555,7 +555,7 @@ if(!next)
 	next=s_IdleTask[core];
 FlagHelper::Clear(next->m_Flags, TaskFlags::Suspended);
 current->m_Next=next;
-Interrupts::Send(IRQ_TASK_SWITCH, core);
+Interrupts::Send(Irq::TaskSwitch, core);
 }
 
 UINT Scheduler::s_CoreCount=0;

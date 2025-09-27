@@ -15,6 +15,8 @@
 #include "Devices/System/Cpu.h"
 #include "Interrupts.h"
 
+using namespace Concurrency;
+
 
 //===========
 // Namespace
@@ -80,7 +82,7 @@ extern "C" VOID HandleInterrupt()
 {
 auto gicc=(gicc_regs_t*)ARM_GICC_BASE;
 UINT iar=io_read(gicc->IAR);
-UINT irq=io_read(iar, GICC_IAR_IRQ_MASK);
+UINT irq=bits_get(iar, GICC_IAR_IRQ_MASK);
 assert(irq<IRQ_COUNT);
 Interrupts::HandleInterrupt(irq);
 io_write(gicc->EOIR, iar);
@@ -104,29 +106,11 @@ UINT core=Cpu::GetId();
 s_DisableCount[core]++;
 }
 
-VOID Interrupts::Disable(UINT irq)
-{
-assert(irq<IRQ_COUNT);
-auto gicd=(gicd_regs_t*)ARM_GICD_BASE;
-UINT reg=irq/32;
-UINT mask=1<<(irq%32);
-io_write(gicd->CLEAR_ENABLED[reg], mask);
-}
-
 VOID Interrupts::Enable()
 {
 UINT core=Cpu::GetId();
 if(--s_DisableCount[core]==0)
 	Cpu::EnableInterrupts();
-}
-
-VOID Interrupts::Enable(UINT irq)
-{
-assert(irq<IRQ_COUNT);
-auto gicd=(gicd_regs_t*)ARM_GICD_BASE;
-UINT reg=irq/32;
-UINT mask=1<<(irq%32);
-io_write(gicd->SET_ENABLED[reg], mask);
 }
 
 BOOL Interrupts::Enabled()
@@ -137,11 +121,13 @@ return s_DisableCount[core]==0;
 
 VOID Interrupts::HandleInterrupt(UINT irq)
 {
+SpinLock lock(s_CriticalSection);
+if(!s_IrqHandlers[irq])
+	return;
 UINT core=Cpu::GetId();
 s_Active[core]=true;
 s_DisableCount[core]++;
-if(s_IrqHandler[irq])
-	s_IrqHandler[irq](s_IrqParameter[irq]);
+s_IrqHandlers[irq](s_IrqParameters[irq]);
 s_Active[core]=false;
 s_DisableCount[core]--;
 }
@@ -173,33 +159,41 @@ for(UINT core=0; core<CPU_COUNT; core++)
 	s_DisableCount[core]=1;
 }
 
-VOID Interrupts::Route(UINT irq, IrqTarget target)
+VOID Interrupts::Route(Irq irq, IrqTarget target)
 {
 auto gicd=(gicd_regs_t*)ARM_GICD_BASE;
-UINT reg=irq/4;
-UINT id=irq%4;
+UINT reg=(UINT)irq/4;
+UINT id=(UINT)irq%4;
 UINT mask=0xF<<id;
 UINT value=(UINT)target<<id;
 io_write(gicd->TARGET[reg], mask, value);
 }
 
-VOID Interrupts::Send(UINT irq, IrqTarget target)
+VOID Interrupts::Send(Irq irq, IrqTarget target)
 {
 auto gicd=(gicd_regs_t*)ARM_GICD_BASE;
 UINT value=0;
 bits_set(value, GICD_SGIR_CPU_TARGET_LIST, (UINT)target);
-bits_set(value, irq);
+bits_set(value, (UINT)irq);
 io_write(gicd->SGIR, value);
 }
 
-VOID Interrupts::SetHandler(UINT irq, IRQ_HANDLER handler, VOID* param)
+VOID Interrupts::SetHandler(Irq irq, IRQ_HANDLER handler, VOID* param)
 {
-assert(irq<IRQ_COUNT);
-Disable(irq);
-s_IrqHandler[irq]=handler;
-s_IrqParameter[irq]=param;
+UINT id=(UINT)irq;
+SpinLock lock(s_CriticalSection);
 if(handler)
-	Enable(irq);
+	{
+	s_IrqHandlers[id]=handler;
+	s_IrqParameters[id]=param;
+	Enable(id);
+	}
+else
+	{
+	s_IrqHandlers[id]=nullptr;
+	s_IrqParameters[id]=nullptr;
+	Disable(id);
+	}
 }
 
 
@@ -207,9 +201,26 @@ if(handler)
 // Common Private
 //================
 
+VOID Interrupts::Disable(UINT irq)
+{
+auto gicd=(gicd_regs_t*)ARM_GICD_BASE;
+UINT reg=irq/32;
+UINT mask=1UL<<(irq%32);
+io_write(gicd->CLEAR_ENABLED[reg], mask);
+}
+
+VOID Interrupts::Enable(UINT irq)
+{
+auto gicd=(gicd_regs_t*)ARM_GICD_BASE;
+UINT reg=irq/32;
+UINT mask=1UL<<(irq%32);
+io_write(gicd->SET_ENABLED[reg], mask);
+}
+
 BOOL Interrupts::s_Active[CPU_COUNT]={ false };
+CriticalSection Interrupts::s_CriticalSection;
 UINT Interrupts::s_DisableCount[CPU_COUNT]={ 0 };
-IRQ_HANDLER Interrupts::s_IrqHandler[IRQ_COUNT]={ nullptr };
-VOID* Interrupts::s_IrqParameter[IRQ_COUNT]={ nullptr };
+IRQ_HANDLER Interrupts::s_IrqHandlers[IRQ_COUNT]={ nullptr };
+VOID* Interrupts::s_IrqParameters[IRQ_COUNT]={ nullptr };
 
 }}

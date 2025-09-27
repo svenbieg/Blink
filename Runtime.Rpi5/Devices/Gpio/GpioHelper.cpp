@@ -9,7 +9,6 @@
 // Using
 //=======
 
-#include <assert.h>
 #include <base.h>
 #include <io.h>
 #include "Devices/Gpio/GpioHelper.h"
@@ -23,18 +22,9 @@ namespace Devices {
 	namespace Gpio {
 
 
-//==========
-// Settings
-//==========
-
-constexpr UINT RP1_GPIO_PIN_COUNT=28;
-constexpr UINT ARM_GPIO_PIN_COUNT=26;
-constexpr UINT GPIO_PIN_COUNT=54;
-
-
-//===========
-// Registers
-//===========
+//===============
+// ARM-Registers
+//===============
 
 typedef struct
 {
@@ -54,36 +44,47 @@ rw32_t PULL[4];
 // Common
 //========
 
-VOID GpioHelper::DigitalWrite(BYTE pin, BOOL value)
+BOOL GpioHelper::DigitalRead(ArmPin arm_pin)
 {
-assert(pin>=RP1_GPIO_PIN_COUNT);
-assert(pin<GPIO_PIN_COUNT);
 auto gpio=(arm_gpio_t*)ARM_GPIO1_BASE;
-if(pin>32)
+UINT pin=(UINT)arm_pin;
+if(pin>=32)
 	{
 	gpio=(arm_gpio_t*)ARM_GPIO2_BASE;
 	pin-=32;
 	}
-UINT mask=1<<pin;
+UINT mask=1UL<<pin;
+return io_read(gpio->DATA0, mask)!=0;
+}
+
+VOID GpioHelper::DigitalWrite(ArmPin arm_pin, BOOL value)
+{
+auto gpio=(arm_gpio_t*)ARM_GPIO1_BASE;
+UINT pin=(UINT)arm_pin;
+if(pin>=32)
+	{
+	gpio=(arm_gpio_t*)ARM_GPIO2_BASE;
+	pin-=32;
+	}
+UINT mask=1UL<<pin;
 UINT set=value? mask: 0;
 io_write(gpio->DATA0, mask, set);
 }
 
-VOID GpioHelper::SetPinMode(BYTE pin, PinMode mode, PullMode pull)
+VOID GpioHelper::SetPinMode(ArmPin arm_pin, ArmPinMode mode, ArmPullMode pull_mode)
 {
-assert(pin>=RP1_GPIO_PIN_COUNT);
-assert(pin<GPIO_PIN_COUNT);
 auto pin_ctrl=(arm_pinctrl_t*)ARM_PINCTRL1_BASE;
-BYTE fsel_reg=pin/8;
-BYTE fsel_shift=(pin%8)<<2;
-bits32_t fsel_bits={ 0xF, fsel_shift };
-io_write(pin_ctrl->FSEL[fsel_reg], fsel_bits, (UINT)mode);
-pin+=7;
-BYTE pull_reg=pin/15;
-BYTE pull_shift=(pin%15)<<1;
+UINT pin=(UINT)arm_pin;
+BYTE sel_reg=pin/8;
+BYTE sel_shift=(pin%8)*4;
+bits32_t sel_bits={ 0xF, sel_shift };
+io_write(pin_ctrl->FSEL[sel_reg], sel_bits, (UINT)mode);
+UINT offset=pin+7;
+BYTE pull_reg=offset/15;
+BYTE pull_shift=(offset%15)*2;
 bits32_t pull_bits={ 0x3, pull_shift };
-io_write(pin_ctrl->PULL[pull_reg], pull_bits, (UINT)pull);
-if(mode==PinMode::Output)
+io_write(pin_ctrl->PULL[pull_reg], pull_bits, (UINT)pull_mode);
+if(mode==ArmPinMode::Output)
 	{
 	auto gpio=(arm_gpio_t*)ARM_GPIO1_BASE;
 	if(pin>32)
@@ -91,7 +92,7 @@ if(mode==PinMode::Output)
 		gpio=(arm_gpio_t*)ARM_GPIO2_BASE;
 		pin-=32;
 		}
-	io_write(gpio->IODIR0, 1<<pin, 0);
+	io_write(gpio->IODIR0, 1UL<<pin, 0);
 	}
 }
 

@@ -33,4 +33,7 @@ public:
 	static Handle<String> GetHostName(Handle<String> const& Path);
 	static LPCSTR GetLastComponent(LPCSTR Path);
 	static LPCWSTR GetLastComponent(LPCWSTR Path);
+	static Handle<String> GetName(LPCSTR Path);
+	static Handle<String> GetName(LPCWSTR Path);
+	static Handle<String> GetName(Handle<String> const& Path);
 };

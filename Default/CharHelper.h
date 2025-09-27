@@ -117,23 +117,22 @@ public:
 	static UINT ReadUtf8(InputStream* Stream, CHAR* Char);
 	static UINT ReadUtf8(InputStream* Stream, WCHAR* Char);
 	static CHAR ToAnsi(WCHAR Char);
-	static CHAR ToCapital(CHAR Char);
-	static WCHAR ToCapital(WCHAR Char);
+	static TCHAR ToCapital(CHAR Char);
+	static TCHAR ToCapital(WCHAR Char);
 	static CHAR ToCapitalAnsi(CHAR Char);
 	static CHAR ToCapitalAnsi(WCHAR Char);
 	static WCHAR ToCapitalUnicode(CHAR Char);
 	static WCHAR ToCapitalUnicode(WCHAR Char);
-	#ifdef _UNICODE
-	static inline TCHAR ToChar(CHAR Char) { return ToUnicode(Char); }
-	static inline TCHAR ToChar(WCHAR Char) { return Char; }
-	#else
-	static inline TCHAR ToChar(CHAR Char) { return Char; }
-	static inline TCHAR ToChar(WCHAR Char) { return ToAnsi(Char); }
-	#endif
+	static TCHAR ToChar(CHAR Char);
+	static TCHAR ToChar(WCHAR Char);
 	static BOOL ToDigit(CHAR Char, UINT* Digit, UINT Base=10);
 	static BOOL ToDigit(WCHAR Char, UINT* Digit, UINT Base=10);
-	static CHAR ToSmall(CHAR Char);
-	static WCHAR ToSmall(WCHAR Char);
+	static TCHAR ToSmall(CHAR Char);
+	static TCHAR ToSmall(WCHAR Char);
+	static CHAR ToSmallAnsi(CHAR Char);
+	static CHAR ToSmallAnsi(WCHAR Char);
+	static WCHAR ToSmallUnicode(CHAR Char);
+	static WCHAR ToSmallUnicode(WCHAR Char);
 	static WCHAR ToUnicode(CHAR Char);
 	static UINT WriteAnsi(OutputStream* Stream, CHAR Char);
 	static UINT WriteAnsi(OutputStream* Stream, WCHAR Char);

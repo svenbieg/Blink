@@ -2,7 +2,7 @@
 // linker.ld.in
 //==============
 
-#include "config.h"
+#include <config.h>
 
 ENTRY(_start)
 
@@ -13,6 +13,7 @@ SECTIONS
 .text :
 	{
 	KEEP(*(.text.start))
+	*(.iram .iram.*)
 	*(.text .text.*)
 	}
 

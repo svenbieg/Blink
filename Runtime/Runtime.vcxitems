@@ -29,6 +29,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)cassert" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cmath" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)cstddef" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cxxabi.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)heap.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />

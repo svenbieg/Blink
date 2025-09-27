@@ -27,12 +27,8 @@ namespace Storage {
 
 VOID Intermediate::Clear()
 {
-FreeBlocks(m_First);
-FreeBlocks(m_Free);
-m_First=nullptr;
-m_Free=nullptr;
-m_Last=nullptr;
-m_Offset=0;
+WriteLock lock(m_Mutex);
+m_Buffer.clear();
 }
 
 
@@ -42,17 +38,8 @@ m_Offset=0;
 
 SIZE_T Intermediate::Available()
 {
-WriteLock lock(m_Mutex);
-if(!m_First)
-	return 0;
-SIZE_T available=m_First->Size-m_Offset;
-auto block=m_First->Next;
-while(block)
-	{
-	available+=block->Size;
-	block=block->Next;
-	}
-return available;
+ReadLock lock(m_Mutex);
+return m_Buffer.available();
 }
 
 SIZE_T Intermediate::Read(VOID* buf, SIZE_T size)
@@ -62,26 +49,14 @@ auto dst=(BYTE*)buf;
 SIZE_T pos=0;
 while(pos<size)
 	{
-	if(m_Offset==m_BlockSize)
-		{
-		auto next=m_First->Next;
-		CacheBlock(m_First);
-		m_First=next;
-		if(!next)
-			m_Last=nullptr;
-		m_Offset=0;
-		}
-	SIZE_T available=0;
-	if(m_First)
-		available=m_First->Size-m_Offset;
+	SIZE_T available=m_Buffer.available();
 	if(!available)
 		{
-		m_Written.Wait(lock);
+		m_Signal.Wait(lock);
 		continue;
 		}
-	SIZE_T copy=TypeHelper::Min(size-pos, available);
-	MemoryHelper::Copy(&dst[pos], &m_First->Buffer[m_Offset], copy);
-	m_Offset+=copy;
+	SIZE_T copy=TypeHelper::Min(available, size-pos);
+	SIZE_T read=m_Buffer.read(&dst[pos], copy);
 	pos+=copy;
 	}
 return pos;
@@ -94,36 +69,15 @@ return pos;
 
 VOID Intermediate::Flush()
 {
-m_Written.Trigger();
+WriteLock lock(m_Mutex);
+m_Buffer.flush();
+m_Signal.Trigger();
 }
 
 SIZE_T Intermediate::Write(VOID const* buf, SIZE_T size)
 {
 WriteLock lock(m_Mutex);
-if(!m_First)
-	{
-	m_First=(BLOCK*)AllocateBlock();
-	m_Last=m_First;
-	}
-auto current=m_Last;
-auto src=(BYTE*)buf;
-SIZE_T pos=0;
-while(pos<size)
-	{
-	if(current->Size==m_BlockSize)
-		{
-		auto next=(BLOCK*)AllocateBlock();
-		current->Next=next;
-		current=next;
-		m_Last=current;
-		}
-	SIZE_T available=m_BlockSize-current->Size;
-	SIZE_T copy=TypeHelper::Min(size-pos, available);
-	MemoryHelper::Copy(&current->Buffer[current->Size], &src[pos], copy);
-	current->Size+=copy;
-	pos+=copy;
-	}
-return pos;
+return m_Buffer.write(buf, size);
 }
 
 
@@ -132,49 +86,7 @@ return pos;
 //==========================
 
 Intermediate::Intermediate(UINT block_size):
-m_BlockSize(block_size),
-m_First(nullptr),
-m_Free(nullptr),
-m_Last(nullptr),
-m_Offset(0)
+m_Buffer(block_size)
 {}
-
-
-//================
-// Common Private
-//================
-
-VOID* Intermediate::AllocateBlock()
-{
-BLOCK* block=nullptr;
-if(m_Free)
-	{
-	block=m_Free;
-	m_Free=m_Free->Next;
-	}
-else
-	{
-	block=(BLOCK*)operator new(sizeof(BLOCK)+m_BlockSize);
-	}
-block->Next=nullptr;
-block->Size=0;
-return block;
-}
-
-VOID Intermediate::CacheBlock(BLOCK* block)
-{
-block->Next=m_Free;
-m_Free=block;
-}
-
-VOID Intermediate::FreeBlocks(BLOCK* block)
-{
-while(block)
-	{
-	auto next=block->Next;
-	delete block;
-	block=next;
-	}
-}
 
 }

@@ -35,7 +35,7 @@ public:
 
 	// Common
 	static VOID CleanDataCache()noexcept;
-	static ALWAYS_INLINE BOOL CompareAndSet(volatile UINT* Value, UINT Compare, UINT Set)noexcept
+	static __always_inline BOOL CompareAndSet(volatile UINT* Value, UINT Compare, UINT Set)noexcept
 		{
 		UINT read;
 		UINT result=1;
@@ -48,16 +48,16 @@ public:
 			1:": "=&r" (result): "r" (Value), "r" (Compare), "r" (Set), "r" (read): "cc", "memory");
 		return result==0;
 		}
-	static ALWAYS_INLINE VOID DataStoreBarrier()noexcept
+	static __always_inline VOID DataStoreBarrier()noexcept
 		{
 		__asm inline volatile("dsb st"::: "memory");
 		}
-	static ALWAYS_INLINE VOID DataSyncBarrier()noexcept
+	static __always_inline VOID DataSyncBarrier()noexcept
 		{
 		__asm inline volatile("dsb sy"::: "memory");
 		}
 	static VOID Delay(UINT MicroSeconds);
-	static ALWAYS_INLINE UINT GetId()noexcept
+	static __always_inline UINT GetId()noexcept
 		{
 		UINT id;
 		__asm inline volatile("\
@@ -66,11 +66,11 @@ public:
 			and %0, %0, #3": "=r" (id));
 		return id;
 		}
-	static ALWAYS_INLINE VOID InstructionSyncBarrier()noexcept
+	static __always_inline VOID InstructionSyncBarrier()noexcept
 		{
 		__asm inline volatile("isb"::: "memory");
 		}
-	static ALWAYS_INLINE UINT InterlockedDecrement(volatile UINT* Value)noexcept
+	static __always_inline UINT InterlockedDecrement(volatile UINT* Value)noexcept
 		{
 		UINT value;
 		__asm inline volatile("\
@@ -79,7 +79,7 @@ public:
 			": "=&r" (value): "r" (Value));
 		return value;
 		}
-	static ALWAYS_INLINE UINT InterlockedIncrement(volatile UINT* Value)noexcept
+	static __always_inline UINT InterlockedIncrement(volatile UINT* Value)noexcept
 		{
 		UINT value;
 		__asm inline volatile("\
@@ -88,11 +88,15 @@ public:
 			": "=&r" (value): "r" (Value));
 		return value;
 		}
-	static ALWAYS_INLINE VOID InvalidateInstructionCache()noexcept
+	static __always_inline VOID InvalidateInstructionCache()noexcept
 		{
 		__asm inline volatile("ic iallu"::: "memory");
 		}
-	static ALWAYS_INLINE VOID SetContext(VOID (*TaskProc)(VOID*), VOID* Parameter, SIZE_T StackPointer)noexcept
+	static __always_inline VOID Nop()
+		{
+		__asm inline volatile("nop");
+		}
+	static __always_inline VOID SetContext(VOID (*TaskProc)(VOID*), VOID* Parameter, SIZE_T StackPointer)noexcept
 		{
 		__asm inline volatile("\
 			mov x30, %0\n\
@@ -100,31 +104,31 @@ public:
 			mov sp, %2\n\
 			ret":: "r" (TaskProc), "r" (Parameter), "r" (StackPointer): "x30", "x0");
 		}
-	static ALWAYS_INLINE VOID SetEvent()noexcept
+	static __always_inline VOID SetEvent()noexcept
 		{
 		__asm inline volatile("sev");
 		}
-	static ALWAYS_INLINE VOID StoreAndRelease(volatile UINT* Address, UINT Set)noexcept
+	static __always_inline VOID StoreAndRelease(volatile UINT* Address, UINT Set)noexcept
 		{
 		__asm inline volatile("stlr %w1, [%0]":: "r" (Address), "r" (Set));
 		}
 	static VOID SynchronizeDataAndInstructionCache()noexcept;
-	static ALWAYS_INLINE VOID WaitForEvent()noexcept
+	static __always_inline VOID WaitForEvent()noexcept
 		{
 		__asm inline volatile("wfe");
 		}
-	static ALWAYS_INLINE VOID WaitForInterrupt()noexcept
+	static __always_inline VOID WaitForInterrupt()noexcept
 		{
 		__asm inline volatile("wfi");
 		}
 
 private:
 	// Common
-	static ALWAYS_INLINE VOID DisableInterrupts()noexcept
+	static __always_inline VOID DisableInterrupts()noexcept
 		{
 		__asm inline volatile("msr daifset, #2");
 		}
-	static ALWAYS_INLINE VOID EnableInterrupts()noexcept
+	static __always_inline VOID EnableInterrupts()noexcept
 		{
 		__asm inline volatile("msr daifclr, #2");
 		}

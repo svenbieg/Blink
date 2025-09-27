@@ -23,7 +23,7 @@ using namespace Storage::Encoding;
 // Settings
 //==========
 
-constexpr SIZE_T CATCH_ANY=0x1301FFFF00000000;
+constexpr UINT64 CATCH_ANY=0x1301FFFF00000000ULL;
 
 
 //===========
@@ -37,7 +37,7 @@ extern "C" {
 // Common
 //========
 
-VOID* __cxa_allocate_exception(SIZE_T thrown_size)noexcept
+__iram VOID* __cxa_allocate_exception(SIZE_T thrown_size)noexcept
 {
 SIZE_T size=sizeof(UnwindException)+thrown_size;
 auto exc=(UnwindException*)operator new(size, std::nothrow_t());
@@ -80,6 +80,11 @@ new (exc) UnwindException((TypeInfo const*)type, destr);
 exc_save_context(&exc->Frame);
 exc->Raise();
 System::Restart();
+}
+
+VOID __cxa_throw_bad_array_new_length()
+{
+throw InvalidArgumentException();
 }
 
 VOID __gxx_personality_v0(INT version, UINT flags, UINT64 exc_class, UnwindException* exc, UnwindContext* context)noexcept
