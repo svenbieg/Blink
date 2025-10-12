@@ -85,6 +85,8 @@ __asm inline volatile("msr CNTP_TVAL_EL0, %0":: "r" (PERIOD));
 __asm inline volatile("msr CNTP_CTL_EL0, %0":: "r" (1UL));
 }
 
+SystemTimer* SystemTimer::s_Current=nullptr;
+
 
 //================
 // Common Private
@@ -107,7 +109,5 @@ while(!task->Cancelled)
 	Triggered(this);
 	}
 }
-
-SystemTimer* SystemTimer::s_Current=nullptr;
 
 }}

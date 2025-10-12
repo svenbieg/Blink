@@ -3,6 +3,10 @@
   <PropertyGroup Label="Globals">
     <HasSharedItems>true</HasSharedItems>
     <ItemsProjectGuid>{E31DF348-0424-4DEB-B143-B720C57D828C}</ItemsProjectGuid>
+    <ItemsSccProjectName>$/Shared/Runtime.Rpi5</ItemsSccProjectName>
+    <ItemsSccAuxPath>https://svenbieg.visualstudio.com</ItemsSccAuxPath>
+    <ItemsSccLocalPath>.</ItemsSccLocalPath>
+    <ItemsSccProvider>{4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}</ItemsSccProvider>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(MSBuildThisFileDirectory)</NMakeIncludeSearchPath>
   </PropertyGroup>
@@ -10,7 +14,11 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Emmc\EmmcHost.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHelper.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHost.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Pcie\PcieHost.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialPort.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Interrupts.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Memory.cpp" />
@@ -22,10 +30,18 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)base.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cpu.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)cstddef" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Emmc\Emmc.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Emmc\EmmcHost.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHost.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pcie\Pcie.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pcie\PcieHost.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialPort.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Interrupts.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Memory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Soc.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\System.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)except.h" />

@@ -37,6 +37,7 @@ public:
 	StreamWriter(OutputStream* Stream=nullptr);
 
 	// Common
+	VOID Flush();
 	UINT Print(LPCSTR Value);
 	UINT Print(LPCSTR Value, FormatFlags Flags, UINT Width);
 	UINT Print(LPCWSTR Value);

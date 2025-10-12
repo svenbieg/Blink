@@ -38,6 +38,12 @@ SetStream(stream);
 // Common
 //========
 
+VOID StreamWriter::Flush()
+{
+if(m_Stream)
+	m_Stream->Flush();
+}
+
 UINT StreamWriter::Print(LPCSTR value)
 {
 return DoPrint(m_WriteAnsi, 0, value);

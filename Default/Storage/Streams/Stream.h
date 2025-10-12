@@ -31,7 +31,11 @@ Unicode,
 UTF8
 };
 
-constexpr StreamFormat DefaultStreamFormat=StreamFormat::UTF8;
+#ifdef _UNICODE
+constexpr StreamFormat DefaultStreamFormat=StreamFormat::Unicode;
+#else
+constexpr StreamFormat DefaultStreamFormat=StreamFormat::Ansi;
+#endif
 
 
 //========

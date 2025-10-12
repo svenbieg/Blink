@@ -12,6 +12,7 @@
 #include <base.h>
 #include <io.h>
 #include "Devices/Gpio/GpioHelper.h"
+#include "Devices/Gpio/GpioHost.h"
 
 
 //===========
@@ -44,20 +45,46 @@ rw32_t PULL[4];
 // Common
 //========
 
-BOOL GpioHelper::DigitalRead(ArmPin arm_pin)
+FLOAT GpioHelper::AnalogRead(BYTE pin)
+{
+throw NotImplementedException();
+return 0.f;
+}
+
+BOOL GpioHelper::DigitalRead(BYTE pin)
+{
+if(pin<GPIO_PIN_COUNT)
+	return DigitalRead((GpioRp1Pin)pin);
+return DigitalRead((GpioArmPin)pin);
+}
+
+BOOL GpioHelper::DigitalRead(GpioArmPin pin)
 {
 auto gpio=(arm_gpio_t*)ARM_GPIO1_BASE;
-UINT pin=(UINT)arm_pin;
-if(pin>=32)
+UINT id=(UINT)pin;
+if(id>=32)
 	{
 	gpio=(arm_gpio_t*)ARM_GPIO2_BASE;
-	pin-=32;
+	id-=32;
 	}
-UINT mask=1UL<<pin;
+UINT mask=1UL<<id;
 return io_read(gpio->DATA0, mask)!=0;
 }
 
-VOID GpioHelper::DigitalWrite(ArmPin arm_pin, BOOL value)
+BOOL GpioHelper::DigitalRead(GpioRp1Pin pin)
+{
+auto gpio=GpioHost::Create();
+return gpio->DigitalRead(pin);
+}
+
+VOID GpioHelper::DigitalWrite(BYTE pin, BOOL value)
+{
+if(pin<GPIO_PIN_COUNT)
+	return DigitalWrite((GpioRp1Pin)pin, value);
+return DigitalWrite((GpioArmPin)pin, value);
+}
+
+VOID GpioHelper::DigitalWrite(GpioArmPin arm_pin, BOOL value)
 {
 auto gpio=(arm_gpio_t*)ARM_GPIO1_BASE;
 UINT pin=(UINT)arm_pin;
@@ -71,7 +98,33 @@ UINT set=value? mask: 0;
 io_write(gpio->DATA0, mask, set);
 }
 
-VOID GpioHelper::SetPinMode(ArmPin arm_pin, ArmPinMode mode, ArmPullMode pull_mode)
+VOID GpioHelper::DigitalWrite(GpioRp1Pin pin, BOOL value)
+{
+auto gpio=GpioHost::Create();
+return gpio->DigitalWrite(pin, value);
+}
+
+VOID GpioHelper::SetInterruptHandler(BYTE pin, IRQ_HANDLER handler, VOID* param, GpioIrqMode mode)
+{
+if(pin>=GPIO_PIN_COUNT)
+	throw InvalidArgumentException();
+SetInterruptHandler((GpioRp1Pin)pin, handler, param, mode);
+}
+
+VOID GpioHelper::SetInterruptHandler(GpioRp1Pin pin, IRQ_HANDLER handler, VOID* param, GpioIrqMode mode)
+{
+auto gpio_host=GpioHost::Create();
+gpio_host->SetInterruptHandler(pin, handler, param, mode);
+}
+
+VOID GpioHelper::SetPinMode(BYTE pin, GpioPinMode mode, GpioPullMode pull_mode)
+{
+if(pin>=GPIO_PIN_COUNT)
+	throw InvalidArgumentException();
+return SetPinMode((GpioRp1Pin)pin, (GpioRp1PinMode)mode, pull_mode);
+}
+
+VOID GpioHelper::SetPinMode(GpioArmPin arm_pin, GpioArmPinMode mode, GpioPullMode pull_mode)
 {
 auto pin_ctrl=(arm_pinctrl_t*)ARM_PINCTRL1_BASE;
 UINT pin=(UINT)arm_pin;
@@ -84,7 +137,7 @@ BYTE pull_reg=offset/15;
 BYTE pull_shift=(offset%15)*2;
 bits32_t pull_bits={ 0x3, pull_shift };
 io_write(pin_ctrl->PULL[pull_reg], pull_bits, (UINT)pull_mode);
-if(mode==ArmPinMode::Output)
+if(mode==GpioArmPinMode::Output)
 	{
 	auto gpio=(arm_gpio_t*)ARM_GPIO1_BASE;
 	if(pin>32)
@@ -94,6 +147,12 @@ if(mode==ArmPinMode::Output)
 		}
 	io_write(gpio->IODIR0, 1UL<<pin, 0);
 	}
+}
+
+VOID GpioHelper::SetPinMode(GpioRp1Pin pin, GpioRp1PinMode mode, GpioPullMode pull_mode)
+{
+auto gpio=GpioHost::Create();
+gpio->SetPinMode(pin, mode, pull_mode);
 }
 
 }}

@@ -42,13 +42,13 @@ public:
 private:
 	// Con-/Destructors
 	SystemTimer();
+	static SystemTimer* s_Current;
 
 	// Common
 	static VOID HandleInterrupt(VOID* Parameter);
 	VOID ServiceTask();
 	Concurrency::Signal m_Signal;
 	Handle<Concurrency::Task> m_Task;
-	static SystemTimer* s_Current;
 };
 
 }}

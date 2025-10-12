@@ -118,6 +118,11 @@ public:
 		if(Scheduler::IsMainTask())
 			throw InvalidContextException();
 		}
+	static inline VOID ThrowIfNotMain()
+		{
+		if(!Scheduler::IsMainTask())
+			throw InvalidContextException();
+		}
 	Status Wait();
 
 protected:

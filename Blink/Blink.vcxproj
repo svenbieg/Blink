@@ -3,6 +3,10 @@
   <Import Project="..\Runtime\Configuration\Platform.props" />
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0A8C397A-DB1A-41FA-966B-358CE4352EB4}</ProjectGuid>
+    <SccProjectName>$/Examples/Blink/Blink</SccProjectName>
+    <SccAuxPath>https://svenbieg.visualstudio.com</SccAuxPath>
+    <SccLocalPath>.</SccLocalPath>
+    <SccProvider>{4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}</SccProvider>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="..\Runtime\Configuration\Default.props" />
@@ -12,8 +16,8 @@
   <ImportGroup Label="Shared">
     <Import Project="..\Runtime\Runtime.vcxitems" Label="Shared" />
     <Import Project="..\Runtime.Rpi5\Runtime.Rpi5.vcxitems" Label="Shared" Condition="'$(Platform)'=='Rpi5'" />
-    <Import Project="..\Default\Default.vcxitems" Label="Shared" />
     <Import Project="..\Scheduler\Scheduler.vcxitems" Label="Shared" />
+    <Import Project="..\Default\Default.vcxitems" Label="Shared" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />

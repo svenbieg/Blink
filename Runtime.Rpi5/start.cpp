@@ -39,10 +39,8 @@ Scheduler::Begin();
 
 VOID start_secondary()
 {
-#ifdef _DEBUG
-BOOL wait=true;
-while(wait) {}
-#endif
+while(1)
+	Cpu::WaitForEvent();
 Memory::Enable();
 Scheduler::Begin();
 }

@@ -1,6 +1,6 @@
-//================
-// StringBuffer.h
-//================
+//==============
+// StringView.h
+//==============
 
 #pragma once
 
@@ -12,22 +12,15 @@
 #include "Storage/Streams/InputStream.h"
 
 
-//===========
-// Namespace
-//===========
+//=============
+// String-View
+//=============
 
-namespace Storage {
-
-
-//===============
-// String-Buffer
-//===============
-
-class StringBuffer: public Streams::InputStream
+class StringView: public Storage::Streams::InputStream
 {
 public:
 	// Con-/Destructors
-	static inline Handle<StringBuffer> Create(Handle<String> Value) { return new StringBuffer(Value); }
+	static inline Handle<StringView> Create(Handle<String> Value) { return new StringView(Value); }
 
 	// Common
 	VOID Reset() { m_Position=0; }
@@ -38,12 +31,10 @@ public:
 
 private:
 	// Con-/Destructors
-	StringBuffer(Handle<String> Value);
+	StringView(Handle<String> Value);
 
 	// Common
 	UINT m_Position;
 	UINT m_Size;
 	Handle<String> m_Value;
 };
-
-}

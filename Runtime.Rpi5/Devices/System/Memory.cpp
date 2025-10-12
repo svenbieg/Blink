@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include <attr.h>
 #include <base.h>
 #include <config.h>
 #include <heap.h>
@@ -67,7 +68,7 @@ constexpr SIZE_T ENTRY_CACHED=(ENTRY_ACC|ENTRY_SHARE_IN|ENTRY_ATT_CACHED|ENTRY_T
 constexpr SIZE_T ENTRY_UNCACHED=(ENTRY_ACC|ENTRY_SHARE_IN|ENTRY_ATT_UNCACHED|ENTRY_TYPE_BLOCK);
 constexpr SIZE_T ENTRY_DEVICE=(ENTRY_PXN|ENTRY_UXN|ENTRY_ACC|ENTRY_SHARE_OUT|ENTRY_ATT_DEVICE|ENTRY_TYPE_BLOCK);
 
-static SIZE_T g_PageTable[PAGE_TABLE_ENTRIES] NO_DATA(PAGE_TABLE_SIZE);
+static SIZE_T g_PageTable[PAGE_TABLE_ENTRIES] __no_data(PAGE_TABLE_SIZE);
 
 
 //========
@@ -113,12 +114,12 @@ VOID Memory::Initialize()
 {
 CreatePageTable();
 Enable();
-MemoryHelper::Fill(&__bss_start, &__bss_end, 0);
+MemoryHelper::Zero(&__bss_start, &__bss_end);
 SIZE_T heap_start=(SIZE_T)&__heap_start;
 SIZE_T heap_end=RAM_SIZE;
 SIZE_T heap_size=heap_end-heap_start;
 g_heap=heap_create(heap_start, heap_size);
-heap_reserve(g_heap, LOW_IO_BASE, HIGH_MEM_BASE-LOW_IO_BASE);
+heap_reserve(g_heap, LOW_IO_BASE, LOW_IO_SIZE);
 for(CTOR_PTR* ctor=&__init_array_start; ctor!=&__init_array_end; ctor++)
 	(*ctor)();
 }

@@ -41,8 +41,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\Stream.h">
       <Filter>Storage\Streams</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)DynamicPointer.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Intermediate.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\PacketBuffer.h">
       <Filter>Storage</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\Index.h">
@@ -107,9 +106,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\StaticBuffer.h">
       <Filter>Storage</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\StringBuffer.h">
-      <Filter>Storage</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\Array.h">
       <Filter>Collections</Filter>
     </ClInclude>
@@ -123,6 +119,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\packet_buf.h">
       <Filter>Storage</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)StringView.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)UI\Console.h">
+      <Filter>UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)StringHelper.cpp" />
@@ -133,7 +133,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Buffer.cpp">
       <Filter>Storage</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Intermediate.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\PacketBuffer.cpp">
       <Filter>Storage</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Collections\StringList.cpp">
@@ -159,12 +159,13 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\StaticBuffer.cpp">
       <Filter>Storage</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\StringBuffer.cpp">
-      <Filter>Storage</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)StringBuilder.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\packet_buf.cpp">
       <Filter>Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)StringView.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)UI\Console.cpp">
+      <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -182,6 +183,9 @@
     </Filter>
     <Filter Include="Culture">
       <UniqueIdentifier>{9163acb5-c885-4791-b4c8-e49817220d0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{a88d2460-9428-4303-9857-d42edf552720}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

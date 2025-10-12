@@ -34,15 +34,15 @@ class TaskHelper
 {
 public:
 	// Common
-	static __always_inline VOID Initialize(SIZE_T* StackPointer, VOID (*TaskProc)(VOID*), VOID* Parameter)
+	static inline VOID Initialize(SIZE_T* StackPointer, VOID (*TaskProc)(VOID*), VOID* Parameter)
 		{
 		task_init(StackPointer, TaskProc, Parameter);
 		}
-	static __always_inline SIZE_T RestoreContext(SIZE_T StackPointer)
+	static inline SIZE_T RestoreContext(SIZE_T StackPointer)
 		{
 		return task_restore_context(StackPointer);
 		}
-	static __always_inline SIZE_T SaveContext(SIZE_T StackPointer)
+	static inline SIZE_T SaveContext(SIZE_T StackPointer)
 		{
 		return task_save_context(StackPointer);
 		}

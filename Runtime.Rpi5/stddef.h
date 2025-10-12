@@ -17,14 +17,6 @@
 #define __LONG_LONG long
 #endif
 
-#ifndef __SIZE
-#define __SIZE long
-#endif
-
-#ifndef __SIZE_T
-#define __SIZE_T unsigned long int
-#endif
-
 #define NULL 0
 
 #define offsetof(type, member) __builtin_offsetof(type, member)
@@ -36,7 +28,7 @@
 
 #ifndef __ASSEMBLER__
 
-typedef __LONG_LONG int ptrdiff_t;
-typedef unsigned __LONG_LONG int size_t;
+typedef long int ptrdiff_t;
+typedef unsigned long int size_t;
 
 #endif

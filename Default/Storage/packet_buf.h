@@ -23,12 +23,15 @@ public:
 	packet_buf(UINT block_size);
 	~packet_buf();
 
-	// Common
+	// Access
 	inline operator bool()const { return m_first!=nullptr; }
 	inline SIZE_T available()const { return m_written-m_read; }
+	SIZE_T read(VOID* buf, SIZE_T size);
+	
+	// Modification
+	inline void append(BYTE value) { write(&value, 1); }
 	VOID clear();
 	inline VOID flush() { m_written=m_write; }
-	SIZE_T read(VOID* buf, SIZE_T size);
 	SIZE_T write(VOID const* buf, SIZE_T size);
 
 private:

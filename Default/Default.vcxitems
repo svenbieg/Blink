@@ -37,7 +37,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\StringList.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Culture\LanguageCode.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)DynamicHandle.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)DynamicPointer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Event.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)EventHandler.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Exception.h" />
@@ -55,7 +54,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Directory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Encoding\Dwarf.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\File.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Intermediate.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\PacketBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\packet_buf.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\ring_buf.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Seekable.h" />
@@ -67,12 +66,13 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamReader.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamWriter.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\StringBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Volume.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StringBuilder.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StringClass.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StringHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StringView.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TypeHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)UI\Console.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)UnknownClass.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VariableArguments.h" />
   </ItemGroup>
@@ -85,16 +85,17 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)PathHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Buffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Encoding\Dwarf.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Intermediate.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\PacketBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\packet_buf.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\StaticBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamReader.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamWriter.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\StringBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StringBuilder.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StringClass.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StringHelper.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)StringView.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)UI\Console.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)UnknownClass.cpp" />
   </ItemGroup>
 </Project>

@@ -82,7 +82,8 @@
     <ItemGroup>
       <SettingsLines Include="{" />
       <SettingsLines Include="%22cortex-debug.openocdPath%22: %22$(OpenOcdExePath)%22," />
-      <SettingsLines Include="%22cortex-debug.gdbPath%22: %22$(GdbExe)%22" />
+      <SettingsLines Include="%22cortex-debug.gdbPath%22: %22$(GdbExe)%22," />
+      <SettingsLines Include="%22debug.allowBreakpointsEverywhere%22: true" />
       <SettingsLines Include="}" />
     </ItemGroup>
     <WriteLinesToFile File="$(SolutionDir)\.vscode\settings.json" Lines="@(SettingsLines)" Overwrite="true" />

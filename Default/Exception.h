@@ -47,6 +47,12 @@ public:
 	AccessDeniedException(): Exception(Status::AccessDenied) {}
 };
 
+class AlreadyExistsException: public Exception
+{
+public:
+	AlreadyExistsException(): Exception(Status::AlreadyExists) {}
+};
+
 class BufferOverrunException: public Exception
 {
 public:

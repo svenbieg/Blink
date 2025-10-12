@@ -11,9 +11,11 @@
 
 #include "Concurrency/Task.h"
 #include "Devices/System/System.h"
+#include "UI/Console.h"
 
 using namespace Concurrency;
 using namespace Devices::System;
+using namespace UI;
 
 
 //=============
@@ -22,6 +24,7 @@ using namespace Devices::System;
 
 INT Main()
 {
+Console::Print("Starting to blink...\n");
 auto task=Task::Create(nullptr, []()
 	{
 	BOOL led=false;
@@ -35,6 +38,7 @@ auto task=Task::Create(nullptr, []()
 	}, "blink");
 task->Then(nullptr, []()
 	{
+	Console::Print("Done\n");
 	System::Led(false);
 	});
 DispatchedQueue::Enter();

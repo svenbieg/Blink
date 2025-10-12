@@ -37,7 +37,7 @@ extern "C" {
 // Common
 //========
 
-__iram VOID* __cxa_allocate_exception(SIZE_T thrown_size)noexcept
+VOID* __cxa_allocate_exception(SIZE_T thrown_size)noexcept
 {
 SIZE_T size=sizeof(UnwindException)+thrown_size;
 auto exc=(UnwindException*)operator new(size, std::nothrow_t());

@@ -38,40 +38,26 @@ clear();
 }
 
 
-//========
-// Common
-//========
 
-VOID packet_buf::clear()
-{
-auto block=m_first;
-while(block)
-	{
-	auto next=block->next;
-	operator delete(block);
-	block=next;
-	}
-m_first=nullptr;
-m_last=nullptr;
-m_read=0;
-m_write=0;
-m_written=0;
-}
+//========
+// Access
+//========
 
 SIZE_T packet_buf::read(VOID* buf, SIZE_T size)
 {
 auto dst=(BYTE*)buf;
-size_t pos=0;
+SIZE_T pos=0;
 while(pos<size)
 	{
 	if(!m_first)
 		break;
-	size_t block_size=m_first->size;
+	SIZE_T block_size=m_first->size;
 	UINT available=block_size-m_read;
 	if(available)
 		{
 		UINT copy=TypeHelper::Min(available, size-pos);
-		MemoryHelper::Copy(&dst[pos], &m_first->buf[m_read], copy);
+		if(dst)
+			MemoryHelper::Copy(&dst[pos], &m_first->buf[m_read], copy);
 		m_read+=copy;
 		pos+=copy;
 		}
@@ -88,6 +74,27 @@ while(pos<size)
 		}
 	}
 return pos;
+}
+
+
+//==============
+// Modification
+//==============
+
+VOID packet_buf::clear()
+{
+auto block=m_first;
+while(block)
+	{
+	auto next=block->next;
+	operator delete(block);
+	block=next;
+	}
+m_first=nullptr;
+m_last=nullptr;
+m_read=0;
+m_write=0;
+m_written=0;
 }
 
 SIZE_T packet_buf::write(VOID const* buf, SIZE_T size)

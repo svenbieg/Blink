@@ -9,7 +9,6 @@
 // Using
 //=======
 
-#include <assert.h>
 #include "CharHelper.h"
 
 using namespace Storage::Streams;
@@ -120,8 +119,8 @@ return CharToChar<_dst_t, _src_t>(tc);
 
 template <class _char_t> UINT CharReadUtf8(InputStream* stream, _char_t* c_ptr)
 {
-assert(stream);
-assert(c_ptr);
+if(!stream||!c_ptr)
+	return 0;
 UINT size=0;
 BYTE buf[4];
 UINT read=(UINT)stream->Read(&buf[0], 1);
@@ -174,7 +173,6 @@ return size;
 
 template <class _char_t> UINT CharWriteUtf8(OutputStream* stream, _char_t tc)
 {
-assert(stream);
 WCHAR c=CharToChar<WCHAR, _char_t>(tc);
 if(c<0x80)
 	{
@@ -523,49 +521,51 @@ return CharIsSpecial(c);
 
 UINT CharHelper::ReadAnsi(InputStream* stream, CHAR* c_ptr)
 {
-assert(stream);
-assert(c_ptr);
+if(!stream)
+	return 0;
 return (UINT)stream->Read(c_ptr, sizeof(CHAR));
 }
 
 UINT CharHelper::ReadAnsi(InputStream* stream, WCHAR* c_ptr)
 {
-assert(stream);
-assert(c_ptr);
+if(!stream)
+	return 0;
 CHAR c=0;
 UINT read=(UINT)stream->Read(&c, sizeof(CHAR));
-*c_ptr=CharToChar<WCHAR, CHAR>(c);
+if(c_ptr)
+	*c_ptr=CharToChar<WCHAR, CHAR>(c);
 return read;
 }
 
 UINT CharHelper::ReadUnicode(InputStream* stream, CHAR* c_ptr)
 {
-assert(stream);
-assert(c_ptr);
+if(!stream)
+	return 0;
 WCHAR c=0;
 UINT read=(UINT)stream->Read(&c, sizeof(WCHAR));
-*c_ptr=CharToChar<CHAR, WCHAR>(c);
+if(c_ptr)
+	*c_ptr=CharToChar<CHAR, WCHAR>(c);
 return read;
 }
 
 UINT CharHelper::ReadUnicode(InputStream* stream, WCHAR* c_ptr)
 {
-assert(stream);
-assert(c_ptr);
+if(!stream)
+	return 0;
 return (UINT)stream->Read(c_ptr, sizeof(WCHAR));
 }
 
 UINT CharHelper::ReadUtf8(InputStream* stream, CHAR* c_ptr)
 {
-assert(stream);
-assert(c_ptr);
+if(!stream)
+	return 0;
 return CharReadUtf8(stream, c_ptr);
 }
 
 UINT CharHelper::ReadUtf8(InputStream* stream, WCHAR* c_ptr)
 {
-assert(stream);
-assert(c_ptr);
+if(!stream)
+	return 0;
 return CharReadUtf8(stream, c_ptr);
 }
 
@@ -672,27 +672,31 @@ return UnicodeMap[b];
 
 UINT CharHelper::WriteAnsi(OutputStream* stream, CHAR c)
 {
-assert(stream);
+if(!stream)
+	return sizeof(CHAR);
 return (UINT)stream->Write(&c, sizeof(CHAR));
 }
 
 UINT CharHelper::WriteAnsi(OutputStream* stream, WCHAR wc)
 {
-assert(stream);
+if(!stream)
+	return sizeof(CHAR);
 CHAR c=CharToChar<CHAR, WCHAR>(wc);
 return (UINT)stream->Write(&c, sizeof(CHAR));
 }
 
 UINT CharHelper::WriteUnicode(OutputStream* stream, CHAR c)
 {
-assert(stream);
+if(!stream)
+	return sizeof(WCHAR);
 WCHAR wc=CharToChar<WCHAR, CHAR>(c);
 return (UINT)stream->Write(&wc, sizeof(WCHAR));
 }
 
 UINT CharHelper::WriteUnicode(OutputStream* stream, WCHAR wc)
 {
-assert(stream);
+if(!stream)
+	return sizeof(WCHAR);
 return (UINT)stream->Write(&wc, sizeof(WCHAR));
 }
 

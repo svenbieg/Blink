@@ -41,7 +41,7 @@ extern "C" {
 // Common
 //========
 
-__iram void abort()
+void abort()
 {
 throw AbortException();
 }
