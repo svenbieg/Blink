@@ -137,5 +137,6 @@
     <None Include="$(MSBuildThisFileDirectory)Configuration\Debug.cfg">
       <Filter>Configuration</Filter>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)mmu.S" />
   </ItemGroup>
 </Project>

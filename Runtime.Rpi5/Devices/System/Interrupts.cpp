@@ -157,6 +157,7 @@ io_write(gicc->PMR, GICC_PMR_PRIORITY);
 io_write(gicc->CTRL, GICC_CTRL_ENABLE);
 for(UINT core=0; core<CPU_COUNT; core++)
 	s_DisableCount[core]=1;
+Enable();
 }
 
 VOID Interrupts::Route(Irq irq, IrqTarget target)

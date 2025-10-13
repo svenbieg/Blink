@@ -242,9 +242,7 @@ VOID PcieHost::OnInterrupt()
 {
 SpinLock lock(m_CriticalSection);
 auto intc=(rp1_intc_regs_t*)RP1_INTC_BASE;
-UINT mask_lo=io_read(intc->INT_STAT_LO);
-UINT mask_hi=io_read(intc->INT_STAT_HI);
-UINT64 mask=TypeHelper::MakeLong(mask_lo, mask_hi);
+UINT64 mask=io_read(intc->INT_STAT);
 for(UINT irq=0; mask!=0; irq++)
 	{
 	if(mask&1)

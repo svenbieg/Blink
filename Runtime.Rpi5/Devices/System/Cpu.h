@@ -34,6 +34,7 @@ public:
 	static constexpr UINT CACHE_LINE_SIZE=64;
 
 	// Common
+	static INT Affinity(UINT Core);
 	static VOID CleanDataCache()noexcept;
 	static inline BOOL CompareAndSet(volatile UINT* Value, UINT Compare, UINT Set)noexcept
 		{
@@ -96,6 +97,7 @@ public:
 		{
 		__asm inline volatile("nop");
 		}
+	static VOID PowerOn(UINT Core);
 	static inline VOID SetContext(VOID (*TaskProc)(VOID*), VOID* Parameter, SIZE_T StackPointer)noexcept
 		{
 		__asm inline volatile("\

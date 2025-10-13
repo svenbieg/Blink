@@ -41,7 +41,7 @@ VOID start_secondary()
 {
 while(1)
 	Cpu::WaitForEvent();
-Memory::Enable();
+Interrupts::Enable();
 Scheduler::Begin();
 }
 

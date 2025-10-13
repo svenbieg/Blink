@@ -300,8 +300,7 @@ typedef struct
 {
 rw32_t REG_RW;
 uint32_t RES0[65];
-ro32_t INT_STAT_LO;
-ro32_t INT_STAT_HI;
+ro64_t INT_STAT;
 uint32_t RES1[446];
 rw32_t MSIX_CFG_SET[64];
 uint32_t RES2[192];

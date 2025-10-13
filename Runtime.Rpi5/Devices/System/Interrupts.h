@@ -37,8 +37,7 @@ constexpr UINT IRQ_COUNT=512;
 
 enum class Irq
 {
-Reset			=0,
-TaskSwitch		=1,
+TaskSwitch		=0,
 SystemTimer		=30,
 Dma0			=112,	// 0x50+0x20
 Dma1			=113,	// 0x51+0x20

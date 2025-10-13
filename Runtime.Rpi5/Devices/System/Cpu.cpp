@@ -18,6 +18,8 @@
 
 using namespace Devices::Timers;
 
+extern "C" VOID _start();
+
 
 //===========
 // Namespace
@@ -47,16 +49,23 @@ constexpr UINT SETWAY_LEVEL_SHIFT=1;
 constexpr UINT SETWAY_SET_SHIFT=6;
 
 
-//====================================
-// Power State Coordination Interface
-//====================================
-
-constexpr UINT64 PSCI_CPU_ON=0xC4000003;
-
-
 //========
 // Common
 //========
+
+INT Cpu::Affinity(UINT core)
+{
+constexpr UINT64 PSCI_AFFINITY=0xC4000004;
+UINT64 mpidr=(core<<8);
+INT status=0;
+__asm volatile("\
+mov x0, %1\n\
+mov x1, %2\n\
+mov x2, xzr\n\
+smc #0\n\
+mov %w0, w0": "=r" (status): "r" (PSCI_AFFINITY), "r" (mpidr));
+return status;
+}
 
 VOID Cpu::CleanDataCache()noexcept
 {
@@ -91,6 +100,23 @@ VOID Cpu::Delay(UINT us)
 {
 UINT64 end=SystemTimer::Microseconds64()+us;
 while(SystemTimer::Microseconds64()<end);
+}
+
+VOID Cpu::PowerOn(UINT core)
+{
+constexpr UINT64 PSCI_CPU_ON=0xC4000003;
+UINT64 mpidr=(core<<8);
+INT status=0;
+__asm volatile("\
+mov x0, %1\n\
+mov x1, %2\n\
+mov x2, %3\n\
+mov x3, #1\n\
+mov x4, xzr\n\
+smc #0\n\
+mov %w0, w0": "=r" (status): "r" (PSCI_CPU_ON), "r" (mpidr), "r" (&_start));
+if(status!=0)
+	throw DeviceNotReadyException();
 }
 
 VOID Cpu::SynchronizeDataAndInstructionCache()noexcept

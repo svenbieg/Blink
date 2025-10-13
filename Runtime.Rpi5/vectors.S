@@ -22,13 +22,41 @@ b \label
 .endm
 
 
-//===================
-// Exception Vectors
-//===================
+//=======================
+// Exception Vectors EL2
+//=======================
 
 .align 11
-.globl exception_vectors
-exception_vectors:
+.globl _vectors_el2
+_vectors_el2:
+ventry sync_handler // Synchronous EL2T
+ventry irq_handler
+ventry fiq_handler
+ventry error_handler
+
+ventry sync_handler // Synchronous EL2H
+ventry irq_handler
+ventry fiq_handler
+ventry error_handler
+
+ventry invalid_handler // Synchronous 64-bit EL0
+ventry invalid_handler
+ventry invalid_handler
+ventry invalid_handler
+
+ventry invalid_handler // Synchronous 32-bit EL0
+ventry invalid_handler
+ventry invalid_handler
+ventry invalid_handler
+
+
+//=======================
+// Exception Vectors EL1
+//=======================
+
+.align 11
+.globl _vectors_el1
+_vectors_el1:
 ventry sync_handler // Synchronous EL1T
 ventry irq_handler
 ventry fiq_handler

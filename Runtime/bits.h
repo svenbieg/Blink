@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include <attr.h>
 #include <stdint.h>
 
 
@@ -50,10 +51,10 @@ while(value>0)
 return bits;
 }
 
-inline void bits_clear(uint32_t& op, uint32_t mask) { op&=~mask; }
-inline uint32_t  bits_get(uint32_t op, uint32_t mask) { return op&mask; }
-inline uint32_t bits_get(uint32_t op, bits32_t const& bits) { return (op>>bits.shift)&bits.mask; }
-inline void bits_set(uint32_t& op, uint32_t mask) { op|=mask; }
-inline void bits_set(uint32_t& op, uint32_t mask, uint32_t value) { op&=~mask; op|=value; }
-inline void bits_set(uint32_t& op, bits32_t const& bits, uint32_t value) { op&=~(bits.mask<<bits.shift); op|=(value<<bits.shift); }
-inline void bits_set(uint64_t& op, uint64_t mask) { op|=mask; }
+__always_inline void bits_clear(uint32_t& op, uint32_t mask) { op&=~mask; }
+__always_inline uint32_t  bits_get(uint32_t op, uint32_t mask) { return op&mask; }
+__always_inline uint32_t bits_get(uint32_t op, bits32_t const& bits) { return (op>>bits.shift)&bits.mask; }
+__always_inline void bits_set(uint32_t& op, uint32_t mask) { op|=mask; }
+__always_inline void bits_set(uint32_t& op, uint32_t mask, uint32_t value) { op&=~mask; op|=value; }
+__always_inline void bits_set(uint32_t& op, bits32_t const& bits, uint32_t value) { op&=~(bits.mask<<bits.shift); op|=(value<<bits.shift); }
+__always_inline void bits_set(uint64_t& op, uint64_t mask) { op|=mask; }

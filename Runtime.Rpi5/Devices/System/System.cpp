@@ -44,14 +44,6 @@ constexpr uint32_t PM_PASSWD=(0x5A<<24);
 constexpr uint32_t PM_FULL_RESET=0x20;
 
 
-//====================================
-// Power State Coordination Interface
-//====================================
-
-constexpr uint64_t PSCI_POWER_OFF=0x84000008;
-constexpr uint64_t PSCI_RESET=0x84000009;
-
-
 //=======
 // Reset
 //=======
@@ -82,6 +74,7 @@ GpioHelper::DigitalWrite(GpioArmPin::ActivityLed, on);
 
 VOID System::PowerOff()
 {
+constexpr UINT64 PSCI_POWER_OFF=0x84000008;
 __asm volatile("\
 mov	x0, %0\n\
 smc	#0\n\
@@ -109,6 +102,7 @@ Cpu::Delay(100);
 
 VOID System::Restart()
 {
+constexpr UINT64 PSCI_RESET=0x84000009;
 __asm volatile("\
 mov	x0, %0\n\
 smc	#0\n\
