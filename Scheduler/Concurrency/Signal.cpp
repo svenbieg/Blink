@@ -50,6 +50,7 @@ Scheduler::AddParallelTask(&m_Waiting, current);
 Scheduler::SuspendCurrentTask(core, current);
 lock.Yield();
 current->m_Signal=nullptr;
+lock.Unlock();
 if(current->Cancelled)
 	throw AbortException();
 }
@@ -66,6 +67,7 @@ Scheduler::AddParallelTask(&m_Waiting, current);
 Scheduler::SuspendCurrentTask(core, current, resume_time);
 lock.Yield();
 current->m_Signal=nullptr;
+lock.Unlock();
 if(current->Cancelled)
 	throw AbortException();
 if(current->m_ResumeTime)
@@ -83,6 +85,7 @@ Scheduler::AddParallelTask(&m_Waiting, current);
 Scheduler::SuspendCurrentTask(core, current);
 scoped_lock.Yield(lock);
 current->m_Signal=nullptr;
+lock.Unlock();
 if(current->Cancelled)
 	throw AbortException();
 }
@@ -100,6 +103,7 @@ Scheduler::AddParallelTask(&m_Waiting, current);
 Scheduler::SuspendCurrentTask(core, current, resume_time);
 scoped_lock.Yield(lock);
 current->m_Signal=nullptr;
+lock.Unlock();
 if(current->Cancelled)
 	throw AbortException();
 if(current->m_ResumeTime)
