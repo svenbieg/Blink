@@ -299,9 +299,10 @@ UArt5=46
 typedef struct
 {
 rw32_t REG_RW;
-uint32_t RES0[64];
-rw32_t INT_STATUS[2];
-uint32_t RES1[447];
+uint32_t RES0[65];
+ro32_t INT_STAT_LO;
+ro32_t INT_STAT_HI;
+uint32_t RES1[446];
 rw32_t MSIX_CFG_SET[64];
 uint32_t RES2[192];
 rw32_t MSIX_CFG_CLEAR[64];
