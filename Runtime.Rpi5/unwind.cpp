@@ -343,6 +343,16 @@ while(instr.GetPosition()<instr_end)
 			pc+=(UINT)instr.ReadValue<BYTE>()*context->CodeAlign;
 			break;
 			}
+		case OP_ADVANCE_LOC2:
+			{
+			pc+=(UINT)instr.ReadValue<WORD>()*context->CodeAlign;
+			break;
+			}
+		case OP_ADVANCE_LOC4:
+			{
+			pc+=(UINT)instr.ReadValue<DWORD>()*context->CodeAlign;
+			break;
+			}
 		case OP_DEF_CFA:
 			{
 			UINT reg=(UINT)instr.ReadUnsigned();
