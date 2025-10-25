@@ -34,8 +34,11 @@ namespace Devices {
 //==========
 
 constexpr UINT UART_CLOCK=50000000;
+
 constexpr UINT UART_INPUT_BUF=48;
 constexpr UINT UART_OUTPUT_BUF=32;
+
+constexpr UINT UART_INPUT_RING=UART_INPUT_BUF*4;
 
 
 //======
@@ -113,12 +116,12 @@ constexpr uint32_t LCRH_FIFO_ENABLE		=1<<4;
 // Baud Rate
 //===========
 
-inline UINT BAUD_INT(UINT clock, UINT baud)
+constexpr UINT BAUD_INT(UINT clock, UINT baud)
 {
 return clock/(baud<<4);
 }
 
-inline UINT BAUD_FRAC(UINT clock, UINT baud)
+constexpr UINT BAUD_FRAC(UINT clock, UINT baud)
 {
 UINT baud16=baud<<4;
 UINT baud_int=clock/baud16;
@@ -133,11 +136,12 @@ return baud_frac/2+baud_frac%2;
 
 SerialPort::~SerialPort()
 {
-s_Current[m_Id]=nullptr;
 if(m_PcieHost)
 	m_PcieHost->SetInterruptHandler(UART_DEVICES[m_Id].IRQ, nullptr);
 if(m_ServiceTask)
 	m_ServiceTask->Cancel();
+WriteLock lock(s_Mutex);
+s_Current[m_Id]=nullptr;
 }
 
 Handle<SerialPort> SerialPort::Create(SerialDevice device, BaudRate baud)
@@ -167,12 +171,12 @@ return serial;
 
 SIZE_T SerialPort::Available()
 {
-return m_ReadBuffer.available();
+return m_ReadBuffer->Available();
 }
 
 SIZE_T SerialPort::Read(VOID* buf, SIZE_T size)
 {
-return m_ReadBuffer.read(buf, size);
+return m_ReadBuffer->Read(buf, size);
 }
 
 
@@ -182,13 +186,14 @@ return m_ReadBuffer.read(buf, size);
 
 VOID SerialPort::Flush()
 {
-m_WriteBuffer.flush();
+SpinLock lock(m_CriticalSection);
+m_WriteBuffer->Flush();
 m_Signal.Trigger();
 }
 
 SIZE_T SerialPort::Write(VOID const* buf, SIZE_T size)
 {
-return m_WriteBuffer.write(buf, size);
+return m_WriteBuffer->Write(buf, size);
 }
 
 
@@ -199,12 +204,11 @@ return m_WriteBuffer.write(buf, size);
 SerialPort::SerialPort(SerialDevice device, BaudRate baud):
 m_BaudRate(baud),
 m_Device((VOID*)UART_DEVICES[(UINT)device].BASE),
-m_Id((UINT)device),
-m_InputBuffer(UART_INPUT_BUF),
-m_OutputBuffer(UART_OUTPUT_BUF),
-m_ReadBuffer(PAGE_SIZE),
-m_WriteBuffer(PAGE_SIZE)
+m_Id((UINT)device)
 {
+m_InputBuffer=RingBuffer::Create(UART_INPUT_RING);
+m_ReadBuffer=ReadBuffer::Create();
+m_WriteBuffer=WriteBuffer::Create();
 auto name=String::Create("serial%u", m_Id);
 m_ServiceTask=Task::Create(this, &SerialPort::ServiceTask, name);
 }
@@ -227,21 +231,21 @@ VOID SerialPort::OnInterrupt()
 {
 SpinLock lock(m_CriticalSection);
 auto uart=(pl011_regs_t*)m_Device;
-UINT mis=io_read(uart->MIS);
-io_write(uart->ICR, mis);
 while(!io_read(uart->FLAGS, FLAG_RX_EMPTY))
 	{
 	UINT value=io_read(uart->DATA);
-	m_InputBuffer.append((BYTE)value);
+	m_InputBuffer->Write((BYTE)value);
 	}
-while(m_OutputBuffer)
+while(m_WriteBuffer->Available())
 	{
 	if(io_read(uart->FLAGS, FLAG_TX_FULL))
 		break;
 	BYTE value=0;
-	m_OutputBuffer.consume(&value);
+	m_WriteBuffer->Read(&value, 1);
 	io_write(uart->DATA, value);
 	}
+UINT mis=io_read(uart->MIS);
+io_write(uart->ICR, mis); // ACK
 m_Signal.Trigger();
 }
 
@@ -268,34 +272,28 @@ bits_set(ifls, IFLS_TXIFSEL, IFLS_IFSEL_1_4);
 io_write(uart->IFLS, ifls);
 io_write(uart->IMSC, IMSC_INT_OE|IMSC_INT_RT|IMSC_INT_TX|IMSC_INT_RX);
 io_set(uart->CTRL, CTRL_RX_ENABLE|CTRL_TX_ENABLE|CTRL_ENABLE);
-BYTE input_buf[UART_INPUT_BUF];
-BYTE output_buf[UART_OUTPUT_BUF];
 SpinLock spin_lock(m_CriticalSection);
 while(!task->Cancelled)
 	{
-	UINT read=m_InputBuffer.consume(input_buf, UART_INPUT_BUF);
-	UINT space=m_OutputBuffer.space();
-	spin_lock.Unlock();
+	UINT read=m_InputBuffer->Available();
 	if(read)
 		{
-		m_ReadBuffer.write(input_buf, read);
+		spin_lock.Unlock();
+		m_ReadBuffer->Write(m_InputBuffer, read);
+		m_ReadBuffer->Flush();
 		DataReceived(this);
+		spin_lock.Lock();
 		}
-	UINT write=TypeHelper::Min(space, m_WriteBuffer.available());
-	if(write)
-		m_WriteBuffer.read(output_buf, write);
-	spin_lock.Lock();
-	for(UINT pos=0; pos<write; pos++)
-		m_OutputBuffer.append(output_buf[pos]);
-	while(m_OutputBuffer)
+	while(m_WriteBuffer->Available())
 		{
 		if(io_read(uart->FLAGS, FLAG_TX_FULL))
 			break;
 		BYTE value=0;
-		m_OutputBuffer.consume(&value);
+		m_WriteBuffer->Read(&value, 1);
 		io_write(uart->DATA, value);
 		}
-	m_Signal.Wait(spin_lock);
+	if(!read)
+		m_Signal.Wait(spin_lock);
 	}
 }
 

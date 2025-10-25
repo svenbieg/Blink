@@ -24,6 +24,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Emmc\EmmcHost.cpp">
       <Filter>Devices\Emmc</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\FlashMemory.cpp">
+      <Filter>Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\PartitionTable.cpp">
+      <Filter>Storage</Filter>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Pcie\PcieHost.cpp">
       <Filter>Devices\Pcie</Filter>
     </ClCompile>
@@ -32,6 +38,12 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHost.cpp">
       <Filter>Devices\Gpio</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\PwmHelper.cpp">
+      <Filter>Devices\Gpio</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\MailBox.cpp">
+      <Filter>Devices\System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -60,6 +72,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)stddef.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)unwind.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)base.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\FlashMemory.h">
+      <Filter>Storage</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHelper.h">
       <Filter>Devices\Gpio</Filter>
     </ClInclude>
@@ -68,6 +83,9 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Emmc\Emmc.h">
       <Filter>Devices\Emmc</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\PartitionTable.h">
+      <Filter>Storage</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Soc.h">
       <Filter>Devices\System</Filter>
@@ -85,6 +103,12 @@
       <Filter>Devices\Gpio</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)cstddef" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\PwmHelper.h">
+      <Filter>Devices\Gpio</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\MailBox.h">
+      <Filter>Devices\System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">
@@ -98,6 +122,9 @@
     </Filter>
     <Filter Include="Devices\Timers">
       <UniqueIdentifier>{139bd0a9-020c-4e62-a3a5-3c1279770a5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Storage">
+      <UniqueIdentifier>{3114767f-77b5-4f19-81ee-1033bdc7847d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Devices\Gpio">
       <UniqueIdentifier>{605f50fa-4556-45f8-bc01-9b5daa298ea6}</UniqueIdentifier>
@@ -129,7 +156,7 @@
       <Filter>Configuration</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)linker.ld.in" />
-    <None Include="$(MSBuildThisFileDirectory)start.S" />
+    <None Include="$(MSBuildThisFileDirectory)init.S" />
     <None Include="$(MSBuildThisFileDirectory)vectors.S" />
     <None Include="$(MSBuildThisFileDirectory)task.S" />
     <None Include="$(MSBuildThisFileDirectory)irq.S" />

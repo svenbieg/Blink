@@ -1,8 +1,8 @@
-//=========
-// start.S
-//=========
+//========
+// init.S
+//========
 
-.section ".text.start"
+.section ".text.init"
 
 
 //=======
@@ -16,8 +16,8 @@
 // Entry-Point
 //=============
 
-.globl _start
-_start:
+.globl init
+init:
 
 
 //============
@@ -47,7 +47,7 @@ msr CNTVOFF_EL2, xzr
 // Co-Processors
 //===============
 
-_init_fpu:
+_init_coproc:
 #define CPACR_FPEN (3<<20) // Enable FPU at EL1
 mov x0, #CPACR_FPEN
 msr CPACR_EL1, x0
@@ -58,9 +58,6 @@ msr CPACR_EL1, x0
 //===================
 
 _switch_to_el1:
-mrs x0, CurrentEL
-cmp x0, #4
-b.eq 1f
 #define SPSR_D (1<<9) // Debug exception mask
 #define SPSR_A (1<<8) // SError interrupt mask
 #define SPSR_I (1<<7) // IRQ interrupt mask
@@ -74,18 +71,6 @@ eret
 1:
 
 
-//============
-// Enable MMU
-//============
-
-_enable_mmu:
-cpu_id x0
-cbnz x0, 1f
-bl mmu_create_page_table
-1:
-bl mmu_enable
-
-
 //=======
 // Stack
 //=======
@@ -97,6 +82,35 @@ mul x1, x1, x0
 ldr x2, =__stack_end
 sub x2, x2, x1
 mov sp, x2
+
+
+//=================
+// Stall Secondary
+//=================
+
+_stall_secondary:
+cpu_id x0
+cbz x0, _create_page_table
+1:
+wfe
+b _enable_mmu
+
+
+//===================
+// Create Page Table
+//===================
+
+_create_page_table:
+bl mmu_create_page_table
+sev
+
+
+//============
+// Enable MMU
+//============
+
+_enable_mmu:
+bl mmu_enable
 
 
 //=======

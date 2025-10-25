@@ -44,7 +44,7 @@ namespace Devices {
 
 VOID Memory::Initialize()
 {
-MemoryHelper::Zero(&__bss_start, &__bss_end);
+MemoryHelper::Zero64(&__bss_start, &__bss_end);
 SIZE_T heap_start=(SIZE_T)&__heap_start;
 SIZE_T heap_end=RAM_SIZE;
 SIZE_T heap_size=heap_end-heap_start;

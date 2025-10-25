@@ -88,6 +88,7 @@ public:
 	static BOOL Enabled();
 	static VOID HandleInterrupt(UINT Irq);
 	static VOID Initialize();
+	static VOID InitializeSecondary();
 	static VOID Route(Irq Irq, IrqTarget Target);
 	static inline VOID Send(Irq Irq, UINT Core) { Send(Irq, (IrqTarget)(1<<Core)); }
 	static VOID Send(Irq Irq, IrqTarget Target);

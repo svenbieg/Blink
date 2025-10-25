@@ -26,6 +26,15 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)io.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)bits.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)attr.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\RingBuffer.h">
+      <Filter>Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\ReadBuffer.h">
+      <Filter>Storage\Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\WriteBuffer.h">
+      <Filter>Storage\Streams</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props">
@@ -72,6 +81,15 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.cpp">
       <Filter>Concurrency</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\RingBuffer.cpp">
+      <Filter>Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\ReadBuffer.cpp">
+      <Filter>Storage\Streams</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\WriteBuffer.cpp">
+      <Filter>Storage\Streams</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">
@@ -79,6 +97,12 @@
     </Filter>
     <Filter Include="Concurrency">
       <UniqueIdentifier>{c14ccb0d-80cb-4bad-80e4-e21e3db633e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Storage">
+      <UniqueIdentifier>{b8394696-fb9d-47bf-8d7a-0b2054f61620}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Storage\Streams">
+      <UniqueIdentifier>{63b21686-c526-4fb7-961c-a45ad4774e85}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

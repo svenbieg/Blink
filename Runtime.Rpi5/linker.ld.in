@@ -4,7 +4,7 @@
 
 #include <config.h>
 
-ENTRY(_start)
+ENTRY(init)
 
 SECTIONS
 {
@@ -12,8 +12,38 @@ SECTIONS
 
 .text :
 	{
-	KEEP(*(.text.start))
+	KEEP(*(.text.init))
 	*(.text .text.*)
+	}
+
+.bss (NOLOAD) :
+	{
+	__bss_start = .;
+	*(.bss .bss.*)
+	. = ALIGN(8);
+	__bss_end = .;
+	}
+
+.nodata (NOLOAD) :
+	{
+	. = ALIGN(4096);
+	__page_table_start = .;
+	. += 4096;
+	__page_table_end = .;
+	. = ALIGN(STACK_SIZE);
+	__stack_start = .;
+	. += CPU_COUNT * STACK_SIZE;
+	__stack_end = .;
+	*(.nodata .nodata.*)
+	}
+
+.data :
+	{
+	__init_array_start = .;
+	KEEP(*(.init_array .init_array.*))
+	__init_array_end = .;
+	*(.rodata .rodata.*)
+	*(.data .data.*)
 	}
 
 .eh_frame_hdr :
@@ -35,40 +65,6 @@ SECTIONS
 .got :
 	{
 	KEEP(*(.got .got.*))
-	}
-
-.stack (NOLOAD) :
-	{
-	. = ALIGN(STACK_SIZE);
-	__stack_start = .;
-	. += CPU_COUNT * STACK_SIZE;
-	__stack_end = .;
-	}
-
-.data :
-	{
-	__init_array_start = .;
-	KEEP(*(.init_array .init_array.*))
-	__init_array_end = .;
-	*(.rodata .rodata.*)
-	*(.data .data.*)
-	}
-
-.bss (NOLOAD) :
-	{
-	__bss_start = .;
-	*(.bss .bss.*)
-	. = ALIGN(8);
-	__bss_end = .;
-	}
-
-.nodata (NOLOAD) :
-	{
-	. = ALIGN(4096);
-	__page_table_start = .;
-	. += 4096;
-	__page_table_end = .;
-	*(.nodata .nodata.*)
 	}
 
 __end = .;

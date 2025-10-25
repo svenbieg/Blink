@@ -11,9 +11,9 @@
 
 #include "Devices/Gpio/GpioHost.h"
 #include "Devices/Pcie/PcieHost.h"
-#include "Storage/Streams/RandomAccessStream.h"
-#include "Storage/packet_buf.h"
-#include "Storage/ring_buf.hpp"
+#include "Storage/Streams/ReadBuffer.h"
+#include "Storage/Streams/WriteBuffer.h"
+#include "Storage/RingBuffer.h"
 
 
 //===========
@@ -39,8 +39,6 @@ Serial3,
 Serial4
 };
 
-constexpr SerialDevice SerialDeviceDefault=SerialDevice::Serial0;
-
 
 //===========
 // Baud-Rate
@@ -56,8 +54,6 @@ Baud460800=460800,
 Baud921600=921600
 };
 
-constexpr BaudRate BaudRateDefault=BaudRate::Baud115200;
-
 
 //=============
 // Serial-Port
@@ -69,11 +65,14 @@ public:
 	// Using
 	using GpioHost=Devices::Gpio::GpioHost;
 	using PcieHost=Devices::Pcie::PcieHost;
+	using ReadBuffer=Storage::Streams::ReadBuffer;
+	using RingBuffer=Storage::RingBuffer;
 	using Task=Concurrency::Task;
+	using WriteBuffer=Storage::Streams::WriteBuffer;
 
 	// Con-/Destructors
 	~SerialPort();
-	static Handle<SerialPort> Create(SerialDevice Device=SerialDeviceDefault, BaudRate Baud=BaudRateDefault);
+	static Handle<SerialPort> Create(SerialDevice Device=SerialDevice::Serial0, BaudRate Baud=BaudRate::Baud115200);
 
 	// Common
 	Event<SerialPort> DataReceived;
@@ -101,13 +100,12 @@ private:
 	VOID* m_Device;
 	Handle<GpioHost> m_GpioHost;
 	UINT m_Id;
-	Storage::ring_buf<BYTE> m_InputBuffer;
-	Storage::ring_buf<BYTE> m_OutputBuffer;
+	Handle<RingBuffer> m_InputBuffer;
 	Handle<PcieHost> m_PcieHost;
-	Storage::packet_buf m_ReadBuffer;
+	Handle<ReadBuffer> m_ReadBuffer;
 	Handle<Task> m_ServiceTask;
 	Concurrency::Signal m_Signal;
-	Storage::packet_buf m_WriteBuffer;
+	Handle<WriteBuffer> m_WriteBuffer;
 };
 
 }}

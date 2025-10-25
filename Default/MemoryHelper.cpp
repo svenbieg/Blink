@@ -39,25 +39,25 @@ while(dst<end)
 	*dst++=*src++;
 }
 
-VOID MemoryHelper::Copy(UINT* dst, UINT const* src, SIZE_T count)
+VOID MemoryHelper::Copy32(UINT* dst, UINT const* src, SIZE_T count)
 {
 while(count--)
 	*dst++=*src++;
 }
 
-VOID MemoryHelper::Copy(UINT* dst, UINT* end, UINT const* src)
+VOID MemoryHelper::Copy32(UINT* dst, UINT const* src, UINT* end)
 {
 while(dst<end)
 	*dst++=*src++;
 }
 
-VOID MemoryHelper::Copy(UINT64* dst, UINT64 const* src, SIZE_T count)
+VOID MemoryHelper::Copy64(UINT64* dst, UINT64 const* src, SIZE_T count)
 {
 while(count--)
 	*dst++=*src++;
 }
 
-VOID MemoryHelper::Copy(UINT64* dst, UINT64* end, UINT64 const* src)
+VOID MemoryHelper::Copy64(UINT64* dst, UINT64 const* src, UINT64* end)
 {
 while(dst<end)
 	*dst++=*src++;
@@ -71,25 +71,25 @@ while(dst<end)
 	*dst++=value;
 }
 
-VOID MemoryHelper::Fill(UINT* dst, SIZE_T count, UINT value)
+VOID MemoryHelper::Fill32(UINT* dst, SIZE_T count, UINT value)
 {
 while(count--)
 	*dst++=value;
 }
 
-VOID MemoryHelper::Fill(UINT* dst, UINT* end, UINT value)
+VOID MemoryHelper::Fill32(UINT* dst, UINT* end, UINT value)
 {
 while(dst<end)
 	*dst++=value;
 }
 
-VOID MemoryHelper::Fill(UINT64* dst, SIZE_T count, UINT64 value)
+VOID MemoryHelper::Fill64(UINT64* dst, SIZE_T count, UINT64 value)
 {
 while(count--)
 	*dst++=value;
 }
 
-VOID MemoryHelper::Fill(UINT64* dst, UINT64* end, UINT64 value)
+VOID MemoryHelper::Fill64(UINT64* dst, UINT64* end, UINT64 value)
 {
 while(dst<end)
 	*dst++=value;
@@ -111,6 +111,46 @@ if(dst>src)
 else
 	{
 	auto end=dst+size;
+	while(dst<end)
+		*dst++=*src++;
+	}
+}
+
+VOID MemoryHelper::Move32(UINT* dst_ptr, UINT const* src, SIZE_T count)
+{
+auto dst=dst_ptr;
+if(dst==src)
+	return;
+if(dst>src)
+	{
+	dst+=count;
+	src+=count;
+	while(dst>=dst_ptr)
+		*--dst=*--src;
+	}
+else
+	{
+	auto end=dst+count;
+	while(dst<end)
+		*dst++=*src++;
+	}
+}
+
+VOID MemoryHelper::Move64(UINT64* dst_ptr, UINT64 const* src, SIZE_T count)
+{
+auto dst=dst_ptr;
+if(dst==src)
+	return;
+if(dst>src)
+	{
+	dst+=count;
+	src+=count;
+	while(dst>=dst_ptr)
+		*--dst=*--src;
+	}
+else
+	{
+	auto end=dst+count;
 	while(dst<end)
 		*dst++=*src++;
 	}

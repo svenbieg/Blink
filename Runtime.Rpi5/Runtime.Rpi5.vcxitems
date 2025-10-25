@@ -17,14 +17,18 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Emmc\EmmcHost.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHost.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\PwmHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Pcie\PcieHost.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialPort.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Interrupts.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\MailBox.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Memory.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\System.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)start.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\FlashMemory.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\PartitionTable.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)unwind.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -35,11 +39,13 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Emmc\EmmcHost.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHost.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\PwmHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pcie\Pcie.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pcie\PcieHost.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialPort.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Interrupts.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\MailBox.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Memory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Soc.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\System.h" />
@@ -50,6 +56,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)config.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stddef.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\FlashMemory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\PartitionTable.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)task.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)unwind.h" />
   </ItemGroup>
@@ -65,7 +73,7 @@
     <None Include="$(MSBuildThisFileDirectory)vectors.S" />
     <None Include="$(MSBuildThisFileDirectory)irq.S" />
     <None Include="$(MSBuildThisFileDirectory)linker.ld.in" />
-    <None Include="$(MSBuildThisFileDirectory)start.S" />
+    <None Include="$(MSBuildThisFileDirectory)init.S" />
     <None Include="$(MSBuildThisFileDirectory)task.S" />
   </ItemGroup>
 </Project>

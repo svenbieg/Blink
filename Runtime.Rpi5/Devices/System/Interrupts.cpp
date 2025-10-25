@@ -109,6 +109,8 @@ s_DisableCount[core]++;
 VOID Interrupts::Enable()
 {
 UINT core=Cpu::GetId();
+if(core>0)
+	throw DeviceNotReadyException();
 if(--s_DisableCount[core]==0)
 	Cpu::EnableInterrupts();
 }
@@ -152,11 +154,16 @@ for(UINT u=0; u<IRQ_COUNT/16; u++)
 	io_write(gicd->CONFIG[u], GICD_CONFIG_LEVEL_TRIGGERED);
 	}
 io_write(gicd->CTRL, GICD_CTRL_ENABLE_GROUP0);
+for(UINT core=0; core<CPU_COUNT; core++)
+	s_DisableCount[core]=1;
+InitializeSecondary();
+}
+
+VOID Interrupts::InitializeSecondary()
+{
 auto gicc=(gicc_regs_t*)ARM_GICC_BASE;
 io_write(gicc->PMR, GICC_PMR_PRIORITY);
 io_write(gicc->CTRL, GICC_CTRL_ENABLE);
-for(UINT core=0; core<CPU_COUNT; core++)
-	s_DisableCount[core]=1;
 Enable();
 }
 

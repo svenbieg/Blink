@@ -40,8 +40,8 @@ Scheduler::Begin();
 VOID start_secondary()
 {
 while(1)
-	Cpu::WaitForEvent();
-Interrupts::Enable();
+	Cpu::WaitForInterrupt();
+Interrupts::InitializeSecondary();
 Scheduler::Begin();
 }
 
