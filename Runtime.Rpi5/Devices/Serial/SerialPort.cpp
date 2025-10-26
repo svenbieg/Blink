@@ -113,7 +113,7 @@ constexpr uint32_t LCRH_FIFO_ENABLE		=1<<4;
 
 
 //===========
-// Baud Rate
+// Baud-Rate
 //===========
 
 constexpr UINT BAUD_INT(UINT clock, UINT baud)
@@ -157,7 +157,7 @@ try
 	}
 catch(Exception e)
 	{
-	delete serial;
+	operator delete(serial);
 	throw e;
 	}
 s_Current[id]=serial;
@@ -186,7 +186,6 @@ return m_ReadBuffer->Read(buf, size);
 
 VOID SerialPort::Flush()
 {
-SpinLock lock(m_CriticalSection);
 m_WriteBuffer->Flush();
 m_Signal.Trigger();
 }
