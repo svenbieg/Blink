@@ -30,7 +30,7 @@ public:
 	VOID Consume(SIZE_T Size);
 	inline VOID Consume(BYTE* Value) { Read(Value, 1); }
 	SIZE_T Read(VOID* Buffer, SIZE_T Size);
-	inline VOID Write(BYTE Value) { Write(&Value, 1); }
+	inline BOOL Write(BYTE Value) { return Write(&Value, 1)==1; }
 	SIZE_T Write(VOID const* Buffer, SIZE_T Size);
 	inline VOID Written(SIZE_T Size) { m_Head+=Size; }
 

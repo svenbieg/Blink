@@ -229,11 +229,13 @@ serial->OnInterrupt();
 VOID SerialPort::OnInterrupt()
 {
 SpinLock lock(m_CriticalSection);
+Status status=Status::Success;
 auto uart=(pl011_regs_t*)m_Device;
 while(!io_read(uart->FLAGS, FLAG_RX_EMPTY))
 	{
 	UINT value=io_read(uart->DATA);
-	m_InputBuffer->Write((BYTE)value);
+	if(!m_InputBuffer->Write((BYTE)value))
+		status=Status::BufferOverrun;
 	}
 while(m_WriteBuffer->Available())
 	{
@@ -245,7 +247,7 @@ while(m_WriteBuffer->Available())
 	}
 UINT mis=io_read(uart->MIS);
 io_write(uart->ICR, mis); // ACK
-m_Signal.Trigger();
+m_Signal.Trigger(status);
 }
 
 VOID SerialPort::ServiceTask()

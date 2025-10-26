@@ -78,9 +78,9 @@ if(m_Head==m_Tail)
 SIZE_T RingBuffer::Read(VOID* buf, SIZE_T size)
 {
 auto dst=(BYTE*)buf;
-SIZE_T pos=0;
 SIZE_T available=m_Head-m_Tail;
 SIZE_T read=TypeHelper::Min(size, available);
+SIZE_T pos=0;
 while(pos<size)
 	{
 	if(m_Head==m_Tail)
@@ -101,14 +101,13 @@ return pos;
 SIZE_T RingBuffer::Write(VOID const* buf, SIZE_T size)
 {
 auto src=(BYTE const*)buf;
-SIZE_T pos=0;
 SIZE_T available=m_Size-(m_Head-m_Tail);
-if(size>available)
-	throw BufferOverrunException();
-while(pos<size)
+SIZE_T write=TypeHelper::Min(available, size);
+SIZE_T pos=0;
+while(pos<write)
 	{
 	SIZE_T head=m_Head%m_Size;
-	SIZE_T copy=m_Size-head;
+	SIZE_T copy=TypeHelper::Min(write-pos, m_Size-head);
 	MemoryHelper::Copy(&m_Buffer[head], &src[pos], copy);
 	m_Head+=copy;
 	pos+=copy;
