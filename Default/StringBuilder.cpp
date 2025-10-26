@@ -19,13 +19,25 @@
 StringBuilder::StringBuilder(UINT len):
 m_AppendAnsi(&StringBuilder::BufferAppendAnsi),
 m_AppendUnicode(&StringBuilder::BufferAppendUnicode),
-m_Buffer(64*sizeof(TCHAR)),
+m_First(nullptr),
+m_Last(nullptr),
 m_Position(0),
 m_Size(0),
 m_ToString(&StringBuilder::BufferToString)
 {
 if(len)
 	Initialize(len);
+}
+
+StringBuilder::~StringBuilder()
+{
+auto block=m_First;
+while(block)
+	{
+	auto next=block->Next;
+	delete block;
+	block=next;
+	}
 }
 
 
@@ -85,15 +97,14 @@ return pos;
 
 VOID StringBuilder::Initialize(UINT len)
 {
-m_Buffer.clear();
 m_Position=0;
 if(len==0)
 	{
-	m_AppendAnsi=&StringBuilder::StringAppendAnsi;
-	m_AppendUnicode=&StringBuilder::StringAppendUnicode;
+	m_AppendAnsi=&StringBuilder::BufferAppendAnsi;
+	m_AppendUnicode=&StringBuilder::BufferAppendUnicode;
 	m_Size=0;
 	m_String=nullptr;
-	m_ToString=&StringBuilder::StringToString;
+	m_ToString=&StringBuilder::BufferToString;
 	}
 else
 	{
@@ -115,32 +126,63 @@ return (this->*m_ToString)();
 // Common Private
 //================
 
+UINT StringBuilder::BufferAppend(TCHAR tc)
+{
+UINT pos=m_Position%STRING_BLOCK;
+if(pos==0)
+	{
+	if(m_Position==0)
+		{
+		if(m_First==nullptr)
+			m_First=new StringBlock();
+		m_Last=m_First;
+		}
+	else
+		{
+		auto block=m_Last->Next;
+		if(!block)
+			{
+			block=new StringBlock();
+			m_Last->Next=block;
+			}
+		m_Last=block;
+		}
+	}
+m_Last->Buffer[pos]=tc;
+m_Position++;
+return 1;
+}
+
 UINT StringBuilder::BufferAppendAnsi(CHAR c)
 {
 TCHAR tc=CharHelper::ToChar(c);
-m_Buffer.write(&tc, sizeof(TCHAR));
-return 1;
+return BufferAppend(tc);
 }
 
 UINT StringBuilder::BufferAppendUnicode(WCHAR c)
 {
 TCHAR tc=CharHelper::ToChar(c);
-m_Buffer.write(&tc, sizeof(TCHAR));
-return 1;
+return BufferAppend(tc);
 }
 
 Handle<String> StringBuilder::BufferToString()
 {
-m_Buffer.flush();
-UINT len=m_Buffer.available()/sizeof(TCHAR);
-if(len==0)
+if(m_Position==0)
 	return nullptr;
-auto str=String::Create(len, nullptr);
+auto str=String::Create(m_Position, nullptr);
 auto buf=const_cast<LPTSTR>(str->Begin());
-m_Buffer.read(buf, len*sizeof(TCHAR));
-buf[len]=0;
+auto block=m_First;
+for(UINT pos=0; pos<m_Position; pos++)
+	{
+	UINT block_pos=pos%STRING_BLOCK;
+	if(block_pos==0&&pos>0)
+		block=block->Next;
+	buf[pos]=block->Buffer[block_pos];
+	}
+buf[m_Position]=0;
 str->m_Hash=StringHelper::GetHash(buf);
-str->m_Length=len;
+str->m_Length=m_Position;
+Initialize(0);
 return str;
 }
 
