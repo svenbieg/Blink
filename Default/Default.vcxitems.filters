@@ -114,9 +114,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)UI\Console.h">
       <Filter>UI</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\packet_buf.h">
-      <Filter>Storage</Filter>
-    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Global.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)StringHelper.cpp" />
@@ -154,9 +152,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)StringView.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)UI\Console.cpp">
       <Filter>UI</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\packet_buf.cpp">
-      <Filter>Storage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

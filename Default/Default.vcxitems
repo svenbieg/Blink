@@ -42,6 +42,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Exception.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)FlagHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Function.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Global.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Handle.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MemoryHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Object.h" />
@@ -54,7 +55,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Directory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Encoding\Dwarf.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\File.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\packet_buf.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Seekable.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\StaticBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\InputStream.h" />
@@ -83,7 +83,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)PathHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Buffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Encoding\Dwarf.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\packet_buf.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\StaticBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamReader.cpp" />

@@ -27,25 +27,6 @@ namespace UI {
 // Common
 //========
 
-Handle<Console> Console::Get()
-{
-WriteLock lock(s_Mutex);
-if(s_Current)
-	return s_Current;
-auto console=(Console*)operator new(sizeof(Console));
-try
-	{
-	new (console) Console();
-	}
-catch(Exception e)
-	{
-	delete console;
-	throw e;
-	}
-s_Current=console;
-return console;
-}
-
 VOID Console::Print(Handle<String> text)
 {
 if(!text)
@@ -67,7 +48,6 @@ Console::Console()
 m_SerialPort=SerialPort::Create();
 }
 
-Handle<Console> Console::s_Current;
-Mutex Console::s_Mutex;
+Global<Console> Console::s_Current;
 
 }
