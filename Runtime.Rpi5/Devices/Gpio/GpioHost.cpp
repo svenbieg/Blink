@@ -104,37 +104,6 @@ uint32_t RES5[1023];
 }rp1_rio_regs_t;
 
 
-//==================
-// Con-/Destructors
-//==================
-
-GpioHost::~GpioHost()
-{
-s_Current=nullptr;
-if(m_PcieHost)
-	m_PcieHost->SetInterruptHandler(Rp1Irq::IoBank0, nullptr);
-}
-
-Handle<GpioHost> GpioHost::Create()
-{
-WriteLock lock(s_Mutex);
-if(s_Current)
-	return s_Current;
-auto gpio_host=(GpioHost*)operator new(sizeof(GpioHost));
-try
-	{
-	new (gpio_host) GpioHost();
-	}
-catch(Exception e)
-	{
-	delete gpio_host;
-	throw e;
-	}
-s_Current=gpio_host;
-return s_Current;
-}
-
-
 //========
 // Common
 //========
@@ -254,11 +223,10 @@ else
 GpioHost::GpioHost():
 m_IrqMask(0)
 {
-m_PcieHost=PcieHost::Create();
+m_PcieHost=PcieHost::Get();
 }
 
-Handle<GpioHost> GpioHost::s_Current;
-Mutex GpioHost::s_Mutex;
+Global<GpioHost> GpioHost::s_Current;
 
 
 //================

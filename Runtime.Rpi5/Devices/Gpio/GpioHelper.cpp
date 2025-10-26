@@ -73,7 +73,7 @@ return io_read(gpio->DATA0, mask)!=0;
 
 BOOL GpioHelper::DigitalRead(GpioRp1Pin pin)
 {
-auto gpio=GpioHost::Create();
+auto gpio=GpioHost::Get();
 return gpio->DigitalRead(pin);
 }
 
@@ -100,7 +100,7 @@ io_write(gpio->DATA0, mask, set);
 
 VOID GpioHelper::DigitalWrite(GpioRp1Pin pin, BOOL value)
 {
-auto gpio=GpioHost::Create();
+auto gpio=GpioHost::Get();
 return gpio->DigitalWrite(pin, value);
 }
 
@@ -113,7 +113,7 @@ SetInterruptHandler((GpioRp1Pin)pin, handler, param, mode);
 
 VOID GpioHelper::SetInterruptHandler(GpioRp1Pin pin, IRQ_HANDLER handler, VOID* param, GpioIrqMode mode)
 {
-auto gpio_host=GpioHost::Create();
+auto gpio_host=GpioHost::Get();
 gpio_host->SetInterruptHandler(pin, handler, param, mode);
 }
 
@@ -151,7 +151,7 @@ if(mode==GpioArmPinMode::Output)
 
 VOID GpioHelper::SetPinMode(GpioRp1Pin pin, GpioRp1PinMode mode, GpioPullMode pull_mode)
 {
-auto gpio=GpioHost::Create();
+auto gpio=GpioHost::Get();
 gpio->SetPinMode(pin, mode, pull_mode);
 }
 
