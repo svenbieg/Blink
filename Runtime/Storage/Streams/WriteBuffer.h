@@ -5,6 +5,13 @@
 #pragma once
 
 
+//=======
+// Using
+//=======
+
+#include "Concurrency/Task.h"
+
+
 //===========
 // Namespace
 //===========
@@ -48,6 +55,7 @@ private:
 	VOID FreeBlock(WriteBufferBlock* Block);
 	VOID FreeBlocks(WriteBufferBlock* First);
 	SIZE_T m_BlockSize;
+	Concurrency::CriticalSection m_CriticalSection;
 	WriteBufferBlock* m_First;
 	WriteBufferBlock* m_Free;
 	WriteBufferBlock* m_Last;
