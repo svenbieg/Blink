@@ -149,7 +149,7 @@ Handle<SerialPort> SerialPort::Create(SerialDevice device, BaudRate baud)
 UINT id=(UINT)device;
 WriteLock lock(s_Mutex);
 if(s_Current[id])
-	return s_Current[id];
+	throw AccessDeniedException();
 auto serial=(SerialPort*)operator new(sizeof(SerialPort));
 try
 	{
@@ -251,10 +251,10 @@ m_Signal.Trigger();
 
 VOID SerialPort::ServiceTask()
 {
-m_GpioHost=GpioHost::Create();
+m_GpioHost=GpioHost::Get();
 m_GpioHost->SetPinMode(UART_DEVICES[m_Id].TX_PIN, UART_DEVICES[m_Id].TX_ALT);
 m_GpioHost->SetPinMode(UART_DEVICES[m_Id].RX_PIN, UART_DEVICES[m_Id].RX_ALT, GpioPullMode::PullUp);
-m_PcieHost=PcieHost::Create();
+m_PcieHost=PcieHost::Get();
 m_PcieHost->SetInterruptHandler(UART_DEVICES[m_Id].IRQ, HandleInterrupt, this);
 auto task=Task::Get();
 task->Lock();
