@@ -11,6 +11,7 @@
 
 #include "Concurrency/Task.h"
 #include "Devices/Pcie/Pcie.h"
+#include "Global.h"
 
 
 //===========
@@ -28,11 +29,11 @@ namespace Devices {
 class PcieHost: public Object
 {
 public:
-	// Con-/Destructors
-	~PcieHost();
-	static Handle<PcieHost> Create();
+	// Friends
+	friend class Global<PcieHost>;
 
 	// Common
+	static inline Handle<PcieHost> Get() { return s_Current; }
 	static inline SIZE_T GetDmaAddress(VOID* Buffer) { return (SIZE_T)Buffer|DMA_OFFSET; }
 	static inline SIZE_T GetDmaAddress(SIZE_T Address) { return Address|DMA_OFFSET; }
 	VOID SetInterruptHandler(Rp1Irq Irq, IRQ_HANDLER Handler, VOID* Parameter=nullptr);
@@ -40,8 +41,7 @@ public:
 private:
 	// Con-/Destructors
 	PcieHost();
-	static PcieHost* s_Current;
-	static Concurrency::Mutex s_Mutex;
+	static Global<PcieHost> s_Current;
 
 	// Common
 	VOID EnableDevice(UINT Id, BYTE Slot, BYTE Function);

@@ -26,35 +26,6 @@ namespace Devices {
 	namespace Pcie {
 
 
-//==================
-// Con-/Destructors
-//==================
-
-PcieHost::~PcieHost()
-{
-s_Current=nullptr;
-}
-
-Handle<PcieHost> PcieHost::Create()
-{
-WriteLock lock(s_Mutex);
-if(s_Current)
-	return s_Current;
-auto pcie_host=(PcieHost*)operator new(sizeof(PcieHost));
-try
-	{
-	new (pcie_host) PcieHost();
-	}
-catch(Exception e)
-	{
-	delete pcie_host;
-	throw e;
-	}
-s_Current=pcie_host;
-return s_Current;
-}
-
-
 //========
 // Common
 //========
@@ -100,8 +71,7 @@ MemoryHelper::Fill(m_IrqParameters, RP1_IRQ_COUNT*sizeof(VOID*), 0);
 Initialize();
 }
 
-PcieHost* PcieHost::s_Current=nullptr;
-Mutex PcieHost::s_Mutex;
+Global<PcieHost> PcieHost::s_Current;
 
 
 //================
