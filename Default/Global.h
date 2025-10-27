@@ -41,7 +41,7 @@ public:
 			}
 		catch(Exception e)
 			{
-			operator delete(obj);
+			delete obj;
 			throw e;
 			}
 		m_Object=obj;

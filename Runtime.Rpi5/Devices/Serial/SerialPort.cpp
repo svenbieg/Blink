@@ -157,7 +157,7 @@ try
 	}
 catch(Exception e)
 	{
-	operator delete(serial);
+	delete serial;
 	throw e;
 	}
 s_Current[id]=serial;
