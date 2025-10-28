@@ -21,6 +21,8 @@ class MemoryHelper
 public:
 	// Common
 	static INT Compare(VOID const* Buffer1, VOID const* Buffer2, SIZE_T Size);
+	static INT Compare32(UINT const* Buffer1, UINT const* Buffer2, SIZE_T Count);
+	static INT Compare64(UINT64 const* Buffer1, UINT64 const* Buffer2, SIZE_T Count);
 	static VOID Copy(VOID* Destination, VOID const* Source, SIZE_T Size);
 	static VOID Copy32(UINT* Destination, UINT const* Source, SIZE_T Count);
 	static VOID Copy32(UINT* Destination, UINT const* Source, UINT* End);

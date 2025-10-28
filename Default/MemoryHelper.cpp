@@ -18,9 +18,33 @@
 
 INT MemoryHelper::Compare(VOID const* buf1_ptr, VOID const* buf2_ptr, SIZE_T size)
 {
-auto buf1=(LPCSTR)buf1_ptr;
-auto buf2=(LPCSTR)buf2_ptr;
+auto buf1=(BYTE const*)buf1_ptr;
+auto buf2=(BYTE const*)buf2_ptr;
 for(SIZE_T u=0; u<size; u++)
+	{
+	if(buf1[u]>buf2[u])
+		return 1;
+	if(buf1[u]<buf2[u])
+		return -1;
+	}
+return 0;
+}
+
+INT MemoryHelper::Compare32(UINT const* buf1, UINT const* buf2, SIZE_T count)
+{
+for(SIZE_T u=0; u<count; u++)
+	{
+	if(buf1[u]>buf2[u])
+		return 1;
+	if(buf1[u]<buf2[u])
+		return -1;
+	}
+return 0;
+}
+
+INT MemoryHelper::Compare64(UINT64 const* buf1, UINT64 const* buf2, SIZE_T count)
+{
+for(SIZE_T u=0; u<count; u++)
 	{
 	if(buf1[u]>buf2[u])
 		return 1;
