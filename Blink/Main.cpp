@@ -22,7 +22,7 @@ using namespace UI;
 // Entry-Point
 //=============
 
-INT Main()
+VOID Main()
 {
 Console::Print("Starting to blink...\n");
 auto task=Task::Create(nullptr, []()
@@ -42,5 +42,4 @@ task->Then(nullptr, []()
 	System::Led(false);
 	});
 DispatchedQueue::Enter();
-return 0;
 }

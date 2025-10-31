@@ -21,7 +21,7 @@
 using namespace Devices::System;
 using namespace Devices::Timers;
 
-extern INT Main();
+extern VOID Main();
 
 
 //===========
