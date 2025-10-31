@@ -51,8 +51,8 @@ Scheduler::SuspendCurrentTask(core, current);
 lock.Yield();
 current->m_Signal=nullptr;
 lock.Unlock();
-if(current->Cancelled)
-	throw AbortException();
+if(StatusHelper::Failed(current->m_Status))
+	throw current->m_Status;
 }
 
 VOID Signal::Wait(UINT timeout)
@@ -68,10 +68,10 @@ Scheduler::SuspendCurrentTask(core, current, resume_time);
 lock.Yield();
 current->m_Signal=nullptr;
 lock.Unlock();
-if(current->Cancelled)
-	throw AbortException();
 if(current->m_ResumeTime)
 	throw TimeoutException();
+if(StatusHelper::Failed(current->m_Status))
+	throw current->m_Status;
 }
 
 VOID Signal::Wait(ScopedLock& scoped_lock)
@@ -86,8 +86,8 @@ Scheduler::SuspendCurrentTask(core, current);
 scoped_lock.Yield(lock);
 current->m_Signal=nullptr;
 lock.Unlock();
-if(current->Cancelled)
-	throw AbortException();
+if(StatusHelper::Failed(current->m_Status))
+	throw current->m_Status;
 }
 
 VOID Signal::Wait(ScopedLock& scoped_lock, UINT timeout)
@@ -104,10 +104,10 @@ Scheduler::SuspendCurrentTask(core, current, resume_time);
 scoped_lock.Yield(lock);
 current->m_Signal=nullptr;
 lock.Unlock();
-if(current->Cancelled)
-	throw AbortException();
 if(current->m_ResumeTime)
 	throw TimeoutException();
+if(StatusHelper::Failed(current->m_Status))
+	throw current->m_Status;
 }
 
 
