@@ -2,7 +2,7 @@
 // Dwarf.h
 //=========
 
-// DWARF was orginally developed by Bell Labs,
+// DWARF was orginally developed by Bell Labs and is
 // licensed under the GNU Free Documentation Standard
 
 #pragma once

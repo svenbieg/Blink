@@ -1405,7 +1405,7 @@ INT StringHelper::Compare(LPCSTR str1, LPCWSTR str2, UINT len, BOOL cs)
 return StringCompare(str1, str2, len, cs);
 }
 
-INT StringHelper::Compare(LPCSTR str1, Handle<String> const& str2, UINT len, BOOL cs)
+INT StringHelper::Compare(LPCSTR str1, String const* str2, UINT len, BOOL cs)
 {
 return StringCompare(str1, str2? str2->Begin(): nullptr, len, cs);
 }
@@ -1420,22 +1420,41 @@ INT StringHelper::Compare(LPCWSTR str1, LPCWSTR str2, UINT len, BOOL cs)
 return StringCompare(str1, str2, len, cs);
 }
 
-INT StringHelper::Compare(LPCWSTR str1, Handle<String> const& str2, UINT len, BOOL cs)
+INT StringHelper::Compare(LPCWSTR str1, String const* str2, UINT len, BOOL cs)
 {
 return StringCompare(str1, str2? str2->Begin(): nullptr, len, cs);
 }
 
-INT StringHelper::Compare(Handle<String> const& str1, LPCSTR str2, UINT len, BOOL cs)
+INT StringHelper::Compare(String const* str1, LPCSTR str2, UINT len, BOOL cs)
 {
 return StringCompare(str1? str1->Begin(): nullptr, str2, len, cs);
 }
 
-INT StringHelper::Compare(Handle<String> const& str1, LPCWSTR str2, UINT len, BOOL cs)
+INT StringHelper::Compare(String const* str1, LPCWSTR str2, UINT len, BOOL cs)
 {
 return StringCompare(str1? str1->Begin(): nullptr, str2, len, cs);
 }
 
-INT StringHelper::Compare(Handle<String> const& str1, Handle<String> const& str2, UINT len, BOOL cs)
+INT StringHelper::Compare(String const* str1, String const* str2)
+{
+if(!str1)
+	{
+	if(!str2)
+		return 0;
+	return -1;
+	}
+if(!str2)
+	return 1;
+UINT64 hash1=str1->m_Hash;
+UINT64 hash2=str2->m_Hash;
+if(hash1<hash2)
+	return -1;
+if(hash1>hash2)
+	return 1;
+return StringCompare(str1->Begin(), str2->Begin(), 0, false);
+}
+
+INT StringHelper::Compare(String const* str1, String const* str2, UINT len, BOOL cs)
 {
 return StringCompare(str1? str1->Begin(): nullptr, str2? str2->Begin(): nullptr, len, cs);
 }
@@ -1450,7 +1469,7 @@ UINT StringHelper::Copy(LPSTR dst, UINT size, LPCWSTR src, UINT copy)
 return StringCopy(dst, size, src, copy);
 }
 
-UINT StringHelper::Copy(LPSTR dst, UINT size, Handle<String> const& src, UINT copy)
+UINT StringHelper::Copy(LPSTR dst, UINT size, String const* src, UINT copy)
 {
 if(!src)
 	return 0;
@@ -1467,7 +1486,7 @@ UINT StringHelper::Copy(LPWSTR dst, UINT size, LPCWSTR src, UINT copy)
 return StringCopy(dst, size, src, copy);
 }
 
-UINT StringHelper::Copy(LPWSTR dst, UINT size, Handle<String> const& src, UINT copy)
+UINT StringHelper::Copy(LPWSTR dst, UINT size, String const* src, UINT copy)
 {
 if(!src)
 	return 0;

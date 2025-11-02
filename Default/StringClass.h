@@ -44,6 +44,7 @@ public:
 	// Friends
 	friend Handle<String>;
 	friend StringBuilder;
+	friend StringHelper;
 
 	// Con-/Destructors
 	static Handle<String> Create(LPCSTR Value);
@@ -65,13 +66,6 @@ public:
 		}
 	inline UINT Copy(LPSTR Buffer, UINT Size) { return StringHelper::Copy(Buffer, Size, m_Buffer); }
 	inline UINT Copy(LPWSTR Buffer, UINT Size) { return StringHelper::Copy(Buffer, Size, m_Buffer); }
-	inline UINT64 GetHash() { return m_Hash; }
-	static inline UINT64 GetHash(String* String)
-		{
-		if(!String)
-			return 0;
-		return String->m_Hash;
-		}
 	inline UINT GetLength()const { return m_Length; }
 	inline BOOL HasValue()const { return m_Buffer[0]!=0; }
 	inline BOOL IsEmpty()const { return m_Buffer[0]==0; }
@@ -82,20 +76,6 @@ public:
 		return StringHelper::ScanArgs(m_Buffer, Format, vargs);
 		}
 	Handle<String> ToString(LanguageCode Language=LanguageCode::None)override;
-
-	// Comparison
-	inline INT Compare(String* String) { return Compare(this, String); }
-	static INT Compare(String* String1, String* String2);
-	static inline INT Compare(String* String1, LPCSTR String2)
-		{
-		auto str1=String1? String1->m_Buffer: nullptr;
-		return StringHelper::Compare(str1, String2);
-		}
-	static inline INT Compare(String* String1, LPCWSTR String2)
-		{
-		auto str1=String1? String1->m_Buffer: nullptr;
-		return StringHelper::Compare(str1, String2);
-		}
 
 	// Operators
 	Handle<String> Replace(LPCSTR Find, LPCSTR Replace, BOOL CaseSensitive=true, BOOL Repeat=false);
@@ -161,34 +141,34 @@ public:
 
 	// Comparison
 	inline bool operator==(nullptr_t)const { return !operator bool(); }
-	inline bool operator==(String* Value)const { return String::Compare(m_Object, Value)==0; }
-	inline bool operator==(LPCSTR Value)const { return String::Compare(m_Object, Value)==0; }
-	inline bool operator==(LPCWSTR Value)const { return String::Compare(m_Object, Value)==0; }
+	inline bool operator==(Handle<String> const& Value)const { return StringHelper::Compare(m_Object, Value)==0; }
+	inline bool operator==(LPCSTR Value)const { return StringHelper::Compare(m_Object, Value)==0; }
+	inline bool operator==(LPCWSTR Value)const { return StringHelper::Compare(m_Object, Value)==0; }
 	inline bool operator!=(nullptr_t)const { return operator bool(); }
-	inline bool operator!=(String* Value)const { return String::Compare(m_Object, Value)!=0; }
-	inline bool operator!=(LPCSTR Value)const { return String::Compare(m_Object, Value)!=0; }
-	inline bool operator!=(LPCWSTR Value)const { return String::Compare(m_Object, Value)!=0; }
+	inline bool operator!=(Handle<String> const& Value)const { return StringHelper::Compare(m_Object, Value)!=0; }
+	inline bool operator!=(LPCSTR Value)const { return StringHelper::Compare(m_Object, Value)!=0; }
+	inline bool operator!=(LPCWSTR Value)const { return StringHelper::Compare(m_Object, Value)!=0; }
 	inline bool operator>(nullptr_t)const { return operator bool(); }
-	inline bool operator>(String* Value)const { return String::Compare(m_Object, Value)>0; }
-	inline bool operator>(LPCSTR Value)const { return String::Compare(m_Object, Value)>0; }
-	inline bool operator>(LPCWSTR Value)const { return String::Compare(m_Object, Value)>0; }
+	inline bool operator>(Handle<String> const& Value)const { return StringHelper::Compare(m_Object, Value)>0; }
+	inline bool operator>(LPCSTR Value)const { return StringHelper::Compare(m_Object, Value)>0; }
+	inline bool operator>(LPCWSTR Value)const { return StringHelper::Compare(m_Object, Value)>0; }
 	inline bool operator>=(nullptr_t)const { return true; }
-	inline bool operator>=(String* Value)const { return String::Compare(m_Object, Value)>=0; }
-	inline bool operator>=(LPCSTR Value)const { return String::Compare(m_Object, Value)>=0; }
-	inline bool operator>=(LPCWSTR Value)const { return String::Compare(m_Object, Value)>=0; }
+	inline bool operator>=(Handle<String> const& Value)const { return StringHelper::Compare(m_Object, Value)>=0; }
+	inline bool operator>=(LPCSTR Value)const { return StringHelper::Compare(m_Object, Value)>=0; }
+	inline bool operator>=(LPCWSTR Value)const { return StringHelper::Compare(m_Object, Value)>=0; }
 	inline bool operator<(nullptr_t)const { return false; }
-	inline bool operator<(String* Value)const { return String::Compare(m_Object, Value)<0; }
-	inline bool operator<(LPCSTR Value)const { return String::Compare(m_Object, Value)<0; }
-	inline bool operator<(LPCWSTR Value)const { return String::Compare(m_Object, Value)<0; }
+	inline bool operator<(Handle<String> const& Value)const { return StringHelper::Compare(m_Object, Value)<0; }
+	inline bool operator<(LPCSTR Value)const { return StringHelper::Compare(m_Object, Value)<0; }
+	inline bool operator<(LPCWSTR Value)const { return StringHelper::Compare(m_Object, Value)<0; }
 	inline bool operator<=(nullptr_t)const { return !operator bool(); }
-	inline bool operator<=(String* Value)const { return String::Compare(m_Object, Value)<=0; }
-	inline bool operator<=(LPCSTR Value)const { return String::Compare(m_Object, Value)<=0; }
-	inline bool operator<=(LPCWSTR Value)const { return String::Compare(m_Object, Value)<=0; }
+	inline bool operator<=(Handle<String> const& Value)const { return StringHelper::Compare(m_Object, Value)<=0; }
+	inline bool operator<=(LPCSTR Value)const { return StringHelper::Compare(m_Object, Value)<=0; }
+	inline bool operator<=(LPCWSTR Value)const { return StringHelper::Compare(m_Object, Value)<=0; }
 
 	// Assignment
 	inline Handle& operator=(nullptr_t) { Handle<Object>::Clear(&m_Object); return *this; }
-	inline Handle& operator=(String* Copy) { Handle<Object>::Set(&m_Object, Copy); return *this; }
-	inline Handle& operator=(Handle const& Copy) { return operator=(Copy.m_Object); }
+	inline Handle& operator=(String* Value) { Handle<Object>::Set(&m_Object, Value); return *this; }
+	inline Handle& operator=(Handle<String> const& Value) { return operator=(Value.m_Object); }
 	inline Handle& operator=(LPCSTR Value) { return operator=(String::Create(Value)); }
 	inline Handle& operator=(LPCWSTR Value) { return operator=(String::Create(Value)); }
 	SIZE_T ReadFromStream(InputStream* Stream)

@@ -46,8 +46,32 @@ writer.Flush();
 Console::Console()
 {
 m_SerialPort=SerialPort::Create();
+m_SerialPort->DataReceived.Add(this, &Console::OnSerialPortDataReceived);
 }
 
 Global<Console> Console::s_Current;
+
+
+//================
+// Common Private
+//================
+
+VOID Console::OnSerialPortDataReceived()
+{
+StreamReader reader(m_SerialPort);
+while(m_SerialPort->Available())
+	{
+	TCHAR c=0;
+	reader.ReadChar(&c);
+	if(CharHelper::IsLineBreak(c))
+		{
+		auto cmd=m_StringBuilder.ToString();
+		if(cmd)
+			DispatchedQueue::Append(this, [this, cmd](){ CommandReceived(this, cmd); });
+		continue;
+		}
+	m_StringBuilder.Append(c);
+	}
+}
 
 }

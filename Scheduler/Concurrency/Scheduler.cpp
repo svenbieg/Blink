@@ -168,7 +168,7 @@ SpinLock lock(s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
 SuspendCurrentTask(core, current, resume_time);
-lock.Yield();
+lock.Unlock();
 if(current->Cancelled)
 	throw AbortException();
 }

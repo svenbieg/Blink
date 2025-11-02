@@ -343,6 +343,20 @@ switch(c)
 return false;
 }
 
+template <class _char_t> inline BOOL CharIsLineBreak(_char_t tc)
+{
+if(tc==0)
+	return true;
+CHAR c=CharToChar<CHAR, _char_t>(tc);
+CHAR str[]="\n\r";
+for(UINT u=0; u<TypeHelper::ArraySize(str); u++)
+	{
+	if(c==str[u])
+		return true;
+	}
+return false;
+}
+
 template <class _char_t> inline BOOL CharIsPrintable(_char_t tc)
 {
 CHAR c=CharToChar<CHAR, _char_t>(tc);
@@ -487,6 +501,16 @@ return CharIsCapital(c);
 BOOL CharHelper::IsCapital(WCHAR c)
 {
 return CharIsCapital(c);
+}
+
+BOOL CharHelper::IsLineBreak(CHAR c)
+{
+return CharIsLineBreak(c);
+}
+
+BOOL CharHelper::IsLineBreak(WCHAR c)
+{
+return CharIsLineBreak(c);
 }
 
 BOOL CharHelper::IsPrintable(CHAR c)

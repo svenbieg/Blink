@@ -17,7 +17,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Emmc\EmmcHost.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHost.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\PwmHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Pcie\PcieHost.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialPort.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.cpp" />
@@ -39,7 +38,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Emmc\EmmcHost.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHost.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\PwmHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pcie\Pcie.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pcie\PcieHost.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialPort.h" />

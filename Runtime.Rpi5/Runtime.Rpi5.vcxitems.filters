@@ -39,9 +39,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHost.cpp">
       <Filter>Devices\Gpio</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\PwmHelper.cpp">
-      <Filter>Devices\Gpio</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\MailBox.cpp">
       <Filter>Devices\System</Filter>
     </ClCompile>
@@ -103,9 +100,6 @@
       <Filter>Devices\Gpio</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)cstddef" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\PwmHelper.h">
-      <Filter>Devices\Gpio</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\MailBox.h">
       <Filter>Devices\System</Filter>
     </ClInclude>

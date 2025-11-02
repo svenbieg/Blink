@@ -72,6 +72,8 @@ public:
 	inline operator bool()const { return m_Callable!=nullptr; }
 	inline _ret_t operator()(_args_t... Arguments)const
 		{
+		if(!m_Callable)
+			throw NullPointerException();
 		return m_Callable->Call(Arguments...);
 		}
 	inline Function& operator=(Function const& Copy)

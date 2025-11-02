@@ -27,8 +27,8 @@ public:
 	SIZE_T AvailableForWrite();
 	SIZE_T BeginRead(BYTE** Buffer);
 	SIZE_T BeginWrite(BYTE** Buffer);
-	VOID Consume(SIZE_T Size);
-	inline VOID Consume(BYTE* Value) { Read(Value, 1); }
+	VOID Consumed(SIZE_T Size);
+	inline BOOL Read(BYTE* Value) { return Read(Value, 1)==1; }
 	SIZE_T Read(VOID* Buffer, SIZE_T Size);
 	inline BOOL Write(BYTE Value) { return Write(&Value, 1)==1; }
 	SIZE_T Write(VOID const* Buffer, SIZE_T Size);

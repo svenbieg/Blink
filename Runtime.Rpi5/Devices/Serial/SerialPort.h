@@ -11,7 +11,7 @@
 
 #include "Devices/Gpio/GpioHost.h"
 #include "Devices/Pcie/PcieHost.h"
-#include "Storage/Streams/ReadBuffer.h"
+#include "Storage/Streams/RandomAccessStream.h"
 #include "Storage/Streams/WriteBuffer.h"
 #include "Storage/RingBuffer.h"
 
@@ -65,7 +65,6 @@ public:
 	// Using
 	using GpioHost=Devices::Gpio::GpioHost;
 	using PcieHost=Devices::Pcie::PcieHost;
-	using ReadBuffer=Storage::Streams::ReadBuffer;
 	using RingBuffer=Storage::RingBuffer;
 	using Task=Concurrency::Task;
 	using WriteBuffer=Storage::Streams::WriteBuffer;
@@ -102,7 +101,6 @@ private:
 	UINT m_Id;
 	Handle<RingBuffer> m_InputBuffer;
 	Handle<PcieHost> m_PcieHost;
-	Handle<ReadBuffer> m_ReadBuffer;
 	Handle<Task> m_ServiceTask;
 	Concurrency::Signal m_Signal;
 	Handle<WriteBuffer> m_WriteBuffer;

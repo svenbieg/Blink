@@ -65,7 +65,7 @@ SIZE_T copy=TypeHelper::Min(available, m_Size-head);
 return copy;
 }
 
-VOID RingBuffer::Consume(SIZE_T size)
+VOID RingBuffer::Consumed(SIZE_T size)
 {
 m_Tail+=size;
 if(m_Head==m_Tail)

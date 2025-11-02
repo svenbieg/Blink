@@ -134,7 +134,7 @@ while(ring_size)
 		pos+=copy;
 		m_Size+=copy;
 		}
-	ring_buf->Consume(written);
+	ring_buf->Consumed(written);
 	ring_size=ring_buf->BeginRead(&src);
 	}
 return written;

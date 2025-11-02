@@ -11,9 +11,8 @@
 
 #include <base.h>
 #include <io.h>
+#include <new>
 #include "Devices/Serial/SerialPort.h"
-#include "Devices/System/Interrupts.h"
-#include "Exception.h"
 
 using namespace Concurrency;
 using namespace Devices::Gpio;
@@ -101,7 +100,11 @@ constexpr uint32_t FLAG_BUSY			=(1<<3);
 
 constexpr bits32_t IFLS_RXIFSEL			={ 7, 3 };
 constexpr bits32_t IFLS_TXIFSEL			={ 7, 0 };
+constexpr uint32_t IFLS_IFSEL_1_8		=0;
 constexpr uint32_t IFLS_IFSEL_1_4		=1;
+constexpr uint32_t IFLS_IFSEL_1_2		=2;
+constexpr uint32_t IFLS_IFSEL_3_4		=3;
+constexpr uint32_t IFLS_IFSEL_7_8		=4;
 
 constexpr uint32_t IMSC_INT_OE			=(1<<10);
 constexpr uint32_t IMSC_INT_RT			=(1<<6);
@@ -136,11 +139,11 @@ return baud_frac/2+baud_frac%2;
 
 SerialPort::~SerialPort()
 {
+WriteLock lock(s_Mutex);
 if(m_PcieHost)
 	m_PcieHost->SetInterruptHandler(UART_DEVICES[m_Id].IRQ, nullptr);
 if(m_ServiceTask)
 	m_ServiceTask->Cancel();
-WriteLock lock(s_Mutex);
 s_Current[m_Id]=nullptr;
 }
 
@@ -171,12 +174,14 @@ return serial;
 
 SIZE_T SerialPort::Available()
 {
-return m_ReadBuffer->Available();
+SpinLock lock(m_CriticalSection);
+return m_InputBuffer->Available();
 }
 
 SIZE_T SerialPort::Read(VOID* buf, SIZE_T size)
 {
-return m_ReadBuffer->Read(buf, size);
+SpinLock lock(m_CriticalSection);
+return m_InputBuffer->Read(buf, size);
 }
 
 
@@ -206,7 +211,6 @@ m_Device((VOID*)UART_DEVICES[(UINT)device].BASE),
 m_Id((UINT)device)
 {
 m_InputBuffer=RingBuffer::Create(UART_INPUT_RING);
-m_ReadBuffer=ReadBuffer::Create();
 m_WriteBuffer=WriteBuffer::Create();
 auto name=String::Create("serial%u", m_Id);
 m_ServiceTask=Task::Create(this, &SerialPort::ServiceTask, name);
@@ -229,8 +233,8 @@ serial->OnInterrupt();
 VOID SerialPort::OnInterrupt()
 {
 SpinLock lock(m_CriticalSection);
-Status status=Status::Success;
 auto uart=(pl011_regs_t*)m_Device;
+Status status=Status::Success;
 while(!io_read(uart->FLAGS, FLAG_RX_EMPTY))
 	{
 	UINT value=io_read(uart->DATA);
@@ -268,7 +272,7 @@ io_write(uart->IBRD, BAUD_INT(UART_CLOCK, (UINT)m_BaudRate));
 io_write(uart->FBRD, BAUD_FRAC(UART_CLOCK, (UINT)m_BaudRate));
 io_write(uart->LCRH, LCRH_WORD_LEN_8|LCRH_FIFO_ENABLE);
 UINT ifls=0;
-bits_set(ifls, IFLS_RXIFSEL, IFLS_IFSEL_1_4);
+bits_set(ifls, IFLS_RXIFSEL, IFLS_IFSEL_3_4);
 bits_set(ifls, IFLS_TXIFSEL, IFLS_IFSEL_1_4);
 io_write(uart->IFLS, ifls);
 io_write(uart->IMSC, IMSC_INT_OE|IMSC_INT_RT|IMSC_INT_TX|IMSC_INT_RX);
@@ -280,8 +284,6 @@ while(!task->Cancelled)
 	if(read)
 		{
 		spin_lock.Unlock();
-		m_ReadBuffer->Write(m_InputBuffer, read);
-		m_ReadBuffer->Flush();
 		DataReceived(this);
 		spin_lock.Lock();
 		}

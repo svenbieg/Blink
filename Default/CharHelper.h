@@ -104,6 +104,8 @@ public:
 	static BOOL IsCapital(WCHAR Char);
 	static inline BOOL IsDigit(CHAR Char, UINT Base=10) { return ToDigit(Char, nullptr, Base); }
 	static inline BOOL IsDigit(WCHAR Char, UINT Base=10) { return ToDigit(Char, nullptr, Base); }
+	static BOOL IsLineBreak(CHAR Char);
+	static BOOL IsLineBreak(WCHAR Char);
 	static BOOL IsPrintable(CHAR Char);
 	static BOOL IsPrintable(WCHAR Char);
 	static BOOL IsSmall(CHAR Char);

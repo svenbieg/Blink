@@ -23,6 +23,7 @@ public:
 	UINT Append(LPCWSTR String);
 	UINT Append(UINT Length, LPCSTR String);
 	UINT Append(UINT Length, LPCWSTR String);
+	VOID Clear();
 	VOID Initialize(UINT Length);
 	Handle<String> ToString();
 

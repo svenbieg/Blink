@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include <assert.h>
 #include "StringBuilder.h"
 
 
@@ -31,13 +32,7 @@ if(len)
 
 StringBuilder::~StringBuilder()
 {
-auto block=m_First;
-while(block)
-	{
-	auto next=block->Next;
-	delete block;
-	block=next;
-	}
+Clear();
 }
 
 
@@ -95,25 +90,34 @@ for(; String[pos]; pos++)
 return pos;
 }
 
+VOID StringBuilder::Clear()
+{
+auto block=m_First;
+while(block)
+	{
+	auto next=block->Next;
+	delete block;
+	block=next;
+	}
+m_AppendAnsi=&StringBuilder::BufferAppendAnsi;
+m_AppendUnicode=&StringBuilder::BufferAppendUnicode;
+m_First=nullptr;
+m_Last=nullptr;
+m_Position=0;
+m_Size=0;
+m_String=nullptr;
+m_ToString=&StringBuilder::BufferToString;
+}
+
 VOID StringBuilder::Initialize(UINT len)
 {
+assert(len!=0);
+m_AppendAnsi=&StringBuilder::StringAppendAnsi;
+m_AppendUnicode=&StringBuilder::StringAppendUnicode;
 m_Position=0;
-if(len==0)
-	{
-	m_AppendAnsi=&StringBuilder::BufferAppendAnsi;
-	m_AppendUnicode=&StringBuilder::BufferAppendUnicode;
-	m_Size=0;
-	m_String=nullptr;
-	m_ToString=&StringBuilder::BufferToString;
-	}
-else
-	{
-	m_AppendAnsi=&StringBuilder::StringAppendAnsi;
-	m_AppendUnicode=&StringBuilder::StringAppendUnicode;
-	m_Size=len+1;
-	m_String=String::Create(len, nullptr);
-	m_ToString=&StringBuilder::StringToString;
-	}
+m_Size=len+1;
+m_String=String::Create(len, nullptr);
+m_ToString=&StringBuilder::StringToString;
 }
 
 Handle<String> StringBuilder::ToString()
@@ -182,7 +186,7 @@ for(UINT pos=0; pos<m_Position; pos++)
 buf[m_Position]=0;
 str->m_Hash=StringHelper::GetHash(buf);
 str->m_Length=m_Position;
-Initialize(0);
+Clear();
 return str;
 }
 
@@ -213,6 +217,6 @@ auto buf=const_cast<LPTSTR>(str->Begin());
 buf[m_Position]=0;
 str->m_Hash=StringHelper::GetHash(buf);
 str->m_Length=m_Position;
-Initialize(0);
+Clear();
 return str;
 }

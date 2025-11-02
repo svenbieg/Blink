@@ -80,26 +80,6 @@ return this;
 }
 
 
-//============
-// Comparison
-//============
-
-INT String::Compare(String* str1, String* str2)
-{
-UINT64 hash1=GetHash(str1);
-UINT64 hash2=GetHash(str2);
-if(hash1<hash2)
-	return -1;
-if(hash1>hash2)
-	return 1;
-if(!hash1)
-	return 0;
-auto buf1=str1? str1->Begin(): nullptr;
-auto buf2=str2? str2->Begin(): nullptr;
-return StringHelper::Compare(buf1, buf2);
-}
-
-
 //===========
 // Operators
 //===========
