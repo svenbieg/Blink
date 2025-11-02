@@ -122,7 +122,7 @@ while(lsda.GetPosition()<callsite_end)
 	if(instr_offset>cs_end)
 		continue;
 	if(lp_offset==0)
-		return;
+		break;
 	if(action_id==0)
 		{
 		exc->Cleanup(lp_start+lp_offset);
