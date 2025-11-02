@@ -90,7 +90,7 @@ while(pos<size)
 		break;
 		}
 	SIZE_T tail=m_Tail%m_Size;
-	SIZE_T copy=TypeHelper::Min(read, m_Size-tail);
+	SIZE_T copy=TypeHelper::Min(read-pos, m_Size-tail);
 	MemoryHelper::Copy(&dst[pos], &m_Buffer[tail], copy);
 	m_Tail+=copy;
 	pos+=copy;
