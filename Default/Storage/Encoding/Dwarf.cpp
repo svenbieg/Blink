@@ -39,17 +39,23 @@ switch(type)
 		break;
 	case DW_WORD:
 	case DW_SHORT:
+		{
 		size=2;
 		break;
+		}
 	case DW_DWORD:
 	case DW_INT:
+		{
 		size=4;
 		break;
+		}
 	case DW_POINTER_ABS:
 	case DW_QWORD:
 	case DW_LONG:
+		{
 		size=8;
 		break;
+		}
 	default:
 		throw InvalidArgumentException();
 	}
@@ -72,32 +78,50 @@ if(type==0xF)
 switch(type)
 	{
 	case DW_POINTER_ABS:
+		{
 		value=ReadValue<SIZE_T>(dwarf);
 		break;
+		}
 	case DW_UNSIGNED:
+		{
 		value=ReadUnsigned(dwarf);
 		break;
+		}
 	case DW_WORD:
+		{
 		value=ReadValue<WORD>(dwarf);
 		break;
+		}
 	case DW_DWORD:
+		{
 		value=ReadValue<DWORD>(dwarf);
 		break;
+		}
 	case DW_QWORD:
+		{
 		value=ReadValue<QWORD>(dwarf);
 		break;
+		}
 	case DW_SIGNED:
+		{
 		value=ReadSigned(dwarf);
 		break;
+		}
 	case DW_SHORT:
+		{
 		value=ReadValue<SHORT>(dwarf);
 		break;
+		}
 	case DW_INT:
+		{
 		value=ReadValue<INT>(dwarf);
 		break;
+		}
 	case DW_LONG:
+		{
 		value=ReadValue<INT64>(dwarf);
 		break;
+		}
 	default:
 		throw InvalidArgumentException();
 	}
