@@ -144,9 +144,7 @@ public:
 	// Common
 	BOOL TryUpcast(TypeInfo const* Type, VOID** Thrown)const noexcept override
 		{
-		if(*Type==*this)
-			return true;
-		return Type->TryUpcast(this, Thrown);
+		return (*Type==*this);
 		}
 };
 
