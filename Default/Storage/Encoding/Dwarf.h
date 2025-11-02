@@ -72,8 +72,8 @@ public:
 	static UINT64 Read(BYTE const*& Dwarf);
 	inline BYTE ReadByte() { return *m_Buffer++; }
 	static inline BYTE ReadByte(BYTE const*& Dwarf) { return *Dwarf++; }
-	inline UINT64 ReadEncoded(BYTE Encoding, SIZE_T Relative=0) { return ReadEncoded((BYTE const*&)m_Buffer, Encoding, Relative); }
-	static UINT64 ReadEncoded(BYTE const*& Dwarf, BYTE Encoding, UINT64 Relative=0);
+	inline UINT64 ReadEncoded(BYTE Encoding, SIZE_T DataRelative=0) { return ReadEncoded((BYTE const*&)m_Buffer, Encoding, DataRelative); }
+	static UINT64 ReadEncoded(BYTE const*& Dwarf, BYTE Encoding, UINT64 DataRelative=0);
 	inline INT64 ReadSigned() { return ReadSigned((BYTE const*&)m_Buffer); }
 	static INT64 ReadSigned(BYTE const*& Dwarf);
 	inline UINT64 ReadUnsigned() { return ReadUnsigned((BYTE const*&)m_Buffer); }

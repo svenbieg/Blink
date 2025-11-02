@@ -62,7 +62,7 @@ BYTE encoding=*dwarf++;
 return ReadEncoded(dwarf, encoding);
 }
 
-UINT64 Dwarf::ReadEncoded(BYTE const*& dwarf, BYTE encoding, UINT64 relative)
+UINT64 Dwarf::ReadEncoded(BYTE const*& dwarf, BYTE encoding, UINT64 data_rel)
 {
 SIZE_T ptr_rel=(SIZE_T)dwarf;
 SIZE_T value=0;
@@ -113,7 +113,7 @@ switch(mode)
 		}
 	case DW_DATA_REL:
 		{
-		value+=relative;
+		value+=data_rel;
 		break;
 		}
 	default:

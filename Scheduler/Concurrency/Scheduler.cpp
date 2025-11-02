@@ -169,8 +169,7 @@ UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
 SuspendCurrentTask(core, current, resume_time);
 lock.Unlock();
-if(current->Cancelled)
-	throw AbortException();
+StatusHelper::ThrowIfFailed(current->m_Status);
 }
 
 
