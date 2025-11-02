@@ -125,14 +125,6 @@ catch(Exception e)
 	{
 	status=e.GetStatus();
 	}
-catch(Status s)
-	{
-	status=s;
-	}
-catch(...)
-	{
-	status=Status::Error;
-	}
 WriteLock lock(task->m_Mutex);
 FlagHelper::Set(task->m_Flags, TaskFlags::Done);
 task->m_Status=status;
