@@ -31,8 +31,13 @@ stp x10, x11, [sp, IRQ_FRAME_X10]
 stp x12, x13, [sp, IRQ_FRAME_X12]
 stp x14, x15, [sp, IRQ_FRAME_X14]
 stp x16, x17, [sp, IRQ_FRAME_X16]
-str x18, [sp, IRQ_FRAME_X18]
-stp x29, x30, [sp, IRQ_FRAME_X29]
+stp x18, x19, [sp, IRQ_FRAME_X18]
+stp x20, x21, [sp, IRQ_FRAME_X20]
+stp x22, x23, [sp, IRQ_FRAME_X22]
+stp x24, x25, [sp, IRQ_FRAME_X24]
+stp x26, x27, [sp, IRQ_FRAME_X26]
+stp x28, x29, [sp, IRQ_FRAME_X28]
+str x30, [sp, IRQ_FRAME_X30]
 
 _init_irq_stack:
 mov x3, sp
@@ -62,8 +67,13 @@ ldp x10, x11, [sp, IRQ_FRAME_X10]
 ldp x12, x13, [sp, IRQ_FRAME_X12]
 ldp x14, x15, [sp, IRQ_FRAME_X14]
 ldp x16, x17, [sp, IRQ_FRAME_X16]
-ldr x18, [sp, IRQ_FRAME_X18]
-ldp x29, x30, [sp, IRQ_FRAME_X29]
+ldp x18, x19, [sp, IRQ_FRAME_X18]
+ldp x20, x21, [sp, IRQ_FRAME_X20]
+ldp x22, x23, [sp, IRQ_FRAME_X22]
+ldp x24, x25, [sp, IRQ_FRAME_X24]
+ldp x26, x27, [sp, IRQ_FRAME_X26]
+ldp x28, x29, [sp, IRQ_FRAME_X28]
+ldr x30, [sp, IRQ_FRAME_X30]
 add sp, sp, #IRQ_FRAME_SIZE
 
 _finish_irq:

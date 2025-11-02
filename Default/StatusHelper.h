@@ -29,9 +29,5 @@ public:
 		{
 		return !FlagHelper::Get(Status, Status::Error);
 		}
-	static inline VOID ThrowIfFailed(Status Status)
-		{
-		if(Failed(Status))
-			throw Status;
-		}
+	static VOID ThrowIfFailed(Status Status);
 };

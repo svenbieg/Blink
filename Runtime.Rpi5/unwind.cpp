@@ -65,12 +65,12 @@ OP_RESTORE=192,
 // Compiler
 //==========
 
-extern "C" [[noreturn]] VOID _Unwind_Raise(UnwindException* exc)
+extern "C" __no_return VOID _Unwind_Raise(UnwindException* exc)
 {
 exc->Raise();
 }
 
-extern "C" [[noreturn]] VOID _Unwind_Resume(UnwindException* exc)
+extern "C" __no_return VOID _Unwind_Resume(UnwindException* exc)
 {
 exc->Resume();
 }
@@ -103,18 +103,18 @@ if(m_Destructor)
 // Common
 //========
 
-VOID UnwindException::Catch(SIZE_T landing_pad, UINT type_id, TypeInfo const* type, VOID* thrown)
+__no_return VOID UnwindException::Catch(SIZE_T landing_pad, UINT type_id, TypeInfo const* type, VOID* thrown)
 {
 m_Thrown=thrown;
 m_Type=type;
-Registers[0]=(SIZE_T)thrown;
-Registers[1]=type_id;
+Registers[__builtin_eh_return_data_regno(0)]=(SIZE_T)thrown;
+Registers[__builtin_eh_return_data_regno(1)]=type_id;
 Registers[EXC_REG_RETURN]=landing_pad;
 exc_restore_context(&Frame);
 System::Restart();
 }
 
-VOID UnwindException::Cleanup(SIZE_T landing_pad)
+__no_return VOID UnwindException::Cleanup(SIZE_T landing_pad)
 {
 exc_resume(&Frame, landing_pad, this);
 System::Restart();
@@ -127,7 +127,7 @@ if(type)
 return m_Thrown;
 }
 
-VOID UnwindException::Raise()noexcept
+__no_return VOID UnwindException::Raise()noexcept
 {
 SIZE_T instr_ptr=Registers[EXC_REG_RETURN]-EXC_INSTR_SIZE;
 GetContext(instr_ptr, &m_Context);
@@ -144,7 +144,7 @@ exc_resume(&Frame, (SIZE_T)_Unwind_Raise, this);
 System::Restart();
 }
 
-VOID UnwindException::Resume()noexcept
+__no_return VOID UnwindException::Resume()noexcept
 {
 Registers[EXC_REG_STACK]+=m_Context.StackOffset;
 exc_resume(&Frame, (SIZE_T)_Unwind_Raise, this);
@@ -373,6 +373,11 @@ while(instr.GetPosition()<instr_end)
 			}
 		case OP_NOP:
 			break;
+		//case OP_SET_LOC:
+		//	{
+		//	pc=(SIZE_T)instr.ReadEncoded(context->PointerEncoding);
+		//	break;
+		//	}
 		case OP_VAL_OFFSET:
 			{
 			UINT reg=(UINT)instr.ReadUnsigned();

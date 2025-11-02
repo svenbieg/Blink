@@ -9,6 +9,7 @@
 // Forward-Declarations
 //======================
 
+#define __builtin_eh_return_data_regno(u) 0
 #define __GNUC__ 14
 #define __GNUC_MINOR__ 2
 
