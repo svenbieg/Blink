@@ -17,8 +17,8 @@
 
 using namespace Devices::System;
 
-extern SIZE_T __bss_start;
-extern SIZE_T __bss_end;
+extern COPY_T __bss_start;
+extern COPY_T __bss_end;
 
 extern BYTE __heap_start;
 
@@ -44,7 +44,7 @@ namespace Devices {
 
 VOID Memory::Initialize()
 {
-MemoryHelper::Zero64(&__bss_start, &__bss_end);
+MemoryHelper::ZeroT(&__bss_start, &__bss_end);
 SIZE_T heap_start=(SIZE_T)&__heap_start;
 SIZE_T heap_end=RAM_SIZE;
 SIZE_T heap_size=heap_end-heap_start;
