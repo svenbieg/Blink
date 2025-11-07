@@ -32,50 +32,50 @@ public:
 			}
 		return 0;
 		}
-	static VOID Copy(VOID* Destination, VOID const* Source, SIZE_T Size);
-	template <class _value_t> static VOID CopyT(_value_t* Destination, _value_t const* Source, SIZE_T Count)
+	static VOID Copy(VOID* To, VOID const* From, SIZE_T Size);
+	template <class _value_t> static VOID CopyT(_value_t* To, _value_t const* From, SIZE_T Count)
 		{
 		while(Count--)
-			*Destination++=*Source++;
+			*To++=*From++;
 		}
-	template <class _value_t> static VOID CopyT(_value_t* Destination, _value_t const* Source, _value_t* End)
+	template <class _value_t> static VOID CopyT(_value_t* To, _value_t const* From, _value_t* End)
 		{
-		while(Destination<End)
-			*Destination++=*Source++;
+		while(To<End)
+			*To++=*From++;
 		}
-	static VOID Fill(VOID* Destination, SIZE_T Size, BYTE Value);
-	template <class _value_t> static VOID FillT(_value_t* Destination, SIZE_T Count, _value_t Value)
+	static VOID Fill(VOID* To, SIZE_T Size, BYTE Value);
+	template <class _value_t> static VOID FillT(_value_t* To, SIZE_T Count, _value_t Value)
 		{
 		while(Count--)
-			*Destination++=Value;
+			*To++=Value;
 		}
-	template <class _value_t> static VOID FillT(_value_t* Destination, _value_t* End, _value_t Value)
+	template <class _value_t> static VOID FillT(_value_t* To, _value_t* End, _value_t Value)
 		{
-		while(Destination<End)
-			*Destination++=Value;
+		while(To<End)
+			*To++=Value;
 		}
-	static VOID Move(VOID* Destination, VOID const* Source, SIZE_T Size);
-	template <class _value_t> static VOID MoveT(_value_t* Destination, _value_t const* Source, SIZE_T Count)
+	static VOID Move(VOID* To, VOID const* From, SIZE_T Size);
+	template <class _value_t> static VOID MoveT(_value_t* To, _value_t const* From, SIZE_T Count)
 		{
-		auto dst=Destination;
-		if(Destination==Source)
+		auto dst=To;
+		if(To==From)
 			return;
-		if(Destination>Source)
+		if(To>From)
 			{
-			auto end=Destination;
-			Destination+=Count;
-			Source+=Count;
-			while(Destination>=end)
-				*--Destination=*--Source;
+			auto end=To;
+			To+=Count;
+			From+=Count;
+			while(To>=end)
+				*--To=*--From;
 			}
 		else
 			{
-			auto end=Destination+Count;
-			while(Destination<end)
-				*Destination++=*Source++;
+			auto end=To+Count;
+			while(To<end)
+				*To++=*From++;
 			}
 		}
-	static inline VOID Zero(VOID* Destination, SIZE_T Size) { Fill(Destination, Size, 0); }
-	template <class _value_t> static inline VOID ZeroT(_value_t* Destination, SIZE_T Count) { FillT<_value_t>(Destination, Count, _value_t(0)); }
-	template <class _value_t> static inline VOID ZeroT(_value_t* Destination, _value_t* End) { FillT<_value_t>(Destination, End, _value_t(0)); }
+	static inline VOID Zero(VOID* To, SIZE_T Size) { Fill(To, Size, 0); }
+	template <class _value_t> static inline VOID ZeroT(_value_t* To, SIZE_T Count) { FillT<_value_t>(To, Count, _value_t(0)); }
+	template <class _value_t> static inline VOID ZeroT(_value_t* To, _value_t* End) { FillT<_value_t>(To, End, _value_t(0)); }
 };
