@@ -38,7 +38,7 @@ namespace Concurrency {
 VOID Scheduler::Begin()
 {
 SpinLock lock(s_CriticalSection);
-UINT core_count=++s_CoreCount;
+++s_CoreCount;
 UINT core=Cpu::GetId();
 auto task=s_CurrentTask[core];
 lock.Unlock();
