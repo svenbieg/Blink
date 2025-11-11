@@ -404,7 +404,6 @@ return resume;
 VOID Scheduler::HandleTaskSwitch(VOID* param)
 {
 SpinLock lock(s_CriticalSection);
-Cpu::DataStoreBarrier();
 UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
 auto next=current->m_Next;
@@ -420,7 +419,7 @@ else
 	AddWaitingTask(current);
 	}
 s_CurrentTask[core]=next;
-Cpu::DataSyncBarrier();
+lock.Unlock();
 TaskHelper::Switch(core, current, next);
 }
 
