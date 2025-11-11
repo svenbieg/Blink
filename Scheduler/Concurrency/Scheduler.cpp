@@ -440,9 +440,9 @@ try
 	{
 	Main();
 	}
-catch(...)
+catch(Exception e)
 	{
-	status=Status::Error;
+	status=e.GetStatus();
 	}
 System::Restart();
 }
