@@ -33,12 +33,6 @@ if(!buf)
 return buf;
 }
 
-void* operator new(__size_t size, std::nothrow_t const&)noexcept
-{
-WriteLock lock(g_heap_mutex);
-return heap_alloc(g_heap, size);
-}
-
 void* operator new[](__size_t size)
 {
 WriteLock lock(g_heap_mutex);
@@ -46,12 +40,6 @@ auto buf=heap_alloc(g_heap, size);
 if(!buf)
 	throw OutOfMemoryException();
 return buf;
-}
-
-void* operator new[](__size_t size, std::nothrow_t const&)noexcept
-{
-WriteLock lock(g_heap_mutex);
-return heap_alloc(g_heap, size);
 }
 
 void operator delete(void* buf)noexcept
