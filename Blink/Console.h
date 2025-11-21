@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Concurrency/Task.h"
+#include "Collections/map.hpp"
 #include "Devices/Serial/SerialPort.h"
 #include "Function.h"
 #include "Global.h"
@@ -20,7 +20,7 @@
 // Namespace
 //===========
 
-namespace UI {
+namespace Blink {
 
 
 //=========
@@ -52,7 +52,9 @@ private:
 	static Global<Console> s_Current;
 
 	// Common
+	VOID OnCommandReceived(Handle<String> Command);
 	VOID OnSerialPortDataReceived();
+	Collections::map<Handle<String>, Function<VOID()>> m_Commands;
 	Concurrency::Mutex m_Mutex;
 	Handle<SerialPort> m_SerialPort;
 	StringBuilder m_StringBuilder;

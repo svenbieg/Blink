@@ -111,9 +111,6 @@
       <Filter>Storage</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)StringView.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)UI\Console.h">
-      <Filter>UI</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Global.h" />
   </ItemGroup>
   <ItemGroup>
@@ -150,9 +147,6 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)StringBuilder.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StringView.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)UI\Console.cpp">
-      <Filter>UI</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)StatusHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -170,9 +164,6 @@
     </Filter>
     <Filter Include="Culture">
       <UniqueIdentifier>{9163acb5-c885-4791-b4c8-e49817220d0f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="UI">
-      <UniqueIdentifier>{2aed8e2d-e850-466c-970b-0eedc150fbd8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -21,9 +21,11 @@
   <ItemDefinitionGroup />
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Console.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="Console.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="..\Runtime\Configuration\Platform.targets" />

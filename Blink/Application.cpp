@@ -10,13 +10,12 @@
 //=======
 
 #include "Devices/System/System.h"
-#include "UI/Console.h"
 #include "Application.h"
+#include "Console.h"
 
 using namespace Blink;
 using namespace Concurrency;
 using namespace Devices::System;
-using namespace UI;
 
 
 //=============
@@ -90,56 +89,8 @@ DispatchedQueue::Enter();
 //==========================
 
 Application::Application()
-{
-InitializeCommands();
-}
+{}
 
 Global<Application> Application::s_Current;
-
-
-//================
-// Common Private
-//================
-
-VOID Application::InitializeCommands()
-{
-m_Commands.add("off", []()
-	{
-	Console::Print("Led off\n");
-	System::Led(false);
-	});
-m_Commands.add("on", []()
-	{
-	Console::Print("Led on\n");
-	System::Led(true);
-	});
-m_Commands.add("start", []()
-	{
-	auto app=Application::Get();
-	app->StartBlinking();
-	});
-m_Commands.add("stop", []()
-	{
-	auto app=Application::Get();
-	app->StopBlinking();
-	});
-auto console=Console::Get();
-console->CommandReceived.Add(this, &Application::OnConsoleCommandReceived);
-console->Print("Blink commands:");
-for(auto cmd: m_Commands)
-	{
-	auto name=cmd.get_key();
-	console->Print(" ");
-	console->Print(name);
-	}
-console->Print("\n");
-}
-
-VOID Application::OnConsoleCommandReceived(Handle<String> cmd)
-{
-auto func=m_Commands.get(cmd);
-if(func)
-	func();
-}
 
 }

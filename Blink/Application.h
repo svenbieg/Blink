@@ -9,7 +9,6 @@
 // Using
 //=======
 
-#include "Collections/map.hpp"
 #include "Concurrency/Task.h"
 #include "Function.h"
 #include "Global.h"
@@ -47,10 +46,7 @@ private:
 	static Global<Application> s_Current;
 
 	// Common
-	VOID InitializeCommands();
-	VOID OnConsoleCommandReceived(Handle<String> Command);
 	Handle<Task> m_BlinkingTask;
-	Collections::map<Handle<String>, Function<VOID()>> m_Commands;
 };
 
 }

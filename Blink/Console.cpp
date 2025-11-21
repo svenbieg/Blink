@@ -9,10 +9,13 @@
 // Using
 //=======
 
+#include "Devices/System/System.h"
 #include "Storage/Streams/StreamWriter.h"
-#include "UI/Console.h"
+#include "Application.h"
+#include "Console.h"
 
 using namespace Concurrency;
+using namespace Devices::System;
 using namespace Storage::Streams;
 
 
@@ -20,7 +23,7 @@ using namespace Storage::Streams;
 // Namespace
 //===========
 
-namespace UI {
+namespace Blink {
 
 
 //========
@@ -47,6 +50,36 @@ Console::Console()
 {
 m_SerialPort=SerialPort::Create();
 m_SerialPort->DataReceived.Add(this, &Console::OnSerialPortDataReceived);
+m_Commands.add("off", []()
+	{
+	Console::Print("Led off\n");
+	System::Led(false);
+	});
+m_Commands.add("on", []()
+	{
+	Console::Print("Led on\n");
+	System::Led(true);
+	});
+m_Commands.add("start", []()
+	{
+	auto app=Application::Get();
+	app->StartBlinking();
+	});
+m_Commands.add("stop", []()
+	{
+	auto app=Application::Get();
+	app->StopBlinking();
+	});
+auto console=Console::Get();
+CommandReceived.Add(this, &Console::OnCommandReceived);
+console->Print("Blink commands:");
+for(auto cmd: m_Commands)
+	{
+	auto name=cmd.get_key();
+	console->Print(" ");
+	console->Print(name);
+	}
+console->Print("\n");
 }
 
 Global<Console> Console::s_Current;
@@ -55,6 +88,13 @@ Global<Console> Console::s_Current;
 //================
 // Common Private
 //================
+
+VOID Console::OnCommandReceived(Handle<String> cmd)
+{
+auto func=m_Commands.get(cmd);
+if(func)
+	func();
+}
 
 VOID Console::OnSerialPortDataReceived()
 {
