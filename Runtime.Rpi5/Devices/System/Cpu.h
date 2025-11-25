@@ -30,9 +30,6 @@ public:
 	// Friends
 	friend Interrupts;
 
-	// Settings
-	static constexpr UINT CACHE_LINE_SIZE=64;
-
 	// Common
 	static INT Affinity(UINT Core);
 	static VOID CleanDataCache()noexcept;

@@ -72,7 +72,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)heap.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)heap.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)stdlib.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TypeInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)new.cpp" />
