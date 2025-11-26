@@ -28,7 +28,7 @@
 
 #ifndef __ASSEMBLER__
 
-typedef long int ptrdiff_t;
-typedef unsigned long int size_t;
+typedef __LONG_LONG int ptrdiff_t;
+typedef unsigned __LONG_LONG int size_t;
 
 #endif
