@@ -49,6 +49,7 @@ writer.Flush();
 Console::Console()
 {
 m_SerialPort=SerialPort::Create();
+m_SerialPort->SetFormat(StreamFormat::UTF8);
 m_SerialPort->DataReceived.Add(this, &Console::OnSerialPortDataReceived);
 m_Commands.add("off", []()
 	{
