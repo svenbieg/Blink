@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)assert.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)heap.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stdbool.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stdint.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stdlib.h" />
@@ -35,6 +34,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\WriteBuffer.h">
       <Filter>Storage\Streams</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)heap.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props">
@@ -72,7 +72,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)heap.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)stdlib.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TypeInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)new.cpp" />
@@ -90,6 +89,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\WriteBuffer.cpp">
       <Filter>Storage\Streams</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)heap.c" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">
