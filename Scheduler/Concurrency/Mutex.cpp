@@ -35,8 +35,13 @@ SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
-if(AddWaitingTask(current))
-	Scheduler::SuspendCurrentTask(core, current);
+if(!m_Owner)
+	{
+	m_Owner=current;
+	return;
+	}
+AddWaitingTask(current);
+Scheduler::SuspendCurrentTask(core, current);
 }
 
 VOID Mutex::Lock(AccessMode)
@@ -47,8 +52,18 @@ UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
 FlagHelper::Set(current->m_Flags, TaskFlags::Sharing);
-if(AddWaitingTask(current, AccessMode::ReadOnly))
-	Scheduler::SuspendCurrentTask(core, current);
+if(!m_Owner)
+	{
+	m_Owner=current;
+	return;
+	}
+if(FlagHelper::Get(m_Owner->m_Flags, TaskFlags::Sharing))
+	{
+	Scheduler::AddParallelTask(&m_Owner, current);
+	return;
+	}
+AddWaitingTask(current, AccessMode::ReadOnly);
+Scheduler::SuspendCurrentTask(core, current);
 }
 
 BOOL Mutex::TryLock()
@@ -83,13 +98,18 @@ VOID Mutex::Unlock()
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
-if(m_Owner!=current)
-	return;
-auto waiting=m_Owner->m_Waiting;
-m_Owner->m_Waiting=nullptr;
-m_Owner=waiting;
-if(m_Owner)
+assert(m_Owner==current);
+if(m_Waiting)
+	{
+	m_Owner=m_Waiting;
+	m_Waiting=m_Waiting->m_Waiting;
+	m_Owner->m_Waiting=nullptr;
 	Scheduler::ResumeTask(core, current, m_Owner);
+	}
+else
+	{
+	m_Owner=nullptr;
+	}
 }
 
 VOID Mutex::Unlock(AccessMode)
@@ -97,16 +117,18 @@ VOID Mutex::Unlock(AccessMode)
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
-if(!Scheduler::RemoveParallelTask(&m_Owner, current))
-	return;
+BOOL removed=Scheduler::RemoveParallelTask(&m_Owner, current);
+assert(removed);
 FlagHelper::Clear(current->m_Flags, TaskFlags::Sharing);
 if(m_Owner)
 	return;
-auto waiting=current->m_Waiting;
-current->m_Waiting=nullptr;
-m_Owner=waiting;
-if(m_Owner)
+if(m_Waiting)
+	{
+	m_Owner=m_Waiting;
+	m_Waiting=m_Waiting->m_Waiting;
+	m_Owner->m_Waiting=nullptr;
 	Scheduler::ResumeTask(core, current, m_Owner);
+	}
 }
 
 
@@ -114,70 +136,49 @@ if(m_Owner)
 // Common Protected
 //==================
 
-BOOL Mutex::AddWaitingTask(Task* task)
+VOID Mutex::AddWaitingTask(Task* task)
 {
 BOOL locked=FlagHelper::Get(task->m_Flags, TaskFlags::Locked);
-auto current_ptr=&m_Owner;
-BOOL suspend=false;
+auto current_ptr=&m_Waiting;
 while(*current_ptr)
 	{
 	auto current=*current_ptr;
 	assert(current!=task);
-	auto waiting=current->m_Waiting;
-	if(!waiting)
+	if(locked&&!FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
 		{
-		current->m_Waiting=task;
-		return true;
-		}
-	suspend=true;
-	if(locked&&!FlagHelper::Get(waiting->m_Flags, TaskFlags::Locked))
-		{
-		current->m_Waiting=task;
-		task->m_Waiting=waiting;
-		return true;
+		*current_ptr=task;
+		task->m_Waiting=current;
+		return;
 		}
 	current_ptr=&current->m_Waiting;
 	}
 *current_ptr=task;
-return suspend;
 }
 
-BOOL Mutex::AddWaitingTask(Task* task, AccessMode)
+VOID Mutex::AddWaitingTask(Task* task, AccessMode)
 {
 BOOL locked=FlagHelper::Get(task->m_Flags, TaskFlags::Locked);
-auto current_ptr=&m_Owner;
-BOOL suspend=false;
+auto current_ptr=&m_Waiting;
 while(*current_ptr)
 	{
 	auto current=*current_ptr;
 	assert(current!=task);
-	auto waiting=current->m_Waiting;
-	if(!waiting)
+	if(locked&&!FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
 		{
 		if(FlagHelper::Get(current->m_Flags, TaskFlags::Sharing))
 			{
 			Scheduler::AddParallelTask(current_ptr, task);
-			return suspend;
 			}
-		current->m_Waiting=task;
-		return true;
-		}
-	suspend=true;
-	if(locked&&!FlagHelper::Get(waiting->m_Flags, TaskFlags::Locked))
-		{
-		if(FlagHelper::Get(waiting->m_Flags, TaskFlags::Sharing))
+		else
 			{
-			Scheduler::AddParallelTask(&current->m_Waiting, task);
-			return true;
+			*current_ptr=task;
+			task->m_Waiting=current;
 			}
-		current->m_Waiting=task;
-		task->m_Waiting=waiting;
-		return true;
+		return;
 		}
 	current_ptr=&current->m_Waiting;
 	}
 *current_ptr=task;
-return suspend;
 }
 
 
@@ -190,17 +191,22 @@ VOID Mutex::Yield(SpinLock& sched_lock)
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 assert(m_Owner==current);
-auto waiting=m_Owner->m_Waiting;
-m_Owner->m_Waiting=nullptr;
-m_Owner=waiting;
-if(m_Owner)
-	Scheduler::ResumeTask(core, current, m_Owner);
-sched_lock.Yield();
-if(AddWaitingTask(current))
+if(m_Waiting)
 	{
-	Scheduler::SuspendCurrentTask(core, current);
-	sched_lock.Yield();
+	m_Owner=m_Waiting;
+	m_Waiting=m_Waiting->m_Waiting;
+	m_Owner->m_Waiting=nullptr;
+	Scheduler::ResumeTask(core, current, m_Owner);
 	}
+sched_lock.Yield();
+if(!m_Owner)
+	{
+	m_Owner=current;
+	return;
+	}
+AddWaitingTask(current);
+Scheduler::SuspendCurrentTask(core, current);
+sched_lock.Yield();
 }
 
 VOID Mutex::Yield(SpinLock& sched_lock, AccessMode access)
@@ -211,18 +217,28 @@ BOOL removed=Scheduler::RemoveParallelTask(&m_Owner, current);
 assert(removed);
 if(!m_Owner)
 	{
-	auto waiting=current->m_Waiting;
-	current->m_Waiting=nullptr;
-	m_Owner=waiting;
-	if(m_Owner)
+	if(m_Waiting)
+		{
+		m_Owner=m_Waiting;
+		m_Waiting=m_Waiting->m_Waiting;
+		m_Owner->m_Waiting=nullptr;
 		Scheduler::ResumeTask(core, current, m_Owner);
+		}
 	}
 sched_lock.Yield();
-if(AddWaitingTask(current, AccessMode::ReadOnly))
+if(!m_Owner)
 	{
-	Scheduler::SuspendCurrentTask(core, current);
-	sched_lock.Yield();
+	m_Owner=current;
+	return;
 	}
+if(FlagHelper::Get(m_Owner->m_Flags, TaskFlags::Sharing))
+	{
+	Scheduler::AddParallelTask(&m_Owner, current);
+	return;
+	}
+AddWaitingTask(current, AccessMode::ReadOnly);
+Scheduler::SuspendCurrentTask(core, current);
+sched_lock.Yield();
 }
 
 }

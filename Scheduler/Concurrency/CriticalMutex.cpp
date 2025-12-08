@@ -39,8 +39,13 @@ if(!current)
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
 FlagHelper::Set(current->m_Flags, TaskFlags::Locked);
 current->m_LockCount++;
-if(AddWaitingTask(current))
-	Scheduler::SuspendCurrentTask(core, current);
+if(!m_Owner)
+	{
+	m_Owner=current;
+	return;
+	}
+AddWaitingTask(current);
+Scheduler::SuspendCurrentTask(core, current);
 }
 
 VOID CriticalMutex::Lock(AccessMode)
@@ -52,8 +57,18 @@ auto current=Scheduler::s_CurrentTask[core];
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
 FlagHelper::Set(current->m_Flags, TaskFlags::LockedSharing);
 current->m_LockCount++;
-if(AddWaitingTask(current, AccessMode::ReadOnly))
-	Scheduler::SuspendCurrentTask(core, current);
+if(!m_Owner)
+	{
+	m_Owner=current;
+	return;
+	}
+if(FlagHelper::Get(m_Owner->m_Flags, TaskFlags::Sharing))
+	{
+	Scheduler::AddParallelTask(&m_Owner, current);
+	return;
+	}
+AddWaitingTask(current, AccessMode::ReadOnly);
+Scheduler::SuspendCurrentTask(core, current);
 }
 
 BOOL CriticalMutex::TryLock()
@@ -93,15 +108,20 @@ if(!m_Owner)
 	return;
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
-if(m_Owner!=current)
-	return;
+assert(m_Owner==current);
 if(--m_Owner->m_LockCount==0)
 	FlagHelper::Clear(m_Owner->m_Flags, TaskFlags::Locked);
-auto waiting=m_Owner->m_Waiting;
-m_Owner->m_Waiting=nullptr;
-m_Owner=waiting;
-if(m_Owner)
+if(m_Waiting)
+	{
+	m_Owner=m_Waiting;
+	m_Waiting=m_Waiting->m_Waiting;
+	m_Owner->m_Waiting=nullptr;
 	Scheduler::ResumeTask(core, current, m_Owner);
+	}
+else
+	{
+	m_Owner=nullptr;
+	}
 }
 
 VOID CriticalMutex::Unlock(AccessMode)
@@ -109,23 +129,20 @@ VOID CriticalMutex::Unlock(AccessMode)
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
-if(!Scheduler::RemoveParallelTask(&m_Owner, current))
-	return;
+BOOL removed=Scheduler::RemoveParallelTask(&m_Owner, current);
+assert(removed);
 FlagHelper::Clear(current->m_Flags, TaskFlags::Sharing);
 if(--current->m_LockCount==0)
-	{
 	FlagHelper::Clear(current->m_Flags, TaskFlags::Locked);
-	if(m_Owner)
-		{
-		Scheduler::ResumeWaitingTasks();
-		return;
-		}
-	}
-auto waiting=current->m_Waiting;
-current->m_Waiting=nullptr;
-m_Owner=waiting;
 if(m_Owner)
+	return;
+if(m_Waiting)
+	{
+	m_Owner=m_Waiting;
+	m_Waiting=m_Waiting->m_Waiting;
+	m_Owner->m_Waiting=nullptr;
 	Scheduler::ResumeTask(core, current, m_Owner);
+	}
 }
 
 }

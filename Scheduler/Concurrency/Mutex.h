@@ -44,7 +44,7 @@ public:
 	friend WriteLock;
 
 	// Con-/Destructors
-	Mutex(): m_Owner(nullptr) {}
+	Mutex(): m_Owner(nullptr), m_Waiting(nullptr) {}
 	~Mutex() {}
 
 	// Common
@@ -57,9 +57,10 @@ public:
 
 protected:
 	// Common
-	BOOL AddWaitingTask(Task* Task);
-	BOOL AddWaitingTask(Task* Task, AccessMode);
+	VOID AddWaitingTask(Task* Task);
+	VOID AddWaitingTask(Task* Task, AccessMode);
 	Task* m_Owner;
+	Task* m_Waiting;
 
 private:
 	// Common
