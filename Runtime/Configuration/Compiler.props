@@ -1,11 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
-    <CompilerFlags>$(CompilerFlags) -g</CompilerFlags>
-    <NMakePreprocessorDefinitions>$(NMakePreprocessorDefinitions);_DEBUG</NMakePreprocessorDefinitions>
-  </PropertyGroup>
-
   <PropertyGroup>
     <AdditionalOptions>$(AdditionalOptions) /Zc:__cplusplus /std:c++17</AdditionalOptions>
     <CompilerFlags>$(CompilerFlags) -fdata-sections -ffunction-sections</CompilerFlags>
@@ -19,6 +14,16 @@
     <LinkerFlags>$(LinkerFlags) --gc-sections</LinkerFlags>
     <LinkerFlags>$(LinkerFlags) -nostdlib</LinkerFlags>
     <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(SolutionDir);$(ProjectDir)</NMakeIncludeSearchPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <CompilerFlags>$(CompilerFlags) -g -O0</CompilerFlags>
+    <NMakePreprocessorDefinitions>$(NMakePreprocessorDefinitions);_DEBUG</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <CompilerFlags>$(CompilerFlags) -Os</CompilerFlags>
+    <LinkerFlags>$(LinkerFlags) -flto=full</LinkerFlags>
   </PropertyGroup>
 
   <Import Project="$(SolutionDir)Runtime.$(Platform)\Configuration\Compiler.props" Condition="Exists('$(SolutionDir)Runtime.$(Platform)\Configuration\Compiler.props')" />
