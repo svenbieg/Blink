@@ -499,18 +499,6 @@ while(resume)
 ResumeWaitingTasks();
 }
 
-VOID Scheduler::ResumeTask(UINT core, Task* current, Task* resume)
-{
-while(resume)
-	{
-	auto parallel=resume->m_Parallel;
-	resume->m_Parallel=nullptr;
-	AddWaitingTask(resume);
-	resume=parallel;
-	}
-ResumeWaitingTasks();
-}
-
 VOID Scheduler::ResumeWaitingTasks()
 {
 UINT waiting_count=GetWaitingCount(s_WaitingFirst, s_CoreCount);

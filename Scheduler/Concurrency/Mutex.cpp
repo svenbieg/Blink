@@ -178,16 +178,12 @@ return false;
 
 VOID Mutex::UnlockInternal(UINT core, Task* current)
 {
+m_Owner=m_Waiting;
 if(m_Waiting)
 	{
-	m_Owner=m_Waiting;
 	m_Waiting=m_Waiting->m_Waiting;
 	m_Owner->m_Waiting=nullptr;
-	Scheduler::ResumeTask(core, current, m_Owner);
-	}
-else
-	{
-	m_Owner=nullptr;
+	Scheduler::ResumeTask(m_Owner, Status::Success);
 	}
 }
 
@@ -203,7 +199,7 @@ if(m_Waiting)
 	m_Owner=m_Waiting;
 	m_Waiting=m_Waiting->m_Waiting;
 	m_Owner->m_Waiting=nullptr;
-	Scheduler::ResumeTask(core, current, m_Owner);
+	Scheduler::ResumeTask(m_Owner, Status::Success);
 	}
 }
 
@@ -222,7 +218,7 @@ if(m_Waiting)
 	m_Owner=m_Waiting;
 	m_Waiting=m_Waiting->m_Waiting;
 	m_Owner->m_Waiting=nullptr;
-	Scheduler::ResumeTask(core, current, m_Owner);
+	Scheduler::ResumeTask(m_Owner, Status::Success);
 	}
 sched_lock.Yield();
 if(!m_Owner)
@@ -248,7 +244,7 @@ if(!m_Owner)
 		m_Owner=m_Waiting;
 		m_Waiting=m_Waiting->m_Waiting;
 		m_Owner->m_Waiting=nullptr;
-		Scheduler::ResumeTask(core, current, m_Owner);
+		Scheduler::ResumeTask(m_Owner, Status::Success);
 		}
 	}
 sched_lock.Yield();

@@ -77,8 +77,7 @@ private:
 	static VOID MainTask();
 	static BOOL RemoveParallelTask(Task** First, Task* Remove);
 	static VOID RemoveSleepingTask(Task** First, Task* Sleeping);
-	static VOID ResumeTask(Task* Resume, Status Status=Status::Success);
-	static VOID ResumeTask(UINT Core, Task* Current, Task* Resume);
+	static VOID ResumeTask(Task* Resume, Status Status);
 	static VOID ResumeWaitingTasks();
 	static VOID SuspendCurrentTask(UINT Core, Task* Current, UINT64 ResumeTime=0);
 	static UINT s_CoreCount;
