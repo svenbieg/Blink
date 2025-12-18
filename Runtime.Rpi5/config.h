@@ -10,14 +10,17 @@
 //=======
 
 #include <asm.h>
-#include <stdint.h>
+
+#ifndef __ASSEMBLER__
+#include "Platform.h"
+#endif
 
 
 //========
 // Common
 //========
 
-CONST_EXPR(uint32_t, CACHE_LINE_SIZE, 64);
-CONST_EXPR(uint32_t, CPU_COUNT, 4);
-CONST_EXPR(uint32_t, STACK_SIZE, 4096);
-CONST_EXPR(uint32_t, RAM_SIZE, 0x80000000);
+CONST_EXPR(UINT, CACHE_LINE_SIZE, 64);
+CONST_EXPR(UINT, CPU_COUNT, 4);
+CONST_EXPR(UINT, STACK_SIZE, 4096);
+CONST_EXPR(UINT, RAM_SIZE, 0x80000000);
