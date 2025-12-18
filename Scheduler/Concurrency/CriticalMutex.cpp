@@ -94,7 +94,10 @@ auto current=Scheduler::s_CurrentTask[core];
 assert(m_Owner==current);
 UnlockInternal(core, current);
 if(--m_Owner->m_LockCount==0)
+	{
 	FlagHelper::Clear(m_Owner->m_Flags, TaskFlags::Locked);
+	Scheduler::ResumeWaitingTasks();
+	}
 }
 
 VOID CriticalMutex::Unlock(AccessMode)
@@ -104,7 +107,10 @@ UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 UnlockInternal(core, current, AccessMode::ReadOnly);
 if(--current->m_LockCount==0)
-	FlagHelper::Clear(current->m_Flags, TaskFlags::Locked);
+	{
+	FlagHelper::Clear(m_Owner->m_Flags, TaskFlags::Locked);
+	Scheduler::ResumeWaitingTasks();
+	}
 }
 
 }
