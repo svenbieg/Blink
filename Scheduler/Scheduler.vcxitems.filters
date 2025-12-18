@@ -68,5 +68,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\SpinLock.h">
       <Filter>Concurrency</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\ServiceTask.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

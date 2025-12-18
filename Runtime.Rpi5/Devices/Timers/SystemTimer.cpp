@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Concurrency/Task.h"
+#include "Concurrency/ServiceTask.h"
 #include "Devices/System/Interrupts.h"
 #include "Devices/Timers/SystemTimer.h"
 
@@ -79,7 +79,7 @@ return cnt_pct*MHZ/FREQ_HZ;
 
 SystemTimer::SystemTimer()
 {
-m_Task=Task::Create(this, &SystemTimer::ServiceTask, "systimer");
+m_Task=ServiceTask::Create(this, &SystemTimer::ServiceTask, "systimer");
 Interrupts::SetHandler(Irq::SystemTimer, HandleInterrupt, this);
 __asm inline volatile("msr CNTP_TVAL_EL0, %0":: "r" (PERIOD));
 __asm inline volatile("msr CNTP_CTL_EL0, %0":: "r" (1UL));
@@ -102,7 +102,6 @@ __asm inline volatile("msr CNTP_TVAL_EL0, %0":: "r" (PERIOD));
 VOID SystemTimer::ServiceTask()
 {
 auto task=Task::Get();
-task->Lock();
 while(!task->Cancelled)
 	{
 	m_Signal.Wait();

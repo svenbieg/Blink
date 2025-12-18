@@ -28,6 +28,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\ReadLock.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\Scheduler.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\ScopedLock.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\ServiceTask.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\Signal.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\SpinLock.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\Task.h" />

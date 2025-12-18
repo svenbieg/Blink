@@ -66,7 +66,6 @@ public:
 	using GpioHost=Devices::Gpio::GpioHost;
 	using PcieHost=Devices::Pcie::PcieHost;
 	using RingBuffer=Storage::RingBuffer;
-	using Task=Concurrency::Task;
 	using WriteBuffer=Storage::Streams::WriteBuffer;
 
 	// Con-/Destructors
@@ -101,7 +100,7 @@ private:
 	UINT m_Id;
 	Handle<RingBuffer> m_InputBuffer;
 	Handle<PcieHost> m_PcieHost;
-	Handle<Task> m_ServiceTask;
+	Handle<Concurrency::Task> m_ServiceTask;
 	Concurrency::Signal m_Signal;
 	Handle<WriteBuffer> m_WriteBuffer;
 };

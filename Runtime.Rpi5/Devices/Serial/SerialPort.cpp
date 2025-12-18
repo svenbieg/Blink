@@ -12,6 +12,7 @@
 #include <base.h>
 #include <io.h>
 #include <new>
+#include "Concurrency/ServiceTask.h"
 #include "Devices/Serial/SerialPort.h"
 
 using namespace Concurrency;
@@ -213,7 +214,7 @@ m_Id((UINT)device)
 m_InputBuffer=RingBuffer::Create(UART_INPUT_RING);
 m_WriteBuffer=WriteBuffer::Create();
 auto name=String::Create("serial%u", m_Id);
-m_ServiceTask=Task::Create(this, &SerialPort::ServiceTask, name);
+m_ServiceTask=ServiceTask::Create(this, &SerialPort::ServiceTask, name);
 }
 
 SerialPort* SerialPort::s_Current[UART_COUNT]={ nullptr };
@@ -261,8 +262,6 @@ m_GpioHost->SetPinMode(UART_DEVICES[m_Id].TX_PIN, UART_DEVICES[m_Id].TX_ALT);
 m_GpioHost->SetPinMode(UART_DEVICES[m_Id].RX_PIN, UART_DEVICES[m_Id].RX_ALT, GpioPullMode::PullUp);
 m_PcieHost=PcieHost::Get();
 m_PcieHost->SetInterruptHandler(UART_DEVICES[m_Id].IRQ, HandleInterrupt, this);
-auto task=Task::Get();
-task->Lock();
 auto uart=(pl011_regs_t*)m_Device;
 if(io_read(uart->FLAGS, FLAG_BUSY))
 	throw DeviceNotReadyException();
@@ -277,6 +276,7 @@ bits_set(ifls, IFLS_TXIFSEL, IFLS_IFSEL_1_4);
 io_write(uart->IFLS, ifls);
 io_write(uart->IMSC, IMSC_INT_OE|IMSC_INT_RT|IMSC_INT_TX|IMSC_INT_RX);
 io_set(uart->CTRL, CTRL_RX_ENABLE|CTRL_TX_ENABLE|CTRL_ENABLE);
+auto task=Task::Get();
 SpinLock spin_lock(m_CriticalSection);
 while(!task->Cancelled)
 	{
