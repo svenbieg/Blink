@@ -15,8 +15,9 @@
 
 #define __LONG long
 #define __LONG_LONG long long
-
+#define __SIZE_T unsigned long long int
 #define __SIZEOF_POINTER__ 8
+#define __FILE_SIZE unsigned long long int
 
 
 //=======

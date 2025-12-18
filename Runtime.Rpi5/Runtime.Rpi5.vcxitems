@@ -3,10 +3,6 @@
   <PropertyGroup Label="Globals">
     <HasSharedItems>true</HasSharedItems>
     <ItemsProjectGuid>{E31DF348-0424-4DEB-B143-B720C57D828C}</ItemsProjectGuid>
-    <ItemsSccProjectName>$/Shared/Runtime.Rpi5</ItemsSccProjectName>
-    <ItemsSccAuxPath>https://svenbieg.visualstudio.com</ItemsSccAuxPath>
-    <ItemsSccLocalPath>.</ItemsSccLocalPath>
-    <ItemsSccProvider>{4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}</ItemsSccProvider>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(MSBuildThisFileDirectory)</NMakeIncludeSearchPath>
   </PropertyGroup>
@@ -26,8 +22,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\System.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)start.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\FlashMemory.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\PartitionTable.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)unwind.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -53,9 +47,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)config.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stddef.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\FlashMemory.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\PartitionTable.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)task.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)unwind.h" />
   </ItemGroup>

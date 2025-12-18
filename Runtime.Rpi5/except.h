@@ -11,6 +11,10 @@
 
 #include <asm.h>
 
+#ifndef __ASSEMBLER__
+#include "Platform.h"
+#endif
+
 
 //=======
 // Types
@@ -74,16 +78,11 @@ STRUCT_END(EXC_FRAME)
 
 #ifndef __ASSEMBLER__
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+extern "C"
+{
 VOID exc_restore_context(EXC_FRAME* Context);
 VOID exc_resume(EXC_FRAME* Context, SIZE_T Resume, VOID* Argument);
 VOID exc_save_context(EXC_FRAME* Context);
-
-#ifdef __cplusplus
 }
-#endif
 
 #endif
