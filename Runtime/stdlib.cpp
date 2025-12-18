@@ -2,13 +2,6 @@
 // stdlib.cpp
 //============
 
-#include "pch.h"
-
-
-//=======
-// Using
-//=======
-
 #include <heap.h>
 #include <stdlib.h>
 #include "Concurrency/CriticalMutex.h"

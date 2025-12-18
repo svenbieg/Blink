@@ -2,13 +2,6 @@
 // new.cpp
 //=========
 
-#include "pch.h"
-
-
-//=======
-// Using
-//=======
-
 #include <heap.h>
 #include <new>
 #include "Concurrency/CriticalMutex.h"
