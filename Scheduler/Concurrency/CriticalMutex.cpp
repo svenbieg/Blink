@@ -5,6 +5,11 @@
 // Copyright 2025, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#dynamic-prioritization
 
+
+//=======
+// Using
+//=======
+
 #include "Concurrency/Task.h"
 #include "Devices/System/Cpu.h"
 #include "Devices/System/Interrupts.h"
@@ -96,7 +101,7 @@ UnlockInternal(core, current);
 if(--m_Owner->m_LockCount==0)
 	{
 	FlagHelper::Clear(m_Owner->m_Flags, TaskFlags::Locked);
-	Scheduler::ResumeWaitingTasks();
+	Scheduler::ResumeWaitingTask(core, current);
 	}
 }
 
@@ -109,8 +114,86 @@ UnlockInternal(core, current, AccessMode::ReadOnly);
 if(--current->m_LockCount==0)
 	{
 	FlagHelper::Clear(m_Owner->m_Flags, TaskFlags::Locked);
-	Scheduler::ResumeWaitingTasks();
+	Scheduler::ResumeWaitingTask(core, current);
 	}
+}
+
+
+//================
+// Common Private
+//================
+
+VOID CriticalMutex::AddWaitingTask(Task* task)
+{
+auto current_ptr=&m_Waiting;
+if(FlagHelper::Get(task->m_Flags, TaskFlags::Locked))
+	{
+	while(*current_ptr)
+		{
+		auto current=*current_ptr;
+		assert(current!=task);
+		if(!FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
+			{
+			*current_ptr=task;
+			task->m_Waiting=current;
+			return;
+			}
+		current_ptr=&current->m_Waiting;
+		}
+	}
+else
+	{
+	while(*current_ptr)
+		{
+		auto current=*current_ptr;
+		assert(current!=task);
+		current_ptr=&current->m_Waiting;
+		}
+	}
+*current_ptr=task;
+}
+
+VOID CriticalMutex::AddWaitingTask(Task* task, AccessMode)
+{
+auto current_ptr=&m_Waiting;
+if(FlagHelper::Get(task->m_Flags, TaskFlags::Locked))
+	{
+	while(*current_ptr)
+		{
+		auto current=*current_ptr;
+		assert(current!=task);
+		if(!FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
+			{
+			*current_ptr=task;
+			task->m_Waiting=current;
+			return;
+			}
+		if(FlagHelper::Get(current->m_Flags, TaskFlags::Sharing))
+			{
+			Scheduler::AddParallelTask(current_ptr, task);
+			return;
+			}
+		current_ptr=&current->m_Waiting;
+		}
+	}
+else
+	{
+	while(*current_ptr)
+		{
+		auto current=*current_ptr;
+		assert(current!=task);
+		if(!FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
+			{
+			if(FlagHelper::Get(current->m_Flags, TaskFlags::Sharing))
+				{
+				Scheduler::AddParallelTask(current_ptr, task);
+				return;
+				}
+			}
+		current_ptr=&current->m_Waiting;
+		}
+	}
+*current_ptr=task;
 }
 
 }

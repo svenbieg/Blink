@@ -13,7 +13,7 @@
 //=======
 
 #include "Concurrency/DispatchedHandler.h"
-#include "Concurrency/CriticalMutex.h"
+#include "Concurrency/CriticalSection.h"
 #include "Concurrency/Signal.h"
 
 
@@ -60,7 +60,7 @@ private:
 	// Common
 	static DispatchedHandler* s_First;
 	static DispatchedHandler* s_Last;
-	static CriticalMutex s_Mutex;
+	static CriticalSection s_CriticalSection;
 	static Signal s_Signal;
 	static volatile BOOL s_Waiting;
 };

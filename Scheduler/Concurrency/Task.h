@@ -23,10 +23,7 @@
 #include "Concurrency/SpinLock.h"
 #include "Concurrency/TaskHelper.h"
 #include "Concurrency/WriteLock.h"
-#include "Exception.h"
-#include "MemoryHelper.h"
-#include "Status.h"
-#include "StringClass.h"
+#include "Platform.h"
 
 
 //===========

@@ -66,8 +66,6 @@ public:
 
 protected:
 	// Common
-	VOID AddWaitingTask(Task* Task);
-	VOID AddWaitingTask(Task* Task, AccessMode);
 	BOOL LockInternal(UINT Core, Task* Current);
 	BOOL LockInternal(UINT Core, Task* Current, AccessMode);
 	VOID UnlockInternal(UINT Core, Task* Current);
@@ -77,6 +75,8 @@ protected:
 
 private:
 	// Common
+	VOID AddWaitingTask(Task* Task);
+	VOID AddWaitingTask(Task* Task, AccessMode);
 	VOID Yield(SpinLock& SchedulerLock);
 	VOID Yield(SpinLock& SchedulerLock, AccessMode Access);
 };

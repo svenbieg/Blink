@@ -48,10 +48,8 @@ public:
 	// Common
 	inline VOID Cancel() { Trigger(Status::Aborted); }
 	VOID Trigger(Status Status=Status::Success);
-	VOID Wait();
-	VOID Wait(UINT Timeout);
-	VOID Wait(ScopedLock& Lock);
-	VOID Wait(ScopedLock& Lock, UINT Timeout);
+	VOID Wait(UINT Timeout=0);
+	VOID Wait(ScopedLock& Lock, UINT Timeout=0);
 
 private:
 	// Common

@@ -5,6 +5,11 @@
 // Copyright 2025, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#critical-section
 
+
+//=======
+// Using
+//=======
+
 #include <assert.h>
 #include "Concurrency/CriticalSection.h"
 #include "Concurrency/SpinLock.h"
@@ -21,6 +26,13 @@ using namespace Devices::System;
 namespace Concurrency {
 
 
+//==========
+// Settings
+//==========
+
+constexpr UINT LOCKED=0x80000000;
+
+
 //========
 // Common
 //========
@@ -28,7 +40,7 @@ namespace Concurrency {
 VOID CriticalSection::Lock()
 {
 Interrupts::Disable();
-UINT core=Cpu::GetId()+1;
+UINT core=Cpu::GetId()|LOCKED;
 assert(m_Core!=core);
 while(!Cpu::CompareAndSet(&m_Core, 0, core))
 	{
@@ -41,7 +53,7 @@ Cpu::DataSyncBarrier();
 BOOL CriticalSection::TryLock()
 {
 Interrupts::Disable();
-UINT core=Cpu::GetId()+1;
+UINT core=Cpu::GetId()|LOCKED;
 assert(m_Core!=core);
 if(Cpu::CompareAndSet(&m_Core, 0, core))
 	{
@@ -54,7 +66,7 @@ return false;
 
 VOID CriticalSection::Unlock()
 {
-UINT core=Cpu::GetId()+1;
+UINT core=Cpu::GetId()|LOCKED;
 if(m_Core!=core)
 	return;
 Cpu::DataStoreBarrier();
@@ -64,7 +76,7 @@ Interrupts::Enable();
 
 VOID CriticalSection::Yield()
 {
-UINT core=Cpu::GetId()+1;
+UINT core=Cpu::GetId()|LOCKED;
 assert(m_Core==core);
 Cpu::DataStoreBarrier();
 Cpu::StoreAndRelease(&m_Core, 0);

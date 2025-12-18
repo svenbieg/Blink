@@ -77,9 +77,10 @@ private:
 	static VOID MainTask();
 	static BOOL RemoveParallelTask(Task** First, Task* Remove);
 	static VOID RemoveSleepingTask(Task** First, Task* Sleeping);
-	static VOID ResumeTask(Task* Resume, Status Status);
+	static VOID ResumeWaitingTask(UINT Core, Task* Current);
 	static VOID ResumeWaitingTasks();
 	static VOID SuspendCurrentTask(UINT Core, Task* Current, UINT64 ResumeTime=0);
+	static VOID WakeupTasks(Task* Wakeup, Status Status);
 	static UINT s_CoreCount;
 	static Task* s_Create;
 	static CriticalSection s_CriticalSection;

@@ -5,8 +5,13 @@
 // Copyright 2025, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#main-task
 
+
+//=======
+// Using
+//=======
+
 #include "Concurrency/DispatchedQueue.h"
-#include "Concurrency/WriteLock.h"
+#include "Concurrency/SpinLock.h"
 
 
 //===========
@@ -22,7 +27,7 @@ namespace Concurrency {
 
 VOID DispatchedQueue::Append(DispatchedHandler* handler)
 {
-WriteLock lock(s_Mutex);
+SpinLock lock(s_CriticalSection);
 if(!s_First)
 	{
 	s_First=handler;
@@ -38,7 +43,7 @@ s_Signal.Trigger();
 
 VOID DispatchedQueue::Enter()
 {
-WriteLock lock(s_Mutex);
+SpinLock lock(s_CriticalSection);
 s_Waiting=true;
 while(s_Waiting)
 	{
@@ -59,7 +64,7 @@ while(s_Waiting)
 
 VOID DispatchedQueue::Exit()
 {
-WriteLock lock(s_Mutex);
+SpinLock lock(s_CriticalSection);
 s_Waiting=false;
 s_Signal.Trigger();
 }
@@ -71,7 +76,7 @@ s_Signal.Trigger();
 
 DispatchedHandler* DispatchedQueue::s_First=nullptr;
 DispatchedHandler* DispatchedQueue::s_Last=nullptr;
-CriticalMutex DispatchedQueue::s_Mutex;
+CriticalSection DispatchedQueue::s_CriticalSection;
 Signal DispatchedQueue::s_Signal;
 volatile BOOL DispatchedQueue::s_Waiting=false;
 

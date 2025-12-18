@@ -5,6 +5,11 @@
 // Copyright 2025, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler
 
+
+//=======
+// Using
+//=======
+
 #include "Concurrency/Scheduler.h"
 #include "Concurrency/SpinLock.h"
 #include "Concurrency/Task.h"
@@ -99,7 +104,7 @@ if(signal)
 	resume=true;
 	}
 if(resume)
-	ResumeTask(task, Status::Aborted);
+	WakeupTasks(task, Status::Aborted);
 }
 
 VOID Scheduler::ExitTask()
@@ -408,11 +413,14 @@ current->m_Next=nullptr;
 if(FlagHelper::Get(current->m_Flags, TaskFlags::Suspended))
 	{
 	if(FlagHelper::Get(current->m_Flags, TaskFlags::Release))
+		{
 		AddReleaseTask(&s_Release, current);
+		}
 	}
 else
 	{
-	AddWaitingTask(current);
+	if(!FlagHelper::Get(current->m_Flags, TaskFlags::Idle))
+		AddWaitingTask(current);
 	}
 s_CurrentTask[core]=next;
 lock.Unlock();
@@ -481,22 +489,14 @@ while(*current_ptr)
 	}
 }
 
-VOID Scheduler::ResumeTask(Task* resume, Status status)
+VOID Scheduler::ResumeWaitingTask(UINT core, Task* current)
 {
-while(resume)
-	{
-	if(resume->m_ResumeTime)
-		{
-		RemoveSleepingTask(&Scheduler::s_Sleeping, resume);
-		resume->m_ResumeTime=0;
-		}
-	auto parallel=resume->m_Parallel;
-	resume->m_Parallel=nullptr;
-	resume->m_Status=status;
-	AddWaitingTask(resume);
-	resume=parallel;
-	}
-ResumeWaitingTasks();
+if(!s_WaitingFirst)
+	return;
+auto resume=GetWaitingTask();
+FlagHelper::Clear(resume->m_Flags, TaskFlags::Suspended);
+current->m_Next=resume;
+Interrupts::Send(Irq::TaskSwitch, core);
 }
 
 VOID Scheduler::ResumeWaitingTasks()
@@ -539,6 +539,23 @@ if(!next)
 FlagHelper::Clear(next->m_Flags, TaskFlags::Suspended);
 current->m_Next=next;
 Interrupts::Send(Irq::TaskSwitch, core);
+}
+
+VOID Scheduler::WakeupTasks(Task* wakeup, Status status)
+{
+while(wakeup)
+	{
+	if(wakeup->m_ResumeTime)
+		{
+		RemoveSleepingTask(&Scheduler::s_Sleeping, wakeup);
+		wakeup->m_ResumeTime=0;
+		}
+	auto parallel=wakeup->m_Parallel;
+	wakeup->m_Parallel=nullptr;
+	wakeup->m_Status=status;
+	AddWaitingTask(wakeup);
+	wakeup=parallel;
+	}
 }
 
 UINT Scheduler::s_CoreCount=0;
