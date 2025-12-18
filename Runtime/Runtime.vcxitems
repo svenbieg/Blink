@@ -36,7 +36,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)io.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mutex" />
     <ClInclude Include="$(MSBuildThisFileDirectory)new" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mutex" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stdbool.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stdexcept" />
