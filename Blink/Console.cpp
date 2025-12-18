@@ -2,7 +2,7 @@
 // Console.cpp
 //=============
 
-#include "pch.h"
+#include "Platform.h"
 
 
 //=======
@@ -71,16 +71,7 @@ m_Commands.add("stop", []()
 	auto app=Application::Get();
 	app->StopBlinking();
 	});
-auto console=Console::Get();
 CommandReceived.Add(this, &Console::OnCommandReceived);
-console->Print("Blink commands:");
-for(auto cmd: m_Commands)
-	{
-	auto name=cmd.get_key();
-	console->Print(" ");
-	console->Print(name);
-	}
-console->Print("\n");
 }
 
 Global<Console> Console::s_Current;
