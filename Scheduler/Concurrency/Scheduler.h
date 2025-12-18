@@ -2,6 +2,9 @@
 // Scheduler.h
 //=============
 
+// Copyright 2025, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Scheduler
+
 #pragma once
 
 
@@ -9,9 +12,9 @@
 // Using
 //=======
 
-#include <config.h>
 #include "Concurrency/CriticalSection.h"
 #include "Concurrency/Mutex.h"
+#include "Platform.h"
 
 
 //===========

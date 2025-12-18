@@ -2,12 +2,8 @@
 // Signal.cpp
 //============
 
-#include "pch.h"
-
-
-//=======
-// Using
-//=======
+// Copyright 2025, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Scheduler/wiki#signal
 
 #include "Concurrency/Task.h"
 #include "Devices/System/Cpu.h"

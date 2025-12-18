@@ -2,6 +2,9 @@
 // Signal.h
 //==========
 
+// Copyright 2025, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Scheduler/wiki#signal
+
 #pragma once
 
 
@@ -40,8 +43,7 @@ public:
 	friend Scheduler;
 
 	// Con-/Destructors
-	Signal(): m_Waiting(nullptr) {}
-	~Signal() {}
+	Signal()=default;
 
 	// Common
 	inline VOID Cancel() { Trigger(Status::Aborted); }
@@ -54,7 +56,7 @@ public:
 private:
 	// Common
 	VOID WaitInternal(ScopedLock& Lock);
-	Task* m_Waiting;
+	Task* m_Waiting=nullptr;
 };
 
 }

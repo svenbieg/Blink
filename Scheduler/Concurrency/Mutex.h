@@ -2,7 +2,17 @@
 // Mutex.h
 //=========
 
+// Copyright 2025, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Scheduler/wiki#mutex
+
 #pragma once
+
+
+//=======
+// Using
+//=======
+
+#include "Platform.h"
 
 
 //===========
@@ -44,8 +54,7 @@ public:
 	friend WriteLock;
 
 	// Con-/Destructors
-	Mutex(): m_Owner(nullptr), m_Waiting(nullptr) {}
-	~Mutex() {}
+	Mutex()=default;
 
 	// Common
 	virtual VOID Lock();
@@ -59,8 +68,12 @@ protected:
 	// Common
 	VOID AddWaitingTask(Task* Task);
 	VOID AddWaitingTask(Task* Task, AccessMode);
-	Task* m_Owner;
-	Task* m_Waiting;
+	BOOL LockInternal(UINT Core, Task* Current);
+	BOOL LockInternal(UINT Core, Task* Current, AccessMode);
+	VOID UnlockInternal(UINT Core, Task* Current);
+	VOID UnlockInternal(UINT Core, Task* Current, AccessMode);
+	Task* m_Owner=nullptr;
+	Task* m_Waiting=nullptr;
 
 private:
 	// Common

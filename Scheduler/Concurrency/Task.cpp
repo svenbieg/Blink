@@ -2,12 +2,8 @@
 // Task.cpp
 //==========
 
-#include "pch.h"
-
-
-//=======
-// Using
-//=======
+// Copyright 2025, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Scheduler/wiki#task-creation
 
 #include "Concurrency/Scheduler.h"
 #include "Concurrency/SpinLock.h"
@@ -52,13 +48,6 @@ if(FlagHelper::Get(m_Flags, TaskFlags::Done))
 Cancelled=true;
 m_Status=Status::Aborted;
 Scheduler::CancelTask(this);
-}
-
-VOID Task::Lock()
-{
-SpinLock lock(Scheduler::s_CriticalSection);
-FlagHelper::Set(m_Flags, TaskFlags::Locked);
-m_LockCount++;
 }
 
 VOID Task::Sleep(UINT ms)
@@ -124,6 +113,14 @@ try
 catch(Exception e)
 	{
 	status=e.GetStatus();
+	}
+catch(Status s)
+	{
+	status=s;
+	}
+catch(...)
+	{
+	status=Status::Error;
 	}
 WriteLock lock(task->m_Mutex);
 FlagHelper::Set(task->m_Flags, TaskFlags::Done);

@@ -2,7 +2,17 @@
 // CriticalSection.h
 //===================
 
+// Copyright 2025, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Scheduler/wiki#critical-section
+
 #pragma once
+
+
+//=======
+// Using
+//=======
+
+#include "Platform.h"
 
 
 //===========
@@ -20,7 +30,7 @@ class CriticalSection
 {
 public:
 	// Con-/Destructors
-	CriticalSection();
+	CriticalSection()=default;
 
 	// Common
 	VOID Lock();
@@ -30,7 +40,7 @@ public:
 
 private:
 	// Common
-	volatile UINT m_Core;
+	volatile UINT m_Core=0;
 };
 
 }

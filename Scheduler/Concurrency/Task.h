@@ -2,6 +2,9 @@
 // Task.h
 //========
 
+// Copyright 2025, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Scheduler/wiki#task-creation
+
 #pragma once
 
 
@@ -21,7 +24,9 @@
 #include "Concurrency/TaskHelper.h"
 #include "Concurrency/WriteLock.h"
 #include "Exception.h"
+#include "MemoryHelper.h"
 #include "Status.h"
+#include "StringClass.h"
 
 
 //===========
@@ -29,6 +34,13 @@
 //===========
 
 namespace Concurrency {
+
+
+//======================
+// Forward-Declarations
+//======================
+
+class ServiceTask;
 
 
 //=======
@@ -60,6 +72,7 @@ public:
 	friend CriticalMutex;
 	friend Mutex;
 	friend Scheduler;
+	friend ServiceTask;
 	friend Signal;
 	friend TaskHelper;
 	friend UnwindException;
@@ -79,7 +92,6 @@ public:
 	static inline Handle<Task> Get() { return Scheduler::GetCurrentTask(); }
 	inline Status GetStatus()const { return m_Status; }
 	static inline BOOL IsMainTask() { return Scheduler::IsMainTask(); }
-	VOID Lock();
 	const LPCTSTR Name;
 	Handle<Object> Result;
 	static VOID Sleep(UINT Milliseconds);

@@ -2,12 +2,8 @@
 // Scheduler.cpp
 //===============
 
-#include "pch.h"
-
-
-//=======
-// Using
-//=======
+// Copyright 2025, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Scheduler
 
 #include "Concurrency/Scheduler.h"
 #include "Concurrency/SpinLock.h"

@@ -2,12 +2,8 @@
 // DispatchedQueue.cpp
 //=====================
 
-#include "pch.h"
-
-
-//=======
-// Using
-//=======
+// Copyright 2025, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Scheduler/wiki#main-task
 
 #include "Concurrency/DispatchedQueue.h"
 #include "Concurrency/WriteLock.h"

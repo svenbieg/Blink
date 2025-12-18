@@ -2,12 +2,8 @@
 // CriticalSection.cpp
 //=====================
 
-#include "pch.h"
-
-
-//=======
-// Using
-//=======
+// Copyright 2025, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Scheduler/wiki#critical-section
 
 #include <assert.h>
 #include "Concurrency/CriticalSection.h"
@@ -25,15 +21,6 @@ using namespace Devices::System;
 namespace Concurrency {
 
 
-//==================
-// Con-/Destructors
-//==================
-
-CriticalSection::CriticalSection():
-m_Core(CPU_COUNT)
-{}
-
-
 //========
 // Common
 //========
@@ -41,9 +28,9 @@ m_Core(CPU_COUNT)
 VOID CriticalSection::Lock()
 {
 Interrupts::Disable();
-UINT core=Cpu::GetId();
+UINT core=Cpu::GetId()+1;
 assert(m_Core!=core);
-while(!Cpu::CompareAndSet(&m_Core, CPU_COUNT, core))
+while(!Cpu::CompareAndSet(&m_Core, 0, core))
 	{
 	Interrupts::Enable();
 	Interrupts::Disable();
@@ -54,9 +41,9 @@ Cpu::DataSyncBarrier();
 BOOL CriticalSection::TryLock()
 {
 Interrupts::Disable();
-UINT core=Cpu::GetId();
+UINT core=Cpu::GetId()+1;
 assert(m_Core!=core);
-if(Cpu::CompareAndSet(&m_Core, CPU_COUNT, core))
+if(Cpu::CompareAndSet(&m_Core, 0, core))
 	{
 	Cpu::DataSyncBarrier();
 	return true;
@@ -67,23 +54,23 @@ return false;
 
 VOID CriticalSection::Unlock()
 {
-UINT core=Cpu::GetId();
+UINT core=Cpu::GetId()+1;
 if(m_Core!=core)
 	return;
 Cpu::DataStoreBarrier();
-Cpu::StoreAndRelease(&m_Core, CPU_COUNT);
+Cpu::StoreAndRelease(&m_Core, 0);
 Interrupts::Enable();
 }
 
 VOID CriticalSection::Yield()
 {
-UINT core=Cpu::GetId();
+UINT core=Cpu::GetId()+1;
 assert(m_Core==core);
 Cpu::DataStoreBarrier();
-Cpu::StoreAndRelease(&m_Core, CPU_COUNT);
+Cpu::StoreAndRelease(&m_Core, 0);
 Interrupts::Enable();
 Interrupts::Disable();
-while(!Cpu::CompareAndSet(&m_Core, CPU_COUNT, core))
+while(!Cpu::CompareAndSet(&m_Core, 0, core))
 	{
 	Interrupts::Enable();
 	Interrupts::Disable();
