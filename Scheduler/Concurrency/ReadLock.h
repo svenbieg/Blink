@@ -5,12 +5,12 @@
 // Copyright 2025, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#mutex
 
-#pragma once
-
 
 //=======
 // Using
 //=======
+
+#pragma once
 
 #include "Concurrency/Mutex.h"
 #include "Concurrency/ScopedLock.h"
@@ -31,6 +31,8 @@ class ReadLock: public ScopedLock
 {
 public:
 	// Con-/Destructors
+	ReadLock()=delete;
+	ReadLock(ReadLock const&)=delete;
 	inline ReadLock(Mutex& Mutex): m_Mutex(&Mutex)
 		{
 		m_Mutex->Lock(AccessMode::ReadOnly);

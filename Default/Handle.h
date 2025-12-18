@@ -27,8 +27,8 @@ public:
 	// Con-/Destructors
 	Handle()=default;
 	inline Handle(nullptr_t)noexcept: m_Object(nullptr) {}
-	inline Handle(_obj_t* Object) { Create(&m_Object, Object); }
-	inline Handle(Handle const& Copy) { Create(&m_Object, Copy.m_Object); }
+	inline Handle(_obj_t* Object)noexcept { Create(&m_Object, Object); }
+	inline Handle(Handle const& Copy)noexcept { Create(&m_Object, Copy.m_Object); }
 	Handle(Handle&& Move)noexcept: m_Object(Move.m_Object)
 		{
 		Move.m_Object=nullptr;
@@ -91,7 +91,7 @@ private:
 		if(obj)
 			obj->Release();
 		}
-	template <class _create_t, class _convert_t> static VOID Create(_create_t** Create, _convert_t* Init)
+	template <class _create_t, class _convert_t> static VOID Create(_create_t** Create, _convert_t* Init)noexcept
 		{
 		auto init=static_cast<_create_t*>(Init);
 		if(init)
@@ -115,5 +115,5 @@ private:
 		if(To)
 			To->AddReference();
 		}
-	_obj_t* m_Object={};
+	_obj_t* m_Object=nullptr;
 };

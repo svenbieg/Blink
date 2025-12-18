@@ -5,12 +5,12 @@
 // Copyright 2025, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#mutex
 
-#pragma once
-
 
 //=======
 // Using
 //=======
+
+#pragma once
 
 #include "Concurrency/Mutex.h"
 #include "Concurrency/ScopedLock.h"
@@ -31,6 +31,8 @@ class WriteLock: public ScopedLock
 {
 public:
 	// Con-/Destructors
+	WriteLock()=delete;
+	WriteLock(WriteLock const&)=delete;
 	inline WriteLock(Mutex& Mutex): m_Mutex(&Mutex)
 		{
 		m_Mutex->Lock();

@@ -5,12 +5,12 @@
 // Copyright 2025, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#main-task
 
-#pragma once
-
 
 //=======
 // Using
 //=======
+
+#pragma once
 
 #include <utility>
 #include "Platform.h"
@@ -48,10 +48,10 @@ public:
 
 protected:
 	// Con-/Destructors
-	DispatchedHandler(): m_Next(nullptr) {}
+	DispatchedHandler()=default;
 
 	// Common
-	DispatchedHandler* m_Next;
+	DispatchedHandler* m_Next=nullptr;
 };
 
 

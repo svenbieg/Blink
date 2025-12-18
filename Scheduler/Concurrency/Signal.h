@@ -5,12 +5,12 @@
 // Copyright 2025, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#signal
 
-#pragma once
-
 
 //=======
 // Using
 //=======
+
+#pragma once
 
 #include "Concurrency/ScopedLock.h"
 
@@ -44,6 +44,8 @@ public:
 
 	// Con-/Destructors
 	Signal()=default;
+	Signal(Signal const&)=delete;
+	~Signal()=default;
 
 	// Common
 	inline VOID Cancel() { Trigger(Status::Aborted); }

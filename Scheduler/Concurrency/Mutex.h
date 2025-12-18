@@ -5,12 +5,12 @@
 // Copyright 2025, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#mutex
 
-#pragma once
-
 
 //=======
 // Using
 //=======
+
+#pragma once
 
 #include "Platform.h"
 
@@ -55,6 +55,8 @@ public:
 
 	// Con-/Destructors
 	Mutex()=default;
+	Mutex(Mutex const&)=delete;
+	~Mutex()=default;
 
 	// Common
 	virtual VOID Lock();

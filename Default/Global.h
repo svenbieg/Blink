@@ -51,6 +51,6 @@ public:
 
 private:
 	// Common
-	Concurrency::Mutex m_Mutex={};
-	Handle<_obj_t> m_Object={};
+	Concurrency::Mutex m_Mutex;
+	Handle<_obj_t> m_Object;
 };

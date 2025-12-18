@@ -5,12 +5,12 @@
 // Copyright 2025, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#dynamic-prioritization
 
-#pragma once
-
 
 //=======
 // Using
 //=======
+
+#pragma once
 
 #include "Concurrency/Mutex.h"
 
@@ -31,6 +31,8 @@ class CriticalMutex: public Mutex
 public:
 	// Con-/Destructors
 	CriticalMutex()=default;
+	CriticalMutex(CriticalMutex const&)=delete;
+	~CriticalMutex()=default;
 
 	// Common
 	VOID Lock()override;

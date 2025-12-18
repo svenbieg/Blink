@@ -5,12 +5,12 @@
 // Copyright 2025, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler
 
-#pragma once
-
 
 //=======
 // Using
 //=======
+
+#pragma once
 
 #include "Concurrency/CriticalSection.h"
 #include "Concurrency/Mutex.h"
@@ -45,6 +45,9 @@ public:
 	friend Mutex;
 	friend Signal;
 	friend Task;
+
+	// Con-/Destructors
+	Scheduler()=delete;
 
 	// Common
 	static VOID Begin();

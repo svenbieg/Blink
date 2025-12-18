@@ -5,12 +5,12 @@
 // Copyright 2025, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#main-task
 
-#pragma once
-
 
 //=======
 // Using
 //=======
+
+#pragma once
 
 #include "Concurrency/DispatchedHandler.h"
 #include "Concurrency/CriticalSection.h"
@@ -31,6 +31,9 @@ namespace Concurrency {
 class DispatchedQueue
 {
 public:
+	// Con-/Destructors
+	DispatchedQueue()=delete;
+
 	// Common
 	static VOID Append(DispatchedHandler* Handler);
 	static inline VOID Append(VOID (*Procedure)())

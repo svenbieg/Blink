@@ -5,12 +5,12 @@
 // Copyright 2025, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#critical-section
 
-#pragma once
-
 
 //=======
 // Using
 //=======
+
+#pragma once
 
 #include "Platform.h"
 
@@ -31,6 +31,8 @@ class CriticalSection
 public:
 	// Con-/Destructors
 	CriticalSection()=default;
+	CriticalSection(CriticalSection const&)=delete;
+	~CriticalSection()=default;
 
 	// Common
 	VOID Lock();
