@@ -20,6 +20,11 @@ class MemoryHelper
 {
 public:
 	// Common
+	static inline VOID* Allocate(SIZE_T Size)
+		{
+		extern VOID* _malloc(SIZE_T);
+		return _malloc(Size);
+		}
 	static INT Compare(VOID const* Buffer1, VOID const* Buffer2, SIZE_T Size);
 	template <class _value_t> static INT CompareT(_value_t const* Values1, _value_t const* Values2, SIZE_T Count)
 		{
@@ -53,6 +58,11 @@ public:
 		{
 		while(To<End)
 			*To++=Value;
+		}
+	static inline VOID Free(VOID* Buffer)
+		{
+		extern VOID _free(VOID*);
+		return _free(Buffer);
 		}
 	static VOID Move(VOID* To, VOID const* From, SIZE_T Size);
 	template <class _value_t> static VOID MoveT(_value_t* To, _value_t const* From, SIZE_T Count)

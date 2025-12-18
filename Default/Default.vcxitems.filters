@@ -7,7 +7,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)UnknownClass.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)PathHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)FlagHelper.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MemoryHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Event.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)EventHandler.h" />

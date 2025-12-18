@@ -6,6 +6,13 @@
 
 
 //=======
+// Using
+//=======
+
+#include "Platform.h"
+
+
+//=======
 // Types
 //=======
 
@@ -20,6 +27,12 @@ constexpr WORD WORD_MAX=0xFFFF;
 
 typedef unsigned __LONG int DWORD;
 typedef unsigned __LONG_LONG int QWORD;
+
+typedef __SIZE_T SIZE_T;
+constexpr SIZE_T SIZE_MAX=(SIZE_T)-1;
+
+typedef __FILE_SIZE FILE_SIZE;
+constexpr FILE_SIZE FILE_MAX=(FILE_SIZE)-1;
 
 typedef int BOOL;
 

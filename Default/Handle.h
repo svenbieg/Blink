@@ -25,8 +25,8 @@ public:
 	template <class _friend_t> friend class Handle;
 
 	// Con-/Destructors
-	inline Handle(): m_Object(nullptr) {}
-	inline Handle(nullptr_t): m_Object(nullptr) {}
+	Handle()=default;
+	inline Handle(nullptr_t)noexcept: m_Object(nullptr) {}
 	inline Handle(_obj_t* Object) { Create(&m_Object, Object); }
 	inline Handle(Handle const& Copy) { Create(&m_Object, Copy.m_Object); }
 	Handle(Handle&& Move)noexcept: m_Object(Move.m_Object)
@@ -115,5 +115,5 @@ private:
 		if(To)
 			To->AddReference();
 		}
-	_obj_t* m_Object;
+	_obj_t* m_Object={};
 };
