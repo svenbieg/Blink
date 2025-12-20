@@ -2,13 +2,6 @@
 // MemoryHelper.cpp
 //==================
 
-#include "pch.h"
-
-
-//=======
-// Using
-//=======
-
 #include "MemoryHelper.h"
 
 

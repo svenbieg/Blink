@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include <config.h>
 #include <cpu.h>
 
 
@@ -77,7 +78,7 @@ eret
 
 _init_stack:
 cpu_id x0
-mov x1, #STACK_SIZE
+mov x1, #CONFIG_STACK_SIZE
 mul x1, x1, x0
 ldr x2, =__stack_end
 sub x2, x2, x1

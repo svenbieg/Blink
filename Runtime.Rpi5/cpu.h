@@ -21,7 +21,7 @@
 .macro cpu_id reg
 mrs \reg, MPIDR_EL1
 lsr \reg, \reg, #8
-and \reg, \reg, #(CPU_COUNT-1)
+and \reg, \reg, #CONFIG_CPU_COUNT
 .endm
 
 #endif

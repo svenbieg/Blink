@@ -9,7 +9,6 @@
 // Using
 //=======
 
-#include <attr.h>
 #include <except.h>
 #include "TypeInfo.h"
 
@@ -40,7 +39,6 @@ INT StackOffset;
 }UnwindContext;
 
 
-
 //===========
 // Exception
 //===========
@@ -57,16 +55,16 @@ public:
 	~UnwindException();
 
 	// Common
-	__no_return VOID Catch(SIZE_T LandingPad, UINT TypeId, TypeInfo const* Type, VOID* Thrown);
-	__no_return VOID Cleanup(SIZE_T LandingPad);
+	[[noreturn]] VOID Catch(SIZE_T LandingPad, UINT TypeId, TypeInfo const* Type, VOID* Thrown);
+	[[noreturn]] VOID Cleanup(SIZE_T LandingPad);
 	VOID* GetThrownException(TypeInfo const** Type=nullptr);
 	union
 		{
 		EXC_FRAME Frame;
 		SIZE_T Registers[EXC_REG_COUNT];
 		};
-	__no_return VOID Raise()noexcept;
-	__no_return VOID Resume()noexcept;
+	[[noreturn]] VOID Raise()noexcept;
+	[[noreturn]] VOID Resume()noexcept;
 
 private:
 	// Common

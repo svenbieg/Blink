@@ -2,7 +2,7 @@
 // GpioHost.cpp
 //==============
 
-#include "pch.h"
+#include "Devices/Gpio/GpioHost.h"
 
 
 //=======
@@ -12,7 +12,6 @@
 #include <base.h>
 #include <io.h>
 #include "Concurrency/Task.h"
-#include "Devices/Gpio/GpioHost.h"
 
 using namespace Concurrency;
 using namespace Devices::Pcie;

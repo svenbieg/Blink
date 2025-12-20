@@ -11,9 +11,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cxxabi.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cassert" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.h">
-      <Filter>Concurrency</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)cmath" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mutex" />
     <ClInclude Include="$(MSBuildThisFileDirectory)new" />
@@ -27,16 +24,21 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\RingBuffer.h">
       <Filter>Storage</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\ReadBuffer.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\InputBuffer.h">
       <Filter>Storage\Streams</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\WriteBuffer.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\OutputBuffer.h">
       <Filter>Storage\Streams</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)heap.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)UI\Console.h">
       <Filter>UI</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)cstddef" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stddef.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props">
@@ -79,29 +81,26 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)new.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)string.c" />
     <ClCompile Include="$(MSBuildThisFileDirectory)cxxabi.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.cpp">
-      <Filter>Concurrency</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\RingBuffer.cpp">
       <Filter>Storage</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\ReadBuffer.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\InputBuffer.cpp">
       <Filter>Storage\Streams</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\WriteBuffer.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\OutputBuffer.cpp">
       <Filter>Storage\Streams</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)heap.c" />
     <ClCompile Include="$(MSBuildThisFileDirectory)UI\Console.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.cpp">
+      <Filter>Concurrency</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">
       <UniqueIdentifier>{5805ee56-b3cf-456e-b0b7-1b0b424bc3d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Concurrency">
-      <UniqueIdentifier>{c14ccb0d-80cb-4bad-80e4-e21e3db633e3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Storage">
       <UniqueIdentifier>{b8394696-fb9d-47bf-8d7a-0b2054f61620}</UniqueIdentifier>
@@ -111,6 +110,9 @@
     </Filter>
     <Filter Include="UI">
       <UniqueIdentifier>{86cab7a1-3892-4f4d-b65b-dcc822557fc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Concurrency">
+      <UniqueIdentifier>{81ce712a-769d-4095-9e02-4b7d1167e805}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

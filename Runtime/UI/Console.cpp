@@ -2,7 +2,7 @@
 // Console.cpp
 //=============
 
-#include "Platform.h"
+#include "UI/Console.h"
 
 
 //=======
@@ -11,8 +11,6 @@
 
 #include "Devices/System/System.h"
 #include "Storage/Streams/StreamWriter.h"
-#include "Application.h"
-#include "Console.h"
 
 using namespace Concurrency;
 using namespace Devices::System;
@@ -57,7 +55,6 @@ Console::Console()
 m_SerialPort=SerialPort::Create();
 m_SerialPort->SetFormat(StreamFormat::UTF8);
 m_SerialPort->DataReceived.Add(this, &Console::OnSerialPortDataReceived);
-CommandReceived.Add(this, &Console::OnCommandReceived);
 }
 
 Global<Console> Console::s_Current;
@@ -67,14 +64,20 @@ Global<Console> Console::s_Current;
 // Common Private
 //================
 
-VOID Console::OnCommandReceived(Handle<String> cmd)
+VOID Console::HandleCommand(Handle<String> cmd)
 {
 ReadLock lock(m_Mutex);
 Function<VOID()> func;
-if(!m_Commands.try_get(cmd, &func))
-	return;
+BOOL found=m_Commands.try_get(cmd, &func);
 lock.Unlock();
-func();
+if(found)
+	{
+	func();
+	}
+else
+	{
+	CommandReceived(this, cmd);
+	}
 }
 
 VOID Console::OnSerialPortDataReceived()
@@ -88,7 +91,7 @@ while(m_SerialPort->Available())
 		{
 		auto cmd=m_StringBuilder.ToString();
 		if(cmd)
-			DispatchedQueue::Append(this, [this, cmd](){ CommandReceived(this, cmd); });
+			DispatchedQueue::Append(this, [this, cmd](){ HandleCommand(cmd); });
 		continue;
 		}
 	m_StringBuilder.Append(c);

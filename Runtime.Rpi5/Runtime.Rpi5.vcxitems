@@ -22,12 +22,11 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\System.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)start.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)unwind.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)UnwindException.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)base.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cpu.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)cstddef" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Emmc\Emmc.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Emmc\EmmcHost.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHelper.h" />
@@ -45,12 +44,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)except.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)irq.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)config.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)stddef.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)task.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)unwind.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)UnwindException.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props" />

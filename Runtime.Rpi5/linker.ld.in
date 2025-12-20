@@ -31,9 +31,9 @@ SECTIONS
 	__page_table_start = .;
 	. += 4096;
 	__page_table_end = .;
-	. = ALIGN(STACK_SIZE);
+	. = ALIGN(CONFIG_STACK_SIZE);
 	__stack_start = .;
-	. += CPU_COUNT * STACK_SIZE;
+	. += CONFIG_CPU_COUNT * CONFIG_STACK_SIZE;
 	__stack_end = .;
 	*(.nodata .nodata.*)
 	}

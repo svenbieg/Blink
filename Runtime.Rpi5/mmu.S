@@ -2,6 +2,13 @@
 // mmu.S
 //=======
 
+.section ".text"
+
+
+//=======
+// Using
+//=======
+
 #include <base.h>
 
 

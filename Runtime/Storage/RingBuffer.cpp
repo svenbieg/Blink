@@ -2,7 +2,7 @@
 // RingBuffer.cpp
 //================
 
-#include "pch.h"
+#include "Storage/RingBuffer.h"
 
 
 //=======
@@ -10,7 +10,10 @@
 //=======
 
 #include <new>
-#include "Storage/RingBuffer.h"
+#include "Devices/System/Cpu.h"
+#include "MemoryHelper.h"
+
+using namespace Devices::System;
 
 
 //===========
@@ -26,7 +29,7 @@ namespace Storage {
 
 Handle<RingBuffer> RingBuffer::Create(SIZE_T capacity)
 {
-auto ring_buf=(RingBuffer*)operator new(sizeof(RingBuffer)+capacity);
+auto ring_buf=(RingBuffer*)MemoryHelper::AllocateAligned(sizeof(RingBuffer)+capacity, Cpu::CACHE_LINE_SIZE);
 auto buf=(BYTE*)((SIZE_T)ring_buf+sizeof(RingBuffer));
 new (ring_buf) RingBuffer(buf, capacity);
 return ring_buf;

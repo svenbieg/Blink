@@ -2,7 +2,7 @@
 // StringHelper.cpp
 //==================
 
-#include "pch.h"
+#include "StringHelper.h"
 
 
 //=======
@@ -13,7 +13,7 @@
 #include "Storage/Streams/StreamWriter.h"
 #include "CharHelper.h"
 #include "FlagHelper.h"
-#include "StringHelper.h"
+#include "StringClass.h"
 
 using namespace Storage::Streams;
 

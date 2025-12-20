@@ -2,14 +2,13 @@
 // EmmcHost.cpp
 //==============
 
-#include "pch.h"
+#include "Devices/Emmc/EmmcHost.h"
 
 
 //=======
 // Using
 //=======
 
-#include "Devices/Emmc/EmmcHost.h"
 #include "Devices/System/Interrupts.h"
 
 using namespace Concurrency;

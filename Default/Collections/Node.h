@@ -9,7 +9,8 @@
 // Using
 //=======
 
-#include "Map.h"
+#include "Collections/Map.h"
+#include "StringClass.h"
 
 
 //===========

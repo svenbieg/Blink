@@ -2,14 +2,13 @@
 // PcieHost.cpp
 //==============
 
-#include "pch.h"
+#include "Devices/Pcie/PcieHost.h"
 
 
 //=======
 // Using
 //=======
 
-#include "Devices/Pcie/PcieHost.h"
 #include "Devices/System/Cpu.h"
 #include "Devices/System/Interrupts.h"
 #include "Devices/System/System.h"
@@ -85,7 +84,7 @@ if(io_read(pcie->CLASSREV, CLASSREV_CLASS)!=id)
 	throw DeviceNotReadyException();
 if(io_read(pcie->HEADER_TYPE)!=HEADER_TYPE_NORMAL)
 	throw DeviceNotReadyException();
-io_write(pcie->CACHE_LINE_SIZE, CACHE_LINE_SIZE/4);
+io_write(pcie->CACHE_LINE_SIZE, Cpu::CACHE_LINE_SIZE/4);
 io_write(pcie->BASE_LO, TypeHelper::LowLong(PCIE_OFFSET)|BASE_MEM_TYPE_64);
 io_write(pcie->BASE_HI, TypeHelper::HighLong(PCIE_OFFSET));
 io_write(pcie->IRQ_PIN, 1);
@@ -153,7 +152,7 @@ io_clear(pcie->HARD_DEBUG, HARD_DEBUG_CLKREQ_L1SS_EN);
 auto bridge=(pcie_regs_t*)pcie;
 assert(io_read(bridge->CLASSREV, CLASSREV_CLASS)==CLASSREV_CLASS_HOST);
 assert(io_read(bridge->HEADER_TYPE)==HEADER_TYPE_BRIDGE);
-io_write(bridge->CACHE_LINE_SIZE, CACHE_LINE_SIZE/4);
+io_write(bridge->CACHE_LINE_SIZE, Cpu::CACHE_LINE_SIZE/4);
 io_write(bridge->SECONDARY_BUS, 1);
 io_write(bridge->SUBORDINATE_BUS, 1);
 io_write(bridge->MEM_BASE, 0);

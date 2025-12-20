@@ -2,14 +2,12 @@
 // CharHelper.cpp
 //================
 
-#include "pch.h"
+#include "CharHelper.h"
 
 
 //=======
 // Using
 //=======
-
-#include "CharHelper.h"
 
 using namespace Storage::Streams;
 

@@ -2,12 +2,12 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <AdditionalOptions>$(AdditionalOptions) /Zc:__cplusplus /std:c++17</AdditionalOptions>
+    <AdditionalOptions>$(AdditionalOptions) /Zc:__cplusplus /std:c++20</AdditionalOptions>
     <CompilerFlags>$(CompilerFlags) -fdata-sections -ffunction-sections</CompilerFlags>
     <CompilerFlags>$(CompilerFlags) -fno-builtin -funwind-tables -nostartfiles</CompilerFlags>
     <CompilerFlags>$(CompilerFlags) -nostdinc</CompilerFlags>
     <CompilerFlags>$(CompilerFlags) -O0</CompilerFlags>
-    <CompilerFlagsCpp>$(CompilerFlagsCpp) -std=c++17</CompilerFlagsCpp>
+    <CompilerFlagsCpp>$(CompilerFlagsCpp) -std=c++20</CompilerFlagsCpp>
     <CompilerFlagsCpp>$(CompilerFlagsCpp) -nostdinc++</CompilerFlagsCpp>
     <CompilerFlagsCpp>$(CompilerFlagsCpp) -Wno-multichar</CompilerFlagsCpp>
     <LinkerFlags>$(LinkerFlags) --eh-frame-hdr</LinkerFlags>

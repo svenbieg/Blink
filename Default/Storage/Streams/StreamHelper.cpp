@@ -2,7 +2,7 @@
 // StreamHelper.cpp
 //==================
 
-#include "pch.h"
+#include "Storage/Streams/StreamHelper.h"
 
 
 //=======
@@ -10,7 +10,7 @@
 //=======
 
 #include "Storage/Buffer.h"
-#include "StreamHelper.h"
+#include "MemoryHelper.h"
 
 
 //===========
@@ -31,12 +31,12 @@ if(!dst||!src)
 	return 0;
 if(!size)
 	size=src->Available();
-auto buf=Buffer::Create(PAGE_SIZE);
+auto buf=Buffer::Create(MemoryHelper::PAGE_SIZE);
 BYTE* buf_ptr=buf->Begin();
 SIZE_T pos=0;
 while(pos<size)
 	{
-	SIZE_T copy=TypeHelper::Min(size-pos, PAGE_SIZE);
+	SIZE_T copy=TypeHelper::Min(size-pos, MemoryHelper::PAGE_SIZE);
 	SIZE_T read=src->Read(buf_ptr, copy);
 	if(!read)
 		break;

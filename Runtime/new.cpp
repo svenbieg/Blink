@@ -2,10 +2,17 @@
 // new.cpp
 //=========
 
-#include <heap.h>
 #include <new>
+
+
+//=======
+// Using
+//=======
+
+#include <heap.h>
 #include "Concurrency/CriticalMutex.h"
 #include "Concurrency/WriteLock.h"
+#include "Exception.h"
 
 using namespace Concurrency;
 
@@ -17,7 +24,7 @@ extern CriticalMutex g_heap_mutex;
 // new
 //=====
 
-void* operator new(__size_t size)
+void* operator new(__SIZE_T size)
 {
 WriteLock lock(g_heap_mutex);
 auto buf=heap_alloc(g_heap, size);
@@ -26,7 +33,7 @@ if(!buf)
 return buf;
 }
 
-void* operator new[](__size_t size)
+void* operator new[](__SIZE_T size)
 {
 WriteLock lock(g_heap_mutex);
 auto buf=heap_alloc(g_heap, size);
@@ -41,7 +48,7 @@ WriteLock lock(g_heap_mutex);
 heap_free(g_heap, buf);
 }
 
-void operator delete(void* buf, __size_t)noexcept
+void operator delete(void* buf, __SIZE_T)noexcept
 {
 WriteLock lock(g_heap_mutex);
 heap_free(g_heap, buf);
@@ -53,7 +60,7 @@ WriteLock lock(g_heap_mutex);
 heap_free(g_heap, array);
 }
 
-void operator delete[](void* array, __size_t)noexcept
+void operator delete[](void* array, __SIZE_T)noexcept
 {
 WriteLock lock(g_heap_mutex);
 heap_free(g_heap, array);

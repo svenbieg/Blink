@@ -9,32 +9,23 @@
 // Using
 //=======
 
-#include <cstddef>
-
-
-//========
-// Macros
-//========
-
-#ifndef __size_t
-#define __size_t std::size_t
-#endif
+#include "Platform.h"
 
 
 //==============
 // Operator New
 //==============
 
-void* operator new(__size_t size);
-void* operator new[](__size_t size);
+void* operator new(__SIZE_T size);
+void* operator new[](__SIZE_T size);
 void operator delete(void* buf)noexcept;
-void operator delete(void* buf, __size_t size)noexcept;
+void operator delete(void* buf, __SIZE_T size)noexcept;
 void operator delete[](void* buf)noexcept;
-void operator delete[](void* buf, __size_t size)noexcept;
+void operator delete[](void* buf, __SIZE_T size)noexcept;
 
 
 //===============
 // Placement New
 //===============
 
-inline void* operator new(__size_t size, void* obj) { return obj; }
+inline void* operator new(__SIZE_T size, void* obj) { return obj; }

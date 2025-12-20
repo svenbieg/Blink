@@ -2,7 +2,7 @@
 // System.cpp
 //============
 
-#include "pch.h"
+#include "Devices/System/System.h"
 
 
 //=======
@@ -13,7 +13,6 @@
 #include <io.h>
 #include "Devices/Gpio/GpioHelper.h"
 #include "Devices/System/Cpu.h"
-#include "Devices/System/System.h"
 
 using namespace Devices::Gpio;
 

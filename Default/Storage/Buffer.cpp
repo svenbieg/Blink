@@ -2,7 +2,7 @@
 // Buffer.cpp
 //============
 
-#include "pch.h"
+#include "Storage/Buffer.h"
 
 
 //=======
@@ -10,7 +10,7 @@
 //=======
 
 #include <new>
-#include "Buffer.h"
+#include "MemoryHelper.h"
 
 
 //===========
@@ -27,7 +27,7 @@ namespace Storage {
 Handle<Buffer> Buffer::Create(SIZE_T size)
 {
 UINT buf_size=sizeof(Buffer)+size;
-auto buf=(Buffer*)operator new(buf_size);
+auto buf=(Buffer*)MemoryHelper::Allocate(buf_size);
 auto buf_ptr=(BYTE*)((SIZE_T)buf+sizeof(Buffer));
 new (buf) Buffer(buf_ptr, size);
 return buf;

@@ -2,7 +2,7 @@
 // unwind.cpp
 //============
 
-#include "pch.h"
+#include "UnwindException.h"
 
 
 //=======
@@ -11,7 +11,6 @@
 
 #include <assert.h>
 #include <cxxabi.h>
-#include <unwind.h>
 #include "Concurrency/Task.h"
 #include "Devices/System/System.h"
 #include "Storage/Encoding/Dwarf.h"
@@ -65,12 +64,12 @@ OP_RESTORE=192,
 // Compiler
 //==========
 
-extern "C" __no_return VOID _Unwind_Raise(UnwindException* exc)
+extern "C" [[noreturn]] VOID _Unwind_Raise(UnwindException* exc)
 {
 exc->Raise();
 }
 
-extern "C" __no_return VOID _Unwind_Resume(UnwindException* exc)
+extern "C" [[noreturn]] VOID _Unwind_Resume(UnwindException* exc)
 {
 exc->Resume();
 }
@@ -103,7 +102,7 @@ if(m_Destructor)
 // Common
 //========
 
-__no_return VOID UnwindException::Catch(SIZE_T landing_pad, UINT type_id, TypeInfo const* type, VOID* thrown)
+[[noreturn]] VOID UnwindException::Catch(SIZE_T landing_pad, UINT type_id, TypeInfo const* type, VOID* thrown)
 {
 m_Thrown=thrown;
 m_Type=type;
@@ -114,7 +113,7 @@ exc_restore_context(&Frame);
 System::Restart();
 }
 
-__no_return VOID UnwindException::Cleanup(SIZE_T landing_pad)
+[[noreturn]] VOID UnwindException::Cleanup(SIZE_T landing_pad)
 {
 exc_resume(&Frame, landing_pad, this);
 System::Restart();
@@ -127,7 +126,7 @@ if(type)
 return m_Thrown;
 }
 
-__no_return VOID UnwindException::Raise()noexcept
+[[noreturn]] VOID UnwindException::Raise()noexcept
 {
 SIZE_T instr_ptr=Registers[EXC_REG_RETURN]-EXC_INSTR_SIZE;
 GetContext(instr_ptr, &m_Context);
@@ -144,7 +143,7 @@ exc_resume(&Frame, (SIZE_T)_Unwind_Raise, this);
 System::Restart();
 }
 
-__no_return VOID UnwindException::Resume()noexcept
+[[noreturn]] VOID UnwindException::Resume()noexcept
 {
 Registers[EXC_REG_STACK]+=m_Context.StackOffset;
 exc_resume(&Frame, (SIZE_T)_Unwind_Raise, this);

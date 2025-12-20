@@ -2,7 +2,7 @@
 // Interrupts.cpp
 //================
 
-#include "pch.h"
+#include "Devices/System/Interrupts.h"
 
 
 //=======
@@ -13,7 +13,6 @@
 #include <base.h>
 #include <io.h>
 #include "Devices/System/Cpu.h"
-#include "Interrupts.h"
 
 using namespace Concurrency;
 

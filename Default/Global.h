@@ -11,6 +11,7 @@
 
 #include "Concurrency/Mutex.h"
 #include "Handle.h"
+#include "MemoryHelper.h"
 #include <new>
 
 
@@ -35,7 +36,7 @@ public:
 		WriteLock lock(m_Mutex);
 		if(m_Object)
 			return m_Object;
-		auto obj=(_obj_t*)malloc(sizeof(_obj_t));
+		auto obj=(_obj_t*)MemoryHelper::Allocate(sizeof(_obj_t));
 		try
 			{
 			new (obj) _obj_t();

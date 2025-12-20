@@ -2,14 +2,13 @@
 // Object.cpp
 //============
 
-#include "pch.h"
+#include "Object.h"
 
 
 //=======
 // Using
 //=======
 
-#include "Object.h"
 #include "StringClass.h"
 
 

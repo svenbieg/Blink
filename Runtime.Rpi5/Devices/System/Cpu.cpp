@@ -2,18 +2,16 @@
 // Cpu.cpp
 //=========
 
-#include "pch.h"
+#include "Devices/System/Cpu.h"
 
 
 //=======
 // Using
 //=======
 
-#include <config.h>
 #include <irq.h>
 #include <task.h>
 #include "Concurrency/Task.h"
-#include "Devices/System/Cpu.h"
 #include "Devices/Timers/SystemTimer.h"
 
 using namespace Devices::Timers;

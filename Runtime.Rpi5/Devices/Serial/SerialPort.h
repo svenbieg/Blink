@@ -12,8 +12,9 @@
 #include "Devices/Gpio/GpioHost.h"
 #include "Devices/Pcie/PcieHost.h"
 #include "Storage/Streams/RandomAccessStream.h"
-#include "Storage/Streams/WriteBuffer.h"
+#include "Storage/Streams/OutputBuffer.h"
 #include "Storage/RingBuffer.h"
+#include "Event.h"
 
 
 //===========
@@ -64,9 +65,9 @@ class SerialPort: public Storage::Streams::RandomAccessStream
 public:
 	// Using
 	using GpioHost=Devices::Gpio::GpioHost;
+	using OutputBuffer=Storage::Streams::OutputBuffer;
 	using PcieHost=Devices::Pcie::PcieHost;
 	using RingBuffer=Storage::RingBuffer;
-	using WriteBuffer=Storage::Streams::WriteBuffer;
 
 	// Con-/Destructors
 	~SerialPort();
@@ -102,7 +103,7 @@ private:
 	Handle<PcieHost> m_PcieHost;
 	Handle<Concurrency::Task> m_ServiceTask;
 	Concurrency::Signal m_Signal;
-	Handle<WriteBuffer> m_WriteBuffer;
+	Handle<OutputBuffer> m_OutputBuffer;
 };
 
 }}

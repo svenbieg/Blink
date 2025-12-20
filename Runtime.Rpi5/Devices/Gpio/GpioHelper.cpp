@@ -2,7 +2,7 @@
 // GpioHelper.cpp
 //================
 
-#include "pch.h"
+#include "Devices/Gpio/GpioHelper.h"
 
 
 //=======
@@ -11,7 +11,6 @@
 
 #include <base.h>
 #include <io.h>
-#include "Devices/Gpio/GpioHelper.h"
 #include "Devices/Gpio/GpioHost.h"
 
 

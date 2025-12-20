@@ -2,7 +2,6 @@
 // string.c
 //==========
 
-#include <stddef.h>
 #include <string.h>
 
 

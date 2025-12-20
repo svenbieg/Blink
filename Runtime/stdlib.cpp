@@ -2,12 +2,19 @@
 // stdlib.cpp
 //============
 
-#include <heap.h>
 #include <stdlib.h>
+
+
+//=======
+// Using
+//=======
+
+#include <heap.h>
 #include "Concurrency/CriticalMutex.h"
 #include "Concurrency/WriteLock.h"
 #include "Devices/System/Cpu.h"
 #include "Devices/System/System.h"
+#include "Exception.h"
 
 using namespace Concurrency;
 using namespace Devices::System;
@@ -57,4 +64,22 @@ WriteLock lock(g_heap_mutex);
 return heap_alloc(g_heap, size);
 }
 
+}
+
+VOID* Allocate(SIZE_T size)
+{
+WriteLock lock(g_heap_mutex);
+return heap_alloc(g_heap, size);
+}
+
+VOID* AllocateAligned(SIZE_T size, SIZE_T align)
+{
+WriteLock lock(g_heap_mutex);
+return heap_alloc_aligned(g_heap, size, align);
+}
+
+VOID Free(VOID* buf)
+{
+WriteLock lock(g_heap_mutex);
+heap_free(g_heap, buf);
 }

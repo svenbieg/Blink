@@ -19,11 +19,19 @@
 class MemoryHelper
 {
 public:
+	// Settings
+	static constexpr UINT PAGE_SIZE=4096;
+
 	// Common
 	static inline VOID* Allocate(SIZE_T Size)
 		{
-		extern VOID* _malloc(SIZE_T);
-		return _malloc(Size);
+		extern VOID* Allocate(SIZE_T);
+		return Allocate(Size);
+		}
+	static inline VOID* AllocateAligned(SIZE_T Size, SIZE_T Align)
+		{
+		extern VOID* AllocateAligned(SIZE_T, SIZE_T);
+		return AllocateAligned(Size, Align);
 		}
 	static INT Compare(VOID const* Buffer1, VOID const* Buffer2, SIZE_T Size);
 	template <class _value_t> static INT CompareT(_value_t const* Values1, _value_t const* Values2, SIZE_T Count)
@@ -38,31 +46,31 @@ public:
 		return 0;
 		}
 	static VOID Copy(VOID* To, VOID const* From, SIZE_T Size);
-	template <class _value_t> static VOID CopyT(_value_t* To, _value_t const* From, SIZE_T Count)
+	template <class _value_t> static inline VOID CopyT(_value_t* To, _value_t const* From, SIZE_T Count)
 		{
 		while(Count--)
 			*To++=*From++;
 		}
-	template <class _value_t> static VOID CopyT(_value_t* To, _value_t const* From, _value_t* End)
+	template <class _value_t> static inline VOID CopyT(_value_t* To, _value_t const* From, _value_t* End)
 		{
 		while(To<End)
 			*To++=*From++;
 		}
 	static VOID Fill(VOID* To, SIZE_T Size, BYTE Value);
-	template <class _value_t> static VOID FillT(_value_t* To, SIZE_T Count, _value_t Value)
+	template <class _value_t> static inline VOID FillT(_value_t* To, SIZE_T Count, _value_t Value)
 		{
 		while(Count--)
 			*To++=Value;
 		}
-	template <class _value_t> static VOID FillT(_value_t* To, _value_t* End, _value_t Value)
+	template <class _value_t> static inline VOID FillT(_value_t* To, _value_t* End, _value_t Value)
 		{
 		while(To<End)
 			*To++=Value;
 		}
 	static inline VOID Free(VOID* Buffer)
 		{
-		extern VOID _free(VOID*);
-		return _free(Buffer);
+		extern VOID Free(VOID*);
+		Free(Buffer);
 		}
 	static VOID Move(VOID* To, VOID const* From, SIZE_T Size);
 	template <class _value_t> static VOID MoveT(_value_t* To, _value_t const* From, SIZE_T Count)
@@ -88,4 +96,15 @@ public:
 	static inline VOID Zero(VOID* To, SIZE_T Size) { Fill(To, Size, 0); }
 	template <class _value_t> static inline VOID ZeroT(_value_t* To, SIZE_T Count) { FillT<_value_t>(To, Count, _value_t(0)); }
 	template <class _value_t> static inline VOID ZeroT(_value_t* To, _value_t* End) { FillT<_value_t>(To, End, _value_t(0)); }
+};
+
+
+//===========
+// Copy-Type
+//===========
+
+struct COPY_T
+{
+COPY_T(SIZE_T Init) { MemoryHelper::FillT<SIZE_T>(Value, __COPY_MAX, Init); }
+SIZE_T Value[__COPY_MAX];
 };

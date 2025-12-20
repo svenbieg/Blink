@@ -17,7 +17,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.cpp">
       <Filter>Devices\Timers</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)unwind.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHelper.cpp">
       <Filter>Devices\Gpio</Filter>
     </ClCompile>
@@ -36,10 +35,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\MailBox.cpp">
       <Filter>Devices\System</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)UnwindException.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)config.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.h">
       <Filter>Devices\System</Filter>
@@ -60,8 +59,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)task.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)irq.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cpu.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)stddef.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)unwind.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)base.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHelper.h">
       <Filter>Devices\Gpio</Filter>
@@ -87,11 +84,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHost.h">
       <Filter>Devices\Gpio</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)cstddef" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\MailBox.h">
       <Filter>Devices\System</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)UnwindException.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">

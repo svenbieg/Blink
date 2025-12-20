@@ -14,7 +14,8 @@
 
 #include "Concurrency/CriticalSection.h"
 #include "Concurrency/Mutex.h"
-#include "Platform.h"
+#include "Devices/System/Cpu.h"
+#include "Status.h"
 
 
 //===========
@@ -64,6 +65,9 @@ protected:
 	static VOID SuspendCurrentTask(UINT MilliSeconds);
 
 private:
+	// Using
+	static constexpr UINT CPU_COUNT=Devices::System::Cpu::CPU_COUNT;
+
 	// Common
 	static VOID AddCreateTask(Task** First, Task* Task);
 	static VOID AddParallelTask(Task** First, Task* Task);

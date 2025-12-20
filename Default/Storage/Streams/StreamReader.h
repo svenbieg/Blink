@@ -10,6 +10,7 @@
 //=======
 
 #include "CharHelper.h"
+#include "StringHelper.h"
 
 
 //===========

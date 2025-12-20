@@ -1,6 +1,6 @@
-//===============
-// WriteBuffer.h
-//===============
+//================
+// OutputBuffer.h
+//================
 
 #pragma once
 
@@ -10,6 +10,7 @@
 //=======
 
 #include "Concurrency/Task.h"
+#include "MemoryHelper.h"
 
 
 //===========
@@ -20,16 +21,16 @@ namespace Storage {
 	namespace Streams {
 
 
-//==============
-// Write-Buffer
-//==============
+//===============
+// Output-Buffer
+//===============
 
-class WriteBuffer: public Object
+class OutputBuffer: public Object
 {
 public:
 	// Con-/Destructors
-	~WriteBuffer();
-	static inline Handle<WriteBuffer> Create(SIZE_T BlockSize=PAGE_SIZE) { return new WriteBuffer(BlockSize); }
+	~OutputBuffer();
+	static inline Handle<OutputBuffer> Create(SIZE_T BlockSize=MemoryHelper::PAGE_SIZE) { return new OutputBuffer(BlockSize); }
 
 	// Common
 	inline SIZE_T Available()const { return m_Written-m_Read; }
@@ -40,25 +41,25 @@ public:
 
 private:
 	// Block
-	struct WriteBufferBlock
+	struct OutputBufferBlock
 		{
-		WriteBufferBlock* Next;
+		OutputBufferBlock* Next;
 		SIZE_T Size;
 		BYTE Buffer[];
 		};
 
 	// Con-/Destructors
-	WriteBuffer(UINT BlockSize);
+	OutputBuffer(UINT BlockSize);
 
 	// Common
-	WriteBufferBlock* CreateBlock();
-	VOID FreeBlock(WriteBufferBlock* Block);
-	VOID FreeBlocks(WriteBufferBlock* First);
+	OutputBufferBlock* CreateBlock();
+	VOID FreeBlock(OutputBufferBlock* Block);
+	VOID FreeBlocks(OutputBufferBlock* First);
 	SIZE_T m_BlockSize;
 	Concurrency::CriticalSection m_CriticalSection;
-	WriteBufferBlock* m_First;
-	WriteBufferBlock* m_Free;
-	WriteBufferBlock* m_Last;
+	OutputBufferBlock* m_First;
+	OutputBufferBlock* m_Free;
+	OutputBufferBlock* m_Last;
 	SIZE_T m_Read;
 	SIZE_T m_Size;
 	SIZE_T m_Written;

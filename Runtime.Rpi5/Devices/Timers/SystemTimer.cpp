@@ -2,7 +2,7 @@
 // SystemTimer.cpp
 //=================
 
-#include "pch.h"
+#include "Devices/Timers/SystemTimer.h"
 
 
 //=======
@@ -11,7 +11,6 @@
 
 #include "Concurrency/ServiceTask.h"
 #include "Devices/System/Interrupts.h"
-#include "Devices/Timers/SystemTimer.h"
 
 using namespace Concurrency;
 using namespace Devices::System;

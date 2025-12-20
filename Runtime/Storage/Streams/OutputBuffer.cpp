@@ -1,15 +1,13 @@
 //==================
-// WriteBuffer.cpp
+// OutputBuffer.cpp
 //==================
 
-#include "pch.h"
+#include "Storage/Streams/OutputBuffer.h"
 
 
 //=======
 // Using
 //=======
-
-#include "Storage/Streams/WriteBuffer.h"
 
 using namespace Concurrency;
 
@@ -26,7 +24,7 @@ namespace Storage {
 // Con-/Destructors
 //==================
 
-WriteBuffer::~WriteBuffer()
+OutputBuffer::~OutputBuffer()
 {
 FreeBlocks(m_First);
 FreeBlocks(m_Free);
@@ -37,7 +35,7 @@ FreeBlocks(m_Free);
 // Common
 //========
 
-VOID WriteBuffer::Clear()
+VOID OutputBuffer::Clear()
 {
 SpinLock lock(m_CriticalSection);
 auto first_next=m_First->Next;
@@ -53,13 +51,13 @@ FreeBlocks(first_next);
 FreeBlocks(free);
 }
 
-VOID WriteBuffer::Flush()
+VOID OutputBuffer::Flush()
 {
 SpinLock lock(m_CriticalSection);
 m_Written=m_Size;
 }
 
-SIZE_T WriteBuffer::Read(VOID* buf, SIZE_T size)
+SIZE_T OutputBuffer::Read(VOID* buf, SIZE_T size)
 {
 auto dst=(BYTE*)buf;
 SIZE_T pos=0;
@@ -106,7 +104,7 @@ return pos;
 }
 
 
-SIZE_T WriteBuffer::Write(VOID const* buf, SIZE_T size)
+SIZE_T OutputBuffer::Write(VOID const* buf, SIZE_T size)
 {
 SIZE_T written=0;
 auto src=(BYTE const*)buf;
@@ -146,7 +144,7 @@ return written;
 // Con-/Destructors Private
 //==========================
 
-WriteBuffer::WriteBuffer(UINT block_size):
+OutputBuffer::OutputBuffer(UINT block_size):
 m_BlockSize(block_size),
 m_First(nullptr),
 m_Free(nullptr),
@@ -164,9 +162,9 @@ m_Last=m_First;
 // Common Private
 //================
 
-WriteBuffer::WriteBufferBlock* WriteBuffer::CreateBlock()
+OutputBuffer::OutputBufferBlock* OutputBuffer::CreateBlock()
 {
-WriteBufferBlock* block=nullptr;
+OutputBufferBlock* block=nullptr;
 if(m_Free)
 	{
 	block=m_Free;
@@ -174,20 +172,20 @@ if(m_Free)
 	}
 else
 	{
-	block=(WriteBufferBlock*)operator new(sizeof(WriteBufferBlock)+m_BlockSize);
+	block=(OutputBufferBlock*)operator new(sizeof(OutputBufferBlock)+m_BlockSize);
 	}
 block->Next=nullptr;
 block->Size=0;
 return block;
 }
 
-VOID WriteBuffer::FreeBlock(WriteBufferBlock* block)
+VOID OutputBuffer::FreeBlock(OutputBufferBlock* block)
 {
 block->Next=m_Free;
 m_Free=block;
 }
 
-VOID WriteBuffer::FreeBlocks(WriteBufferBlock* first)
+VOID OutputBuffer::FreeBlocks(OutputBufferBlock* first)
 {
 auto buf=first;
 while(buf)

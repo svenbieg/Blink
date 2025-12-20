@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include <config.h>
 #include <cpu.h>
 #include <irq.h>
 
@@ -42,7 +43,7 @@ str x30, [sp, IRQ_FRAME_X30]
 _init_irq_stack:
 mov x3, sp
 cpu_id x0
-mov x1, #STACK_SIZE
+mov x1, #CONFIG_STACK_SIZE
 mul x1, x1, x0
 ldr x2, =__stack_end
 sub x2, x2, x1

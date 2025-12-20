@@ -10,6 +10,7 @@
 //=======
 
 #include "Storage/Streams/InputStream.h"
+#include "StringClass.h"
 
 
 //=============

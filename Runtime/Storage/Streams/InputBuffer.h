@@ -1,6 +1,6 @@
-//==============
-// ReadBuffer.h
-//==============
+//===============
+// InputBuffer.h
+//===============
 
 #pragma once
 
@@ -12,6 +12,7 @@
 #include "Concurrency/Task.h"
 #include "Storage/Streams/RandomAccessStream.h"
 #include "Storage/RingBuffer.h"
+#include "MemoryHelper.h"
 
 
 //===========
@@ -22,16 +23,16 @@ namespace Storage {
 	namespace Streams {
 
 
-//=============
-// Read-Buffer
-//=============
+//==============
+// Input-Buffer
+//==============
 
-class ReadBuffer: public Object
+class InputBuffer: public Object
 {
 public:
 	// Con-/Destructors
-	~ReadBuffer();
-	static inline Handle<ReadBuffer> Create(SIZE_T BlockSize=PAGE_SIZE) { return new ReadBuffer(BlockSize); }
+	~InputBuffer();
+	static inline Handle<InputBuffer> Create(SIZE_T BlockSize=MemoryHelper::PAGE_SIZE) { return new InputBuffer(BlockSize); }
 
 	// Common
 	SIZE_T Available();
@@ -50,7 +51,7 @@ private:
 		};
 
 	// Con-/Destructors
-	ReadBuffer(UINT BlockSize);
+	InputBuffer(UINT BlockSize);
 
 	// Common
 	ReadBufferBlock* CreateBlock();

@@ -10,6 +10,7 @@
 //=======
 
 #include "Storage/Seekable.h"
+#include "Handle.h"
 
 
 //===========

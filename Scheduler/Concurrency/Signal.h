@@ -13,6 +13,7 @@
 #pragma once
 
 #include "Concurrency/ScopedLock.h"
+#include "Status.h"
 
 
 //===========

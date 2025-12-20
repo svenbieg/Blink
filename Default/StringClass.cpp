@@ -2,7 +2,7 @@
 // StringClass.cpp
 //=================
 
-#include "pch.h"
+#include "StringClass.h"
 
 
 //=======
@@ -10,7 +10,6 @@
 //=======
 
 #include <new>
-#include "StringClass.h"
 
 using namespace Storage::Streams;
 

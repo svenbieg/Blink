@@ -2,7 +2,7 @@
 // SerialPort.cpp
 //================
 
-#include "pch.h"
+#include "Devices/Serial/SerialPort.h"
 
 
 //=======
@@ -13,7 +13,6 @@
 #include <io.h>
 #include <new>
 #include "Concurrency/ServiceTask.h"
-#include "Devices/Serial/SerialPort.h"
 
 using namespace Concurrency;
 using namespace Devices::Gpio;
@@ -154,7 +153,7 @@ UINT id=(UINT)device;
 WriteLock lock(s_Mutex);
 if(s_Current[id])
 	throw AccessDeniedException();
-auto serial=(SerialPort*)operator new(sizeof(SerialPort));
+auto serial=(SerialPort*)MemoryHelper::Allocate(sizeof(SerialPort));
 try
 	{
 	new (serial) SerialPort(device, baud);
@@ -192,13 +191,13 @@ return m_InputBuffer->Read(buf, size);
 
 VOID SerialPort::Flush()
 {
-m_WriteBuffer->Flush();
+m_OutputBuffer->Flush();
 m_Signal.Trigger();
 }
 
 SIZE_T SerialPort::Write(VOID const* buf, SIZE_T size)
 {
-return m_WriteBuffer->Write(buf, size);
+return m_OutputBuffer->Write(buf, size);
 }
 
 
@@ -212,7 +211,7 @@ m_Device((VOID*)UART_DEVICES[(UINT)device].BASE),
 m_Id((UINT)device)
 {
 m_InputBuffer=RingBuffer::Create(UART_INPUT_RING);
-m_WriteBuffer=WriteBuffer::Create();
+m_OutputBuffer=OutputBuffer::Create();
 auto name=String::Create("serial%u", m_Id);
 m_ServiceTask=ServiceTask::Create(this, &SerialPort::ServiceTask, name);
 }
@@ -242,12 +241,12 @@ while(!io_read(uart->FLAGS, FLAG_RX_EMPTY))
 	if(!m_InputBuffer->Write((BYTE)value))
 		status=Status::BufferOverrun;
 	}
-while(m_WriteBuffer->Available())
+while(m_OutputBuffer->Available())
 	{
 	if(io_read(uart->FLAGS, FLAG_TX_FULL))
 		break;
 	BYTE value=0;
-	m_WriteBuffer->Read(&value, 1);
+	m_OutputBuffer->Read(&value, 1);
 	io_write(uart->DATA, value);
 	}
 UINT mis=io_read(uart->MIS);
@@ -287,12 +286,12 @@ while(!task->Cancelled)
 		DataReceived(this);
 		spin_lock.Lock();
 		}
-	while(m_WriteBuffer->Available())
+	while(m_OutputBuffer->Available())
 		{
 		if(io_read(uart->FLAGS, FLAG_TX_FULL))
 			break;
 		BYTE value=0;
-		m_WriteBuffer->Read(&value, 1);
+		m_OutputBuffer->Read(&value, 1);
 		io_write(uart->DATA, value);
 		}
 	if(!read)

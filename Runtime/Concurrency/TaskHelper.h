@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include <task.h>
+#include "TypeHelper.h"
 
 
 //===========
@@ -34,18 +34,9 @@ class TaskHelper
 {
 public:
 	// Common
-	static inline VOID Initialize(SIZE_T* StackPointer, VOID (*TaskProc)(VOID*), VOID* Parameter)
-		{
-		task_init(StackPointer, TaskProc, Parameter);
-		}
-	static inline SIZE_T RestoreContext(SIZE_T StackPointer)
-		{
-		return task_restore_context(StackPointer);
-		}
-	static inline SIZE_T SaveContext(SIZE_T StackPointer)
-		{
-		return task_save_context(StackPointer);
-		}
+	static VOID Initialize(SIZE_T* StackPointer, VOID (*TaskProc)(VOID*), VOID* Parameter);
+	static SIZE_T RestoreContext(SIZE_T StackPointer);
+	static SIZE_T SaveContext(SIZE_T StackPointer);
 	static VOID Switch(UINT Core, Task* Current, Task* Next);
 };
 

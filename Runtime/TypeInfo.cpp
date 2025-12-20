@@ -2,7 +2,7 @@
 // TypeInfo.cpp
 //==============
 
-#include "pch.h"
+#include "TypeInfo.h"
 
 
 //=======
@@ -12,7 +12,6 @@
 #include <assert.h>
 #include <cstddef>
 #include "FlagHelper.h"
-#include "TypeInfo.h"
 
 
 //===========

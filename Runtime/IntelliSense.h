@@ -21,10 +21,10 @@
 // Types
 //=======
 
-#define __long long
-#define __long_long long long
+#define __LONG long
+#define __LONG_LONG long long
 
-#define __size_t unsigned int
+#define __SIZE_T unsigned int
 
 #define __SCHAR_MAX__ 0x7F
 #define __SHRT_MAX__ 0x7FFF

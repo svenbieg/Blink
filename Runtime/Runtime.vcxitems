@@ -30,6 +30,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)cassert" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cmath" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)cstddef" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cxxabi.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)heap.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
@@ -38,12 +39,13 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)new" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mutex" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stdbool.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stddef.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stdexcept" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stdint.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stdlib.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\RingBuffer.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\ReadBuffer.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\WriteBuffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\InputBuffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\OutputBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)string.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TypeInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)type_traits" />
@@ -57,8 +59,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)new.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)stdlib.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\RingBuffer.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\ReadBuffer.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\WriteBuffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\InputBuffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\OutputBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)string.c" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TypeInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)UI\Console.cpp" />

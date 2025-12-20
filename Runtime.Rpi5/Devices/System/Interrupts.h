@@ -9,9 +9,9 @@
 // Using
 //=======
 
-#include <config.h>
 #include <irq.h>
 #include "Concurrency/Task.h"
+#include "Devices/System/Cpu.h"
 
 
 //===========
@@ -95,6 +95,9 @@ public:
 	static VOID SetHandler(Irq Irq, IRQ_HANDLER Handler, VOID* Parameter=nullptr);
 
 private:
+	// Using
+	static constexpr UINT CPU_COUNT=Devices::System::Cpu::CPU_COUNT;
+
 	// Common
 	static VOID Disable(UINT Irq);
 	static VOID Enable(UINT Irq);

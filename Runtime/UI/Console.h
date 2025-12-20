@@ -53,7 +53,7 @@ private:
 	static Global<Console> s_Current;
 
 	// Common
-	VOID OnCommandReceived(Handle<String> Command);
+	VOID HandleCommand(Handle<String> Command);
 	VOID OnSerialPortDataReceived();
 	Collections::map<Handle<String>, Function<VOID()>> m_Commands;
 	Concurrency::Mutex m_Mutex;

@@ -12,7 +12,7 @@
 #include <asm.h>
 
 #ifndef __ASSEMBLER__
-#include "Platform.h"
+#include "TypeHelper.h"
 #endif
 
 

@@ -2,13 +2,6 @@
 // PathHelper.cpp
 //================
 
-#include "pch.h"
-
-
-//=======
-// Using
-//=======
-
 #include "PathHelper.h"
 
 

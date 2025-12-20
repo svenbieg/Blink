@@ -2,7 +2,7 @@
 // Memory.cpp
 //============
 
-#include "pch.h"
+#include "Devices/System/Memory.h"
 
 
 //=======
@@ -13,7 +13,7 @@
 #include <config.h>
 #include <heap.h>
 #include "Devices/System/Cpu.h"
-#include "Devices/System/Memory.h"
+#include "MemoryHelper.h"
 
 using namespace Devices::System;
 
@@ -46,7 +46,7 @@ VOID Memory::Initialize()
 {
 MemoryHelper::ZeroT(&__bss_start, &__bss_end);
 SIZE_T heap_start=(SIZE_T)&__heap_start;
-SIZE_T heap_end=RAM_SIZE;
+SIZE_T heap_end=CONFIG_RAM_SIZE;
 SIZE_T heap_size=heap_end-heap_start;
 g_heap=heap_create(heap_start, heap_size);
 heap_reserve(g_heap, LOW_IO_BASE, LOW_IO_SIZE);

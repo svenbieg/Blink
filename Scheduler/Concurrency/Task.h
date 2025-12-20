@@ -14,7 +14,6 @@
 
 #include <assert.h>
 #include <new>
-#include <unwind.h>
 #include "Concurrency/CriticalMutex.h"
 #include "Concurrency/DispatchedQueue.h"
 #include "Concurrency/Scheduler.h"
@@ -23,7 +22,9 @@
 #include "Concurrency/SpinLock.h"
 #include "Concurrency/TaskHelper.h"
 #include "Concurrency/WriteLock.h"
-#include "Platform.h"
+#include "MemoryHelper.h"
+#include "StringClass.h"
+#include "UnwindException.h"
 
 
 //===========
@@ -76,12 +77,12 @@ public:
 
 	// Con-/Destructors
 	~Task();
-	static Handle<Task> Create(VOID (*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=STACK_SIZE);
-	template <class _owner_t> static Handle<Task> Create(_owner_t* Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=STACK_SIZE);
-	template <class _owner_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=STACK_SIZE);
-	template <class _owner_t, class _lambda_t> static Handle<Task> Create(_owner_t* Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=STACK_SIZE);
-	template <class _owner_t, class _lambda_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=STACK_SIZE);
-	template <class _lambda_t> static Handle<Task> Create(nullptr_t Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=STACK_SIZE);
+	static Handle<Task> Create(VOID (*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE);
+	template <class _owner_t> static Handle<Task> Create(_owner_t* Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE);
+	template <class _owner_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE);
+	template <class _owner_t, class _lambda_t> static Handle<Task> Create(_owner_t* Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE);
+	template <class _owner_t, class _lambda_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE);
+	template <class _lambda_t> static Handle<Task> Create(nullptr_t Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE);
 
 	// Common
 	VOID Cancel();
@@ -137,7 +138,7 @@ public:
 protected:
 	// Con-/Destructors
 	Task(Handle<String> Name, SIZE_T StackTop, SIZE_T StackSize);
-	static Task* CreateInternal(VOID (*Procedure)(), Handle<String> Name, SIZE_T StackSize=PAGE_SIZE);
+	static Task* CreateInternal(VOID (*Procedure)(), Handle<String> Name, SIZE_T StackSize=MemoryHelper::PAGE_SIZE);
 
 	// Common
 	virtual VOID Run()=0;

@@ -5,6 +5,13 @@
 #pragma once
 
 
+//=======
+// Using
+//=======
+
+#include "TypeHelper.h"
+
+
 //===========
 // Namespace
 //===========
@@ -29,6 +36,10 @@ class Cpu
 public:
 	// Friends
 	friend Interrupts;
+
+	// Settings
+	static constexpr UINT CACHE_LINE_SIZE=64;
+	static constexpr UINT CPU_COUNT=4;
 
 	// Common
 	static INT Affinity(UINT Core);

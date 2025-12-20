@@ -2,7 +2,15 @@
 // UnknownClass.cpp
 //==================
 
-#include "pch.h"
+#include "UnknownClass.h"
+
+
+//=======
+// Using
+//=======
+
+#include "MemoryHelper.h"
+#include "StringClass.h"
 
 
 //==================

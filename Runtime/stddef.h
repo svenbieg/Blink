@@ -5,17 +5,16 @@
 #pragma once
 
 
+//=======
+// Using
+//=======
+
+#include "Platform.h"
+
+
 //========
 // Macros
 //========
-
-#ifndef __LONG
-#define __LONG
-#endif
-
-#ifndef __LONG_LONG
-#define __LONG_LONG long
-#endif
 
 #define NULL 0
 

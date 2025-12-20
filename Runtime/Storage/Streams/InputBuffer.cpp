@@ -1,15 +1,13 @@
-//================
-// ReadBuffer.cpp
-//================
+//=================
+// InputBuffer.cpp
+//=================
 
-#include "pch.h"
+#include "Storage/Streams/InputBuffer.h"
 
 
 //=======
 // Using
 //=======
-
-#include "Storage/Streams/ReadBuffer.h"
 
 using namespace Concurrency;
 
@@ -26,7 +24,7 @@ namespace Storage {
 // Con-/Destructors
 //==================
 
-ReadBuffer::~ReadBuffer()
+InputBuffer::~InputBuffer()
 {
 FreeBlocks(m_First);
 }
@@ -36,13 +34,13 @@ FreeBlocks(m_First);
 // Common
 //========
 
-SIZE_T ReadBuffer::Available()
+SIZE_T InputBuffer::Available()
 {
 ReadLock lock(m_Mutex);
 return m_Written-m_Read;
 }
 
-VOID ReadBuffer::Clear()
+VOID InputBuffer::Clear()
 {
 WriteLock lock(m_Mutex);
 FreeBlocks(m_First->Next);
@@ -53,14 +51,14 @@ m_Size=0;
 m_Written=0;
 }
 
-VOID ReadBuffer::Flush()
+VOID InputBuffer::Flush()
 {
 WriteLock lock(m_Mutex);
 m_Written=m_Size;
 m_Signal.Trigger();
 }
 
-SIZE_T ReadBuffer::Read(VOID* buf, SIZE_T size)
+SIZE_T InputBuffer::Read(VOID* buf, SIZE_T size)
 {
 WriteLock lock(m_Mutex);
 auto dst=(BYTE*)buf;
@@ -103,7 +101,7 @@ while(pos<size)
 return pos;
 }
 
-SIZE_T ReadBuffer::Write(RingBuffer* ring_buf, SIZE_T size)
+SIZE_T InputBuffer::Write(RingBuffer* ring_buf, SIZE_T size)
 {
 WriteLock lock(m_Mutex);
 SIZE_T written=0;
@@ -145,7 +143,7 @@ return written;
 // Con-/Destructors Private
 //==========================
 
-ReadBuffer::ReadBuffer(UINT block_size):
+InputBuffer::InputBuffer(UINT block_size):
 m_BlockSize(block_size),
 m_First(nullptr),
 m_Last(nullptr),
@@ -162,7 +160,7 @@ m_Last=m_First;
 // Common Private
 //================
 
-ReadBuffer::ReadBufferBlock* ReadBuffer::CreateBlock()
+InputBuffer::ReadBufferBlock* InputBuffer::CreateBlock()
 {
 ReadBufferBlock* block=(ReadBufferBlock*)operator new(sizeof(ReadBufferBlock)+m_BlockSize);
 block->Next=nullptr;
@@ -170,7 +168,7 @@ block->Size=0;
 return block;
 }
 
-VOID ReadBuffer::FreeBlocks(ReadBufferBlock* first)
+VOID InputBuffer::FreeBlocks(ReadBufferBlock* first)
 {
 auto buf=first;
 while(buf)

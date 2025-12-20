@@ -2,14 +2,12 @@
 // StringView.cpp
 //================
 
-#include "pch.h"
+#include "StringView.h"
 
 
 //=======
 // Using
 //=======
-
-#include "StringView.h"
 
 using namespace Storage::Streams;
 

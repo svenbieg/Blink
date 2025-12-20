@@ -2,13 +2,6 @@
 // StringList.cpp
 //================
 
-#include "pch.h"
-
-
-//=======
-// Using
-//=======
-
 #include "StringList.h"
 
 

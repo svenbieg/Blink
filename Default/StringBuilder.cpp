@@ -2,14 +2,6 @@
 // StringBuilder.cpp
 //===================
 
-#include "pch.h"
-
-
-//=======
-// Using
-//=======
-
-#include <assert.h>
 #include "StringBuilder.h"
 
 
@@ -111,13 +103,24 @@ m_ToString=&StringBuilder::BufferToString;
 
 VOID StringBuilder::Initialize(UINT len)
 {
-assert(len!=0);
-m_AppendAnsi=&StringBuilder::StringAppendAnsi;
-m_AppendUnicode=&StringBuilder::StringAppendUnicode;
+if(len)
+	{
+	m_AppendAnsi=&StringBuilder::StringAppendAnsi;
+	m_AppendUnicode=&StringBuilder::StringAppendUnicode;
+	m_Size=len+1;
+	m_String=String::Create(len, nullptr);
+	m_ToString=&StringBuilder::StringToString;
+	}
+else
+	{
+	m_AppendAnsi=&StringBuilder::BufferAppendAnsi;
+	m_AppendUnicode=&StringBuilder::BufferAppendUnicode;
+	m_Position=0;
+	m_Size=0;
+	m_String=nullptr;
+	m_ToString=&StringBuilder::BufferToString;
+	}
 m_Position=0;
-m_Size=len+1;
-m_String=String::Create(len, nullptr);
-m_ToString=&StringBuilder::StringToString;
 }
 
 Handle<String> StringBuilder::ToString()

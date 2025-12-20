@@ -5,14 +5,13 @@
 // DWARF was orginally developed by Bell Labs,
 // licensed under the GNU Free Documentation Standard
 
-#include "pch.h"
+#include "Storage/Encoding/Dwarf.h"
 
 
 //=======
 // Using
 //=======
 
-#include "Dwarf.h"
 #include "FlagHelper.h"
 
 
