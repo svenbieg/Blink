@@ -149,8 +149,8 @@ if(m_Waiting)
 
 VOID Mutex::UnlockInternal(UINT core, Task* current, AccessMode)
 {
-BOOL removed=Scheduler::RemoveParallelTask(&m_Owner, current);
-assert(removed);
+if(!Scheduler::RemoveParallelTask(&m_Owner, current))
+	return;
 FlagHelper::Clear(current->m_Flags, TaskFlags::Sharing);
 if(m_Owner)
 	return;
