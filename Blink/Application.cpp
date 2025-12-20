@@ -102,18 +102,14 @@ console->AddCommand("restart", []()
 	Console::Print("Restarting...\n");
 	System::Restart();
 	});
-console->AddCommand("start", []()
+console->AddCommand("start", [this]()
 	{
-	auto app=Application::Get();
-	app->StartBlinking();
+	StartBlinking();
 	});
-console->AddCommand("stop", []()
+console->AddCommand("stop", [this]()
 	{
-	auto app=Application::Get();
-	app->StopBlinking();
+	StopBlinking();
 	});
 }
-
-Application* Application::s_Current=nullptr;
 
 }

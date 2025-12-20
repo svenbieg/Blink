@@ -33,14 +33,12 @@ public:
 	static inline Handle<Application> Create() { return new Application(); }
 
 	// Common
-	static inline Handle<Application> Get() { return s_Current; }
 	VOID StartBlinking();
 	VOID StopBlinking();
 
 private:
 	// Con-/Destructors
 	Application();
-	static Application* s_Current;
 
 	// Common
 	Handle<Task> m_BlinkingTask;
