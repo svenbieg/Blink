@@ -34,6 +34,9 @@
       <Filter>Storage\Streams</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)heap.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)UI\Console.h">
+      <Filter>UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props">
@@ -89,6 +92,9 @@
       <Filter>Storage\Streams</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)heap.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)UI\Console.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">
@@ -102,6 +108,9 @@
     </Filter>
     <Filter Include="Storage\Streams">
       <UniqueIdentifier>{63b21686-c526-4fb7-961c-a45ad4774e85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{86cab7a1-3892-4f4d-b65b-dcc822557fc6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

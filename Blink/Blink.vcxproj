@@ -10,10 +10,10 @@
   <PropertyGroup />
   <ImportGroup Label="ExtensionSettings" />
   <ImportGroup Label="Shared">
-    <Import Project="..\Runtime\Runtime.vcxitems" Label="Shared" />
     <Import Project="..\Runtime.Rpi5\Runtime.Rpi5.vcxitems" Label="Shared" Condition="'$(Platform)'=='Rpi5'" />
-    <Import Project="..\Default\Default.vcxitems" Label="Shared" />
+    <Import Project="..\Runtime\Runtime.vcxitems" Label="Shared" />
     <Import Project="..\Scheduler\Scheduler.vcxitems" Label="Shared" />
+    <Import Project="..\Default\Default.vcxitems" Label="Shared" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
@@ -21,11 +21,9 @@
   <ItemDefinitionGroup />
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
-    <ClCompile Include="Console.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
-    <ClInclude Include="Console.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="..\Runtime\Configuration\Platform.targets" />

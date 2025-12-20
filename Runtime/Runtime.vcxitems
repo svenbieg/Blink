@@ -47,6 +47,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)string.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TypeInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)type_traits" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)UI\Console.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utility" />
   </ItemGroup>
   <ItemGroup>
@@ -60,5 +61,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\WriteBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)string.c" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TypeInfo.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)UI\Console.cpp" />
   </ItemGroup>
 </Project>

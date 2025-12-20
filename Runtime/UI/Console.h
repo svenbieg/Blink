@@ -20,7 +20,7 @@
 // Namespace
 //===========
 
-namespace Blink {
+namespace UI {
 
 
 //=========
@@ -37,6 +37,7 @@ public:
 	friend class Global<Console>;
 
 	// Common
+	VOID AddCommand(Handle<String> Command, Function<VOID()> Function);
 	static inline Handle<Console> Get() { return s_Current; }
 	Event<Console, Handle<String>> CommandReceived;
 	static VOID Print(Handle<String> Text);

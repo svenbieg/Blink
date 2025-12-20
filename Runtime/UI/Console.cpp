@@ -23,12 +23,18 @@ using namespace Storage::Streams;
 // Namespace
 //===========
 
-namespace Blink {
+namespace UI {
 
 
 //========
 // Common
 //========
+
+VOID Console::AddCommand(Handle<String> cmd, Function<VOID()> func)
+{
+WriteLock lock(m_Mutex);
+m_Commands.add(cmd, func);
+}
 
 VOID Console::Print(Handle<String> text)
 {
@@ -51,26 +57,6 @@ Console::Console()
 m_SerialPort=SerialPort::Create();
 m_SerialPort->SetFormat(StreamFormat::UTF8);
 m_SerialPort->DataReceived.Add(this, &Console::OnSerialPortDataReceived);
-m_Commands.add("off", []()
-	{
-	Console::Print("Led off\n");
-	System::Led(false);
-	});
-m_Commands.add("on", []()
-	{
-	Console::Print("Led on\n");
-	System::Led(true);
-	});
-m_Commands.add("start", []()
-	{
-	auto app=Application::Get();
-	app->StartBlinking();
-	});
-m_Commands.add("stop", []()
-	{
-	auto app=Application::Get();
-	app->StopBlinking();
-	});
 CommandReceived.Add(this, &Console::OnCommandReceived);
 }
 
@@ -83,9 +69,12 @@ Global<Console> Console::s_Current;
 
 VOID Console::OnCommandReceived(Handle<String> cmd)
 {
-auto func=m_Commands.get(cmd);
-if(func)
-	func();
+ReadLock lock(m_Mutex);
+Function<VOID()> func;
+if(!m_Commands.try_get(cmd, &func))
+	return;
+lock.Unlock();
+func();
 }
 
 VOID Console::OnSerialPortDataReceived()

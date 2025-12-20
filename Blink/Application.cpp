@@ -10,12 +10,13 @@
 //=======
 
 #include "Devices/System/System.h"
+#include "UI/Console.h"
 #include "Application.h"
-#include "Console.h"
 
 using namespace Blink;
 using namespace Concurrency;
 using namespace Devices::System;
+using namespace UI;
 
 
 //=============
@@ -24,8 +25,9 @@ using namespace Devices::System;
 
 VOID Main()
 {
-auto app=Application::Get();
-app->Run();
+auto app=Application::Create();
+app->StartBlinking();
+DispatchedQueue::Enter();
 }
 
 
@@ -77,20 +79,41 @@ if(!m_BlinkingTask)
 m_BlinkingTask->Cancel();
 }
 
-VOID Application::Run()
-{
-StartBlinking();
-DispatchedQueue::Enter();
-}
-
 
 //==========================
 // Con-/Destructors Private
 //==========================
 
 Application::Application()
-{}
+{
+auto console=Console::Get();
+console->AddCommand("off", []()
+	{
+	Console::Print("Led off\n");
+	System::Led(false);
+	});
+console->AddCommand("on", []()
+	{
+	Console::Print("Led on\n");
+	System::Led(true);
+	});
+console->AddCommand("restart", []()
+	{
+	Console::Print("Restarting...\n");
+	System::Restart();
+	});
+console->AddCommand("start", []()
+	{
+	auto app=Application::Get();
+	app->StartBlinking();
+	});
+console->AddCommand("stop", []()
+	{
+	auto app=Application::Get();
+	app->StopBlinking();
+	});
+}
 
-Global<Application> Application::s_Current;
+Application* Application::s_Current=nullptr;
 
 }

@@ -10,7 +10,6 @@
 //=======
 
 #include "Concurrency/Task.h"
-#include "Global.h"
 
 
 //===========
@@ -30,19 +29,18 @@ public:
 	// Using
 	using Task=Concurrency::Task;
 
-	// Friends
-	friend class Global<Application>;
+	// Con-/Destructors
+	static inline Handle<Application> Create() { return new Application(); }
 
 	// Common
 	static inline Handle<Application> Get() { return s_Current; }
 	VOID StartBlinking();
 	VOID StopBlinking();
-	VOID Run();
 
 private:
 	// Con-/Destructors
 	Application();
-	static Global<Application> s_Current;
+	static Application* s_Current;
 
 	// Common
 	Handle<Task> m_BlinkingTask;
