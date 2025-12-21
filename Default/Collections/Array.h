@@ -37,9 +37,9 @@ class Array: public Object
 {
 public:
 	// Using
-	using InputStream=Storage::Streams::InputStream;
+	using IInputStream=Storage::Streams::IInputStream;
+	using IOutputStream=Storage::Streams::IOutputStream;
 	using Iterator=ArrayIterator<_item_t, _size_t>;
-	using OutputStream=Storage::Streams::OutputStream;
 	using StreamReader=Storage::Streams::StreamReader;
 	using StreamWriter=Storage::Streams::StreamWriter;
 
@@ -62,7 +62,7 @@ public:
 	inline _item_t& GetAt(_size_t Position) { return m_Items[Position]; }
 	inline _item_t const& GetAt(_size_t Position)const { return m_Items[Position]; }
 	inline _size_t GetCount()const { return m_Count; }
-	SIZE_T PrintToStream(OutputStream* Stream, LPCSTR Format="%i")
+	SIZE_T PrintToStream(IOutputStream* Stream, LPCSTR Format="%i")
 		{
 		SIZE_T size=0;
 		StreamWriter writer(Stream);
@@ -76,8 +76,10 @@ public:
 		size+=writer.Print(" ]");
 		return size;
 		}
-	inline SIZE_T WriteToStream(OutputStream* Stream)
+	inline SIZE_T WriteToStream(IOutputStream* Stream)
 		{
+		if(!Stream)
+			return m_Count*sizeof(_item_t);
 		return Stream->Write(m_Items, m_Count*sizeof(_item_t));
 		}
 
@@ -87,8 +89,10 @@ public:
 		for(_size_t u=0; u<m_Count; u++)
 			m_Items[u]=Item;
 		}
-	inline SIZE_T ReadFromStream(InputStream* Stream)
+	inline SIZE_T ReadFromStream(IInputStream* Stream)
 		{
+		if(!Stream)
+			return 0;
 		return Stream->Read(m_Items, m_Count*sizeof(_item_t));
 		}
 	virtual VOID SetAt(_size_t Position, _item_t const& Item)

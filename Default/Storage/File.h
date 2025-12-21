@@ -9,7 +9,8 @@
 // Using
 //=======
 
-#include "Storage/Seekable.h"
+#include "Storage/Streams/Stream.h"
+#include "StringClass.h"
 
 
 //===========
@@ -59,7 +60,7 @@ ShareWrite
 // File
 //======
 
-class File: public Seekable
+class File: public Streams::Seekable
 {
 public:
 	// Common
@@ -69,7 +70,7 @@ public:
 
 protected:
 	// Con-/Destructors
-	File() {}
+	File()=default;
 };
 
 }

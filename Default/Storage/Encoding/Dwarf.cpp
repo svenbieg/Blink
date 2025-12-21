@@ -179,7 +179,7 @@ while(byte&0x80);
 return value;
 }
 
-UINT Dwarf::WriteSigned(OutputStream* dwarf, INT64 ivalue)
+UINT Dwarf::WriteSigned(IOutputStream* dwarf, INT64 ivalue)
 {
 BOOL neg=false;
 if(ivalue<0)

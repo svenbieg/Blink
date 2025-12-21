@@ -11,8 +11,8 @@
 
 #include "Devices/Gpio/GpioHost.h"
 #include "Devices/Pcie/PcieHost.h"
-#include "Storage/Streams/RandomAccessStream.h"
 #include "Storage/Streams/OutputBuffer.h"
+#include "Storage/Streams/Stream.h"
 #include "Storage/RingBuffer.h"
 #include "Event.h"
 

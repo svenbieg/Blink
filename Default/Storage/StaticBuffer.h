@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Storage/Seekable.h"
+#include "Storage/Streams/Stream.h"
 #include "Handle.h"
 
 
@@ -24,7 +24,7 @@ namespace Storage {
 // Static-Buffer
 //===============
 
-class StaticBuffer: public Seekable
+class StaticBuffer: public Streams::Seekable
 {
 public:
 	// Con-/Destructors
@@ -37,7 +37,7 @@ public:
 	SIZE_T Available()override { return m_Size-m_Position; }
 	SIZE_T Read(VOID* Buffer, SIZE_T Size)override;
 
-	// Ouput-Stream
+	// Output-Stream
 	inline VOID Flush()override {}
 	SIZE_T Write(VOID const* Buffer, SIZE_T Size)override;
 

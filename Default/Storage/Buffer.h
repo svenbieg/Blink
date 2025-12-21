@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Storage/Seekable.h"
+#include "Storage/Streams/Stream.h"
 #include "Handle.h"
 
 
@@ -24,7 +24,7 @@ namespace Storage {
 // Buffer
 //========
 
-class Buffer: public Seekable
+class Buffer: public Streams::Seekable
 {
 public:
 	// Con-/Destructors

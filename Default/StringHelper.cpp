@@ -2008,7 +2008,7 @@ if(dst)
 return pos;
 }
 
-SIZE_T StringHelper::WriteToStream(OutputStream* stream, LPCSTR str)
+SIZE_T StringHelper::WriteToStream(IOutputStream* stream, LPCSTR str)
 {
 SIZE_T size=0;
 StreamWriter writer(stream);
@@ -2017,7 +2017,7 @@ size+=writer.PrintChar('\0');
 return size;
 }
 
-SIZE_T StringHelper::WriteToStream(OutputStream* stream, LPCWSTR str)
+SIZE_T StringHelper::WriteToStream(IOutputStream* stream, LPCWSTR str)
 {
 SIZE_T size=0;
 StreamWriter writer(stream);

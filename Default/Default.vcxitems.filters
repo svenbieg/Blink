@@ -13,18 +13,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Handle.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Object.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StringClass.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\InputStream.h">
-      <Filter>Storage\Streams</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\OutputStream.h">
-      <Filter>Storage\Streams</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\RandomAccessStream.h">
-      <Filter>Storage\Streams</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Seekable.h">
-      <Filter>Storage</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Buffer.h">
       <Filter>Storage</Filter>
     </ClInclude>
@@ -37,9 +25,6 @@
       <Filter>Storage</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Status.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\Stream.h">
-      <Filter>Storage\Streams</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\Index.h">
       <Filter>Collections</Filter>
     </ClInclude>
@@ -111,6 +96,9 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)StringView.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Global.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\Stream.h">
+      <Filter>Storage\Streams</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)StringHelper.cpp" />

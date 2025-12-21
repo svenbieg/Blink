@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Storage/Streams/InputStream.h"
+#include "Storage/Streams/Stream.h"
 #include "StringClass.h"
 
 
@@ -17,23 +17,20 @@
 // String-View
 //=============
 
-class StringView: public Storage::Streams::InputStream
+class StringView: public Storage::Streams::IInputStream
 {
 public:
 	// Con-/Destructors
-	static inline Handle<StringView> Create(Handle<String> Value) { return new StringView(Value); }
+	StringView(Handle<String> String);
 
 	// Common
-	VOID Reset() { m_Position=0; }
+	VOID Reset();
 
 	// Input-Stream
-	SIZE_T Available()override { return m_Size-m_Position; }
+	SIZE_T Available()override;
 	SIZE_T Read(VOID* Buffer, SIZE_T Size)override;
 
 private:
-	// Con-/Destructors
-	StringView(Handle<String> Value);
-
 	// Common
 	UINT m_Position;
 	UINT m_Size;

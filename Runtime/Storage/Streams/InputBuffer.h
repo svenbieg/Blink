@@ -10,7 +10,7 @@
 //=======
 
 #include "Concurrency/Task.h"
-#include "Storage/Streams/RandomAccessStream.h"
+#include "Storage/Streams/Stream.h"
 #include "Storage/RingBuffer.h"
 #include "MemoryHelper.h"
 

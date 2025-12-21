@@ -25,7 +25,7 @@ namespace Storage {
 // Con-/Destructors
 //==================
 
-StreamWriter::StreamWriter(OutputStream* stream):
+StreamWriter::StreamWriter(IOutputStream* stream):
 m_Stream(nullptr),
 m_WriteAnsi(nullptr),
 m_WriteUnicode(nullptr)
@@ -254,12 +254,12 @@ StringHelper::PrintUInt(buf, 64, value, flags, width);
 return DoPrint(m_WriteAnsi, 0, buf);
 }
 
-VOID StreamWriter::SetStream(OutputStream* stream)
+VOID StreamWriter::SetStream(IOutputStream* stream)
 {
+if(!stream)
+	throw InvalidArgumentException();
 m_Stream=stream;
-auto format=DefaultStreamFormat;
-if(m_Stream)
-	format=m_Stream->GetFormat();
+auto format=m_Stream->GetStreamFormat();
 SetStreamFormat(format);
 }
 

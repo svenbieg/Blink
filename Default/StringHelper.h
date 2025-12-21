@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Storage/Streams/OutputStream.h"
+#include "Storage/Streams/Stream.h"
 #include "CharHelper.h"
 #include "MemoryHelper.h"
 #include "VariableArguments.h"
@@ -23,7 +23,7 @@ class StringHelper
 {
 public:
 	// Using
-	using OutputStream=Storage::Streams::OutputStream;
+	using IOutputStream=Storage::Streams::IOutputStream;
 
 	// Format
 	enum class Format
@@ -145,6 +145,6 @@ public:
 	static UINT Uppercase(LPSTR String);
 	static UINT Uppercase(LPWSTR String);
 	static UINT Uppercase(LPSTR Destination, UINT Size, LPCSTR String);
-	static SIZE_T WriteToStream(OutputStream* Stream, LPCSTR String);
-	static SIZE_T WriteToStream(OutputStream* Stream, LPCWSTR String);
+	static SIZE_T WriteToStream(IOutputStream* Stream, LPCSTR String);
+	static SIZE_T WriteToStream(IOutputStream* Stream, LPCWSTR String);
 };
