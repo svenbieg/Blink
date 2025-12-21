@@ -32,7 +32,7 @@ typedef __SIZE_T SIZE_T;
 constexpr SIZE_T SIZE_MAX=(SIZE_T)-1;
 
 typedef __FILE_SIZE_T FILE_SIZE;
-constexpr FILE_SIZE FILE_MAX=(FILE_SIZE)-1;
+constexpr FILE_SIZE FILE_SIZE_MAX=(FILE_SIZE)-1;
 
 typedef int BOOL;
 
