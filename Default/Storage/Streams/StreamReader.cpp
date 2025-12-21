@@ -2,7 +2,7 @@
 // StreamReader.cpp
 //==================
 
-#include "Storage/Streams/StreamReader.h"
+#include "StreamReader.h"
 
 
 //=======

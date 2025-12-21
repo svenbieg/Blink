@@ -5,12 +5,7 @@
 // Copyright 2025, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#critical-section
 
-
-//=======
-// Using
-//=======
-
-#include "Concurrency/SpinLock.h"
+#include "SpinLock.h"
 
 
 //===========

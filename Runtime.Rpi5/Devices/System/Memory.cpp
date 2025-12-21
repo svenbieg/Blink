@@ -2,7 +2,7 @@
 // Memory.cpp
 //============
 
-#include "Devices/System/Memory.h"
+#include "Memory.h"
 
 
 //=======

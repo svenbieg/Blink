@@ -5,16 +5,17 @@
 // Copyright 2025, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#critical-section
 
+#include "CriticalSection.h"
+
 
 //=======
 // Using
 //=======
 
-#include <assert.h>
-#include "Concurrency/CriticalSection.h"
 #include "Concurrency/SpinLock.h"
 #include "Devices/System/Cpu.h"
 #include "Devices/System/Interrupts.h"
+#include <assert.h>
 
 using namespace Devices::System;
 

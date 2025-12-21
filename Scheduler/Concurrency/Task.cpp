@@ -5,6 +5,8 @@
 // Copyright 2025, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#task-creation
 
+#include "Task.h"
+
 
 //=======
 // Using
@@ -12,7 +14,6 @@
 
 #include "Concurrency/Scheduler.h"
 #include "Concurrency/SpinLock.h"
-#include "Concurrency/Task.h"
 #include "Devices/Timers/SystemTimer.h"
 #include "FlagHelper.h"
 

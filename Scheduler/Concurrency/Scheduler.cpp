@@ -5,12 +5,13 @@
 // Copyright 2025, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler
 
+#include "Scheduler.h"
+
 
 //=======
 // Using
 //=======
 
-#include "Concurrency/Scheduler.h"
 #include "Concurrency/SpinLock.h"
 #include "Concurrency/Task.h"
 #include "Devices/System/Cpu.h"

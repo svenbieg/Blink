@@ -5,12 +5,12 @@
 // Copyright 2025, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#signal
 
+#pragma once
+
 
 //=======
 // Using
 //=======
-
-#pragma once
 
 #include "Concurrency/ScopedLock.h"
 #include "Status.h"

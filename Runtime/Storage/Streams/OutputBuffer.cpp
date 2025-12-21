@@ -2,7 +2,7 @@
 // OutputBuffer.cpp
 //==================
 
-#include "Storage/Streams/OutputBuffer.h"
+#include "OutputBuffer.h"
 
 
 //=======

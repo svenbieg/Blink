@@ -2,7 +2,7 @@
 // Cpu.cpp
 //=========
 
-#include "Devices/System/Cpu.h"
+#include "Cpu.h"
 
 
 //=======

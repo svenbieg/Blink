@@ -2,7 +2,7 @@
 // SerialPort.cpp
 //================
 
-#include "Devices/Serial/SerialPort.h"
+#include "SerialPort.h"
 
 
 //=======

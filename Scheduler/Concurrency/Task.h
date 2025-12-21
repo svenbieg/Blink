@@ -5,15 +5,13 @@
 // Copyright 2025, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#task-creation
 
+#pragma once
+
 
 //=======
 // Using
 //=======
 
-#pragma once
-
-#include <assert.h>
-#include <new>
 #include "Concurrency/CriticalMutex.h"
 #include "Concurrency/DispatchedQueue.h"
 #include "Concurrency/Scheduler.h"
@@ -25,6 +23,8 @@
 #include "MemoryHelper.h"
 #include "StringClass.h"
 #include "UnwindException.h"
+#include <assert.h>
+#include <new>
 
 
 //===========

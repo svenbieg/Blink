@@ -2,7 +2,7 @@
 // InputBuffer.cpp
 //=================
 
-#include "Storage/Streams/InputBuffer.h"
+#include "InputBuffer.h"
 
 
 //=======

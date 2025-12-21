@@ -2,7 +2,7 @@
 // MailBox.cpp
 //=============
 
-#include "Devices/System/MailBox.h"
+#include "MailBox.h"
 
 
 //=======
