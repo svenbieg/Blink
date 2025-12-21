@@ -13,8 +13,8 @@
 #define __COPY_MAX 2
 #endif
 
-#ifndef __FILE_SIZE
-#define __FILE_SIZE unsigned long int
+#ifndef __FILE_SIZE_T
+#define __FILE_SIZE_T unsigned long int
 #endif
 
 #ifndef __LONG
