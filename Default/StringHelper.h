@@ -23,7 +23,7 @@ class StringHelper
 {
 public:
 	// Using
-	using IOutputStream=Storage::Streams::IOutputStream;
+	using OutputStream=Storage::Streams::OutputStream;
 
 	// Format
 	enum class Format
@@ -145,6 +145,6 @@ public:
 	static UINT Uppercase(LPSTR String);
 	static UINT Uppercase(LPWSTR String);
 	static UINT Uppercase(LPSTR Destination, UINT Size, LPCSTR String);
-	static SIZE_T WriteToStream(IOutputStream* Stream, LPCSTR String);
-	static SIZE_T WriteToStream(IOutputStream* Stream, LPCWSTR String);
+	static SIZE_T WriteToStream(OutputStream* Stream, LPCSTR String);
+	static SIZE_T WriteToStream(OutputStream* Stream, LPCWSTR String);
 };

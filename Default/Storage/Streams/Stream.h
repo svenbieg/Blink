@@ -32,32 +32,19 @@ UTF8
 };
 
 
-//=========
-// IStream
-//=========
-
-class IStream
-{
-public:
-	// Common
-	virtual StreamFormat GetStreamFormat()const=0;
-	virtual VOID SetStreamFormat(StreamFormat Format)=0;
-};
-
-
 //========
 // Stream
 //========
 
-class Stream: public Object, public virtual IStream
+class Stream: public Object
 {
 public:
 	// Using
 	using StreamFormat=Storage::Streams::StreamFormat;
 
 	// Common
-	StreamFormat GetStreamFormat()const override { return m_StreamFormat; }
-	VOID SetStreamFormat(StreamFormat Format)override { m_StreamFormat=Format; }
+	StreamFormat GetStreamFormat()const { return m_StreamFormat; }
+	VOID SetStreamFormat(StreamFormat Format) { m_StreamFormat=Format; }
 
 protected:
 	// Using
@@ -76,10 +63,10 @@ protected:
 
 
 //==============
-// IInputStream
+// Input-Stream
 //==============
 
-class IInputStream: public virtual IStream
+class InputStream: public virtual Stream
 {
 public:
 	// Common
@@ -89,10 +76,10 @@ public:
 
 
 //===============
-// IOutputStream
+// Output-Stream
 //===============
 
-class IOutputStream: public virtual IStream
+class OutputStream: public virtual Stream
 {
 public:
 	// Common
@@ -105,25 +92,11 @@ public:
 // Random-Access-Stream
 //======================
 
-class RandomAccessStream: public Stream, public IInputStream, public IOutputStream
+class RandomAccessStream: public InputStream, public OutputStream
 {
 protected:
 	// Con-/Destructors
 	RandomAccessStream(StreamFormat Format=DefaultStreamFormat): Stream(Format) {}
-
-};
-
-
-//===========
-// ISeekable
-//===========
-
-class ISeekable: public IInputStream, public IOutputStream
-{
-public:
-	// Common
-	virtual FILE_SIZE GetSize()=0;
-	virtual BOOL Seek(FILE_SIZE Position)=0;
 };
 
 
@@ -131,12 +104,12 @@ public:
 // Seekable
 //==========
 
-class Seekable: public Stream, public ISeekable
+class Seekable: public InputStream, public OutputStream
 {
-protected:
-	// Con-/Destructors
-	Seekable(StreamFormat Format=DefaultStreamFormat): Stream(Format) {}
-
+public:
+	// Common
+	virtual FILE_SIZE GetSize()=0;
+	virtual BOOL Seek(FILE_SIZE Position)=0;
 };
 
 }}

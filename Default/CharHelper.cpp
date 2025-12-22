@@ -115,7 +115,7 @@ return CharToChar<_dst_t, _src_t>(tc);
 // UTF-8
 //=======
 
-template <class _char_t> UINT CharReadUtf8(IInputStream* stream, _char_t* c_ptr)
+template <class _char_t> UINT CharReadUtf8(InputStream* stream, _char_t* c_ptr)
 {
 if(!stream||!c_ptr)
 	return 0;
@@ -169,7 +169,7 @@ if(read==1)
 return size;
 }
 
-template <class _char_t> UINT CharWriteUtf8(IOutputStream* stream, _char_t tc)
+template <class _char_t> UINT CharWriteUtf8(OutputStream* stream, _char_t tc)
 {
 WCHAR c=CharToChar<WCHAR, _char_t>(tc);
 if(c<0x80)
@@ -541,14 +541,14 @@ BOOL CharHelper::IsSpecial(WCHAR c)
 return CharIsSpecial(c);
 }
 
-UINT CharHelper::ReadAnsi(IInputStream* stream, CHAR* c_ptr)
+UINT CharHelper::ReadAnsi(InputStream* stream, CHAR* c_ptr)
 {
 if(!stream)
 	return 0;
 return (UINT)stream->Read(c_ptr, sizeof(CHAR));
 }
 
-UINT CharHelper::ReadAnsi(IInputStream* stream, WCHAR* c_ptr)
+UINT CharHelper::ReadAnsi(InputStream* stream, WCHAR* c_ptr)
 {
 if(!stream)
 	return 0;
@@ -559,7 +559,7 @@ if(c_ptr)
 return read;
 }
 
-UINT CharHelper::ReadUnicode(IInputStream* stream, CHAR* c_ptr)
+UINT CharHelper::ReadUnicode(InputStream* stream, CHAR* c_ptr)
 {
 if(!stream)
 	return 0;
@@ -570,21 +570,21 @@ if(c_ptr)
 return read;
 }
 
-UINT CharHelper::ReadUnicode(IInputStream* stream, WCHAR* c_ptr)
+UINT CharHelper::ReadUnicode(InputStream* stream, WCHAR* c_ptr)
 {
 if(!stream)
 	return 0;
 return (UINT)stream->Read(c_ptr, sizeof(WCHAR));
 }
 
-UINT CharHelper::ReadUtf8(IInputStream* stream, CHAR* c_ptr)
+UINT CharHelper::ReadUtf8(InputStream* stream, CHAR* c_ptr)
 {
 if(!stream)
 	return 0;
 return CharReadUtf8(stream, c_ptr);
 }
 
-UINT CharHelper::ReadUtf8(IInputStream* stream, WCHAR* c_ptr)
+UINT CharHelper::ReadUtf8(InputStream* stream, WCHAR* c_ptr)
 {
 if(!stream)
 	return 0;
@@ -692,14 +692,14 @@ b-=0x80;
 return UnicodeMap[b];
 }
 
-UINT CharHelper::WriteAnsi(IOutputStream* stream, CHAR c)
+UINT CharHelper::WriteAnsi(OutputStream* stream, CHAR c)
 {
 if(!stream)
 	return sizeof(CHAR);
 return (UINT)stream->Write(&c, sizeof(CHAR));
 }
 
-UINT CharHelper::WriteAnsi(IOutputStream* stream, WCHAR wc)
+UINT CharHelper::WriteAnsi(OutputStream* stream, WCHAR wc)
 {
 if(!stream)
 	return sizeof(CHAR);
@@ -707,7 +707,7 @@ CHAR c=CharToChar<CHAR, WCHAR>(wc);
 return (UINT)stream->Write(&c, sizeof(CHAR));
 }
 
-UINT CharHelper::WriteUnicode(IOutputStream* stream, CHAR c)
+UINT CharHelper::WriteUnicode(OutputStream* stream, CHAR c)
 {
 if(!stream)
 	return sizeof(WCHAR);
@@ -715,19 +715,19 @@ WCHAR wc=CharToChar<WCHAR, CHAR>(c);
 return (UINT)stream->Write(&wc, sizeof(WCHAR));
 }
 
-UINT CharHelper::WriteUnicode(IOutputStream* stream, WCHAR wc)
+UINT CharHelper::WriteUnicode(OutputStream* stream, WCHAR wc)
 {
 if(!stream)
 	return sizeof(WCHAR);
 return (UINT)stream->Write(&wc, sizeof(WCHAR));
 }
 
-UINT CharHelper::WriteUtf8(IOutputStream* stream, CHAR c)
+UINT CharHelper::WriteUtf8(OutputStream* stream, CHAR c)
 {
 return CharWriteUtf8(stream, c);
 }
 
-UINT CharHelper::WriteUtf8(IOutputStream* stream, WCHAR wc)
+UINT CharHelper::WriteUtf8(OutputStream* stream, WCHAR wc)
 {
 return CharWriteUtf8(stream, wc);
 }

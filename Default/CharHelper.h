@@ -79,8 +79,8 @@ class CharHelper
 {
 public:
 	// Using
-	using IInputStream=Storage::Streams::IInputStream;
-	using IOutputStream=Storage::Streams::IOutputStream;
+	using InputStream=Storage::Streams::InputStream;
+	using OutputStream=Storage::Streams::OutputStream;
 
 	// Common
 	static INT Compare(CHAR Char1, CHAR Char2, BOOL CaseSensitive=true);
@@ -110,12 +110,12 @@ public:
 	static BOOL IsSmall(WCHAR Char);
 	static BOOL IsSpecial(CHAR Char);
 	static BOOL IsSpecial(WCHAR Char);
-	static UINT ReadAnsi(IInputStream* Stream, CHAR* Char);
-	static UINT ReadAnsi(IInputStream* Stream, WCHAR* Char);
-	static UINT ReadUnicode(IInputStream* Stream, CHAR* Char);
-	static UINT ReadUnicode(IInputStream* Stream, WCHAR* Char);
-	static UINT ReadUtf8(IInputStream* Stream, CHAR* Char);
-	static UINT ReadUtf8(IInputStream* Stream, WCHAR* Char);
+	static UINT ReadAnsi(InputStream* Stream, CHAR* Char);
+	static UINT ReadAnsi(InputStream* Stream, WCHAR* Char);
+	static UINT ReadUnicode(InputStream* Stream, CHAR* Char);
+	static UINT ReadUnicode(InputStream* Stream, WCHAR* Char);
+	static UINT ReadUtf8(InputStream* Stream, CHAR* Char);
+	static UINT ReadUtf8(InputStream* Stream, WCHAR* Char);
 	static CHAR ToAnsi(WCHAR Char);
 	static TCHAR ToCapital(CHAR Char);
 	static TCHAR ToCapital(WCHAR Char);
@@ -134,10 +134,10 @@ public:
 	static WCHAR ToSmallUnicode(CHAR Char);
 	static WCHAR ToSmallUnicode(WCHAR Char);
 	static WCHAR ToUnicode(CHAR Char);
-	static UINT WriteAnsi(IOutputStream* Stream, CHAR Char);
-	static UINT WriteAnsi(IOutputStream* Stream, WCHAR Char);
-	static UINT WriteUnicode(IOutputStream* Stream, CHAR Char);
-	static UINT WriteUnicode(IOutputStream* Stream, WCHAR Char);
-	static UINT WriteUtf8(IOutputStream* Stream, CHAR Char);
-	static UINT WriteUtf8(IOutputStream* Stream, WCHAR Char);
+	static UINT WriteAnsi(OutputStream* Stream, CHAR Char);
+	static UINT WriteAnsi(OutputStream* Stream, WCHAR Char);
+	static UINT WriteUnicode(OutputStream* Stream, CHAR Char);
+	static UINT WriteUnicode(OutputStream* Stream, WCHAR Char);
+	static UINT WriteUtf8(OutputStream* Stream, CHAR Char);
+	static UINT WriteUtf8(OutputStream* Stream, WCHAR Char);
 };

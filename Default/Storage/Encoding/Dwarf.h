@@ -57,8 +57,8 @@ class Dwarf
 {
 public:
 	// Using
-	using IInputStream=Storage::Streams::IInputStream;
-	using IOutputStream=Storage::Streams::IOutputStream;
+	using InputStream=Storage::Streams::InputStream;
+	using OutputStream=Storage::Streams::OutputStream;
 
 	// Con-/Destructors
 	Dwarf(SIZE_T Position): m_Buffer((BYTE*)Position) {}
@@ -78,7 +78,7 @@ public:
 	static INT64 ReadSigned(BYTE const*& Dwarf);
 	inline UINT64 ReadUnsigned() { return ReadUnsigned((BYTE const*&)m_Buffer); }
 	static UINT64 ReadUnsigned(BYTE const*& Dwarf);
-	template <typename _value_t> static UINT ReadUnsigned(IInputStream* Dwarf, _value_t* Value)
+	template <typename _value_t> static UINT ReadUnsigned(InputStream* Dwarf, _value_t* Value)
 		{
 		if(!Dwarf)
 			throw InvalidArgumentException();
@@ -114,7 +114,7 @@ public:
 		Dwarf+=sizeof(_value_t);
 		return value;
 		}
-	template <typename _value_t> static inline _value_t ReadValue(IInputStream* Dwarf)
+	template <typename _value_t> static inline _value_t ReadValue(InputStream* Dwarf)
 		{
 		_value_t value;
 		SIZE_T read=Dwarf->Read(&value, sizeof(_value_t));
@@ -123,8 +123,8 @@ public:
 		return value;
 		}
 	VOID SetPosition(SIZE_T Position) { m_Buffer=(BYTE*)Position; }
-	static UINT WriteSigned(IOutputStream* Dwarf, INT64 Value);
-	template <typename _value_t> static UINT WriteUnsigned(IOutputStream* Dwarf, _value_t Value)
+	static UINT WriteSigned(OutputStream* Dwarf, INT64 Value);
+	template <typename _value_t> static UINT WriteUnsigned(OutputStream* Dwarf, _value_t Value)
 		{
 		UINT size=0;
 		do

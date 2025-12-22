@@ -17,7 +17,7 @@
 // String-View
 //=============
 
-class StringView: public Storage::Streams::IInputStream
+class StringView: public Storage::Streams::InputStream
 {
 public:
 	// Con-/Destructors

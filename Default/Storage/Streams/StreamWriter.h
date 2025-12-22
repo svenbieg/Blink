@@ -34,7 +34,7 @@ public:
 	using FormatFlags=StringHelper::FormatFlags;
 
 	// Con-/Destructors
-	StreamWriter(IOutputStream* Stream=nullptr);
+	StreamWriter(OutputStream* Stream=nullptr);
 
 	// Common
 	VOID Flush();
@@ -62,13 +62,13 @@ public:
 	UINT PrintInt(INT64 Value, FormatFlags Flags=FormatFlags::None, UINT Width=0);
 	UINT PrintUInt(UINT Value, FormatFlags Flags=FormatFlags::None, UINT Width=0);
 	UINT PrintUInt(UINT64 Value, FormatFlags Flags=FormatFlags::None, UINT Width=0);
-	VOID SetStream(IOutputStream* Stream);
+	VOID SetStream(OutputStream* Stream);
 	SIZE_T Write(VOID const* Buffer, SIZE_T Size);
 
 private:
 	// Using
-	typedef UINT (*ANSI_PROC)(IOutputStream* Stream, CHAR Char);
-	typedef UINT (*UNICODE_PROC)(IOutputStream* Stream, WCHAR Char);
+	typedef UINT (*ANSI_PROC)(OutputStream* Stream, CHAR Char);
+	typedef UINT (*UNICODE_PROC)(OutputStream* Stream, WCHAR Char);
 
 	// Common
 	template <class _func_t, class _char_t> UINT DoPrint(_func_t WriteChar, UINT Length, _char_t const* Value);
@@ -76,7 +76,7 @@ private:
 	template <class _func_t, class _char_t> UINT DoPrintChar(_func_t WriteChar, _char_t Char, UINT Count);
 	VOID SetStreamFormat(StreamFormat Format);
 
-	IOutputStream* m_Stream;
+	OutputStream* m_Stream;
 	ANSI_PROC m_WriteAnsi;
 	UNICODE_PROC m_WriteUnicode;
 };

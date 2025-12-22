@@ -28,7 +28,7 @@ class StreamHelper
 {
 public:
 	// Common
-	static SIZE_T Copy(IOutputStream* Destination, IInputStream* Source, SIZE_T Size=0);
+	static SIZE_T Copy(OutputStream* Destination, InputStream* Source, SIZE_T Size=0);
 };
 
 }}

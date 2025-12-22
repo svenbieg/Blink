@@ -105,8 +105,8 @@ class Handle<String>
 public:
 	// Using
 	using Dwarf=Storage::Encoding::Dwarf;
-	using IInputStream=Storage::Streams::IInputStream;
-	using IOutputStream=Storage::Streams::IOutputStream;
+	using InputStream=Storage::Streams::InputStream;
+	using OutputStream=Storage::Streams::OutputStream;
 	using StreamReader=Storage::Streams::StreamReader;
 	using StreamWriter=Storage::Streams::StreamWriter;
 
@@ -127,7 +127,7 @@ public:
 	inline operator bool()const { return m_Object&&m_Object->HasValue(); }
 	inline operator String*()const { return m_Object; }
 	inline String* operator->()const { return m_Object; }
-	SIZE_T WriteToStream(IOutputStream* Stream)
+	SIZE_T WriteToStream(OutputStream* Stream)
 		{
 		if(!m_Object)
 			return Dwarf::WriteUnsigned(Stream, 0U);
@@ -171,7 +171,7 @@ public:
 	inline Handle& operator=(Handle<String> const& Value) { return operator=(Value.m_Object); }
 	inline Handle& operator=(LPCSTR Value) { return operator=(String::Create(Value)); }
 	inline Handle& operator=(LPCWSTR Value) { return operator=(String::Create(Value)); }
-	SIZE_T ReadFromStream(IInputStream* Stream)
+	SIZE_T ReadFromStream(InputStream* Stream)
 		{
 		StreamReader reader(Stream);
 		SIZE_T size=0;

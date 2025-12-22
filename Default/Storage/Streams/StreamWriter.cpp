@@ -25,7 +25,7 @@ namespace Storage {
 // Con-/Destructors
 //==================
 
-StreamWriter::StreamWriter(IOutputStream* stream):
+StreamWriter::StreamWriter(OutputStream* stream):
 m_Stream(nullptr),
 m_WriteAnsi(nullptr),
 m_WriteUnicode(nullptr)
@@ -254,7 +254,7 @@ StringHelper::PrintUInt(buf, 64, value, flags, width);
 return DoPrint(m_WriteAnsi, 0, buf);
 }
 
-VOID StreamWriter::SetStream(IOutputStream* stream)
+VOID StreamWriter::SetStream(OutputStream* stream)
 {
 if(!stream)
 	throw InvalidArgumentException();

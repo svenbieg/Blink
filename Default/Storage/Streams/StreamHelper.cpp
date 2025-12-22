@@ -25,7 +25,7 @@ namespace Storage {
 // Common
 //========
 
-SIZE_T StreamHelper::Copy(IOutputStream* dst, IInputStream* src, SIZE_T size)
+SIZE_T StreamHelper::Copy(OutputStream* dst, InputStream* src, SIZE_T size)
 {
 if(!dst||!src)
 	return 0;
