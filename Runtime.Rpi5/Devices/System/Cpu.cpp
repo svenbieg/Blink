@@ -27,77 +27,34 @@ namespace Devices {
 	namespace System {
 
 
-//=======
-// Cache
-//=======
-
-constexpr UINT L1_DATA_CACHE_SETS=256;
-constexpr UINT L1_DATA_CACHE_WAYS=4;
-constexpr UINT L1_SETWAY_WAY_SHIFT=30;
-
-constexpr UINT L2_CACHE_SETS=1024;
-constexpr UINT L2_CACHE_WAYS=8;
-constexpr UINT L2_SETWAY_WAY_SHIFT=29;
-
-constexpr UINT L3_CACHE_SETS=2048;
-constexpr UINT L3_CACHE_WAYS=16;
-constexpr UINT L3_SETWAY_WAY_SHIFT=28;
-
-constexpr UINT SETWAY_LEVEL_SHIFT=1;
-constexpr UINT SETWAY_SET_SHIFT=6;
-
-
 //========
 // Common
 //========
 
-INT Cpu::Affinity(UINT core)
+VOID Cpu::CleanDataCache(SIZE_T addr, SIZE_T size)noexcept
 {
-constexpr UINT64 PSCI_AFFINITY=0xC4000004;
-UINT64 mpidr=(core<<8);
-INT status=0;
-__asm volatile("\
-mov x0, %1\n\
-mov x1, %2\n\
-mov x2, xzr\n\
-smc #0\n\
-mov %w0, w0": "=r" (status): "r" (PSCI_AFFINITY), "r" (mpidr));
-return status;
-}
-
-VOID Cpu::CleanDataCache()noexcept
-{
-for(UINT set=0; set<L1_DATA_CACHE_SETS; set++)
+SIZE_T end=addr+size;
+while(addr<end)
 	{
-	for(UINT way=0; way<L1_DATA_CACHE_WAYS; way++)
-		{
-		UINT64 set_way_level=(way<<L1_SETWAY_WAY_SHIFT)|(set<<SETWAY_SET_SHIFT)|(0<<SETWAY_LEVEL_SHIFT);
-		__asm volatile("dc csw, %0": : "r" (set_way_level): "memory");
-		}
+	__asm volatile("dc cvac, %0":: "r" (addr) : "memory");
+	addr+=CACHE_LINE_SIZE;
 	}
-for(UINT set=0; set<L2_CACHE_SETS; set++)
-	{
-	for(UINT way=0; way<L2_CACHE_WAYS; way++)
-		{
-		UINT64 set_way_level=(way<<L2_SETWAY_WAY_SHIFT)|(set<<SETWAY_SET_SHIFT)|(1<<SETWAY_LEVEL_SHIFT);
-		__asm volatile("dc csw, %0": : "r" (set_way_level): "memory");
-		}
-	}
-for(UINT set=0; set<L3_CACHE_SETS; set++)
-	{
-	for(UINT way=0; way<L3_CACHE_WAYS; way++)
-		{
-		UINT64 set_way_level=(way<<L3_SETWAY_WAY_SHIFT)|(set<<SETWAY_SET_SHIFT)|(1<<SETWAY_LEVEL_SHIFT);
-		__asm volatile("dc csw, %0": : "r" (set_way_level): "memory");
-		}
-	}
-DataSyncBarrier();
 }
 
 VOID Cpu::Delay(UINT us)
 {
 UINT64 end=SystemTimer::Microseconds64()+us;
 while(SystemTimer::Microseconds64()<end);
+}
+
+VOID Cpu::InvalidateDataCache(SIZE_T addr, SIZE_T size)noexcept
+{
+SIZE_T end=addr+size;
+while(addr<end)
+	{
+	__asm volatile("dc ivac, %0":: "r" (addr) : "memory");
+	addr+=CACHE_LINE_SIZE;
+	}
 }
 
 VOID Cpu::PowerOn(UINT core)
@@ -115,14 +72,6 @@ smc #0\n\
 mov %w0, w0": "=r" (status): "r" (PSCI_CPU_ON), "r" (mpidr), "r" (&_start));
 if(status!=0)
 	throw DeviceNotReadyException();
-}
-
-VOID Cpu::SynchronizeDataAndInstructionCache()noexcept
-{
-CleanDataCache();
-InvalidateInstructionCache();
-DataSyncBarrier();
-InstructionSyncBarrier();
 }
 
 }}

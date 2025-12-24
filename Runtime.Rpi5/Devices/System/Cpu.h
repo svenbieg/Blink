@@ -42,8 +42,7 @@ public:
 	static constexpr UINT CPU_COUNT=4;
 
 	// Common
-	static INT Affinity(UINT Core);
-	static VOID CleanDataCache()noexcept;
+	static VOID CleanDataCache(SIZE_T Address, SIZE_T Size)noexcept;
 	static inline BOOL CompareAndSet(volatile UINT* Value, UINT Compare, UINT Set)noexcept
 		{
 		UINT read;
@@ -57,9 +56,9 @@ public:
 			1:": "=&r" (result): "r" (Value), "r" (Compare), "r" (Set), "r" (read): "cc", "memory");
 		return result==0;
 		}
-	static inline VOID DataStoreBarrier()noexcept
+	static inline VOID DataMemoryBarrier()noexcept
 		{
-		__asm inline volatile("dsb st"::: "memory");
+		__asm inline volatile("dmb ish"::: "memory");
 		}
 	static inline VOID DataSyncBarrier()noexcept
 		{
@@ -97,14 +96,7 @@ public:
 			": "=&r" (value): "r" (Value));
 		return value;
 		}
-	static inline VOID InvalidateInstructionCache()noexcept
-		{
-		__asm inline volatile("ic iallu"::: "memory");
-		}
-	static inline VOID Nop()
-		{
-		__asm inline volatile("nop");
-		}
+	static VOID InvalidateDataCache(SIZE_T Address, SIZE_T Size)noexcept;
 	static VOID PowerOn(UINT Core);
 	static inline VOID SetContext(VOID (*TaskProc)(VOID*), VOID* Parameter, SIZE_T StackPointer)noexcept
 		{
@@ -122,7 +114,6 @@ public:
 		{
 		__asm inline volatile("stlr %w1, [%0]":: "r" (Address), "r" (Set));
 		}
-	static VOID SynchronizeDataAndInstructionCache()noexcept;
 	static inline VOID WaitForEvent()noexcept
 		{
 		__asm inline volatile("wfe");
