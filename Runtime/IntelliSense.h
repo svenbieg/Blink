@@ -21,16 +21,8 @@
 // Types
 //=======
 
-#define __LONG long
-#define __LONG_LONG long long
-
-#define __SIZE_T unsigned int
-
 #define __SCHAR_MAX__ 0x7F
 #define __SHRT_MAX__ 0x7FFF
 #define __INT_MAX__ 0x7FFFFFFF
-#define __LONG_MAX__ 0x7FFFFFFFFFFFFFFF
-
-#define __SIZEOF_LONG__ 8
 
 #define typeid(...) (TypeInfo const*)nullptr

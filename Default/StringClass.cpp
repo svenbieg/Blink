@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include "MemoryHelper.h"
 #include <new>
 
 using namespace Storage::Streams;
@@ -22,7 +23,7 @@ Handle<String> String::Create(LPCSTR Value)
 {
 UINT len=StringHelper::Length(Value);
 UINT size=sizeof(String)+(len+1)*sizeof(TCHAR);
-auto str=(String*)operator new(size);
+auto str=(String*)MemoryHelper::Allocate(size);
 LPTSTR buf=(LPTSTR)((SIZE_T)str+sizeof(String));
 new (str) String(buf, len+1, Value);
 return str;
@@ -32,7 +33,7 @@ Handle<String> String::Create(LPCWSTR Value)
 {
 UINT len=StringHelper::Length(Value);
 UINT size=sizeof(String)+(len+1)*sizeof(TCHAR);
-auto str=(String*)operator new(size);
+auto str=(String*)MemoryHelper::Allocate(size);
 LPTSTR buf=(LPTSTR)((SIZE_T)str+sizeof(String));
 new (str) String(buf, len+1, Value);
 return str;
@@ -42,7 +43,7 @@ Handle<String> String::Create(UINT Length, LPCSTR Value)
 {
 UINT len=StringHelper::Length(Value, Length);
 UINT size=sizeof(String)+(len+1)*sizeof(TCHAR);
-auto str=(String*)operator new(size);
+auto str=(String*)MemoryHelper::Allocate(size);
 LPTSTR buf=(LPTSTR)((SIZE_T)str+sizeof(String));
 new (str) String(buf, len+1, Value);
 return str;
@@ -52,7 +53,7 @@ Handle<String> String::Create(UINT Length, LPCWSTR Value)
 {
 UINT len=StringHelper::Length(Value, Length);
 UINT size=sizeof(String)+(len+1)*sizeof(TCHAR);
-auto str=(String*)operator new(size);
+auto str=(String*)MemoryHelper::Allocate(size);
 LPTSTR buf=(LPTSTR)((SIZE_T)str+sizeof(String));
 new (str) String(buf, len+1, Value);
 return str;
@@ -62,7 +63,7 @@ Handle<String> String::Create(LPCSTR Format, VariableArguments const& Arguments)
 {
 UINT len=StringHelper::Length(Format, Arguments);
 UINT size=sizeof(String)+(len+1)*sizeof(TCHAR);
-auto str=(String*)operator new(size);
+auto str=(String*)MemoryHelper::Allocate(size);
 LPTSTR buf=(LPTSTR)((SIZE_T)str+sizeof(String));
 new (str) String(buf, len+1, Format, Arguments);
 return str;
@@ -131,7 +132,7 @@ m_Hash=StringHelper::GetHash(m_Buffer);
 Handle<String> String::Create(UINT Length, nullptr_t)
 {
 UINT size=sizeof(String)+(Length+1)*sizeof(TCHAR);
-auto str=(String*)operator new(size);
+auto str=(String*)MemoryHelper::Allocate(size);
 LPTSTR buf=(LPTSTR)((SIZE_T)str+sizeof(String));
 new (str) String(buf);
 return str;

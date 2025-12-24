@@ -25,6 +25,10 @@
 #define __LONG_LONG long
 #endif
 
+#ifndef __size_t
+#define __size_t unsigned long int
+#endif
+
 #ifndef __SIZE_T
 #define __SIZE_T unsigned long int
 #endif

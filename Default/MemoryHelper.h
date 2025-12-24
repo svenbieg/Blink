@@ -94,6 +94,7 @@ public:
 			}
 		}
 	static inline VOID Zero(VOID* To, SIZE_T Size) { Fill(To, Size, 0); }
+	template <class _value_t> static inline VOID ZeroT(_value_t* To) { *To=_value_t(0); }
 	template <class _value_t> static inline VOID ZeroT(_value_t* To, SIZE_T Count) { FillT<_value_t>(To, Count, _value_t(0)); }
 	template <class _value_t> static inline VOID ZeroT(_value_t* To, _value_t* End) { FillT<_value_t>(To, End, _value_t(0)); }
 };

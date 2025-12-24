@@ -41,7 +41,7 @@ public:
 	friend Signal;
 
 	// Con-/Destructors
-	virtual ~ScopedLock() {}
+	virtual ~ScopedLock()=default;
 
 	// Common
 	virtual VOID Lock()=0;
@@ -50,7 +50,7 @@ public:
 
 protected:
 	// Con-/Destructors
-	ScopedLock() {}
+	ScopedLock()=default;
 
 private:
 	// Common

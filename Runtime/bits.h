@@ -58,3 +58,4 @@ __always_inline void bits_set(uint32_t& op, uint32_t mask) { op|=mask; }
 __always_inline void bits_set(uint32_t& op, uint32_t mask, uint32_t value) { op&=~mask; op|=value; }
 __always_inline void bits_set(uint32_t& op, bits32_t const& bits, uint32_t value) { op&=~(bits.mask<<bits.shift); op|=(value<<bits.shift); }
 __always_inline void bits_set(uint64_t& op, uint64_t mask) { op|=mask; }
+__always_inline void bits_write(uint32_t& op, uint32_t mask) { op=mask; }

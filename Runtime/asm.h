@@ -34,6 +34,8 @@
 
 #else
 
+#include "TypeHelper.h"
+
 #define CONST_EXPR(Type, Name, Value) constexpr Type Name=Value;
 
 #define ENUM_CLASS(Name) enum class Name {

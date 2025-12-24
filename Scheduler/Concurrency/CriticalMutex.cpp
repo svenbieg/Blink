@@ -79,9 +79,10 @@ BOOL CriticalMutex::TryLock(AccessMode)
 assert(!Interrupts::Active());
 SpinLock lock(Scheduler::s_CriticalSection);
 if(m_Owner)
-	return false;
-if(!FlagHelper::Get(m_Owner->m_Flags, TaskFlags::Sharing))
-	return false;
+	{
+	if(!FlagHelper::Get(m_Owner->m_Flags, TaskFlags::Sharing))
+		return false;
+	}
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
@@ -100,9 +101,10 @@ UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 assert(m_Owner==current);
 UnlockInternal(core, current);
-if(--m_Owner->m_LockCount==0)
+current->m_LockCount--;
+if(current->m_LockCount==0)
 	{
-	FlagHelper::Clear(m_Owner->m_Flags, TaskFlags::Locked);
+	FlagHelper::Clear(current->m_Flags, TaskFlags::Locked);
 	Scheduler::ResumeWaitingTask(core, current);
 	}
 }
@@ -113,89 +115,12 @@ SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 UnlockInternal(core, current, AccessMode::ReadOnly);
-if(--current->m_LockCount==0)
+current->m_LockCount--;
+if(current->m_LockCount==0)
 	{
-	FlagHelper::Clear(m_Owner->m_Flags, TaskFlags::Locked);
+	FlagHelper::Clear(current->m_Flags, TaskFlags::Locked);
 	Scheduler::ResumeWaitingTask(core, current);
 	}
-}
-
-
-//================
-// Common Private
-//================
-
-VOID CriticalMutex::AddWaitingTask(Task* task)
-{
-auto current_ptr=&m_Waiting;
-if(FlagHelper::Get(task->m_Flags, TaskFlags::Locked))
-	{
-	while(*current_ptr)
-		{
-		auto current=*current_ptr;
-		assert(current!=task);
-		if(!FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
-			{
-			*current_ptr=task;
-			task->m_Waiting=current;
-			return;
-			}
-		current_ptr=&current->m_Waiting;
-		}
-	}
-else
-	{
-	while(*current_ptr)
-		{
-		auto current=*current_ptr;
-		assert(current!=task);
-		current_ptr=&current->m_Waiting;
-		}
-	}
-*current_ptr=task;
-}
-
-VOID CriticalMutex::AddWaitingTask(Task* task, AccessMode)
-{
-auto current_ptr=&m_Waiting;
-if(FlagHelper::Get(task->m_Flags, TaskFlags::Locked))
-	{
-	while(*current_ptr)
-		{
-		auto current=*current_ptr;
-		assert(current!=task);
-		if(!FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
-			{
-			*current_ptr=task;
-			task->m_Waiting=current;
-			return;
-			}
-		if(FlagHelper::Get(current->m_Flags, TaskFlags::Sharing))
-			{
-			Scheduler::AddParallelTask(current_ptr, task);
-			return;
-			}
-		current_ptr=&current->m_Waiting;
-		}
-	}
-else
-	{
-	while(*current_ptr)
-		{
-		auto current=*current_ptr;
-		assert(current!=task);
-		if(!FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
-			{
-			if(FlagHelper::Get(current->m_Flags, TaskFlags::Sharing))
-				{
-				Scheduler::AddParallelTask(current_ptr, task);
-				return;
-				}
-			}
-		current_ptr=&current->m_Waiting;
-		}
-	}
-*current_ptr=task;
 }
 
 }

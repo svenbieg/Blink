@@ -11,10 +11,6 @@
 
 #include <asm.h>
 
-#ifndef __ASSEMBLER__
-#include "TypeHelper.h"
-#endif
-
 
 //=======
 // Stack

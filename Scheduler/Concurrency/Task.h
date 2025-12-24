@@ -55,7 +55,7 @@ LockedSharing=36,
 Owner=8,
 Release=16,
 Sharing=32,
-Suspended=64,
+Suspended=64
 };
 
 
@@ -268,7 +268,7 @@ template <class _owner_t> Handle<Task> Task::Create(_owner_t* Owner, VOID (_owne
 assert(StackSize%sizeof(SIZE_T)==0);
 using _task_t=TaskMemberProcedure<_owner_t>;
 SIZE_T size=StackSize+TypeHelper::AlignUp(sizeof(_task_t), sizeof(SIZE_T));
-auto task=(_task_t*)operator new(size);
+auto task=(_task_t*)MemoryHelper::Allocate(size);
 SIZE_T stack_top=(SIZE_T)task+size;
 new (task) _task_t(Owner, Procedure, Name, stack_top, StackSize);
 Scheduler::AddTask(task);
@@ -280,7 +280,7 @@ template <class _owner_t> Handle<Task> Task::Create(Handle<_owner_t> const& Owne
 assert(StackSize%sizeof(SIZE_T)==0);
 using _task_t=TaskMemberProcedure<_owner_t>;
 SIZE_T size=StackSize+TypeHelper::AlignUp(sizeof(_task_t), sizeof(SIZE_T));
-auto task=(_task_t*)operator new(size);
+auto task=(_task_t*)MemoryHelper::Allocate(size);
 SIZE_T stack_top=(SIZE_T)task+size;
 new (task) _task_t(Owner, Procedure, Name, stack_top, StackSize);
 Scheduler::AddTask(task);
@@ -292,7 +292,7 @@ template <class _owner_t, class _lambda_t> Handle<Task> Task::Create(_owner_t* O
 assert(StackSize%sizeof(SIZE_T)==0);
 using _task_t=TaskLambda<_owner_t, _lambda_t>;
 SIZE_T size=StackSize+TypeHelper::AlignUp(sizeof(_task_t), sizeof(SIZE_T));
-auto task=(_task_t*)operator new(size);
+auto task=(_task_t*)MemoryHelper::Allocate(size);
 SIZE_T stack_top=(SIZE_T)task+size;
 new (task) _task_t(Owner, std::forward<_lambda_t>(Lambda), Name, stack_top, StackSize);
 Scheduler::AddTask(task);
@@ -304,7 +304,7 @@ template <class _owner_t, class _lambda_t> Handle<Task> Task::Create(Handle<_own
 assert(StackSize%sizeof(SIZE_T)==0);
 using _task_t=TaskLambda<_owner_t, _lambda_t>;
 SIZE_T size=StackSize+TypeHelper::AlignUp(sizeof(_task_t), sizeof(SIZE_T));
-auto task=(_task_t*)operator new(size);
+auto task=(_task_t*)MemoryHelper::Allocate(size);
 SIZE_T stack_top=(SIZE_T)task+size;
 new (task) _task_t(Owner, std::forward<_lambda_t>(Lambda), Name, stack_top, StackSize);
 Scheduler::AddTask(task);
@@ -316,7 +316,7 @@ template <class _lambda_t> Handle<Task> Task::Create(nullptr_t Owner, _lambda_t&
 assert(StackSize%sizeof(SIZE_T)==0);
 using _task_t=TaskLambda<nullptr_t, _lambda_t>;
 SIZE_T size=StackSize+TypeHelper::AlignUp(sizeof(_task_t), sizeof(SIZE_T));
-auto task=(_task_t*)operator new(size);
+auto task=(_task_t*)MemoryHelper::Allocate(size);
 SIZE_T stack_top=(SIZE_T)task+size;
 new (task) _task_t(std::forward<_lambda_t>(Lambda), Name, stack_top, StackSize);
 Scheduler::AddTask(task);
@@ -332,7 +332,7 @@ inline Task* Task::CreateInternal(VOID (*Procedure)(), Handle<String> Name, SIZE
 {
 assert(StackSize%sizeof(SIZE_T)==0);
 SIZE_T size=StackSize+TypeHelper::AlignUp(sizeof(TaskProcedure), sizeof(SIZE_T));
-auto task=(TaskProcedure*)operator new(size);
+auto task=(TaskProcedure*)MemoryHelper::Allocate(size);
 SIZE_T stack_top=(SIZE_T)task+size;
 new (task) TaskProcedure(Procedure, Name, stack_top, StackSize);
 return task;

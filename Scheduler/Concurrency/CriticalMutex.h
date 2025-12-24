@@ -41,11 +41,6 @@ public:
 	BOOL TryLock(AccessMode)override;
 	VOID Unlock()override;
 	VOID Unlock(AccessMode)override;
-
-private:
-	// Common
-	VOID AddWaitingTask(Task* Task);
-	VOID AddWaitingTask(Task* Task, AccessMode);
 };
 
 }

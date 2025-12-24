@@ -58,7 +58,7 @@ UINT core=Cpu::GetId()|LOCKED;
 assert(m_Core!=core);
 if(Cpu::CompareAndSet(&m_Core, 0, core))
 	{
-	Cpu::DataSyncBarrier();
+	Cpu::DataMemoryBarrier();
 	return true;
 	}
 Interrupts::Enable();
@@ -88,7 +88,7 @@ while(!Cpu::CompareAndSet(&m_Core, 0, core))
 	Interrupts::Enable();
 	Interrupts::Disable();
 	}
-Cpu::DataSyncBarrier();
+Cpu::DataMemoryBarrier();
 }
 
 }
