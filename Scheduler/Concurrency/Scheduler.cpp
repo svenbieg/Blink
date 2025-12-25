@@ -479,7 +479,6 @@ for(UINT core_id=0; core_id<core_count; core_id++)
 VOID Scheduler::SuspendCurrentTask(UINT core, Task* current, UINT64 resume_time)
 {
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Suspended));
-assert(!current->m_Next);
 FlagHelper::Set(current->m_Flags, TaskFlags::Suspended);
 if(FlagHelper::Get(current->m_Flags, TaskFlags::Owner))
 	{
@@ -491,11 +490,14 @@ if(resume_time)
 	current->m_ResumeTime=resume_time;
 	AddSleepingTask(&s_Sleeping, current);
 	}
-auto next=GetWaitingTask();
-if(!next)
-	next=s_IdleTask[core];
-current->m_Next=next;
-Interrupts::Send(Irq::TaskSwitch, core);
+if(!current->m_Next)
+	{
+	auto next=GetWaitingTask();
+	if(!next)
+		next=s_IdleTask[core];
+	current->m_Next=next;
+	Interrupts::Send(Irq::TaskSwitch, core);
+	}
 }
 
 VOID Scheduler::WakeupTasks(Task* wakeup, Status status)
