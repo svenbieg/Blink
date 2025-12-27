@@ -8,4 +8,8 @@
     <CompilerVersion>14.3.1</CompilerVersion>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <FirmwarePath>$(SolutionDir)Firmware\</FirmwarePath>
+  </PropertyGroup>
+
 </Project>
