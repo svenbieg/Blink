@@ -17,18 +17,14 @@
 #define __FILE_SIZE_T unsigned long int
 #endif
 
+#ifndef __ISENSE_T
+#define __ISENSE_T unsigned long int
+#endif
+
 #ifndef __LONG
 #define __LONG
 #endif
 
 #ifndef __LONG_LONG
 #define __LONG_LONG long
-#endif
-
-#ifndef __size_t
-#define __size_t unsigned long int
-#endif
-
-#ifndef __SIZE_T
-#define __SIZE_T unsigned long int
 #endif

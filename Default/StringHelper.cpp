@@ -9,11 +9,11 @@
 // Using
 //=======
 
-#include <cmath>
 #include "Storage/Streams/StreamWriter.h"
 #include "CharHelper.h"
 #include "FlagHelper.h"
 #include "StringClass.h"
+#include <cmath>
 
 using namespace Storage::Streams;
 

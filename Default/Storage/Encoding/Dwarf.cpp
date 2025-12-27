@@ -160,7 +160,7 @@ do
 	}
 while(byte&0x80);
 if(byte&0x40)
-	value|=(UINT64_MAX)<<shift;
+	value|=-1ULL<<shift;
 return (INT64)value;
 }
 

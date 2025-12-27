@@ -10,9 +10,11 @@
 //=======
 
 #include "Devices/System/Interrupts.h"
+#include "Devices/Timers/SystemTimer.h"
 
 using namespace Concurrency;
 using namespace Devices::System;
+using namespace Devices::Timers;
 
 
 //===========
@@ -21,13 +23,6 @@ using namespace Devices::System;
 
 namespace Devices {
 	namespace Emmc {
-
-
-//==========
-// Settings
-//==========
-
-constexpr UINT BLOCK_SIZE=512;
 
 
 //==================
@@ -58,7 +53,7 @@ Command(CMD_APPCMD, m_RelativeCardAddress<<16);
 Command(cmd, arg, response, nullptr, 0, 0, timeout);
 }
 
-VOID EmmcHost::AppCommand(UINT cmd, UINT arg, UINT* response, UINT* buf, UINT block_size, UINT block_count, UINT timeout)
+VOID EmmcHost::AppCommand(UINT cmd, UINT arg, UINT* response, UINT* buf, UINT block_count, UINT block_size, UINT timeout)
 {
 Command(CMD_APPCMD, m_RelativeCardAddress<<16);
 Command(cmd, arg, response, buf, block_size, block_count, timeout);
@@ -76,20 +71,29 @@ VOID EmmcHost::Command(UINT cmd, UINT arg, UINT* response, UINT timeout)
 Command(cmd, arg, response, nullptr, 0, 0, timeout);
 }
 
-VOID EmmcHost::Command(UINT cmd, UINT arg, UINT* response, UINT* buf, UINT block_size, UINT block_count, UINT timeout)
+VOID EmmcHost::Command(UINT cmd, UINT arg, UINT* response, UINT* buf, UINT block_count, UINT block_size, UINT timeout)
 {
 assert(block_count<0x10000);
 auto emmc=(emmc_regs_t*)m_Address;
 SpinLock lock(m_CriticalSection);
 if(io_read(emmc->STATUS, STATUS_CMD_INHIBIT))
 	throw DeviceNotReadyException();
+if(io_read(emmc->STATUS, STATUS_DAT_INHIBIT))
+	{
+	io_set(emmc->CTRL1, CTRL1_RESET_DATA);
+	for(UINT retry=0; retry>=0; retry++)
+		{
+		if(io_read(emmc->STATUS, STATUS_DAT_INHIBIT)==0)
+			break;
+		if(retry==10)
+			throw DeviceNotReadyException();
+		}
+	}
 io_write(emmc->BLKSIZECNT, (block_count<<16)|block_size);
 io_write(emmc->ARG1, arg);
 io_write(emmc->CMD, cmd);
 m_IrqFlags=IRQF_CMD_DONE|IRQF_ERR;
 m_Signal.Wait(lock, timeout);
-if(FlagHelper::Get(m_IrqFlags, IRQF_ERR))
-	throw DeviceNotReadyException();
 uint32_t resp_type=bits_get(cmd, CMF_RSPNS_MASK);
 if(response)
 	{
@@ -113,48 +117,69 @@ if(response)
 			break;
 		}
 	}
-if(FlagHelper::Get(cmd, CMF_ISDATA))
+if(!FlagHelper::Get(cmd, CMF_ISDATA))
+	return;
+UINT size=block_count*block_size;
+UINT pos=0;
+if(FlagHelper::Get(cmd, CMF_DAT_DIR_READ))
 	{
-	if(FlagHelper::Get(cmd, CMF_DAT_DIR_READ))
+	for(UINT block=0; block<block_count; block++)
 		{
-		for(UINT block=0; block<block_count; block++)
+		if(!FlagHelper::Get(emmc->STATUS, STATUS_READ_AVAILABLE))
 			{
 			m_IrqFlags=IRQF_READ_RDY|IRQF_ERR;
 			m_Signal.Wait(lock, timeout);
-			if(FlagHelper::Get(m_IrqFlags, IRQF_ERR))
-				throw DeviceNotReadyException();
-			for(UINT pos=0; pos<block_size; pos+=sizeof(UINT))
-				*buf++=emmc->DATA;
 			}
+		UINT copy=TypeHelper::Min(size-pos, block_size);
+		auto end=buf+(copy/sizeof(UINT));
+		while(buf<end)
+			*buf++=emmc->DATA;
+		pos+=copy;
+		if(pos==size)
+			break;
 		}
-	else
+	if(!FlagHelper::Get(m_IrqFlags, IRQF_DATA_DONE))
 		{
-		for(UINT block=0; block<block_count; block++)
+		m_IrqFlags=IRQF_DATA_DONE|IRQF_ERR;
+		m_Signal.Wait(lock, timeout);
+		}
+	}
+else
+	{
+	for(UINT block=0; block<block_count; block++)
+		{
+		if(!FlagHelper::Get(emmc->STATUS, STATUS_WRITE_AVAILABLE))
 			{
-			if(!FlagHelper::Get(m_IrqFlags, IRQF_WRITE_RDY))
-				{
-				m_IrqFlags=IRQF_WRITE_RDY|IRQF_ERR;
-				m_Signal.Wait(lock, timeout);
-				if(FlagHelper::Get(m_IrqFlags, IRQF_ERR))
-					throw DeviceNotReadyException();
-				}
-			for(UINT pos=0; pos<block_size; pos+=sizeof(UINT))
-				emmc->DATA=*buf++;
+			m_IrqFlags=IRQF_WRITE_RDY|IRQF_ERR;
+			m_Signal.Wait(lock, timeout);
 			}
+		UINT copy=TypeHelper::Min(size-pos, block_size);
+		auto end=buf+(copy/sizeof(UINT));
+		while(buf<end)
+			emmc->DATA=*buf++;
+		pos+=copy;
+		if(pos==size)
+			break;
 		}
 	}
 }
 
-FILE_SIZE EmmcHost::GetCapacity()
+VOID EmmcHost::PollRegister(UINT fn, UINT addr, BYTE mask, BYTE value, UINT timeout)
 {
-auto emmc=(emmc_regs_t*)m_Address;
-UINT csd[4];
-Command(CMD_SEND_CSD, m_RelativeCardAddress<<16, csd);
-UINT csd_ver=csd[3]>>30;
-UINT size=(((csd[2]&0x3FF)<<2)|csd[1]>>30)+1;
-UINT shift=((csd[1]>>15)&0x7)+12;
-FILE_SIZE capacity=((FILE_SIZE)size<<shift)*m_BlockSize;
-return capacity;
+UINT64 end=SystemTimer::GetTickCount64()+timeout;
+UINT arg=IO_RW_READ;
+bits_set(arg, IO_RW_FUNC, fn);
+bits_set(arg, IO_RW_ADDR, addr);
+UINT response=0;
+do
+	{
+	Command(CMD_IO_RW_DIRECT, arg, &response);
+	if(bits_get((BYTE)response, mask)==value)
+		return;
+	Task::Sleep(10);
+	}
+while(SystemTimer::GetTickCount64()<=end);
+throw TimeoutException();
 }
 
 VOID EmmcHost::PowerOff()
@@ -164,18 +189,14 @@ auto emmc=(emmc_regs_t*)m_Address;
 io_write(emmc->CTRL0, CTRL0_POWER, CTRL0_POWER_OFF);
 }
 
-VOID EmmcHost::Read(UINT block, UINT block_count, UINT block_size, UINT* buf)
+BYTE EmmcHost::ReadRegister(UINT fn, UINT addr)
 {
-UINT cmd=block_count>1? CMD_READ_MULTI: CMD_READ_SINGLE;
-Command(cmd, block, nullptr, buf, block_size, block_count, 500);
-}
-
-UINT EmmcHost::ReadRegister(UINT fn, UINT addr)
-{
-UINT cmd=IO_RW_READ;
-cmd|=(fn&7)<<28;
-cmd|=(addr&0x1FFFF)<<9;
-return Command(CMD_IO_RW_DIRECT, cmd);
+UINT arg=IO_RW_READ;
+bits_set(arg, IO_RW_FUNC, fn);
+bits_set(arg, IO_RW_ADDR, addr);
+UINT value=0;
+Command(CMD_IO_RW_DIRECT, arg, &value);
+return (BYTE)value;
 }
 
 VOID EmmcHost::Reset()
@@ -199,9 +220,6 @@ VOID EmmcHost::SelectCard(UINT rca)
 {
 m_RelativeCardAddress=rca;
 Command(CMD_SELECT_CARD, rca<<16);
-//UINT sel_card=Command(CMD_SELECT_CARD, rca<<16);
-//UINT sel_status=(sel_card>>9)&0xF;
-//assert(sel_status==3||sel_status==4);
 }
 
 VOID EmmcHost::SetClockRate(UINT base_clock, UINT clock_rate)
@@ -234,19 +252,13 @@ value|=mask;
 WriteRegister(fn, addr, value);
 }
 
-VOID EmmcHost::Write(UINT block, UINT block_count, UINT block_size, UINT const* buf)
+VOID EmmcHost::WriteRegister(UINT fn, UINT addr, BYTE value)
 {
-UINT cmd=block_count>1? CMD_WRITE_MULTI: CMD_WRITE_SINGLE;
-Command(cmd, block, nullptr, (UINT*)buf, block_size, block_count, 500);
-}
-
-VOID EmmcHost::WriteRegister(UINT fn, UINT addr, UINT value)
-{
-UINT cmd=IO_RW_WRITE;
-cmd|=(fn&7)<<28;
-cmd|=(addr&0x1FFFF)<<9;
-cmd|=(value&0xFF);
-Command(CMD_IO_RW_DIRECT, cmd);
+UINT arg=IO_RW_WRITE;
+bits_set(arg, IO_RW_FUNC, fn);
+bits_set(arg, IO_RW_ADDR, addr);
+bits_set(arg, IO_RW_DATA, value);
+Command(CMD_IO_RW_DIRECT, arg);
 }
 
 
@@ -256,7 +268,6 @@ Command(CMD_IO_RW_DIRECT, cmd);
 
 EmmcHost::EmmcHost(SIZE_T addr, Irq irq):
 m_Address(addr),
-m_BlockSize(BLOCK_SIZE),
 m_Irq(irq),
 m_IrqFlags(0),
 m_RelativeCardAddress(0)
@@ -267,23 +278,26 @@ m_RelativeCardAddress(0)
 // Common Private
 //================
 
-VOID EmmcHost::OnInterrupt()
-{
-SpinLock lock(m_CriticalSection);
-auto emmc=(emmc_regs_t*)m_Address;
-UINT irq_flags=io_read(emmc->IRQ);
-io_write(emmc->IRQ, UINT_MAX);
-if(m_IrqFlags&irq_flags)
-	{
-	m_IrqFlags=irq_flags;
-	m_Signal.Trigger();
-	}
-}
-
 VOID EmmcHost::HandleInterrupt(VOID* param)
 {
 auto emmc=(EmmcHost*)param;
 emmc->OnInterrupt();
+}
+
+VOID EmmcHost::OnInterrupt()
+{
+Status status=Status::Success;
+auto emmc=(emmc_regs_t*)m_Address;
+SpinLock lock(m_CriticalSection);
+UINT irq_flags=io_read(emmc->IRQ);
+if(FlagHelper::Get(irq_flags, IRQF_ERR))
+	status=Status::DeviceNotReady;
+io_write(emmc->IRQ, irq_flags);
+if(FlagHelper::Get(m_IrqFlags, irq_flags))
+	{
+	m_IrqFlags=irq_flags;
+	m_Signal.Trigger(status);
+	}
 }
 
 }}

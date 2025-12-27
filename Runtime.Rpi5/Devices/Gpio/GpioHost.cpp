@@ -162,7 +162,6 @@ VOID GpioHost::DigitalWrite(GpioRp1Pin pin, BOOL value)
 auto rio=(rp1_rio_regs_t*)RP1_RIO0_BASE;
 UINT pin_mask=1UL<<(UINT)pin;
 io_set(value? rio->SET: rio->CLEAR, pin_mask);
-Cpu::DataSyncBarrier();
 }
 
 VOID GpioHost::SetInterruptHandler(GpioRp1Pin pin, IRQ_HANDLER handler, VOID* param, GpioIrqMode mode)

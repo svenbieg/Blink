@@ -36,29 +36,15 @@ UTF8
 // Stream
 //========
 
-class Stream: public Object
+class Stream
 {
 public:
 	// Using
 	using StreamFormat=Storage::Streams::StreamFormat;
 
 	// Common
-	StreamFormat GetStreamFormat()const { return m_StreamFormat; }
-	VOID SetStreamFormat(StreamFormat Format) { m_StreamFormat=Format; }
-
-protected:
-	// Using
-	#ifdef _UNICODE
-	static constexpr StreamFormat DefaultStreamFormat=StreamFormat::Unicode;
-	#else
-	static constexpr StreamFormat DefaultStreamFormat=StreamFormat::Ansi;
-	#endif
-
-	// Con-/Destructors
-	Stream(StreamFormat Format=DefaultStreamFormat): m_StreamFormat(Format) {}
-
-	// Common
-	StreamFormat m_StreamFormat;
+	virtual StreamFormat GetStreamFormat()const=0;
+	virtual VOID SetStreamFormat(StreamFormat Format)=0;
 };
 
 
@@ -66,7 +52,7 @@ protected:
 // Input-Stream
 //==============
 
-class InputStream: public virtual Stream
+class InputStream: public Stream
 {
 public:
 	// Common
@@ -79,7 +65,7 @@ public:
 // Output-Stream
 //===============
 
-class OutputStream: public virtual Stream
+class OutputStream: public Stream
 {
 public:
 	// Common
@@ -92,11 +78,19 @@ public:
 // Random-Access-Stream
 //======================
 
-class RandomAccessStream: public InputStream, public OutputStream
+class RandomAccessStream: public Object, public InputStream, public OutputStream
 {
+public:
+	// Common
+	StreamFormat GetStreamFormat()const override { return m_StreamFormat; }
+	VOID SetStreamFormat(StreamFormat Format)override { m_StreamFormat=Format; }
+
 protected:
 	// Con-/Destructors
-	RandomAccessStream(StreamFormat Format=DefaultStreamFormat): Stream(Format) {}
+	RandomAccessStream(StreamFormat Format=StreamFormat::UTF8): m_StreamFormat(Format) {}
+
+	// Common
+	StreamFormat m_StreamFormat;
 };
 
 
@@ -104,12 +98,16 @@ protected:
 // Seekable
 //==========
 
-class Seekable: public InputStream, public OutputStream
+class Seekable: public RandomAccessStream
 {
 public:
 	// Common
 	virtual FILE_SIZE GetSize()=0;
 	virtual BOOL Seek(FILE_SIZE Position)=0;
+
+protected:
+	// Con-/Destructors
+	Seekable(StreamFormat Format=StreamFormat::UTF8): RandomAccessStream(Format) {}
 };
 
 }}

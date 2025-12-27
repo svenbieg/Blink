@@ -28,7 +28,7 @@ constexpr WORD WORD_MAX=(WORD)-1;
 typedef unsigned __LONG int DWORD;
 typedef unsigned __LONG_LONG int QWORD;
 
-typedef __SIZE_T SIZE_T;
+typedef __LONG_LONG unsigned int SIZE_T;
 constexpr SIZE_T SIZE_MAX=(SIZE_T)-1;
 
 typedef __FILE_SIZE_T FILE_SIZE;

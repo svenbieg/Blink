@@ -5,6 +5,15 @@
 #pragma once
 
 
+//=======
+// Using
+//=======
+
+#ifndef __ASSEMBLER__
+#include "TypeHelper.h"
+#endif
+
+
 //========
 // Macros
 //========
@@ -33,8 +42,6 @@
 #endif
 
 #else
-
-#include "TypeHelper.h"
 
 #define CONST_EXPR(Type, Name, Value) constexpr Type Name=Value;
 

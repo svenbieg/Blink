@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(NinjaBuild)'=='true'">
     <ProjectName>$(MSBuildProjectName)</ProjectName>
     <ProjectDir>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)'))\</ProjectDir>
@@ -11,6 +15,9 @@
     <HomePath>$(HOMEDRIVE)$(HOMEPATH)\</HomePath>
     <IntDir>$(SolutionDir)$(Configuration)\$(Platform)\</IntDir>
     <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\</OutDir>
+    <TargetExt>.bin</TargetExt>
+    <TargetName>$(ProjectName)</TargetName>
+    <TargetType>Binary</TargetType>
     <Timestamp>$([System.DateTime]::Now.ToString("yyyy-MM-dd HH:mm:ss"))</Timestamp>
   </PropertyGroup>
 

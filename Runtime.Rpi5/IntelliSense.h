@@ -9,18 +9,10 @@
 // Forward-Declarations
 //======================
 
-#define __GNUC__ 14
-#define __GNUC_MINOR__ 2
-
+#define __FILE_SIZE_T unsigned long long int
+#define __ISENSE_T unsigned int
 #define __LONG long
 #define __LONG_LONG long long
-#define __LONG_MAX__ 0x7FFFFFFFFFFFFFFF
-
-#define __size_t unsigned int
-#define __SIZE_T unsigned long long int
-#define __SIZEOF_POINTER__ 8
-
-#define __FILE_SIZE_T unsigned long long int
 
 
 //=======

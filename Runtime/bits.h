@@ -19,6 +19,12 @@
 
 typedef struct
 {
+uint8_t mask;
+uint8_t shift;
+}bits8_t;
+
+typedef struct
+{
 uint16_t mask;
 uint8_t shift;
 }bits16_t;
@@ -52,8 +58,15 @@ return bits;
 }
 
 __always_inline void bits_clear(uint32_t& op, uint32_t mask) { op&=~mask; }
-__always_inline uint32_t  bits_get(uint32_t op, uint32_t mask) { return op&mask; }
+__always_inline uint8_t bits_get(uint8_t op, uint8_t mask) { return op&mask; }
+__always_inline uint8_t bits_get(uint8_t op, bits8_t const& bits) { return (op>>bits.shift)&bits.mask; }
+__always_inline uint32_t bits_get(uint32_t op, uint32_t mask) { return op&mask; }
 __always_inline uint32_t bits_get(uint32_t op, bits32_t const& bits) { return (op>>bits.shift)&bits.mask; }
+__always_inline uint16_t bits_long(uint8_t bits0, uint8_t bits8) { return ((uint16_t)bits8<<8)|bits0; }
+__always_inline uint32_t bits_long(uint8_t bits0, uint8_t bits8, uint8_t bits16, uint8_t bits24)
+	{
+	return ((uint32_t)bits24<<24)|((uint32_t)bits16<<16)|((uint32_t)bits8<<8)|bits0;
+	}
 __always_inline void bits_set(uint32_t& op, uint32_t mask) { op|=mask; }
 __always_inline void bits_set(uint32_t& op, uint32_t mask, uint32_t value) { op&=~mask; op|=value; }
 __always_inline void bits_set(uint32_t& op, bits32_t const& bits, uint32_t value) { op&=~(bits.mask<<bits.shift); op|=(value<<bits.shift); }

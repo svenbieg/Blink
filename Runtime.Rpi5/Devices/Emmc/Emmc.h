@@ -60,7 +60,7 @@ constexpr uint32_t CTRL0_POWER_OFF		=0;
 constexpr uint32_t CTRL0_POWER_VDD1		=0xF;
 constexpr uint32_t CTRL0_HCTL_8BIT		=(1<<5);
 constexpr uint32_t CTRL0_HCTL_HS_EN		=(1<<2);
-constexpr uint32_t CTRL0_HCTL_DWIDTH	=(1<<1);
+constexpr uint32_t CTRL0_HCTL_DWIDTH4	=(1<<1);
 
 // CTRL1
 constexpr uint32_t CTRL1_RESET_DATA			=(1<<26);
@@ -174,11 +174,18 @@ constexpr uint32_t CMD_READ_MULTI		=(18<<24)|CMF_RSPNS_48|CMF_CRCCHK|CMF_ISDATA|
 constexpr uint32_t CMD_WRITE_SINGLE		=(24<<24)|CMF_RSPNS_48|CMF_CRCCHK|CMF_ISDATA|CMF_DAT_DIR_WRITE;
 constexpr uint32_t CMD_WRITE_MULTI		=(25<<24)|CMF_RSPNS_48|CMF_CRCCHK|CMF_ISDATA|CMF_DAT_DIR_WRITE|CMF_MULTI_BLOCK|CMF_BLKCNT_EN|CMF_AUTO_CMD_12;
 constexpr uint32_t CMD_IO_RW_DIRECT		=(52<<24)|CMF_RSPNS_48|CMF_CRCCHK|CMF_IXCHK;
+constexpr uint32_t CMD_IO_RW_EXTENDED	=(53<<24)|CMF_RSPNS_48|CMF_CRCCHK|CMF_IXCHK|CMF_ISDATA;
 constexpr uint32_t CMD_APPCMD			=(55<<24)|CMF_RSPNS_48|CMF_CRCCHK;
 
-// CMD_IO_RW_DIRECT
-constexpr uint32_t IO_RW_READ	=(0<<31);
+// CMD_IO_RW
 constexpr uint32_t IO_RW_WRITE	=(1<<31);
+constexpr uint32_t IO_RW_READ	=(0<<31);
+constexpr bits32_t IO_RW_FUNC	={ 0x7, 28 };
+constexpr uint32_t IO_RW_BLK	=(1<<27);
+constexpr uint32_t IO_RW_INCR	=(1<<26);
+constexpr bits32_t IO_RW_ADDR	={ 0x1FFFF, 9};
+constexpr bits32_t IO_RW_COUNT	={ 0x1FF, 0};
+constexpr bits32_t IO_RW_DATA	={ 0xFF, 0};
 
 // CMD_SEND_IF_COND
 constexpr uint32_t IF_COND_DEFAULT	=0x1AA;
@@ -205,35 +212,5 @@ constexpr uint32_t ACMD_SEND_OP_COND	=(41<<24)|CMF_RSPNS_48;
 constexpr uint32_t FN0=0;
 constexpr uint32_t FN1=1;
 constexpr uint32_t FN2=2;
-
-
-//======
-// CCCR
-//======
-
-constexpr uint32_t CCCR_IOENABLE	=0x02;
-constexpr uint32_t CCCR_IOREADY		=0x03;
-constexpr uint32_t CCCR_INTENABLE	=0x04;
-constexpr uint32_t CCCR_INTPEND		=0x05;
-constexpr uint32_t CCCR_IOABORT		=0x06;
-constexpr uint32_t CCCR_BUSIFC		=0x07;
-constexpr uint32_t CCCR_CAPABILITY	=0x08;
-constexpr uint32_t CCCR_HIGHSPEED	=0x13;
-
-
-//======
-// FBR1
-//======
-
-constexpr uint32_t FBR1_BLKSIZE0		=0x110;
-constexpr uint32_t FBR1_BLKSIZE1		=0x111;
-
-
-//======
-// FBR2
-//======
-
-constexpr uint32_t FBR2_BLKSIZE0		=0x210;
-constexpr uint32_t FBR2_BLKSIZE1		=0x211;
 
 }}
