@@ -9,11 +9,11 @@
 // Using
 //=======
 
-#include <assert.h>
-#include <cxxabi.h>
 #include "Concurrency/Task.h"
 #include "Devices/System/System.h"
 #include "Storage/Encoding/Dwarf.h"
+#include <assert.h>
+#include <cxxabi.h>
 
 using namespace Concurrency;
 using namespace Devices::System;
@@ -106,8 +106,8 @@ if(m_Destructor)
 {
 m_Thrown=thrown;
 m_Type=type;
-Registers[__builtin_eh_return_data_regno(0)]=(SIZE_T)thrown;
-Registers[__builtin_eh_return_data_regno(1)]=type_id;
+Registers[0]=(SIZE_T)thrown;
+Registers[1]=type_id;
 Registers[EXC_REG_RETURN]=landing_pad;
 exc_restore_context(&Frame);
 System::Restart();
@@ -135,8 +135,9 @@ ParseInstructions(m_Context.CommonInstructions, m_Context.CommonInstructionsLeng
 ParseInstructions(m_Context.FrameInstructions, m_Context.FrameInstructionsLength, code_offset, &m_Context);
 if(m_Context.Personality)
 	{
-	auto func=(Personality)m_Context.Personality;
-	func(0, 0, 0, this, &m_Context);
+	auto personality=(Personality)m_Context.Personality;
+	m_Context.Personality=0;
+	personality(0, 0, 0, this, &m_Context);
 	}
 Registers[EXC_REG_STACK]+=m_Context.StackOffset;
 exc_resume(&Frame, (SIZE_T)_Unwind_Raise, this);

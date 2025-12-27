@@ -9,10 +9,12 @@
 // Using
 //=======
 
-#include <assert.h>
-#include <new>
 #include "Devices/System/System.h"
 #include "Storage/Encoding/Dwarf.h"
+#include "BitHelper.h"
+#include "MemoryHelper.h"
+#include <assert.h>
+#include <new>
 
 using namespace Devices::System;
 using namespace Storage::Encoding;
@@ -22,7 +24,7 @@ using namespace Storage::Encoding;
 // Settings
 //==========
 
-constexpr UINT64 CATCH_ANY=0x1301FFFF00000000ULL;
+constexpr UINT64 CATCH_ANY=0xFFFFFF0000000000ULL;
 
 
 //===========
@@ -39,7 +41,7 @@ extern "C" {
 VOID* __cxa_allocate_exception(SIZE_T thrown_size)noexcept
 {
 SIZE_T size=sizeof(UnwindException)+thrown_size;
-auto exc=(UnwindException*)malloc(size);
+auto exc=(UnwindException*)MemoryHelper::Allocate(size);
 if(!exc)
 	System::Restart();
 return (BYTE*)exc+sizeof(UnwindException);
@@ -140,9 +142,9 @@ while(lsda.GetPosition()<callsite_end)
 		Dwarf catch_type_entry(types_pos-type_id*type_info_len);
 		auto catch_id=catch_type_entry.ReadEncoded(types_enc);
 		TypeInfo const* catch_type=thrown_type;
-		if(catch_id!=CATCH_ANY)
+		if(!BitHelper::Get(catch_id, CATCH_ANY))
 			catch_type=(TypeInfo const*)catch_id;
-		if(catch_type->TryUpcast(thrown_type, &thrown))
+		if(thrown_type->TryUpcast(catch_type, &thrown))
 			{
 			exc->Catch(lp_start+lp_offset, type_id, catch_type, thrown);
 			System::Restart();
@@ -150,7 +152,7 @@ while(lsda.GetPosition()<callsite_end)
 		auto next_action_offset=action.ReadSigned();
 		if(next_action_offset==0)
 			break;
-		action_pos+=next_action_offset;
+		action_pos+=next_action_offset+1;
 		}
 	}
 }

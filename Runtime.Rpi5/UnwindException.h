@@ -9,8 +9,8 @@
 // Using
 //=======
 
-#include <except.h>
 #include "TypeInfo.h"
+#include <except.h>
 
 
 //=========
