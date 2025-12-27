@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\Runtime\Configuration\Platform.props" />
+  <Import Project="..\Runtime.Rpi5\Configuration\Platform.props" />
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0A8C397A-DB1A-41FA-966B-358CE4352EB4}</ProjectGuid>
   </PropertyGroup>
