@@ -17,20 +17,15 @@
     <None Include="$(MSBuildThisFileDirectory)Configuration\Default.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Default.targets" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\NinjaBuild.targets" />
-    <None Include="$(MSBuildThisFileDirectory)Configuration\Platform.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Platform.targets" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.targets" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)asm.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)assert.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)attr.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)bits.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)cassert" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)cmath" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)cstddef" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cxxabi.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)heap.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
@@ -38,19 +33,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mutex" />
     <ClInclude Include="$(MSBuildThisFileDirectory)new" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mutex" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)stdbool.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)stddef.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stdexcept" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)stdint.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)stdlib.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\RingBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\InputBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\OutputBuffer.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)string.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TypeInfo.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)type_traits" />
     <ClInclude Include="$(MSBuildThisFileDirectory)UI\Console.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)utility" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.cpp" />
@@ -61,7 +49,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\RingBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\InputBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\OutputBuffer.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)string.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)string.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TypeInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)UI\Console.cpp" />
   </ItemGroup>

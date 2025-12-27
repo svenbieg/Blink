@@ -5,15 +5,15 @@
     <AdditionalOptions>$(AdditionalOptions) /Zc:__cplusplus /std:c++20</AdditionalOptions>
     <CompilerFlags>$(CompilerFlags) -fdata-sections -ffunction-sections</CompilerFlags>
     <CompilerFlags>$(CompilerFlags) -fno-builtin -funwind-tables -nostartfiles</CompilerFlags>
-    <CompilerFlags>$(CompilerFlags) -nostdinc</CompilerFlags>
     <CompilerFlags>$(CompilerFlags) -O0</CompilerFlags>
     <CompilerFlagsCpp>$(CompilerFlagsCpp) -std=c++20</CompilerFlagsCpp>
-    <CompilerFlagsCpp>$(CompilerFlagsCpp) -nostdinc++</CompilerFlagsCpp>
     <CompilerFlagsCpp>$(CompilerFlagsCpp) -Wno-multichar</CompilerFlagsCpp>
-    <LinkerFlags>$(LinkerFlags) --eh-frame-hdr</LinkerFlags>
-    <LinkerFlags>$(LinkerFlags) --gc-sections</LinkerFlags>
-    <LinkerFlags>$(LinkerFlags) -nostdlib</LinkerFlags>
+    <LinkerFlags>$(LinkerFlags) --gc-sections --nostdlib --eh-frame-hdr</LinkerFlags>
     <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(SolutionDir);$(ProjectDir)</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(CompilerPath)$(CompilerName)\include\</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(CompilerPath)$(CompilerName)\include\c++\$(CompilerVersion)\</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(CompilerPath)$(CompilerName)\include\c++\$(CompilerVersion)\$(CompilerName)\</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(CompilerPath)lib\gcc\$(CompilerName)\$(CompilerVersion)\include\</NMakeIncludeSearchPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">

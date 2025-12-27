@@ -29,7 +29,6 @@
       <PreprocessorArg Condition="'@(PreprocessorList)'!=''">-D@(PreprocessorList->'%(Identity)', ' -D')</PreprocessorArg>
       <PreprocessorArg>$([System.String]::Copy('$(PreprocessorArg)').Replace('"', '\"'))</PreprocessorArg>
       <LinkerScriptArg Condition="'@(SourceListLdIn)'!=''">-T@(SourceListLdIn->'%(OutputFileName)', ' -T')</LinkerScriptArg>
-      <NinjaAssembleC Condition="'$(Configuration)'=='Debug' AND '@(SourceListC)'!=''">@(SourceListC->'build %(OutputFileName).S: .c.o.S %(InputFileName)', '%0D%0A')</NinjaAssembleC>
       <NinjaCompileC Condition="'@(SourceListC)'!=''">@(SourceListC->'build %(OutputFileName): .c.o %(InputFileName)', '%0D%0A')</NinjaCompileC>
       <NinjaCompileCpp Condition="'@(SourceListCpp)'!=''">@(SourceListCpp->'build %(OutputFileName): .cpp.o %(InputFileName)', '%0D%0A')</NinjaCompileCpp>
       <NinjaCompileIn Condition="'@(SourceListLdIn)'!=''">@(SourceListLdIn->'build %(OutputFileName): .ld %(InputFileName)', '%0D%0A')</NinjaCompileIn>
@@ -52,10 +51,6 @@
         <Command>$(CompilerPrefix)gcc -MD -MF $out.d -c $FLAGS $FLAGS_C $PREPROC $INCLUDE -o $out $in</Command>
         <Dependency>$out.d</Dependency>
       </NinjaRules>
-      <NinjaRules Include=".c.o.S" Condition="'$(NinjaAssembleC)'!=''">
-        <Command>$(CompilerPrefix)g++ -MD -MF $out.d -S $FLAGS $FLAGS_CPP $PREPROC $INCLUDE -o $out $in</Command>
-        <Dependency>$out.d</Dependency>
-      </NinjaRules>
       <NinjaRules Include=".cpp.o" Condition="'$(NinjaCompileCpp)'!=''">
         <Command>$(CompilerPrefix)g++ -MD -MF $out.d -c $FLAGS $FLAGS_CPP $PREPROC $INCLUDE -o $out $in</Command>
         <Dependency>$out.d</Dependency>
@@ -65,8 +60,7 @@
         <Dependency>$out.d</Dependency>
       </NinjaRules>
       <NinjaRules Include=".elf" Condition="'$(NinjaLink)'!=''">
-        <Command Condition="'$(UseStdlib)'=='true'">$(CompilerPrefix)ld -o $out $FLAGS_LD $SCRIPTS $CRTBEGIN $in --start-group $LIBS --end-group $CRTEND</Command>
-        <Command Condition="'$(UseStdlib)'!='true'">$(CompilerPrefix)ld -o $out $FLAGS_LD $SCRIPTS $in</Command>
+        <Command>$(CompilerPrefix)ld -o $out $FLAGS_LD $SCRIPTS $CRTBEGIN $in --start-group $LIBS --end-group $CRTEND</Command>
       </NinjaRules>
       <NinjaRules Include=".elf.txt" Condition="'$(NinjaHeaders)'!=''">
         <Command>cmd /c $(CompilerPrefix)objdump -h $in > $out</Command>
@@ -99,7 +93,6 @@
       <NinjaLines Include="%0D%0A" />
     </ItemGroup>
     <ItemGroup>
-      <NinjaLines Include="$(NinjaAssembleC)" Condition="'$(NinjaAssembleC)'!=''" />
       <NinjaLines Include="$(NinjaCompileS)" Condition="'$(NinjaCompileS)'!=''" />
       <NinjaLines Include="$(NinjaCompileC)" Condition="'$(NinjaCompileC)'!=''" />
       <NinjaLines Include="$(NinjaCompileCpp)" Condition="'$(NinjaCompileCpp)'!=''" />

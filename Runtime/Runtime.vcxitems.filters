@@ -1,23 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)assert.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)stdbool.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)stdint.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)stdlib.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)string.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TypeInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)asm.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cxxabi.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)cassert" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)cmath" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mutex" />
     <ClInclude Include="$(MSBuildThisFileDirectory)new" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mutex" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stdexcept" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)type_traits" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)utility" />
     <ClInclude Include="$(MSBuildThisFileDirectory)io.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)bits.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)attr.h" />
@@ -37,8 +28,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.h">
       <Filter>Concurrency</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)cstddef" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)stddef.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props">
@@ -54,9 +43,6 @@
       <Filter>Configuration</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Default.targets">
-      <Filter>Configuration</Filter>
-    </None>
-    <None Include="$(MSBuildThisFileDirectory)Configuration\Platform.props">
       <Filter>Configuration</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Platform.targets">
@@ -79,7 +65,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)stdlib.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TypeInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)new.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)string.c" />
     <ClCompile Include="$(MSBuildThisFileDirectory)cxxabi.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\RingBuffer.cpp">
       <Filter>Storage</Filter>
@@ -97,6 +82,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.cpp">
       <Filter>Concurrency</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)string.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">

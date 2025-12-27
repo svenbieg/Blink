@@ -2,22 +2,22 @@
 // stdlib.cpp
 //============
 
-#include <stdlib.h>
+#include "Platform.h"
 
 
 //=======
 // Using
 //=======
 
-#include <heap.h>
 #include "Concurrency/CriticalMutex.h"
 #include "Concurrency/WriteLock.h"
 #include "Devices/System/Cpu.h"
-#include "Devices/System/System.h"
+#include "UI/Console.h"
 #include "Exception.h"
+#include "heap.h"
 
 using namespace Concurrency;
-using namespace Devices::System;
+using namespace UI;
 
 
 //=========
@@ -30,40 +30,19 @@ heap_t* g_heap=nullptr;
 CriticalMutex g_heap_mutex;
 
 
-//===========
-// Namespace
-//===========
-
-extern "C" {
-
-
 //========
 // Common
 //========
 
-void abort()
+extern "C" VOID __assert_func(LPCSTR file, INT line, LPCSTR func, LPCSTR expr)
 {
+Console::Print("%s (%i) - func: assert(%s)\n", file, line, func, expr);
 throw AbortException();
 }
 
-void* aligned_alloc(size_t align, size_t size)
+extern "C" VOID abort()
 {
-WriteLock lock(g_heap_mutex);
-return heap_alloc_aligned(g_heap, size, align);
-}
-
-void free(void* buf)
-{
-WriteLock lock(g_heap_mutex);
-heap_free(g_heap, buf);
-}
-
-void* malloc(size_t size)
-{
-WriteLock lock(g_heap_mutex);
-return heap_alloc(g_heap, size);
-}
-
+throw AbortException();
 }
 
 VOID* Allocate(SIZE_T size)
@@ -76,6 +55,12 @@ VOID* AllocateAligned(SIZE_T size, SIZE_T align)
 {
 WriteLock lock(g_heap_mutex);
 return heap_alloc_aligned(g_heap, size, align);
+}
+
+extern "C" VOID free(VOID* buf)
+{
+WriteLock lock(g_heap_mutex);
+heap_free(g_heap, buf);
 }
 
 VOID Free(VOID* buf)
