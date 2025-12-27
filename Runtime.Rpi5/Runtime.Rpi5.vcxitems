@@ -52,7 +52,6 @@
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Debug.cfg" />
-    <None Include="$(MSBuildThisFileDirectory)Configuration\Default.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Platform.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.targets" />

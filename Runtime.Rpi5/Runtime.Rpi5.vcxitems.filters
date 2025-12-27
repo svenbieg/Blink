@@ -120,9 +120,6 @@
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props">
       <Filter>Configuration</Filter>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)Configuration\Default.props">
-      <Filter>Configuration</Filter>
-    </None>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Platform.props">
       <Filter>Configuration</Filter>
     </None>
