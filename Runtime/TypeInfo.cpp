@@ -65,11 +65,9 @@ class __class_type_info: public TypeInfo
 {
 public:
 	// Common
-	BOOL TryUpcast(TypeInfo const* Type, VOID** Thrown)const noexcept override
+	virtual BOOL TryUpcast(TypeInfo const* Type, VOID** Thrown)const noexcept override
 		{
-		if(*Type==*this)
-			return true;
-		return Type->TryUpcast(this, Thrown);
+		return (*Type==*this);
 		}
 };
 
@@ -90,7 +88,7 @@ private:
 
 BOOL __si_class_type_info::TryUpcast(TypeInfo const* type, VOID** obj)const noexcept
 {
-if(*m_Info==*type)
+if(*this==*type)
 	return true;
 return m_Info->TryUpcast(type, obj);
 }
@@ -141,7 +139,7 @@ class __enum_type_info: public TypeInfo
 {
 public:
 	// Common
-	BOOL TryUpcast(TypeInfo const* Type, VOID** Thrown)const noexcept override
+	virtual BOOL TryUpcast(TypeInfo const* Type, VOID** Thrown)const noexcept override
 		{
 		return (*Type==*this);
 		}
@@ -164,7 +162,7 @@ private:
 
 BOOL __si_enum_type_info::TryUpcast(TypeInfo const* type, VOID** obj)const noexcept
 {
-if(*m_Info==*type)
+if(*this==*type)
 	return true;
 return m_Info->TryUpcast(type, obj);
 }
