@@ -9,10 +9,10 @@
 // Using
 //=======
 
-#include <base.h>
-#include <io.h>
-#include <new>
 #include "Concurrency/ServiceTask.h"
+#include "Devices/IoHelper.h"
+#include <base.h>
+#include <new>
 
 using namespace Concurrency;
 using namespace Devices::Gpio;
@@ -32,12 +32,12 @@ namespace Devices {
 // Settings
 //==========
 
-constexpr UINT UART_CLOCK=50000000;
+constexpr UINT UART_CLOCK			=50'000'000;
 
-constexpr UINT UART_INPUT_BUF=48;
-constexpr UINT UART_OUTPUT_BUF=32;
+constexpr UINT UART_INPUT_BUF		=48;
+constexpr UINT UART_OUTPUT_BUF		=32;
 
-constexpr UINT UART_INPUT_RING=UART_INPUT_BUF*4;
+constexpr UINT UART_INPUT_RING		=UART_INPUT_BUF*4;
 
 
 //======
@@ -52,9 +52,9 @@ GpioRp1Pin RX_PIN;
 GpioRp1PinMode TX_ALT;
 GpioRp1PinMode RX_ALT;
 Rp1Irq IRQ;
-}uart_info_t;
+}UART_INFO;
 
-const uart_info_t UART_DEVICES[UART_COUNT]=
+constexpr UART_INFO UART_DEVICES[UART_COUNT]=
 	{
 	{ RP1_UART0_BASE, GpioRp1Pin::Gpio14, GpioRp1Pin::Gpio15, GpioRp1PinMode::Alt4, GpioRp1PinMode::Alt4, Rp1Irq::UArt0 },
 	{ RP1_UART1_BASE, GpioRp1Pin::Gpio0, GpioRp1Pin::Gpio1, GpioRp1PinMode::Alt2, GpioRp1PinMode::Alt2, Rp1Irq::UArt1 },
@@ -70,49 +70,49 @@ const uart_info_t UART_DEVICES[UART_COUNT]=
 
 typedef struct
 {
-rw32_t DATA;
-rw32_t STATUS;
-rw32_t RES0[4];
-rw32_t FLAGS;
-rw32_t RES1;
-rw32_t ILPR;
-rw32_t IBRD;
-rw32_t FBRD;
-rw32_t LCRH;
-rw32_t CTRL;
-rw32_t IFLS;
-rw32_t IMSC;
-rw32_t RIS;
-rw32_t MIS;
-rw32_t ICR;
-rw32_t DMACR;
-}pl011_regs_t;
+RW32 DATA;
+RW32 STATUS;
+RW32 RES0[4];
+RW32 FLAGS;
+RW32 RES1;
+RW32 ILPR;
+RW32 IBRD;
+RW32 FBRD;
+RW32 LCRH;
+RW32 CTRL;
+RW32 IFLS;
+RW32 IMSC;
+RW32 RIS;
+RW32 MIS;
+RW32 ICR;
+RW32 DMACR;
+}PL011_REGS;
 
-constexpr uint32_t CTRL_RX_ENABLE		=(1<<9);
-constexpr uint32_t CTRL_TX_ENABLE		=(1<<8);
-constexpr uint32_t CTRL_ENABLE			=(1<<0);
+constexpr UINT CTRL_RX_ENABLE		=(1<<9);
+constexpr UINT CTRL_TX_ENABLE		=(1<<8);
+constexpr UINT CTRL_ENABLE			=(1<<0);
 
-constexpr uint32_t FLAG_TX_EMPTY		=(1<<7);
-constexpr uint32_t FLAG_RX_FULL			=(1<<6);
-constexpr uint32_t FLAG_TX_FULL			=(1<<5);
-constexpr uint32_t FLAG_RX_EMPTY		=(1<<4);
-constexpr uint32_t FLAG_BUSY			=(1<<3);
+constexpr UINT FLAG_TX_EMPTY		=(1<<7);
+constexpr UINT FLAG_RX_FULL			=(1<<6);
+constexpr UINT FLAG_TX_FULL			=(1<<5);
+constexpr UINT FLAG_RX_EMPTY		=(1<<4);
+constexpr UINT FLAG_BUSY			=(1<<3);
 
-constexpr bits32_t IFLS_RXIFSEL			={ 7, 3 };
-constexpr bits32_t IFLS_TXIFSEL			={ 7, 0 };
-constexpr uint32_t IFLS_IFSEL_1_8		=0;
-constexpr uint32_t IFLS_IFSEL_1_4		=1;
-constexpr uint32_t IFLS_IFSEL_1_2		=2;
-constexpr uint32_t IFLS_IFSEL_3_4		=3;
-constexpr uint32_t IFLS_IFSEL_7_8		=4;
+constexpr BITS IFLS_RXIFSEL			={ 7, 3 };
+constexpr BITS IFLS_TXIFSEL			={ 7, 0 };
+constexpr UINT IFLS_IFSEL_1_8		=0;
+constexpr UINT IFLS_IFSEL_1_4		=1;
+constexpr UINT IFLS_IFSEL_1_2		=2;
+constexpr UINT IFLS_IFSEL_3_4		=3;
+constexpr UINT IFLS_IFSEL_7_8		=4;
 
-constexpr uint32_t IMSC_INT_OE			=(1<<10);
-constexpr uint32_t IMSC_INT_RT			=(1<<6);
-constexpr uint32_t IMSC_INT_TX			=(1<<5);
-constexpr uint32_t IMSC_INT_RX			=(1<<4);
+constexpr UINT IMSC_INT_OE			=(1<<10);
+constexpr UINT IMSC_INT_RT			=(1<<6);
+constexpr UINT IMSC_INT_TX			=(1<<5);
+constexpr UINT IMSC_INT_RX			=(1<<4);
 
-constexpr uint32_t LCRH_WORD_LEN_8		=3<<5;
-constexpr uint32_t LCRH_FIFO_ENABLE		=1<<4;
+constexpr UINT LCRH_WORD_LEN_8		=3<<5;
+constexpr UINT LCRH_FIFO_ENABLE		=1<<4;
 
 
 //===========
@@ -233,24 +233,24 @@ serial->OnInterrupt();
 VOID SerialPort::OnInterrupt()
 {
 SpinLock lock(m_CriticalSection);
-auto uart=(pl011_regs_t*)m_Device;
+auto uart=(PL011_REGS*)m_Device;
 Status status=Status::Success;
-while(!io_read(uart->FLAGS, FLAG_RX_EMPTY))
+while(!IoHelper::Read(uart->FLAGS, FLAG_RX_EMPTY))
 	{
-	UINT value=io_read(uart->DATA);
+	UINT value=IoHelper::Read(uart->DATA);
 	if(!m_InputBuffer->Write((BYTE)value))
 		status=Status::BufferOverrun;
 	}
 while(m_OutputBuffer->Available())
 	{
-	if(io_read(uart->FLAGS, FLAG_TX_FULL))
+	if(IoHelper::Read(uart->FLAGS, FLAG_TX_FULL))
 		break;
 	BYTE value=0;
 	m_OutputBuffer->Read(&value, 1);
-	io_write(uart->DATA, value);
+	IoHelper::Write(uart->DATA, value);
 	}
-UINT mis=io_read(uart->MIS);
-io_write(uart->ICR, mis); // ACK
+UINT mis=IoHelper::Read(uart->MIS);
+IoHelper::Write(uart->ICR, mis); // ACK
 m_Signal.Trigger(status);
 }
 
@@ -261,20 +261,20 @@ m_GpioHost->SetPinMode(UART_DEVICES[m_Id].TX_PIN, UART_DEVICES[m_Id].TX_ALT);
 m_GpioHost->SetPinMode(UART_DEVICES[m_Id].RX_PIN, UART_DEVICES[m_Id].RX_ALT, GpioPullMode::PullUp);
 m_PcieHost=PcieHost::Get();
 m_PcieHost->SetInterruptHandler(UART_DEVICES[m_Id].IRQ, HandleInterrupt, this);
-auto uart=(pl011_regs_t*)m_Device;
-if(io_read(uart->FLAGS, FLAG_BUSY))
+auto uart=(PL011_REGS*)m_Device;
+if(IoHelper::Read(uart->FLAGS, FLAG_BUSY))
 	throw DeviceNotReadyException();
-io_write(uart->IMSC, 0);
-io_write(uart->ICR, 0x7FF);
-io_write(uart->IBRD, BAUD_INT(UART_CLOCK, (UINT)m_BaudRate));
-io_write(uart->FBRD, BAUD_FRAC(UART_CLOCK, (UINT)m_BaudRate));
-io_write(uart->LCRH, LCRH_WORD_LEN_8|LCRH_FIFO_ENABLE);
+IoHelper::Write(uart->IMSC, 0);
+IoHelper::Write(uart->ICR, 0x7FF);
+IoHelper::Write(uart->IBRD, BAUD_INT(UART_CLOCK, (UINT)m_BaudRate));
+IoHelper::Write(uart->FBRD, BAUD_FRAC(UART_CLOCK, (UINT)m_BaudRate));
+IoHelper::Write(uart->LCRH, LCRH_WORD_LEN_8|LCRH_FIFO_ENABLE);
 UINT ifls=0;
-bits_set(ifls, IFLS_RXIFSEL, IFLS_IFSEL_3_4);
-bits_set(ifls, IFLS_TXIFSEL, IFLS_IFSEL_1_4);
-io_write(uart->IFLS, ifls);
-io_write(uart->IMSC, IMSC_INT_OE|IMSC_INT_RT|IMSC_INT_TX|IMSC_INT_RX);
-io_set(uart->CTRL, CTRL_RX_ENABLE|CTRL_TX_ENABLE|CTRL_ENABLE);
+BitHelper::Set(ifls, IFLS_RXIFSEL, IFLS_IFSEL_3_4);
+BitHelper::Set(ifls, IFLS_TXIFSEL, IFLS_IFSEL_1_4);
+IoHelper::Write(uart->IFLS, ifls);
+IoHelper::Write(uart->IMSC, IMSC_INT_OE|IMSC_INT_RT|IMSC_INT_TX|IMSC_INT_RX);
+IoHelper::Set(uart->CTRL, CTRL_RX_ENABLE|CTRL_TX_ENABLE|CTRL_ENABLE);
 auto task=Task::Get();
 SpinLock spin_lock(m_CriticalSection);
 while(!task->Cancelled)
@@ -288,11 +288,11 @@ while(!task->Cancelled)
 		}
 	while(m_OutputBuffer->Available())
 		{
-		if(io_read(uart->FLAGS, FLAG_TX_FULL))
+		if(IoHelper::Read(uart->FLAGS, FLAG_TX_FULL))
 			break;
 		BYTE value=0;
 		m_OutputBuffer->Read(&value, 1);
-		io_write(uart->DATA, value);
+		IoHelper::Write(uart->DATA, value);
 		}
 	if(!read)
 		m_Signal.Wait(spin_lock);

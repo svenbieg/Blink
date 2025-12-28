@@ -9,8 +9,6 @@
 // Using
 //=======
 
-#include <irq.h>
-#include <task.h>
 #include "Concurrency/Task.h"
 #include "Devices/Timers/SystemTimer.h"
 

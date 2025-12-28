@@ -28,7 +28,7 @@ constexpr WORD WORD_MAX=(WORD)-1;
 typedef unsigned __LONG int DWORD;
 typedef unsigned __LONG_LONG int QWORD;
 
-typedef __LONG_LONG unsigned int SIZE_T;
+typedef __ADDR_T SIZE_T;
 constexpr SIZE_T SIZE_MAX=(SIZE_T)-1;
 
 typedef __FILE_SIZE_T FILE_SIZE;
@@ -45,6 +45,7 @@ constexpr INT INT_MIN=-0x7FFFFFFF;
 
 typedef unsigned int UINT;
 constexpr UINT UINT_MAX=(UINT)-1;
+typedef UINT UINT32;
 
 typedef __LONG_LONG int INT64;
 
@@ -119,6 +120,14 @@ public:
 		}
 	static inline UINT HighLong(UINT64 Value) { return (UINT)(Value>>32); }
 	static inline UINT LowLong(UINT64 Value) { return (UINT)Value; }
+	static inline WORD MakeLong(BYTE Low, BYTE High)
+		{
+		return (((WORD)High)<<8)|Low;
+		}
+	static inline UINT MakeLong(BYTE Low, BYTE High8, BYTE High16, BYTE High24)
+		{
+		return (((UINT)High24)<<24)|((UINT)High16<<16)|((UINT)High8<<8)|Low;
+		}
 	static inline UINT MakeLong(WORD Low, WORD High)
 		{
 		return (((UINT)High)<<16)|Low;

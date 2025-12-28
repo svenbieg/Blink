@@ -9,8 +9,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)new" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mutex" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stdexcept" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)io.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)bits.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)attr.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\RingBuffer.h">
       <Filter>Storage</Filter>
@@ -27,6 +25,9 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.h">
       <Filter>Concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\IoHelper.h">
+      <Filter>Devices</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -99,6 +100,9 @@
     </Filter>
     <Filter Include="Concurrency">
       <UniqueIdentifier>{81ce712a-769d-4095-9e02-4b7d1167e805}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices">
+      <UniqueIdentifier>{7409c0a8-a473-40b4-8a2d-85d77a29c54c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

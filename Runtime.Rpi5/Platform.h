@@ -9,6 +9,10 @@
 // Forward-Declarations
 //======================
 
+#ifndef __ADDR_T
+#define __ADDR_T unsigned long int
+#endif
+
 #ifndef __COPY_MAX
 #define __COPY_MAX 2
 #endif

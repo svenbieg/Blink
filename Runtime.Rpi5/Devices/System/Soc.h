@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include <io.h>
+#include "Devices/IoHelper.h"
 
 
 //===========
@@ -26,11 +26,11 @@ namespace Devices {
 
 typedef struct
 {
-rw32_t RES;
-rw32_t STEPPING;
-}soc_regs_t;
+RW32 RES;
+RW32 STEPPING;
+}SOC_REGS;
 
 // STEPPING
-constexpr bits32_t SOC_STEPPING={ 0xFF, 0 };
+constexpr BITS SOC_STEPPING={ 0xFF, 0 };
 
 }}

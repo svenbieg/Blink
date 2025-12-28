@@ -9,10 +9,10 @@
 // Using
 //=======
 
+#include "Devices/System/Cpu.h"
+#include "Devices/IoHelper.h"
 #include <assert.h>
 #include <base.h>
-#include <io.h>
-#include "Devices/System/Cpu.h"
 
 using namespace Concurrency;
 
@@ -31,28 +31,28 @@ namespace Devices {
 
 typedef struct
 {
-rw32_t CTRL;
-rw32_t RES0[31];
-rw32_t GROUP[32];
-rw32_t SET_ENABLED[32];
-rw32_t CLEAR_ENABLED[32];
-rw32_t SET_PENDING[32];
-rw32_t CLEAR_PENDING[32];
-rw32_t SET_ACTIVE[32];
-rw32_t CLEAR_ACTIVE[32];
-rw32_t PRIORITY[256];
-rw32_t TARGET[256];
-rw32_t CONFIG[192];
-rw32_t SGIR;
-}gicd_regs_t;
+RW32 CTRL;
+RW32 RES0[31];
+RW32 GROUP[32];
+RW32 SET_ENABLED[32];
+RW32 CLEAR_ENABLED[32];
+RW32 SET_PENDING[32];
+RW32 CLEAR_PENDING[32];
+RW32 SET_ACTIVE[32];
+RW32 CLEAR_ACTIVE[32];
+RW32 PRIORITY[256];
+RW32 TARGET[256];
+RW32 CONFIG[192];
+RW32 SGIR;
+}GICD_REGS;
 
-constexpr uint32_t GICD_CTRL_DISABLE			=0;
-constexpr uint32_t GICD_CTRL_ENABLE_GROUP0		=(1<<0);
-constexpr uint32_t GICD_CTRL_ENABLE_GROUP1		=(1<<1);
-constexpr uint32_t GICD_PRIORITY_DEFAULT		=0xA0A0A0A0;
-constexpr uint32_t GICD_TARGET_CORE0			=0x01010101;
-constexpr uint32_t GICD_CONFIG_LEVEL_TRIGGERED	=0;
-constexpr bits32_t GICD_SGIR_CPU_TARGET_LIST	={ 0xF, 16 };
+constexpr UINT GICD_CTRL_DISABLE			=0;
+constexpr UINT GICD_CTRL_ENABLE_GROUP0		=(1<<0);
+constexpr UINT GICD_CTRL_ENABLE_GROUP1		=(1<<1);
+constexpr UINT GICD_PRIORITY_DEFAULT		=0xA0A0A0A0;
+constexpr UINT GICD_TARGET_CORE0			=0x01010101;
+constexpr UINT GICD_CONFIG_LEVEL_TRIGGERED	=0;
+constexpr BITS GICD_SGIR_CPU_TARGET_LIST	={ 0xF, 16 };
 
 
 //===================
@@ -61,16 +61,16 @@ constexpr bits32_t GICD_SGIR_CPU_TARGET_LIST	={ 0xF, 16 };
 
 typedef struct
 {
-rw32_t CTRL;
-rw32_t PMR;
-rw32_t RES0;
-rw32_t IAR;
-rw32_t EOIR;
-}gicc_regs_t;
+RW32 CTRL;
+RW32 PMR;
+RW32 RES0;
+RW32 IAR;
+RW32 EOIR;
+}GICC_REGS;
 
-constexpr uint32_t GICC_CTRL_ENABLE=1;
-constexpr uint32_t GICC_PMR_PRIORITY=0xF0;
-constexpr uint32_t GICC_IAR_IRQ_MASK=0x3FF;
+constexpr UINT GICC_CTRL_ENABLE		=1;
+constexpr UINT GICC_PMR_PRIORITY	=0xF0;
+constexpr UINT GICC_IAR_IRQ_MASK	=0x3FF;
 
 
 //=============
@@ -79,12 +79,12 @@ constexpr uint32_t GICC_IAR_IRQ_MASK=0x3FF;
 
 extern "C" VOID HandleInterrupt()
 {
-auto gicc=(gicc_regs_t*)ARM_GICC_BASE;
-UINT iar=io_read(gicc->IAR);
-UINT irq=bits_get(iar, GICC_IAR_IRQ_MASK);
+auto gicc=(GICC_REGS*)ARM_GICC_BASE;
+UINT iar=IoHelper::Read(gicc->IAR);
+UINT irq=BitHelper::Get(iar, GICC_IAR_IRQ_MASK);
 assert(irq<IRQ_COUNT);
 Interrupts::HandleInterrupt(irq);
-io_write(gicc->EOIR, iar);
+IoHelper::Write(gicc->EOIR, iar);
 }
 
 
@@ -135,24 +135,24 @@ s_DisableCount[core]--;
 
 VOID Interrupts::Initialize()
 {
-auto gicd=(gicd_regs_t*)ARM_GICD_BASE;
-io_write(gicd->CTRL, GICD_CTRL_DISABLE);
+auto gicd=(GICD_REGS*)ARM_GICD_BASE;
+IoHelper::Write(gicd->CTRL, GICD_CTRL_DISABLE);
 for(UINT u=0; u<IRQ_COUNT/32; u++)
 	{
-	io_write(gicd->CLEAR_ENABLED[u], 0xFFFFFFFF);
-	io_write(gicd->CLEAR_PENDING[u], 0xFFFFFFFF);
-	io_write(gicd->CLEAR_ACTIVE[u], 0xFFFFFFFF);
+	IoHelper::Write(gicd->CLEAR_ENABLED[u], 0xFFFFFFFF);
+	IoHelper::Write(gicd->CLEAR_PENDING[u], 0xFFFFFFFF);
+	IoHelper::Write(gicd->CLEAR_ACTIVE[u], 0xFFFFFFFF);
 	}
 for(UINT u=0; u<IRQ_COUNT/4; u++)
 	{
-	io_write(gicd->PRIORITY[u], GICD_PRIORITY_DEFAULT);
-	io_write(gicd->TARGET[u], GICD_TARGET_CORE0);
+	IoHelper::Write(gicd->PRIORITY[u], GICD_PRIORITY_DEFAULT);
+	IoHelper::Write(gicd->TARGET[u], GICD_TARGET_CORE0);
 	}
 for(UINT u=0; u<IRQ_COUNT/16; u++)
 	{
-	io_write(gicd->CONFIG[u], GICD_CONFIG_LEVEL_TRIGGERED);
+	IoHelper::Write(gicd->CONFIG[u], GICD_CONFIG_LEVEL_TRIGGERED);
 	}
-io_write(gicd->CTRL, GICD_CTRL_ENABLE_GROUP0);
+IoHelper::Write(gicd->CTRL, GICD_CTRL_ENABLE_GROUP0);
 for(UINT core=0; core<CPU_COUNT; core++)
 	s_DisableCount[core]=1;
 InitializeSecondary();
@@ -160,29 +160,29 @@ InitializeSecondary();
 
 VOID Interrupts::InitializeSecondary()
 {
-auto gicc=(gicc_regs_t*)ARM_GICC_BASE;
-io_write(gicc->PMR, GICC_PMR_PRIORITY);
-io_write(gicc->CTRL, GICC_CTRL_ENABLE);
+auto gicc=(GICC_REGS*)ARM_GICC_BASE;
+IoHelper::Write(gicc->PMR, GICC_PMR_PRIORITY);
+IoHelper::Write(gicc->CTRL, GICC_CTRL_ENABLE);
 Enable();
 }
 
 VOID Interrupts::Route(Irq irq, IrqTarget target)
 {
-auto gicd=(gicd_regs_t*)ARM_GICD_BASE;
+auto gicd=(GICD_REGS*)ARM_GICD_BASE;
 UINT reg=(UINT)irq/4;
 UINT id=(UINT)irq%4;
 UINT mask=0xF<<id;
 UINT value=(UINT)target<<id;
-io_write(gicd->TARGET[reg], mask, value);
+IoHelper::Write(gicd->TARGET[reg], mask, value);
 }
 
 VOID Interrupts::Send(Irq irq, IrqTarget target)
 {
-auto gicd=(gicd_regs_t*)ARM_GICD_BASE;
+auto gicd=(GICD_REGS*)ARM_GICD_BASE;
 UINT value=0;
-bits_set(value, GICD_SGIR_CPU_TARGET_LIST, (UINT)target);
-bits_set(value, (UINT)irq);
-io_write(gicd->SGIR, value);
+BitHelper::Set(value, GICD_SGIR_CPU_TARGET_LIST, (UINT)target);
+BitHelper::Set(value, (UINT)irq);
+IoHelper::Write(gicd->SGIR, value);
 }
 
 VOID Interrupts::SetHandler(Irq irq, IRQ_HANDLER handler, VOID* param)
@@ -210,18 +210,18 @@ else
 
 VOID Interrupts::Disable(UINT irq)
 {
-auto gicd=(gicd_regs_t*)ARM_GICD_BASE;
+auto gicd=(GICD_REGS*)ARM_GICD_BASE;
 UINT reg=irq/32;
 UINT mask=1UL<<(irq%32);
-io_write(gicd->CLEAR_ENABLED[reg], mask);
+IoHelper::Write(gicd->CLEAR_ENABLED[reg], mask);
 }
 
 VOID Interrupts::Enable(UINT irq)
 {
-auto gicd=(gicd_regs_t*)ARM_GICD_BASE;
+auto gicd=(GICD_REGS*)ARM_GICD_BASE;
 UINT reg=irq/32;
 UINT mask=1UL<<(irq%32);
-io_write(gicd->SET_ENABLED[reg], mask);
+IoHelper::Write(gicd->SET_ENABLED[reg], mask);
 }
 
 BOOL Interrupts::s_Active[CPU_COUNT]={ false };

@@ -9,7 +9,6 @@
 // Using
 //=======
 
-#include <irq.h>
 #include "Concurrency/Task.h"
 #include "Devices/System/Cpu.h"
 

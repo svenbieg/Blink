@@ -22,13 +22,6 @@ namespace Devices {
 	namespace Gpio {
 
 
-//==========
-// Settings
-//==========
-
-constexpr UINT GPIO_PIN_COUNT=28;
-
-
 //===========
 // Gpio-Host
 //===========
@@ -59,9 +52,9 @@ private:
 	static VOID HandleInterrupt(VOID* Parameter);
 	VOID OnInterrupt();
 	Concurrency::CriticalSection m_CriticalSection;
-	IRQ_HANDLER m_Handlers[GPIO_PIN_COUNT];
+	IRQ_HANDLER m_Handlers[RP1_GPIO_PIN_COUNT];
 	UINT m_IrqMask;
-	VOID* m_Parameters[GPIO_PIN_COUNT];
+	VOID* m_Parameters[RP1_GPIO_PIN_COUNT];
 	Handle<PcieHost> m_PcieHost;
 };
 

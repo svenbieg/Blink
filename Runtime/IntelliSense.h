@@ -25,6 +25,7 @@
 #define __builtin_isnan(f) false
 #define __builtin_isinf(f) false
 #define __builtin_offsetof(type, member) 0
+#define __extension__
 #define __typeof__(x) decltype(x)
 
 #define typeof(x) (TypeInfo const*)nullptr

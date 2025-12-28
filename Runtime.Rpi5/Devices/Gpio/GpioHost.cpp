@@ -9,9 +9,8 @@
 // Using
 //=======
 
-#include <base.h>
-#include <io.h>
 #include "Concurrency/Task.h"
+#include "Devices/IoHelper.h"
 
 using namespace Concurrency;
 using namespace Devices::Pcie;
@@ -33,74 +32,74 @@ constexpr UINT BANK_PIN_COUNT=32;
 
 typedef struct
 {
-rw32_t STATUS;
-rw32_t CTRL;
-}rp1_pin_regs_t;
+RW32 STATUS;
+RW32 CTRL;
+}RP1_PIN_REGS;
 
-constexpr uint32_t CTRL_IRQRESET=(1<<28);
-constexpr uint32_t CTRL_IRQMASK=(0xF<<20);
-constexpr uint32_t CTRL_IRQMASK_EDGE_HIGH=(1<<21);
-constexpr uint32_t CTRL_IRQMASK_EDGE_LOW=(1<<20);
-constexpr bits32_t CTRL_INOVER={ 3, 16 };
-constexpr bits32_t CTRL_OEOVER={ 3, 14 };
-constexpr uint32_t CTRL_OEOVER_DISABLE=2;
-constexpr uint32_t CTRL_OEOVER_ENABLE=3;
-constexpr bits32_t CTRL_OUTOVER={ 3, 12 };
-constexpr uint32_t CTRL_OUTOVER_LOW=2;
-constexpr uint32_t CTRL_OUTOVER_HIGH=3;
-constexpr bits32_t CTRL_FUNCSEL={ 0x1F, 0 };
-constexpr uint32_t CTRL_FUNCSEL_DEFAULT=0x1F;
+constexpr UINT CTRL_IRQRESET=(1<<28);
+constexpr UINT CTRL_IRQMASK=(0xF<<20);
+constexpr UINT CTRL_IRQMASK_EDGE_HIGH=(1<<21);
+constexpr UINT CTRL_IRQMASK_EDGE_LOW=(1<<20);
+constexpr BITS CTRL_INOVER={ 3, 16 };
+constexpr BITS CTRL_OEOVER={ 3, 14 };
+constexpr UINT CTRL_OEOVER_DISABLE=2;
+constexpr UINT CTRL_OEOVER_ENABLE=3;
+constexpr BITS CTRL_OUTOVER={ 3, 12 };
+constexpr UINT CTRL_OUTOVER_LOW=2;
+constexpr UINT CTRL_OUTOVER_HIGH=3;
+constexpr BITS CTRL_FUNCSEL={ 0x1F, 0 };
+constexpr UINT CTRL_FUNCSEL_DEFAULT=0x1F;
 
 constexpr UINT STATUS_INFILTERED=(1<<18);
 
 typedef struct
 {
-rw32_t INTE;
-rw32_t INTF;
-rw32_t INTS;
-}rp1_int_regs_t;
+RW32 INTE;
+RW32 INTF;
+RW32 INTS;
+}RP1_INT_REGS;
 
 typedef struct
 {
-rp1_pin_regs_t PIN[BANK_PIN_COUNT];
-rw32_t INTR;
-rp1_int_regs_t PROC[2];
-rp1_int_regs_t PCIE;
-}rp1_gpio_regs_t;
+RP1_PIN_REGS PIN[BANK_PIN_COUNT];
+RW32 INTR;
+RP1_INT_REGS PROC[2];
+RP1_INT_REGS PCIE;
+}RP1_GPIO_REGS;
 
 typedef struct
 {
-rw32_t VSEL;
-rw32_t PIN[BANK_PIN_COUNT];
-}rp1_pads_regs_t;
+RW32 VSEL;
+RW32 PIN[BANK_PIN_COUNT];
+}RP1_PADS_REGS;
 
-constexpr uint32_t PADS_VSEL_3V3=0;
-constexpr uint32_t PADS_VSEL_1V8=1;
+constexpr UINT PADS_VSEL_3V3=0;
+constexpr UINT PADS_VSEL_1V8=1;
 
-constexpr uint32_t PADS_OUTPUT_DISABLE=(1<<7);
-constexpr uint32_t PADS_INPUT_ENABLE=(1<<6);
-constexpr bits32_t PADS_DRIVE={ 0x3, 3 };
-constexpr uint32_t PADS_DRIVE_2MA=0;
-constexpr uint32_t PADS_DRIVE_4MA=1;
-constexpr uint32_t PADS_DRIVE_8MA=2;
-constexpr uint32_t PADS_DRIVE_12MA=3;
-constexpr bits32_t PADS_PULL={ 0x3, 2 };
-constexpr uint32_t PADS_SCHMITT=(1<<1);
-constexpr uint32_t PADS_SLEWFAST=(1<<0);
+constexpr UINT PADS_OUTPUT_DISABLE=(1<<7);
+constexpr UINT PADS_INPUT_ENABLE=(1<<6);
+constexpr BITS PADS_DRIVE={ 0x3, 3 };
+constexpr UINT PADS_DRIVE_2MA=0;
+constexpr UINT PADS_DRIVE_4MA=1;
+constexpr UINT PADS_DRIVE_8MA=2;
+constexpr UINT PADS_DRIVE_12MA=3;
+constexpr BITS PADS_PULL={ 0x3, 2 };
+constexpr UINT PADS_SCHMITT=(1<<1);
+constexpr UINT PADS_SLEWFAST=(1<<0);
 
 typedef struct
 {
-uint32_t RES0;
-uint32_t RES1;
-rw32_t READ;
-uint32_t RES2[1021];
-rw32_t XOR;
-uint32_t RES3[1023];
-rw32_t SET;
-uint32_t RES4[1023];
-rw32_t CLEAR;
-uint32_t RES5[1023];
-}rp1_rio_regs_t;
+RW32 RES0;
+RW32 RES1;
+RW32 READ;
+RW32 RES2[1021];
+RW32 XOR;
+RW32 RES3[1023];
+RW32 SET;
+RW32 RES4[1023];
+RW32 CLEAR;
+RW32 RES5[1023];
+}RP1_RIO_REGS;
 
 
 //========
@@ -109,66 +108,66 @@ uint32_t RES5[1023];
 
 BOOL GpioHost::DigitalRead(GpioRp1Pin pin)
 {
-auto rio=(rp1_rio_regs_t*)RP1_RIO0_BASE;
+auto rio=(RP1_RIO_REGS*)RP1_RIO0_BASE;
 UINT pin_mask=1UL<<(UINT)pin;
-return io_read(rio->READ, pin_mask)!=0;
+return IoHelper::Read(rio->READ, pin_mask)!=0;
 }
 
 VOID GpioHost::SetPinMode(GpioRp1Pin pin, GpioRp1PinMode mode, GpioPullMode pull_mode)
 {
-auto pads=(rp1_pads_regs_t*)RP1_PADS0_BASE;
-auto gpio=(rp1_gpio_regs_t*)RP1_GPIO0_BASE;
+auto pads=(RP1_PADS_REGS*)RP1_PADS0_BASE;
+auto gpio=(RP1_GPIO_REGS*)RP1_GPIO0_BASE;
 UINT id=(UINT)pin;
 SpinLock lock(m_CriticalSection);
-UINT pad=io_read(pads->PIN[id]);
-UINT ctrl=io_read(gpio->PIN[id].CTRL);
-bits_set(pad, PADS_PULL, (UINT)pull_mode);
+UINT pad=IoHelper::Read(pads->PIN[id]);
+UINT ctrl=IoHelper::Read(gpio->PIN[id].CTRL);
+BitHelper::Set(pad, PADS_PULL, (UINT)pull_mode);
 switch(mode)
 	{
 	case GpioRp1PinMode::Input:
 		{
-		bits_set(pad, PADS_OUTPUT_DISABLE);
-		bits_set(pad, PADS_INPUT_ENABLE);
-		bits_set(ctrl, CTRL_OEOVER, CTRL_OEOVER_DISABLE);
-		bits_set(ctrl, CTRL_FUNCSEL, CTRL_FUNCSEL_DEFAULT);
+		BitHelper::Set(pad, PADS_OUTPUT_DISABLE);
+		BitHelper::Set(pad, PADS_INPUT_ENABLE);
+		BitHelper::Set(ctrl, CTRL_OEOVER, CTRL_OEOVER_DISABLE);
+		BitHelper::Set(ctrl, CTRL_FUNCSEL, CTRL_FUNCSEL_DEFAULT);
 		break;
 		}
 	case GpioRp1PinMode::Output:
 		{
-		bits_clear(pad, PADS_OUTPUT_DISABLE);
-		bits_clear(pad, PADS_INPUT_ENABLE);
-		bits_set(ctrl, CTRL_OEOVER, CTRL_OEOVER_ENABLE);
-		bits_set(ctrl, CTRL_FUNCSEL, CTRL_FUNCSEL_DEFAULT);
+		BitHelper::Clear(pad, PADS_OUTPUT_DISABLE);
+		BitHelper::Clear(pad, PADS_INPUT_ENABLE);
+		BitHelper::Set(ctrl, CTRL_OEOVER, CTRL_OEOVER_ENABLE);
+		BitHelper::Set(ctrl, CTRL_FUNCSEL, CTRL_FUNCSEL_DEFAULT);
 		break;
 		}
 	default:
 		{
 		UINT func=(UINT)mode-(UINT)GpioRp1PinMode::Alt0;
-		bits_clear(pad, PADS_OUTPUT_DISABLE);
-		bits_set(pad, PADS_INPUT_ENABLE);
-		bits_set(ctrl, CTRL_INOVER, 0);
-		bits_set(ctrl, CTRL_OEOVER, 0);
-		bits_set(ctrl, CTRL_OUTOVER, 0);
-		bits_set(ctrl, CTRL_FUNCSEL, func);
+		BitHelper::Clear(pad, PADS_OUTPUT_DISABLE);
+		BitHelper::Set(pad, PADS_INPUT_ENABLE);
+		BitHelper::Set(ctrl, CTRL_INOVER, 0);
+		BitHelper::Set(ctrl, CTRL_OEOVER, 0);
+		BitHelper::Set(ctrl, CTRL_OUTOVER, 0);
+		BitHelper::Set(ctrl, CTRL_FUNCSEL, func);
 		break;
 		}
 	}
-io_write(pads->PIN[id], pad);
-io_write(gpio->PIN[id].CTRL, ctrl);
+IoHelper::Write(pads->PIN[id], pad);
+IoHelper::Write(gpio->PIN[id].CTRL, ctrl);
 }
 
 VOID GpioHost::DigitalWrite(GpioRp1Pin pin, BOOL value)
 {
-auto rio=(rp1_rio_regs_t*)RP1_RIO0_BASE;
+auto rio=(RP1_RIO_REGS*)RP1_RIO0_BASE;
 UINT pin_mask=1UL<<(UINT)pin;
-io_set(value? rio->SET: rio->CLEAR, pin_mask);
+IoHelper::Set(value? rio->SET: rio->CLEAR, pin_mask);
 }
 
 VOID GpioHost::SetInterruptHandler(GpioRp1Pin pin, IRQ_HANDLER handler, VOID* param, GpioIrqMode mode)
 {
 UINT id=(UINT)pin;
 UINT pin_mask=1UL<<id;
-auto gpio=(rp1_gpio_regs_t*)RP1_GPIO0_BASE;
+auto gpio=(RP1_GPIO_REGS*)RP1_GPIO0_BASE;
 SpinLock lock(m_CriticalSection);
 if(handler)
 	{
@@ -183,28 +182,28 @@ if(handler)
 		{
 		case GpioIrqMode::Edge:
 			{
-			flags|=CTRL_IRQMASK_EDGE_HIGH;
-			flags|=CTRL_IRQMASK_EDGE_LOW;
+			FlagHelper::Set(flags, CTRL_IRQMASK_EDGE_HIGH);
+			FlagHelper::Set(flags, CTRL_IRQMASK_EDGE_LOW);
 			break;
 			}
 		case GpioIrqMode::FallingEdge:
 			{
-			flags|=CTRL_IRQMASK_EDGE_LOW;
+			FlagHelper::Set(flags, CTRL_IRQMASK_EDGE_LOW);
 			break;
 			}
 		case GpioIrqMode::RisingEdge:
 			{
-			flags|=CTRL_IRQMASK_EDGE_HIGH;
+			FlagHelper::Set(flags, CTRL_IRQMASK_EDGE_HIGH);
 			break;
 			}
 		}
-	io_set(gpio->PIN[id].CTRL, flags);
-	io_set(gpio->PCIE.INTE, pin_mask);
+	IoHelper::Write(gpio->PIN[id].CTRL, flags);
+	IoHelper::Set(gpio->PCIE.INTE, pin_mask);
 	}
 else
 	{
-	io_clear(gpio->PCIE.INTE, pin_mask);
-	io_clear(gpio->PIN[id].CTRL, CTRL_IRQMASK);
+	IoHelper::Clear(gpio->PCIE.INTE, pin_mask);
+	IoHelper::Clear(gpio->PIN[id].CTRL, CTRL_IRQMASK);
 	FlagHelper::Clear(m_IrqMask, pin_mask);
 	m_Handlers[id]=nullptr;
 	m_Parameters[id]=nullptr;
@@ -239,7 +238,7 @@ gpio_host->OnInterrupt();
 
 VOID GpioHost::OnInterrupt()
 {
-auto gpio=(rp1_gpio_regs_t*)RP1_GPIO0_BASE;
+auto gpio=(RP1_GPIO_REGS*)RP1_GPIO0_BASE;
 UINT mask=gpio->PCIE.INTS;
 for(UINT pin=0; mask!=0; pin++)
 	{
@@ -247,7 +246,7 @@ for(UINT pin=0; mask!=0; pin++)
 		{
 		if(m_Handlers[pin])
 			m_Handlers[pin](m_Parameters[pin]);
-		io_set(gpio->PIN[pin].CTRL, CTRL_IRQRESET);
+		IoHelper::Set(gpio->PIN[pin].CTRL, CTRL_IRQRESET);
 		}
 	mask>>=1;
 	}

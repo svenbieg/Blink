@@ -9,12 +9,12 @@
 // Using
 //=======
 
+#include "Devices/System/Memory.h"
+#include "Devices/IoHelper.h"
+#include "MemoryHelper.h"
 #include <assert.h>
 #include <attr.h>
 #include <base.h>
-#include <io.h>
-#include "Devices/System/Memory.h"
-#include "MemoryHelper.h"
 
 using namespace Devices::System;
 
@@ -33,15 +33,15 @@ namespace Devices {
 
 typedef struct
 {
-rw32_t READ;
-rw32_t RES0[5];
-rw32_t STATUS;
-rw32_t RES1;
-rw32_t WRITE;
+RW32 READ;
+RW32 RES0[5];
+RW32 STATUS;
+RW32 RES1;
+RW32 WRITE;
 }mailbox_regs_t;
 
-constexpr uint32_t STATUS_FULL=(1<<31);
-constexpr uint32_t STATUS_EMPTY=(1<<30);
+constexpr UINT STATUS_FULL=(1<<31);
+constexpr UINT STATUS_EMPTY=(1<<30);
 
 
 //=================
@@ -51,19 +51,21 @@ constexpr uint32_t STATUS_EMPTY=(1<<30);
 typedef struct
 {
 UINT Size;
-volatile UINT Code;
+RW32 Code;
 PropertyTag Tag;
-volatile UINT BufferSize;
-volatile UINT Status;
-BYTE Data[0];
-}PROPERTY_BUFFER;
+RW32 BufferSize;
+RW32 Status;
+}PROP_HEADER;
 
-constexpr UINT PROPERTY_BUFSIZE=64;
+__align(16) typedef struct
+{
+PROP_HEADER Header;
+BYTE Data[44];
+}PROP_BUF;
+
 constexpr UINT PROPERTY_REQUEST=0;
 
-BYTE g_PropertyBuffer[PROPERTY_BUFSIZE] __align(16);
-
-PROPERTY_BUFFER* g_Properties=(PROPERTY_BUFFER*)g_PropertyBuffer;
+PROP_BUF g_PropertyBuffer;
 
 
 //============
@@ -97,14 +99,14 @@ return info.ClockRate;
 
 BOOL MailBox::GetProperty(PropertyTag tag, VOID* prop, UINT prop_size)
 {
-UINT buf_size=sizeof(PROPERTY_BUFFER)+prop_size+sizeof(UINT);
-assert(buf_size<=PROPERTY_BUFSIZE);
-auto buf=Memory::Uncached(g_Properties);
-buf->Size=buf_size;
-buf->Code=PROPERTY_REQUEST;
-buf->Tag=tag;
-buf->BufferSize=prop_size;
-buf->Status=0;
+UINT buf_size=sizeof(PROP_HEADER)+prop_size+sizeof(UINT);
+assert(buf_size<=sizeof(PROP_BUF));
+auto buf=Memory::Uncached(&g_PropertyBuffer);
+buf->Header.Size=buf_size;
+buf->Header.Code=PROPERTY_REQUEST;
+buf->Header.Tag=tag;
+buf->Header.BufferSize=prop_size;
+buf->Header.Status=0;
 MemoryHelper::Copy(buf->Data, prop, prop_size);
 MemoryHelper::Zero(&buf->Data[prop_size], sizeof(UINT));
 UINT addr=(UINT)(SIZE_T)buf;
@@ -127,8 +129,8 @@ addr&=0xFFFFFFF0;
 addr|=(UINT)ch;
 while(1)
 	{
-	while(io_read(mailbox->STATUS, STATUS_EMPTY));
-	if(io_read(mailbox->READ)==addr)
+	while(IoHelper::Read(mailbox->STATUS, STATUS_EMPTY));
+	if(IoHelper::Read(mailbox->READ)==addr)
 		return true;
 	}
 return false;
@@ -139,8 +141,8 @@ VOID MailBox::Write(MailBoxChannel ch, UINT addr)
 auto mailbox=(mailbox_regs_t*)ARM_MAILBOX_BASE;
 addr&=0xFFFFFFF0;
 addr|=(UINT)ch;
-while(io_read(mailbox->STATUS, STATUS_FULL));
-io_write(mailbox->WRITE, addr);
+while(IoHelper::Read(mailbox->STATUS, STATUS_FULL));
+IoHelper::Write(mailbox->WRITE, addr);
 }
 
 }}

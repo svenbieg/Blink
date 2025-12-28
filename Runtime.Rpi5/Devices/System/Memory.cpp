@@ -9,11 +9,11 @@
 // Using
 //=======
 
+#include "Devices/System/Cpu.h"
+#include "MemoryHelper.h"
 #include <base.h>
 #include <config.h>
 #include <heap.h>
-#include "Devices/System/Cpu.h"
-#include "MemoryHelper.h"
 
 using namespace Devices::System;
 
