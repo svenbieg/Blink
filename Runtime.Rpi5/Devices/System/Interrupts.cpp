@@ -173,7 +173,7 @@ UINT reg=(UINT)irq/4;
 UINT id=(UINT)irq%4;
 UINT mask=0xF<<id;
 UINT value=(UINT)target<<id;
-IoHelper::Write(gicd->TARGET[reg], mask, value);
+IoHelper::Set(gicd->TARGET[reg], mask, value);
 }
 
 VOID Interrupts::Send(Irq irq, IrqTarget target)

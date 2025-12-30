@@ -63,6 +63,9 @@ Baud921600=921600
 class SerialPort: public Storage::Streams::RandomAccessStream
 {
 public:
+	// Friends
+	friend Object;
+
 	// Using
 	using GpioHost=Devices::Gpio::GpioHost;
 	using OutputBuffer=Storage::Streams::OutputBuffer;

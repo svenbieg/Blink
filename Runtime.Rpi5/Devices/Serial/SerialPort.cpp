@@ -119,12 +119,12 @@ constexpr UINT LCRH_FIFO_ENABLE		=1<<4;
 // Baud-Rate
 //===========
 
-constexpr UINT BAUD_INT(UINT clock, UINT baud)
+inline UINT BAUD_INT(UINT clock, UINT baud)
 {
 return clock/(baud<<4);
 }
 
-constexpr UINT BAUD_FRAC(UINT clock, UINT baud)
+inline UINT BAUD_FRAC(UINT clock, UINT baud)
 {
 UINT baud16=baud<<4;
 UINT baud_int=clock/baud16;
@@ -153,16 +153,7 @@ UINT id=(UINT)device;
 WriteLock lock(s_Mutex);
 if(s_Current[id])
 	throw AccessDeniedException();
-auto serial=(SerialPort*)MemoryHelper::Allocate(sizeof(SerialPort));
-try
-	{
-	new (serial) SerialPort(device, baud);
-	}
-catch(Exception e)
-	{
-	delete serial;
-	throw e;
-	}
+auto serial=Object::Create<SerialPort>(device, baud);
 s_Current[id]=serial;
 return serial;
 }

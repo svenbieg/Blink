@@ -30,7 +30,9 @@ class EmmcHost: public Object
 {
 public:
 	// Using
+	using CriticalSection=Concurrency::CriticalSection;
 	using Irq=Devices::System::Irq;
+	using Signal=Concurrency::Signal;
 
 	// Con-/Destructors
 	~EmmcHost();
@@ -44,15 +46,15 @@ public:
 	VOID Command(EmmcAppCmd Command, UINT Argument, UINT* Response);
 	VOID Command(EmmcAppCmd Command, UINT Argument, UINT* Response, VOID* Buffer, UINT BlockCount, UINT BlockSize);
 	inline EMMC_REGS* GetDevice()const { return m_Device; }
-	VOID IoRwExtended(EMMC_FN Function, IoRwFlags Flags, UINT Address, VOID* Buffer, UINT Size);
-	VOID PollRegister(EMMC_REG Register, BYTE Mask, BYTE Value, UINT Timeout=100);
+	VOID IoRwExtended(EMMC_FN const& Function, IoRwFlags Flags, UINT Address, VOID* Buffer, UINT Size);
+	VOID PollRegister(EMMC_REG const& Register, BYTE Mask, BYTE Value, UINT Timeout=100);
 	VOID PowerOff();
-	BYTE ReadRegister(EMMC_REG Register);
+	BYTE ReadRegister(EMMC_REG const& Register);
 	VOID SelectCard(UINT RelativeCardAddress);
 	VOID SetClockRate(UINT BaseClock, UINT ClockRate);
-	VOID SetRegister(EMMC_REG Register, BYTE Mask);
-	VOID SetRegister(EMMC_REG Register, BYTE Mask, BYTE Value);
-	VOID WriteRegister(EMMC_REG Register, BYTE Value);
+	VOID SetRegister(EMMC_REG const& Register, BYTE Mask);
+	VOID SetRegister(EMMC_REG const& Register, BYTE Mask, BYTE Value);
+	VOID WriteRegister(EMMC_REG const& Register, BYTE Value);
 
 private:
 	// Con-/Destructors
@@ -62,11 +64,11 @@ private:
 	static VOID HandleInterrupt(VOID* Parameter);
 	VOID OnInterrupt();
 	EMMC_REGS* m_Device;
-	Concurrency::CriticalSection m_CriticalSection;
+	CriticalSection m_CriticalSection;
 	Irq m_Irq;
 	volatile UINT m_IrqFlags;
 	UINT m_RelativeCardAddress;
-	Concurrency::Signal m_Signal;
+	Signal m_Signal;
 };
 
 }}

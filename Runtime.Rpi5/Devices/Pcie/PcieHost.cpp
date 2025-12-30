@@ -118,7 +118,7 @@ MdioWrite(0, MDIO_REG_SET_ADDR_OFFSET, 0x1600);
 for(UINT u=0; u<TypeHelper::ArraySize(regs); u++)
 	MdioWrite(0, regs[u], data[u]);
 Task::Sleep(10);
-IoHelper::Write(pcie->PL_PHY_CTL_15, PL_PHY_CTL_15_CLOCK_PERIOD, PL_PHY_CTL_15_CLOCK_PERIOD_DEFAULT);
+IoHelper::Set(pcie->PL_PHY_CTL_15, PL_PHY_CTL_15_CLOCK_PERIOD, PL_PHY_CTL_15_CLOCK_PERIOD_DEFAULT);
 UINT misc_ctrl=IoHelper::Read(pcie->MISC_CTRL);
 BitHelper::Set(misc_ctrl, MISC_CTRL_CFG_READ_UR_MODE|MISC_CTRL_RCB_MPS_MODE|MISC_CTRL_SCB_ACCESS_EN);
 BitHelper::Set(misc_ctrl, MISC_CTRL_MAX_BURST_SIZE, MISC_CTRL_MAX_BURST_SIZE_256);
@@ -133,12 +133,12 @@ IoHelper::Write(pcie->CFG.TL_VDM_CTL1, 0);
 IoHelper::Set(pcie->CFG.TL_VDM_CTL0, TL_VDM_CTL0_VDM_ENABLED|TL_VDM_CTL0_VDM_IGNORETAG|TL_VDM_CTL0_VDM_IGNOREVNDRID);
 IoHelper::Write(pcie->RC_BAR2_CONFIG_LO, TypeHelper::LowLong(RBAR2_OFFSET)|EncodeBarSize(RBAR2_SIZE));
 IoHelper::Write(pcie->RC_BAR2_CONFIG_HI, TypeHelper::HighLong(RBAR2_OFFSET));
-IoHelper::Write(pcie->MISC_CTRL, MISC_CTRL_SCB0_SIZE, BitHelper::BitCount(RBAR2_SIZE)-15);
+IoHelper::Set(pcie->MISC_CTRL, MISC_CTRL_SCB0_SIZE, BitHelper::BitCount(RBAR2_SIZE)-15);
 IoHelper::Set(pcie->UBUS_CTRL, UBUS_CTRL_REPLY_ERR_DIS|UBUS_CTRL_REPLY_DECERR_DIS);
 IoHelper::Write(pcie->AXI_READ_ERROR_DATA, 0xFFFFFFFF);
 IoHelper::Write(pcie->UBUS_TIMEOUT, 0xB2D0000);
 IoHelper::Write(pcie->RC_CONFIG_RETRY_TIMEOUT, 0xABA0000);
-IoHelper::Write(pcie->CFG.PRIV1_LINK_CAPABILITY, PRIV1_LINKCAP_ASPM_SUPPORT, LINK_STATE_L0S|LINK_STATE_L1);
+IoHelper::Set(pcie->CFG.PRIV1_LINK_CAPABILITY, PRIV1_LINKCAP_ASPM_SUPPORT, LINK_STATE_L0S|LINK_STATE_L1);
 SetOutboundWindow(0, OUTWND_OFFSET, PCIE_OFFSET, OUTWND_SIZE);
 IoHelper::Write(pcie->RC_BAR1_CONFIG_LO, TypeHelper::LowLong(RBAR1_OFFSET)|EncodeBarSize(RBAR1_SIZE));
 IoHelper::Write(pcie->RC_BAR1_CONFIG_HI, TypeHelper::HighLong(RBAR1_OFFSET));
@@ -232,12 +232,16 @@ IoHelper::Write(pcie->CPU2_MEM_WIN[id].LOW, TypeHelper::LowLong(pcie_addr));
 IoHelper::Write(pcie->CPU2_MEM_WIN[id].HIGH, TypeHelper::HighLong(pcie_addr));
 SIZE_T base_mb=cpu_addr>>20;
 SIZE_T limit_mb=(cpu_addr+size-1)>>20;
-IoHelper::Write(pcie->CPU2_MEM_WIN_BASE_LIMIT[id], CPU2_MEM_WIN_BASE_LIMIT_BASE, base_mb);
-IoHelper::Write(pcie->CPU2_MEM_WIN_BASE_LIMIT[id], CPU2_MEM_WIN_BASE_LIMIT_LIMIT, limit_mb);
+UINT base_limit=0;
+BitHelper::Set(base_limit, CPU2_MEM_WIN_BASE_LIMIT_BASE, base_mb);
+BitHelper::Set(base_limit, CPU2_MEM_WIN_BASE_LIMIT_LIMIT, limit_mb);
+IoHelper::Write(pcie->CPU2_MEM_WIN_BASE_LIMIT[id], base_limit);
 base_mb>>=CPU2_MEM_WIN_BASE_LIMIT_NUM_BITS;
 limit_mb>>=CPU2_MEM_WIN_BASE_LIMIT_NUM_BITS;
-IoHelper::Write(pcie->CPU2_MEM_WIN_BASE_LIMIT_HI[id].BASE, CPU2_MEM_WIN_BASE_LIMIT_HI_MASK, base_mb);
-IoHelper::Write(pcie->CPU2_MEM_WIN_BASE_LIMIT_HI[id].LIMIT, CPU2_MEM_WIN_BASE_LIMIT_HI_MASK, limit_mb);
+base_mb&=CPU2_MEM_WIN_BASE_LIMIT_HI_MASK;
+limit_mb&=CPU2_MEM_WIN_BASE_LIMIT_HI_MASK;
+IoHelper::Write(pcie->CPU2_MEM_WIN_BASE_LIMIT_HI[id].BASE, base_mb);
+IoHelper::Write(pcie->CPU2_MEM_WIN_BASE_LIMIT_HI[id].LIMIT, limit_mb);
 }
 
 }}

@@ -42,41 +42,86 @@ class IoHelper
 {
 public:
 	// Common
+	static inline VOID Clear(RW08& Register, BYTE Mask) { Register&=~Mask; }
+	static inline VOID Clear(RW16& Register, WORD Mask) { Register&=~Mask; }
 	static inline VOID Clear(RW32& Register, UINT Mask) { Register&=~Mask; }
+	static inline VOID Clear(RW64& Register, UINT64 Mask) { Register&=~Mask; }
 	static inline BYTE Read(RO8& Register) { return Register; }
+	static inline UINT Read(RO8& Register, BYTE Mask) { return Register&Mask; }
+	static inline UINT Read(RO8& Register, BITS8 const& Bits) { return (Register>>Bits.Shift)&Bits.Mask; }
 	static inline WORD Read(RO16& Register) { return Register; }
+	static inline UINT Read(RO16& Register, WORD Mask) { return Register&Mask; }
+	static inline UINT Read(RO16& Register, BITS16 const& Bits) { return (Register>>Bits.Shift)&Bits.Mask; }
 	static inline UINT Read(RO32& Register) { return Register; }
 	static inline UINT Read(RO32& Register, UINT Mask) { return Register&Mask; }
-	static inline UINT Read(RO32& Register, BITS Bits) { return (Register>>Bits.Shift)&Bits.Mask; }
+	static inline UINT Read(RO32& Register, BITS const& Bits) { return (Register>>Bits.Shift)&Bits.Mask; }
 	static inline UINT64 Read(RO64& Register) { return Register; }
 	static inline UINT64 Read(RO64& Register, UINT64 Mask) { return Register&Mask; }
-	static inline UINT64 Read(RO64& Register, BITS64 Bits) { return (Register>>Bits.Shift)&Bits.Mask; }
+	static inline UINT64 Read(RO64& Register, BITS64 const& Bits) { return (Register>>Bits.Shift)&Bits.Mask; }
+	static inline VOID Set(RW08& Register, BYTE Mask) { Register|=Mask; }
+	static inline VOID Set(RW08& Register, BYTE Mask, BYTE Value)
+		{
+		BYTE tmp=Register;
+		tmp&=~Mask;
+		tmp|=Value;
+		Register=tmp;
+		}
+	static inline VOID Set(RW08& Register, BITS8 const& Bits, BYTE Value)
+		{
+		WORD tmp=Register;
+		tmp&=~(Bits.Mask<<Bits.Shift);
+		tmp|=(Value<<Bits.Shift);
+		Register=tmp;
+		}
+	static inline VOID Set(RW16& Register, WORD Mask) { Register|=Mask; }
+	static inline VOID Set(RW16& Register, WORD Mask, WORD Value)
+		{
+		WORD tmp=Register;
+		tmp&=~Mask;
+		tmp|=Value;
+		Register=tmp;
+		}
+	static inline VOID Set(RW16& Register, BITS16 const& Bits, WORD Value)
+		{
+		WORD tmp=Register;
+		tmp&=~(Bits.Mask<<Bits.Shift);
+		tmp|=(Value<<Bits.Shift);
+		Register=tmp;
+		}
 	static inline VOID Set(RW32& Register, UINT Mask) { Register|=Mask; }
-	static inline VOID Write(RW08& Register, BYTE value) { Register=value; }
-	static inline VOID Write(RW16& Register, WORD value) { Register=value; }
-	static inline VOID Write(RW16& Register, BITS16 Bits, WORD value)
+	static inline VOID Set(RW32& Register, UINT Mask, UINT Value)
 		{
-		WORD u=Register;
-		u&=~(Bits.Mask<<Bits.Shift);
-		u|=(value<<Bits.Shift);
-		Register=u;
+		UINT tmp=Register;
+		tmp&=~Mask;
+		tmp|=Value;
+		Register=tmp;
 		}
-	static inline VOID Write(RW32& Register, UINT value) { Register=value; }
-	static inline VOID Write(RW32& Register, UINT Mask, UINT value)
+	static inline VOID Set(RW32& Register, BITS const& Bits, UINT Value)
 		{
-		UINT u=Register;
-		u&=~Mask;
-		u|=value;
-		Register=u;
+		UINT tmp=Register;
+		tmp&=~(Bits.Mask<<Bits.Shift);
+		tmp|=(Value<<Bits.Shift);
+		Register=tmp;
 		}
-	static inline VOID Write(RW32& Register, BITS Bits, UINT value)
+	static inline VOID Set(RW64& Register, UINT64 Mask) { Register|=Mask; }
+	static inline VOID Set(RW64& Register, UINT64 Mask, UINT64 Value)
 		{
-		UINT u=Register;
-		u&=~(Bits.Mask<<Bits.Shift);
-		u|=(value<<Bits.Shift);
-		Register=u;
+		UINT64 tmp=Register;
+		tmp&=~Mask;
+		tmp|=Value;
+		Register=tmp;
 		}
-	static inline VOID Write(RW64& Register, UINT64 value) { Register=value; }
+	static inline VOID Set(RW64& Register, BITS64 const& Bits, WORD Value)
+		{
+		WORD tmp=Register;
+		tmp&=~(Bits.Mask<<Bits.Shift);
+		tmp|=(Value<<Bits.Shift);
+		Register=tmp;
+		}
+	static inline VOID Write(RW08& Register, BYTE Value) { Register=Value; }
+	static inline VOID Write(RW16& Register, WORD Value) { Register=Value; }
+	static inline VOID Write(RW32& Register, UINT Value) { Register=Value; }
+	static inline VOID Write(RW64& Register, UINT64 Value) { Register=Value; }
 };
 
 }

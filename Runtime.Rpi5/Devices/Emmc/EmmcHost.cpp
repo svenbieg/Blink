@@ -170,7 +170,7 @@ Command(EmmcCmd::AppCmd, m_RelativeCardAddress<<16);
 Command((EmmcCmd)cmd, arg, response, buf, block_size, block_count);
 }
 
-VOID EmmcHost::IoRwExtended(EMMC_FN fn, IoRwFlags flags, UINT addr, VOID* buf, UINT size)
+VOID EmmcHost::IoRwExtended(EMMC_FN const& fn, IoRwFlags flags, UINT addr, VOID* buf, UINT size)
 {
 assert(size<=IO_RW_ADDR_MAX);
 auto cmd_single=EmmcCmd::IoReadSingle;
@@ -211,7 +211,7 @@ while(pos<size)
 	}
 }
 
-VOID EmmcHost::PollRegister(EMMC_REG reg, BYTE mask, BYTE value, UINT timeout)
+VOID EmmcHost::PollRegister(EMMC_REG const& reg, BYTE mask, BYTE value, UINT timeout)
 {
 UINT64 end=SystemTimer::GetTickCount64()+timeout;
 UINT arg=IO_RW_READ;
@@ -232,10 +232,10 @@ throw TimeoutException();
 VOID EmmcHost::PowerOff()
 {
 Interrupts::SetHandler(m_Irq, nullptr);
-IoHelper::Write(m_Device->CTRL0, CTRL0_POWER, CTRL0_POWER_OFF);
+IoHelper::Set(m_Device->CTRL0, CTRL0_POWER, CTRL0_POWER_OFF);
 }
 
-BYTE EmmcHost::ReadRegister(EMMC_REG reg)
+BYTE EmmcHost::ReadRegister(EMMC_REG const& reg)
 {
 UINT arg=IO_RW_READ;
 BitHelper::Set(arg, IO_RW_FUNC, reg.FN.ID);
@@ -256,7 +256,7 @@ VOID EmmcHost::SetClockRate(UINT base_clock, UINT clock_rate)
 UINT ctrl1=IoHelper::Read(m_Device->CTRL1);
 if(BitHelper::Get(ctrl1, CTRL1_CLK_EN))
 	{
-	BitHelper::Set(ctrl1, CTRL1_CLK_INTLEN|CTRL1_CLK_EN, 0);
+	BitHelper::Set(ctrl1, CTRL1_CLK_INTLEN|CTRL1_CLK_EN, 0U);
 	IoHelper::Write(m_Device->CTRL1, ctrl1);
 	Task::Sleep(10);
 	}
@@ -269,16 +269,16 @@ IoHelper::Write(m_Device->CTRL1, ctrl1);
 Task::Sleep(10);
 if(IoHelper::Read(m_Device->CTRL1, CTRL1_CLK_STABLE)==0)
 	throw DeviceNotReadyException();
-IoHelper::Write(m_Device->CTRL1, CTRL1_CLK_EN, CTRL1_CLK_EN);
+IoHelper::Set(m_Device->CTRL1, CTRL1_CLK_EN);
 Task::Sleep(10);
 }
 
-VOID EmmcHost::SetRegister(EMMC_REG reg, BYTE mask)
+VOID EmmcHost::SetRegister(EMMC_REG const& reg, BYTE mask)
 {
 SetRegister(reg, mask, mask);
 }
 
-VOID EmmcHost::SetRegister(EMMC_REG reg, BYTE mask, BYTE value)
+VOID EmmcHost::SetRegister(EMMC_REG const& reg, BYTE mask, BYTE value)
 {
 UINT tmp=ReadRegister(reg);
 tmp&=~mask;
@@ -286,7 +286,7 @@ tmp|=value;
 WriteRegister(reg, tmp);
 }
 
-VOID EmmcHost::WriteRegister(EMMC_REG reg, BYTE value)
+VOID EmmcHost::WriteRegister(EMMC_REG const& reg, BYTE value)
 {
 UINT arg=IO_RW_WRITE;
 BitHelper::Set(arg, IO_RW_FUNC, reg.FN.ID);
@@ -311,7 +311,7 @@ IoHelper::Write(m_Device->CTRL1, CTRL1_RESET_HOST);
 Task::Sleep(10);
 if(IoHelper::Read(m_Device->CTRL1, CTRL1_RESET_ALL))
 	throw DeviceNotReadyException();
-IoHelper::Write(m_Device->CTRL0, CTRL0_POWER, CTRL0_POWER_VDD1);
+IoHelper::Set(m_Device->CTRL0, CTRL0_POWER, CTRL0_POWER_VDD1);
 Task::Sleep(10);
 Interrupts::SetHandler(m_Irq, HandleInterrupt, this);
 IoHelper::Write(m_Device->IRQ, UINT_MAX);

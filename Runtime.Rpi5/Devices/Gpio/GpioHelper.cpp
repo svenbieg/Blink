@@ -94,7 +94,7 @@ if(pin>=32)
 	}
 UINT mask=1UL<<pin;
 UINT set=value? mask: 0;
-IoHelper::Write(gpio->DATA0, mask, set);
+IoHelper::Set(gpio->DATA0, mask, set);
 }
 
 VOID GpioHelper::DigitalWrite(GpioRp1Pin pin, BOOL value)
@@ -130,12 +130,12 @@ UINT pin=(UINT)arm_pin;
 BYTE sel_reg=pin/8;
 BYTE sel_shift=(pin%8)*4;
 BITS sel_bits={ 0xF, sel_shift };
-IoHelper::Write(pin_ctrl->FSEL[sel_reg], sel_bits, (UINT)mode);
+IoHelper::Set(pin_ctrl->FSEL[sel_reg], sel_bits, (UINT)mode);
 UINT offset=pin+7;
 BYTE pull_reg=offset/15;
 BYTE pull_shift=(offset%15)*2;
 BITS pull_bits={ 0x3, pull_shift };
-IoHelper::Write(pin_ctrl->PULL[pull_reg], pull_bits, (UINT)pull_mode);
+IoHelper::Set(pin_ctrl->PULL[pull_reg], pull_bits, (UINT)pull_mode);
 if(mode==GpioArmPinMode::Output)
 	{
 	auto gpio=(ARM_GPIO*)ARM_GPIO1_BASE;
@@ -144,7 +144,7 @@ if(mode==GpioArmPinMode::Output)
 		gpio=(ARM_GPIO*)ARM_GPIO2_BASE;
 		pin-=32;
 		}
-	IoHelper::Write(gpio->IODIR0, 1UL<<pin, 0);
+	IoHelper::Set(gpio->IODIR0, 1UL<<pin, 0);
 	}
 }
 
