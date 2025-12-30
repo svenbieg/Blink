@@ -83,7 +83,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.cpp">
       <Filter>Concurrency</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)string.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)string.c" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">

@@ -88,7 +88,7 @@ private:
 
 BOOL __si_class_type_info::TryUpcast(TypeInfo const* type, VOID** obj)const noexcept
 {
-if(*this==*type)
+if(*type==*this)
 	return true;
 return m_Info->TryUpcast(type, obj);
 }
@@ -119,7 +119,7 @@ for(UINT u=0; u<m_BaseCount; u++)
 		continue;
 	VOID* parent=BaseType::Upcast(m_BaseType[u], *obj);
 	auto parent_type=m_BaseType[u].GetInfo();
-	if(*parent_type==*type)
+	if(*type==*parent_type)
 		{
 		*obj=parent;
 		return true;

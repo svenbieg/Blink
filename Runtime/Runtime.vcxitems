@@ -48,7 +48,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\RingBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\InputBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\OutputBuffer.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)string.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)string.c" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TypeInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)UI\Console.cpp" />
   </ItemGroup>

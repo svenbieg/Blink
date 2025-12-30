@@ -132,43 +132,51 @@ constexpr UINT VER_HOST_SPEC_V3			=2;
 // Command-Flags
 //===============
 
-constexpr UINT CMF_TYPE_NORMAL		=(0<<22);
-constexpr UINT CMF_TYPE_SUSPEND		=(1<<22);
-constexpr UINT CMF_TYPE_RESUME		=(2<<22);
-constexpr UINT CMF_TYPE_ABORT		=(3<<22);
-constexpr UINT CMF_ISDATA			=(1<<21);
-constexpr UINT CMF_IXCHK			=(1<<20);
-constexpr UINT CMF_CRCCHK			=(1<<19);
-constexpr UINT CMF_RSPNS_MASK		=(3<<16);
-constexpr UINT CMF_RSPNS_136		=(1<<16);
-constexpr UINT CMF_RSPNS_48			=(2<<16);
-constexpr UINT CMF_RSPNS_48_BUSY	=(3<<16);
-constexpr UINT CMF_MULTI_BLOCK		=(1<<5);
-constexpr UINT CMF_DAT_DIR_READ		=(1<<4);
-constexpr UINT CMF_DAT_DIR_WRITE	=(0<<4);
-constexpr UINT CMF_AUTO_CMD_23		=(1<<3);
-constexpr UINT CMF_AUTO_CMD_12		=(1<<2);
-constexpr UINT CMF_BLKCNT_EN		=(1<<1);
+constexpr UINT CMF_TYPE_NORMAL			=(0<<22);
+constexpr UINT CMF_TYPE_SUSPEND			=(1<<22);
+constexpr UINT CMF_TYPE_RESUME			=(2<<22);
+constexpr UINT CMF_TYPE_ABORT			=(3<<22);
+constexpr UINT CMF_ISDATA				=(1<<21);
+constexpr UINT CMF_IXCHK				=(1<<20);
+constexpr UINT CMF_CRCCHK				=(1<<19);
+constexpr UINT CMF_RSPNS_MASK			=(3<<16);
+constexpr UINT CMF_RSPNS_136			=(1<<16);
+constexpr UINT CMF_RSPNS_48				=(2<<16);
+constexpr UINT CMF_RSPNS_48_BUSY		=(3<<16);
+constexpr UINT CMF_MULTI_BLOCK			=(1<<5);
+constexpr UINT CMF_DAT_DIR_READ			=(1<<4);
+constexpr UINT CMF_DAT_DIR_WRITE		=(0<<4);
+constexpr UINT CMF_AUTO_CMD_23			=(1<<3);
+constexpr UINT CMF_AUTO_CMD_12			=(1<<2);
+constexpr UINT CMF_BLKCNT_EN			=(1<<1);
 
 
 //==========
 // Commands
 //==========
 
-constexpr UINT CMD_GO_IDLE			=(0<<24);
-constexpr UINT CMD_SEND_CID			=(2<<24)|CMF_RSPNS_136|CMF_CRCCHK;
-constexpr UINT CMD_SEND_REL_ADDR	=(3<<24)|CMF_RSPNS_48|CMF_CRCCHK;
-constexpr UINT CMD_SEND_OP_COND		=(5<<24)|CMF_RSPNS_48;
-constexpr UINT CMD_SELECT_CARD		=(7<<24)|CMF_RSPNS_48_BUSY|CMF_CRCCHK;
-constexpr UINT CMD_SEND_IF_COND		=(8<<24)|CMF_RSPNS_48|CMF_CRCCHK;
-constexpr UINT CMD_SEND_CSD			=(9<<24)|CMF_RSPNS_136|CMF_CRCCHK;
-constexpr UINT CMD_READ_SINGLE		=(17<<24)|CMF_RSPNS_48|CMF_CRCCHK|CMF_ISDATA|CMF_DAT_DIR_READ;
-constexpr UINT CMD_READ_MULTI		=(18<<24)|CMF_RSPNS_48|CMF_CRCCHK|CMF_ISDATA|CMF_DAT_DIR_READ|CMF_MULTI_BLOCK|CMF_BLKCNT_EN|CMF_AUTO_CMD_12;
-constexpr UINT CMD_WRITE_SINGLE		=(24<<24)|CMF_RSPNS_48|CMF_CRCCHK|CMF_ISDATA|CMF_DAT_DIR_WRITE;
-constexpr UINT CMD_WRITE_MULTI		=(25<<24)|CMF_RSPNS_48|CMF_CRCCHK|CMF_ISDATA|CMF_DAT_DIR_WRITE|CMF_MULTI_BLOCK|CMF_BLKCNT_EN|CMF_AUTO_CMD_12;
-constexpr UINT CMD_IO_RW_DIRECT		=(52<<24)|CMF_RSPNS_48;
-constexpr UINT CMD_IO_RW_EXTENDED	=(53<<24)|CMF_RSPNS_48|CMF_ISDATA;
-constexpr UINT CMD_APPCMD			=(55<<24)|CMF_RSPNS_48|CMF_CRCCHK;
+enum class EmmcCmd: UINT
+{
+GoIdle				=(0<<24),
+SendCid				=(2<<24)|CMF_RSPNS_136|CMF_CRCCHK,
+SendRelAddr			=(3<<24)|CMF_RSPNS_48|CMF_CRCCHK,
+SendOpCond			=(5<<24)|CMF_RSPNS_48,
+SelectCard			=(7<<24)|CMF_RSPNS_48_BUSY|CMF_CRCCHK,
+SendIfCond			=(8<<24)|CMF_RSPNS_48|CMF_CRCCHK,
+SendCsd				=(9<<24)|CMF_RSPNS_136|CMF_CRCCHK,
+ReadSingle			=(17<<24)|CMF_RSPNS_48|CMF_CRCCHK|CMF_ISDATA|CMF_DAT_DIR_READ,
+ReadMulti			=(18<<24)|CMF_RSPNS_48|CMF_CRCCHK|CMF_ISDATA|CMF_DAT_DIR_READ|CMF_MULTI_BLOCK|CMF_BLKCNT_EN|CMF_AUTO_CMD_12,
+WriteSingle			=(24<<24)|CMF_RSPNS_48|CMF_CRCCHK|CMF_ISDATA|CMF_DAT_DIR_WRITE,
+WriteMulti			=(25<<24)|CMF_RSPNS_48|CMF_CRCCHK|CMF_ISDATA|CMF_DAT_DIR_WRITE|CMF_MULTI_BLOCK|CMF_BLKCNT_EN|CMF_AUTO_CMD_12,
+IoRwDirect			=(52<<24)|CMF_RSPNS_48,
+IoReadSingle		=(53<<24)|CMF_RSPNS_48|CMF_ISDATA|CMF_DAT_DIR_READ,
+IoReadMulti			=(53<<24)|CMF_RSPNS_48|CMF_ISDATA|CMF_DAT_DIR_READ|CMF_MULTI_BLOCK|CMF_BLKCNT_EN,
+IoWriteSingle		=(53<<24)|CMF_RSPNS_48|CMF_ISDATA|CMF_DAT_DIR_WRITE,
+IoWriteMulti		=(53<<24)|CMF_RSPNS_48|CMF_ISDATA|CMF_DAT_DIR_WRITE|CMF_MULTI_BLOCK|CMF_BLKCNT_EN,
+AppCmd				=(55<<24)|CMF_RSPNS_48|CMF_CRCCHK
+};
+
+constexpr UINT IF_COND_DEFAULT		=0x1AA;
 
 constexpr UINT IO_RW_WRITE			=(1<<31);
 constexpr UINT IO_RW_READ			=(0<<31);
@@ -176,30 +184,54 @@ constexpr BITS IO_RW_FUNC			={ 0x7, 28 };
 constexpr UINT IO_RW_BLK			=(1<<27);
 constexpr UINT IO_RW_INCR			=(1<<26);
 constexpr BITS IO_RW_ADDR			={ 0x1FFFF, 9};
+constexpr UINT IO_RW_ADDR_MAX		=0x1FFFF;
 constexpr BITS IO_RW_COUNT			={ 0x1FF, 0};
+constexpr UINT IO_RW_COUNT_MAX		=256;
 constexpr BITS IO_RW_DATA			={ 0xFF, 0};
 
-constexpr UINT IF_COND_DEFAULT		=0x1AA;
+enum class IoRwFlags: UINT
+{
+Read=IO_RW_READ,
+ReadIncr=IO_RW_READ|IO_RW_INCR,
+Write=IO_RW_WRITE,
+WriteIncr=IO_RW_WRITE|IO_RW_INCR
+};
 
 constexpr UINT OP_COND_3V3			=(3<<20);
 constexpr UINT OP_COND_SUCCESS		=(1<<31);
 
-constexpr BITS SEND_REL_ADDR_RCA	={ 0xFFFF, 16 };
+constexpr BITS RELADDR_RCA			={ 0xFFFF, 16 };
 
 
 //==============
 // App-Commands
 //==============
 
-constexpr UINT ACMD_SEND_OP_COND	=(41<<24)|CMF_RSPNS_48;
+enum class EmmcAppCmd: UINT
+{
+SendOpCond=(41<<24)|CMF_RSPNS_48
+};
 
 
-//===========
-// Functions
-//===========
+//==========
+// Function
+//==========
 
-constexpr UINT FN0=0;
-constexpr UINT FN1=1;
-constexpr UINT FN2=2;
+typedef struct
+{
+WORD ID;
+WORD BLOCK_SIZE;
+}EMMC_FN;
+
+
+//==========
+// Register
+//==========
+
+typedef struct
+{
+EMMC_FN FN;
+UINT ADDR;
+}EMMC_REG;
 
 }}

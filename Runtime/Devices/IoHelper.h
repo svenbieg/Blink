@@ -47,14 +47,14 @@ public:
 	static inline WORD Read(RO16& Register) { return Register; }
 	static inline UINT Read(RO32& Register) { return Register; }
 	static inline UINT Read(RO32& Register, UINT Mask) { return Register&Mask; }
-	static inline UINT Read(RO32& Register, BITS const& Bits) { return (Register>>Bits.Shift)&Bits.Mask; }
+	static inline UINT Read(RO32& Register, BITS Bits) { return (Register>>Bits.Shift)&Bits.Mask; }
 	static inline UINT64 Read(RO64& Register) { return Register; }
 	static inline UINT64 Read(RO64& Register, UINT64 Mask) { return Register&Mask; }
-	static inline UINT64 Read(RO64& Register, BITS64 const& Bits) { return (Register>>Bits.Shift)&Bits.Mask; }
+	static inline UINT64 Read(RO64& Register, BITS64 Bits) { return (Register>>Bits.Shift)&Bits.Mask; }
 	static inline VOID Set(RW32& Register, UINT Mask) { Register|=Mask; }
 	static inline VOID Write(RW08& Register, BYTE value) { Register=value; }
 	static inline VOID Write(RW16& Register, WORD value) { Register=value; }
-	static inline VOID Write(RW16& Register, BITS16 const& Bits, WORD value)
+	static inline VOID Write(RW16& Register, BITS16 Bits, WORD value)
 		{
 		WORD u=Register;
 		u&=~(Bits.Mask<<Bits.Shift);
@@ -69,7 +69,7 @@ public:
 		u|=value;
 		Register=u;
 		}
-	static inline VOID Write(RW32& Register, BITS const& Bits, UINT value)
+	static inline VOID Write(RW32& Register, BITS Bits, UINT value)
 		{
 		UINT u=Register;
 		u&=~(Bits.Mask<<Bits.Shift);

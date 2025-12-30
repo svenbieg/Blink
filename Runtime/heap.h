@@ -8,38 +8,34 @@
 // Copyright 2025, Sven Bieg (svenbieg@outlook.de)
 // http://github.com/svenbieg/Heap
 
-
-#ifndef _HEAP_H
-#define _HEAP_H
+#pragma once
 
 
 //=======
 // Using
 //=======
 
+#include <stddef.h>
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#include <assert.h>
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
 
 
 //==========
 // Settings
 //==========
 
-#define CLUSTER_GROUP_SIZE 10
+constexpr uint32_t CLUSTER_GROUP_SIZE=10;
 
 
 //===========
 // Alignment
 //===========
 
-#define BLOCK_SIZE_MIN (4*sizeof(size_t))
-#define SIZE_BITS (sizeof(size_t)*8)
+constexpr uint32_t BLOCK_SIZE_MIN=(4*sizeof(size_t));
+constexpr uint32_t SIZE_BITS=(sizeof(size_t)*8);
 
 static inline size_t align_down(size_t value, size_t align)
 {
@@ -362,15 +358,13 @@ return block_map_group_get_last_size(map->root);
 
 static inline void block_map_init(block_map_t* map)
 {
-map->root=NULL;
+map->root=nullptr;
 }
 
 bool block_map_lift_root(heap_t* heap, block_map_t* map);
 void block_map_remove_block(heap_t* heap, block_map_t* map, heap_block_info_t const* info);
 
 
-#ifdef __cplusplus // extern "C"
-}
+#ifdef __cplusplus
+} // extern "C"
 #endif
-
-#endif // _HEAP_H

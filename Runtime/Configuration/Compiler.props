@@ -2,11 +2,12 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <AdditionalOptions>$(AdditionalOptions) /Zc:__cplusplus /std:c++20</AdditionalOptions>
+    <AdditionalOptions>$(AdditionalOptions) /Zc:__cplusplus /std:c++26</AdditionalOptions>
     <CompilerFlags>$(CompilerFlags) -fdata-sections -ffunction-sections</CompilerFlags>
     <CompilerFlags>$(CompilerFlags) -fno-builtin -funwind-tables -nostartfiles</CompilerFlags>
     <CompilerFlags>$(CompilerFlags) -O0</CompilerFlags>
-    <CompilerFlagsCpp>$(CompilerFlagsCpp) -std=c++20</CompilerFlagsCpp>
+    <CompilerFlagsC>$(CompilerFlagsCpp) -std=c23</CompilerFlagsC>
+    <CompilerFlagsCpp>$(CompilerFlagsCpp) -std=c++26</CompilerFlagsCpp>
     <CompilerFlagsCpp>$(CompilerFlagsCpp) -Wno-multichar</CompilerFlagsCpp>
     <LinkerFlags>$(LinkerFlags) --gc-sections --nostdlib --eh-frame-hdr</LinkerFlags>
     <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(SolutionDir);$(ProjectDir)</NMakeIncludeSearchPath>

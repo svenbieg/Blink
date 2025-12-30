@@ -13,6 +13,7 @@
 // Using
 //=======
 
+#include <assert.h>
 #include "heap.h"
 
 

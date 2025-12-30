@@ -62,23 +62,25 @@ public:
 			}
 		return bits;
 		}
-	static inline VOID Clear(UINT& Operand) { Operand=0; }
+	static inline VOID Clear(WORD& Operand, WORD Mask) { Operand&=~Mask; }
 	static inline VOID Clear(UINT& Operand, UINT Mask) { Operand&=~Mask; }
 	static inline VOID Clear(UINT64& Operand, UINT64 Mask) { Operand&=~Mask; }
 	static inline BYTE Get(BYTE Operand, BYTE Mask) { return Operand&Mask; }
-	static inline BYTE Get(BYTE Operand, BITS8 const& Bits) { return (Operand>>Bits.Shift)&Bits.Mask; }
+	static inline BYTE Get(BYTE Operand, BITS8 Bits) { return (Operand>>Bits.Shift)&Bits.Mask; }
+	static inline WORD Get(WORD Operand, WORD Mask) { return Operand&Mask; }
 	static inline UINT Get(UINT Operand, UINT Mask) { return Operand&Mask; }
-	static inline UINT Get(UINT Operand, BITS const& Bits) { return (Operand>>Bits.Shift)&Bits.Mask; }
+	static inline UINT Get(UINT Operand, BITS Bits) { return (Operand>>Bits.Shift)&Bits.Mask; }
 	static inline UINT Get(UINT64 Operand, UINT Mask) { return ((UINT)Operand)&Mask; }
 	static inline UINT64 Get(UINT64 Operand, UINT64 Mask) { return Operand&Mask; }
+	template <class _op_t> static inline UINT Get(_op_t Operand, UINT Mask) { return (UINT)Operand&Mask; }
+	static inline VOID Set(WORD& Operand, WORD Mask) { Operand|=Mask; }
 	static inline VOID Set(UINT& Operand, UINT Mask) { Operand|=Mask; }
-	static inline VOID Set(UINT& Operand, BITS32 const& Bits, UINT Value)
+	static inline VOID Set(UINT& Operand, BITS Bits, UINT Value)
 		{
 		assert((Value&Bits.Mask)==Value);
 		Operand&=~(Bits.Mask<<Bits.Shift);
 		Operand|=(Value<<Bits.Shift);
 		}
-	static inline VOID Set(UINT64& Operand, UINT64 Mask) { Operand|=Mask; }
 	static inline VOID Set(UINT& Operand, UINT Mask, UINT Value)
 		{
 		UINT value=Operand;
@@ -86,6 +88,7 @@ public:
 		value|=Value;
 		Operand=value;
 		}
+	static inline VOID Set(UINT64& Operand, UINT64 Mask) { Operand|=Mask; }
 	static inline VOID Set(UINT64& Operand, UINT64 Mask, UINT64 Value)
 		{
 		UINT64 value=Operand;
