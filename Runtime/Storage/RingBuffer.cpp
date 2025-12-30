@@ -9,7 +9,6 @@
 // Using
 //=======
 
-#include <new>
 #include "Devices/System/Cpu.h"
 #include "MemoryHelper.h"
 
@@ -21,19 +20,6 @@ using namespace Devices::System;
 //===========
 
 namespace Storage {
-
-
-//==================
-// Con-/Destructors
-//==================
-
-Handle<RingBuffer> RingBuffer::Create(SIZE_T capacity)
-{
-auto ring_buf=(RingBuffer*)MemoryHelper::AllocateAligned(sizeof(RingBuffer)+capacity, Cpu::CACHE_LINE_SIZE);
-auto buf=(BYTE*)((SIZE_T)ring_buf+sizeof(RingBuffer));
-new (ring_buf) RingBuffer(buf, capacity);
-return ring_buf;
-}
 
 
 //========
@@ -123,8 +109,8 @@ return size;
 // Con-/Destructors Private
 //==========================
 
-RingBuffer::RingBuffer(BYTE* buf, SIZE_T size):
-m_Buffer(buf),
+RingBuffer::RingBuffer(VOID* buf, SIZE_T size):
+m_Buffer((BYTE*)buf),
 m_Head(0),
 m_Size(size),
 m_Tail(0)

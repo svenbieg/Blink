@@ -10,6 +10,7 @@
 //=======
 
 #include "Exception.h"
+#include "MemoryHelper.h"
 #include "Object.h"
 
 

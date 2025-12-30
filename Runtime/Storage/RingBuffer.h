@@ -26,8 +26,11 @@ namespace Storage {
 class RingBuffer: public Object
 {
 public:
+	// Friends
+	friend Object;
+
 	// Con-/Destructors
-	static Handle<RingBuffer> Create(SIZE_T Size);
+	static inline Handle<RingBuffer> Create(SIZE_T Size, SIZE_T Align=0) { return Object::CreateEx<RingBuffer>(Size, Align); }
 
 	// Common
 	SIZE_T Available();
@@ -43,7 +46,7 @@ public:
 
 private:
 	// Con-/Destructors
-	RingBuffer(BYTE* Buffer, SIZE_T Size);
+	RingBuffer(VOID* Buffer, SIZE_T Size);
 
 	// Common
 	BYTE* m_Buffer;

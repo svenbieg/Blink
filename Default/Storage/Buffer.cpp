@@ -9,7 +9,6 @@
 // Using
 //=======
 
-#include <new>
 #include "MemoryHelper.h"
 
 
@@ -18,19 +17,6 @@
 //===========
 
 namespace Storage {
-
-
-//==================
-// Con-/Destructors
-//==================
-
-Handle<Buffer> Buffer::Create(SIZE_T size)
-{
-auto buf=(Buffer*)MemoryHelper::Allocate(sizeof(Buffer)+size);
-auto buf_ptr=(BYTE*)((SIZE_T)buf+sizeof(Buffer));
-new (buf) Buffer(buf_ptr, size);
-return buf;
-}
 
 
 //==============
@@ -108,8 +94,8 @@ return copy;
 // Con-/Destructors Private
 //==========================
 
-Buffer::Buffer(BYTE* buf_ptr, SIZE_T size):
-m_Buffer(buf_ptr),
+Buffer::Buffer(VOID* buf_ptr, SIZE_T size):
+m_Buffer((BYTE*)buf_ptr),
 m_Position(0),
 m_Size(size)
 {}

@@ -27,8 +27,11 @@ namespace Storage {
 class Buffer: public Streams::Seekable
 {
 public:
+	// Friends
+	friend Object;
+
 	// Con-/Destructors
-	static Handle<Buffer> Create(SIZE_T Size);
+	static inline Handle<Buffer> Create(SIZE_T Size, SIZE_T Align=0) { return Object::CreateEx<Buffer>(Size, Align); }
 
 	// Input-Stream
 	SIZE_T Available()override;
@@ -50,7 +53,7 @@ public:
 
 private:
 	// Con-/Destructors
-	Buffer(BYTE* Buffer, SIZE_T Size);
+	Buffer(VOID* Buffer, SIZE_T Size);
 
 	// Common
 	BYTE* m_Buffer;
