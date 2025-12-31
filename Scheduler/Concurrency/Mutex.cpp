@@ -252,9 +252,9 @@ VOID Mutex::Yield(SpinLock& sched_lock)
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 assert(m_Owner==current);
-if(m_Waiting)
+m_Owner=m_Waiting;
+if(m_Owner)
 	{
-	m_Owner=m_Waiting;
 	m_Waiting=m_Waiting->m_Waiting;
 	m_Owner->m_Waiting=nullptr;
 	Scheduler::WakeupTasks(m_Owner, Status::Success);
