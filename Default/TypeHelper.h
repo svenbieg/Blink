@@ -10,6 +10,7 @@
 //=======
 
 #include "Platform.h"
+#include <assert.h>
 
 
 //=======
@@ -96,10 +97,12 @@ public:
 	// Common
 	template <class _size_t> static inline _size_t AlignDown(_size_t Value, UINT Align)
 		{
+		assert(Align!=0);
 		return Value&~(Align-1);
 		}
 	template <class _size_t> static inline _size_t AlignUp(_size_t Value, UINT Align)
 		{
+		assert(Align!=0);
 		return Value+(Align-Value%Align)%Align;
 		}
 	template <class _item_t, UINT _Count> static constexpr UINT ArraySize(_item_t (&)[_Count])

@@ -31,7 +31,7 @@ public:
 	friend Object;
 
 	// Con-/Destructors
-	static inline Handle<Buffer> Create(SIZE_T Size, SIZE_T Align=0) { return Object::CreateEx<Buffer>(Size, Align); }
+	static inline Handle<Buffer> Create(SIZE_T Size, SIZE_T Align=sizeof(SIZE_T)) { return Object::CreateEx<Buffer>(Size, Align); }
 
 	// Input-Stream
 	SIZE_T Available()override;

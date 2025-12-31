@@ -30,7 +30,7 @@ public:
 	friend Object;
 
 	// Con-/Destructors
-	static inline Handle<RingBuffer> Create(SIZE_T Size, SIZE_T Align=0) { return Object::CreateEx<RingBuffer>(Size, Align); }
+	static inline Handle<RingBuffer> Create(SIZE_T Size, SIZE_T Align=sizeof(SIZE_T)) { return Object::CreateEx<RingBuffer>(Size, Align); }
 
 	// Common
 	SIZE_T Available();
