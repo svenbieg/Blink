@@ -38,7 +38,7 @@ public:
 	friend class EventBase<_sender_t, _args_t...>;
 
 	// Con-/Destructors
-	virtual ~EventHandler() {}
+	virtual ~EventHandler()=default;
 
 	// Common
 	virtual VOID* GetOwner()const=0;
@@ -47,7 +47,7 @@ public:
 
 protected:
 	// Con-/Destructors
-	EventHandler() {}
+	EventHandler()=default;
 
 	// Common
 	Handle<EventHandler> m_Next;

@@ -2,7 +2,7 @@
 // Scheduler.h
 //=============
 
-// Copyright 2025, Sven Bieg (svenbieg@outlook.de)
+// Copyright 2026, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler
 
 #pragma once
@@ -76,7 +76,6 @@ private:
 	static VOID AddWaitingTask(Task* Task);
 	static VOID CreateTasks();
 	static UINT GetAvailableCores(UINT* Cores, UINT Max);
-	static UINT GetParallelCount(Task* Task, UINT Max);
 	static UINT GetWaitingCount(Task* Task, UINT Max);
 	static Task* GetWaitingTask();
 	static VOID HandleTaskSwitch(VOID* Parameter);
