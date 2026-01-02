@@ -225,6 +225,11 @@ while(c)
 	{
 	switch(c)
 		{
+		case 'B':
+			{
+			throw NotImplementedException();
+			break;
+			}
 		case 'L':
 			{
 			context->LanguageEncoding=cie.ReadByte();
@@ -252,8 +257,6 @@ while(c)
 			context->HasAugmentation=true;
 			break;
 			}
-		default:
-			throw NotImplementedException();
 		}
 	c=*str_args++;
 	}
