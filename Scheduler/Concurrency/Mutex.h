@@ -2,7 +2,7 @@
 // Mutex.h
 //=========
 
-// Copyright 2025, Sven Bieg (svenbieg@outlook.de)
+// Copyright 2026, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#mutex
 
 #pragma once
