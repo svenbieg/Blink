@@ -49,8 +49,8 @@
       <CppPropLines Include="%09%22name%22: %22$(Platform)%22," />
       <CppPropLines Include="%09%22includePath%22: [ $(IncludeDirs) ]," />
       <CppPropLines Include="%09%22defines%22: [ $(PreprocessorDefs) ]," />
-      <CppPropLines Include="%09%22cStandard%22: %22c17%22," />
-      <CppPropLines Include="%09%22cppStandard%22: %22c++17%22," />
+      <CppPropLines Include="%09%22cStandard%22: %22c23%22," />
+      <CppPropLines Include="%09%22cppStandard%22: %22c++26%22," />
       <CppPropLines Include="%09%22compilerPath%22: %22$(GccExe)%22," />
       <CppPropLines Include="%09%22forcedInclude%22: [ $(ForcedIncludes) ]," />
       <CppPropLines Include="%09%22configurationProvider%22: %22ms-vscode.cmake-tools%22," />
