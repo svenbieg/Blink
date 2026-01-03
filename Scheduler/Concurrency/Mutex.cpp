@@ -126,7 +126,12 @@ if(!m_Owner)
 	}
 if(FlagHelper::Get(m_Owner->m_Flags, TaskFlags::Sharing))
 	{
+	BOOL sharing=false;
+	if(FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
+		sharing=true;
 	if(!FlagHelper::Get(m_Owner->m_Flags, TaskFlags::Locked))
+		sharing=true;
+	if(sharing)
 		{
 		Scheduler::AddParallelTask(&m_Owner, current);
 		return true;
@@ -173,6 +178,7 @@ if(m_Waiting)
 
 VOID Mutex::AddWaitingTask(Task* task)
 {
+FlagHelper::Set(task->m_Flags, TaskFlags::Suspended);
 auto current_ptr=&m_Waiting;
 if(FlagHelper::Get(task->m_Flags, TaskFlags::Locked))
 	{
@@ -203,6 +209,7 @@ else
 
 VOID Mutex::AddWaitingTask(Task* task, AccessMode)
 {
+FlagHelper::Set(task->m_Flags, TaskFlags::Suspended);
 auto current_ptr=&m_Waiting;
 if(FlagHelper::Get(task->m_Flags, TaskFlags::Locked))
 	{
@@ -253,13 +260,12 @@ UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 assert(m_Owner==current);
 m_Owner=m_Waiting;
-if(m_Owner)
+if(m_Waiting)
 	{
 	m_Waiting=m_Waiting->m_Waiting;
-	m_Owner->m_Waiting=nullptr;
 	Scheduler::WakeupTasks(m_Owner, Status::Success);
 	}
-Scheduler::ResumeWaitingTask(core, current);
+Scheduler::SuspendCurrentTask(core, current);
 sched_lock.Yield();
 if(!m_Owner)
 	{
@@ -282,11 +288,10 @@ if(!m_Owner)
 		{
 		m_Owner=m_Waiting;
 		m_Waiting=m_Waiting->m_Waiting;
-		m_Owner->m_Waiting=nullptr;
 		Scheduler::WakeupTasks(m_Owner, Status::Success);
 		}
 	}
-Scheduler::ResumeWaitingTask(core, current);
+Scheduler::SuspendCurrentTask(core, current);
 sched_lock.Yield();
 if(!m_Owner)
 	{

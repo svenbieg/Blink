@@ -35,12 +35,13 @@ namespace Concurrency {
 VOID Signal::Trigger(Status status)
 {
 SpinLock lock(Scheduler::s_CriticalSection);
-if(m_Waiting)
-	{
-	Scheduler::WakeupTasks(m_Waiting, status);
-	Scheduler::ResumeWaitingTasks();
-	m_Waiting=nullptr;
-	}
+if(!m_Waiting)
+	return;
+Scheduler::WakeupTasks(m_Waiting, status);
+m_Waiting=nullptr;
+UINT core=Cpu::GetId();
+auto current=Scheduler::s_CurrentTask[core];
+Scheduler::ResumeWaitingTask(core, current);
 }
 
 VOID Signal::Wait(UINT timeout)
@@ -52,6 +53,7 @@ if(timeout)
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
+FlagHelper::Set(current->m_Flags, TaskFlags::Suspended);
 current->m_Signal=this;
 Scheduler::AddParallelTask(&m_Waiting, current);
 Scheduler::SuspendCurrentTask(core, current, resume_time);
@@ -72,6 +74,7 @@ if(timeout)
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
+FlagHelper::Set(current->m_Flags, TaskFlags::Suspended);
 current->m_Signal=this;
 Scheduler::AddParallelTask(&m_Waiting, current);
 Scheduler::SuspendCurrentTask(core, current, resume_time);
@@ -93,6 +96,7 @@ VOID Signal::WaitInternal(ScopedLock& scoped_lock)
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
+FlagHelper::Set(current->m_Flags, TaskFlags::Suspended);
 current->m_Signal=this;
 Scheduler::AddParallelTask(&m_Waiting, current);
 Scheduler::SuspendCurrentTask(core, current);

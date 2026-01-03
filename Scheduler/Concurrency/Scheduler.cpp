@@ -112,6 +112,7 @@ VOID Scheduler::ExitTask()
 SpinLock lock(s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
+FlagHelper::Set(current->m_Flags, TaskFlags::Suspended);
 FlagHelper::Set(current->m_Flags, TaskFlags::Release);
 SuspendCurrentTask(core, current);
 lock.Unlock();
@@ -168,6 +169,7 @@ UINT64 resume_time=SystemTimer::GetTickCount64()+ms;
 SpinLock lock(s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
+FlagHelper::Set(current->m_Flags, TaskFlags::Suspended);
 SuspendCurrentTask(core, current, resume_time);
 lock.Unlock();
 StatusHelper::ThrowIfFailed(current->m_Status);
@@ -239,8 +241,9 @@ while(*current_ptr)
 
 VOID Scheduler::AddWaitingTask(Task* task)
 {
-assert(!FlagHelper::Get(task->m_Flags, TaskFlags::Idle));
 assert(!FlagHelper::Get(task->m_Flags, TaskFlags::Suspended));
+if(FlagHelper::Get(task->m_Flags, TaskFlags::Idle))
+	return;
 if(FlagHelper::Get(task->m_Flags, TaskFlags::Locked))
 	{
 	if(!s_WaitingFirst)
@@ -373,8 +376,7 @@ if(FlagHelper::Get(current->m_Flags, TaskFlags::Suspended))
 	}
 else
 	{
-	if(!FlagHelper::Get(current->m_Flags, TaskFlags::Idle))
-		AddWaitingTask(current);
+	AddWaitingTask(current);
 	}
 s_CurrentTask[core]=next;
 TaskHelper::Switch(core, current, next);
@@ -448,8 +450,7 @@ if(next)
 	if(FlagHelper::Get(next->m_Flags, TaskFlags::Locked))
 		return;
 	current->m_Next=GetWaitingTask();
-	if(!FlagHelper::Get(next->m_Flags, TaskFlags::Idle))
-		AddWaitingTask(next);
+	AddWaitingTask(next);
 	}
 else
 	{
@@ -477,8 +478,6 @@ for(UINT core_id=0; core_id<core_count; core_id++)
 
 VOID Scheduler::SuspendCurrentTask(UINT core, Task* current, UINT64 resume_time)
 {
-assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Suspended));
-FlagHelper::Set(current->m_Flags, TaskFlags::Suspended);
 if(FlagHelper::Get(current->m_Flags, TaskFlags::Owner))
 	{
 	FlagHelper::Clear(current->m_Flags, TaskFlags::Owner);
@@ -497,6 +496,7 @@ if(next)
 	if(!s_WaitingLocked)
 		return;
 	current->m_Next=GetWaitingTask();
+	AddWaitingTask(next);
 	return;
 	}
 auto resume=GetWaitingTask();
