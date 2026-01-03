@@ -5,7 +5,7 @@
 // Memory-manager for real-time C++ applications
 // Allocations and deletions are done in constant low time
 
-// Copyright 2025, Sven Bieg (svenbieg@outlook.de)
+// Copyright 2026, Sven Bieg (svenbieg@outlook.de)
 // http://github.com/svenbieg/Heap
 
 #pragma once
@@ -27,15 +27,15 @@ extern "C" {
 // Settings
 //==========
 
-constexpr uint32_t CLUSTER_GROUP_SIZE=10;
+#define CLUSTER_GROUP_SIZE 10
 
 
 //===========
 // Alignment
 //===========
 
-constexpr uint32_t BLOCK_SIZE_MIN=(4*sizeof(size_t));
-constexpr uint32_t SIZE_BITS=(sizeof(size_t)*8);
+#define BLOCK_SIZE_MIN (4*sizeof(size_t))
+#define SIZE_BITS (sizeof(size_t)*8)
 
 static inline size_t align_down(size_t value, size_t align)
 {
