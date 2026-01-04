@@ -19,6 +19,7 @@
 #include "Devices/System/System.h"
 #include "Devices/Timers/SystemTimer.h"
 #include "FlagHelper.h"
+#include "StatusHelper.h"
 
 using namespace Devices::System;
 using namespace Devices::Timers;
