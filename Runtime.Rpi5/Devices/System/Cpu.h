@@ -74,6 +74,14 @@ public:
 			and %0, %0, #3": "=r" (id));
 		return id;
 		}
+	static inline UINT GetLeastSignificantBitPosition(UINT Value)
+		{
+		UINT pos;
+		__asm inline volatile("\
+			rbit %w0, %w1\n\
+			clz %w0, %w0": "=r" (pos): "r" (Value));
+		return pos;
+		}
 	static inline VOID InstructionSyncBarrier()noexcept
 		{
 		__asm inline volatile("isb"::: "memory");
