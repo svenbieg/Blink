@@ -179,6 +179,14 @@ while(str[pos])
 				written+=DoPrint(pw, flags, width);
 				continue;
 				}
+			Handle<String>* ph=nullptr;
+			if(args.GetAt(arg, ph))
+				{
+				auto pt=(*ph)? (*ph)->Begin(): nullptr;
+				arg++;
+				written+=DoPrint(pt, flags, width);
+				continue;
+				}
 			return written;
 			}
 		default:

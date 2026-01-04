@@ -147,4 +147,8 @@ public:
 	static UINT Uppercase(LPSTR Destination, UINT Size, LPCSTR String);
 	static SIZE_T WriteToStream(OutputStream* Stream, LPCSTR String);
 	static SIZE_T WriteToStream(OutputStream* Stream, LPCWSTR String);
+
+private:
+	// Scanning
+	template <class _char_t> static UINT StringScanArgs(_char_t const* String, LPCSTR Format, VariableArguments& Arguments);
 };
