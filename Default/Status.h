@@ -5,18 +5,11 @@
 #pragma once
 
 
-//=======
-// Using
-//=======
-
-#include "TypeHelper.h"
-
-
 //========
 // Status
 //========
 
-enum class Status: UINT
+enum class Status: unsigned int
 {
 // Successful
 Success,

@@ -71,7 +71,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)MemoryHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Object.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)PathHelper.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)StatusHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Buffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Encoding\Dwarf.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\StaticBuffer.cpp" />

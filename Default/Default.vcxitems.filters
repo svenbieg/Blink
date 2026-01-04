@@ -134,7 +134,6 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)StringBuilder.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StringView.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)StatusHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Storage">

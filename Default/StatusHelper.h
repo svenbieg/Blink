@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include "Exception.h"
 #include "FlagHelper.h"
 #include "Status.h"
 
@@ -21,13 +22,17 @@ class StatusHelper
 {
 public:
 	// Common
-	static inline BOOL Failed(Status Status)
+	static inline bool Failed(Status Status)
 		{
 		return FlagHelper::Get(Status, Status::Error);
 		}
-	static inline BOOL Succeeded(Status Status)
+	static inline bool Succeeded(Status Status)
 		{
 		return !FlagHelper::Get(Status, Status::Error);
 		}
-	static VOID ThrowIfFailed(Status Status);
+	static void ThrowIfFailed(Status Status)
+		{
+		if(Failed(Status))
+			throw Exception(Status);
+		}
 };
