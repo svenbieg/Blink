@@ -9,8 +9,8 @@
 // Using
 //=======
 
+#include "Exception.h"
 #include "Platform.h"
-#include <assert.h>
 
 
 //=======
@@ -22,23 +22,24 @@ typedef void VOID;
 typedef decltype(nullptr) nullptr_t;
 
 typedef unsigned char BYTE;
+constexpr BYTE BYTE_MAX=0xFF;
 
 typedef unsigned short int WORD;
-constexpr WORD WORD_MAX=(WORD)-1;
+constexpr WORD WORD_MAX=0xFFFF;
 
 typedef unsigned __LONG int DWORD;
+constexpr DWORD DWORD_MAX=0xFFFFFFFF;
+
 typedef unsigned __LONG_LONG int QWORD;
 
 typedef __ADDR_T SIZE_T;
-constexpr SIZE_T SIZE_MAX=(SIZE_T)-1;
-
-typedef __FILE_SIZE_T FILE_SIZE;
-constexpr FILE_SIZE FILE_SIZE_MAX=(FILE_SIZE)-1;
+constexpr SIZE_T SIZE_MAX=~0;
 
 typedef int BOOL;
 
 typedef short int SHORT;
-typedef unsigned short int USHORT;
+constexpr SHORT SHORT_MAX=0x7FFF;
+constexpr SHORT SHORT_MIN=-0x7FFF;
 
 typedef int INT;
 constexpr INT INT_MAX=0x7FFFFFFF;
@@ -87,6 +88,14 @@ typedef LPCSTR LPCTSTR;
 #define STR(s) _STR(s)
 
 
+//=========================
+// Additional Dependencies
+//=========================
+
+#include <assert.h>
+#include <concepts>
+
+
 //=============
 // Type-Helper
 //=============
@@ -95,17 +104,17 @@ class TypeHelper
 {
 public:
 	// Common
-	template <class _size_t> static inline _size_t AlignDown(_size_t Value, UINT Align)
+	template <std::unsigned_integral _size_t, std::unsigned_integral _align_t> static inline _size_t AlignDown(_size_t Value, _align_t Align)
 		{
 		assert(Align!=0);
 		return Value&~(Align-1);
 		}
-	template <class _size_t> static inline _size_t AlignUp(_size_t Value, UINT Align)
+	template <std::unsigned_integral _size_t, std::unsigned_integral _align_t> static inline _size_t AlignUp(_size_t Value, _align_t Align)
 		{
 		assert(Align!=0);
 		return Value+(Align-Value%Align)%Align;
 		}
-	template <class _item_t, UINT _Count> static constexpr UINT ArraySize(_item_t (&)[_Count])
+	template <class _item_t, SIZE_T _Count> static constexpr SIZE_T ArraySize(_item_t (&)[_Count])
 		{
 		return _Count;
 		}
@@ -122,6 +131,32 @@ public:
 		return value;
 		}
 	static inline UINT HighLong(UINT64 Value) { return (UINT)(Value>>32); }
+	template <std::unsigned_integral _uint_t, std::unsigned_integral _value_t> static inline BOOL Fits(_value_t Value)
+		{
+		return Value<=(_uint_t)~0;
+		}
+	template <std::unsigned_integral _uint_t, std::signed_integral _value_t> static inline BOOL Fits(_value_t Value)
+		{
+		if(Value<0)
+			return false;
+		return Value<=(_uint_t)~0;
+		}
+	template <std::signed_integral _int_t, std::unsigned_integral _value_t> static inline BOOL Fits(_value_t Value)
+		{
+		using uint_t=typename std::make_unsigned<_int_t>::type;
+		_int_t max=((uint_t)~0)/2;
+		_int_t min=-max;
+		using value_t=typename std::make_signed<_value_t>::type;
+		value_t value=Value;
+		return (value>=min)&&(value<=max);
+		}
+	template <std::signed_integral _int_t, std::signed_integral _value_t> static inline BOOL Fits(_value_t Value)
+		{
+		using uint_t=typename std::make_unsigned<_int_t>::type;
+		_int_t max=((uint_t)~0)/2;
+		_int_t min=-max;
+		return (Value>=min)&&(Value<=max);
+		}
 	static inline UINT LowLong(UINT64 Value) { return (UINT)Value; }
 	static inline WORD MakeLong(BYTE Low, BYTE High)
 		{
@@ -150,5 +185,39 @@ public:
 		if(Value1<Value2)
 			return Value1;
 		return Value2;
+		}
+	template <std::signed_integral _int_t, std::integral _value_t> static _int_t Signed(_value_t Value)
+		{
+		using int_t=typename std::make_signed<_value_t>::type;
+		int_t value=Value;
+		if(!Fits<_int_t, int_t>(value))
+			throw InvalidArgumentException();
+		return static_cast<_int_t>(value);
+		}
+	template <std::signed_integral _int_t, std::integral _value_t> static bool Signed(_value_t Value, _int_t* Signed)
+		{
+		using int_t=typename std::make_signed<_value_t>::type;
+		int_t value=Value;
+		if(!Fits<_int_t, int_t>(value))
+			return false;
+		*Signed=static_cast<_int_t>(value);
+		return true;
+		}
+	template <std::unsigned_integral _uint_t, std::integral _value_t> static _uint_t Unsigned(_value_t Value)
+		{
+		using uint_t=typename std::make_unsigned<_value_t>::type;
+		uint_t value=Value;
+		if(!Fits<_uint_t, uint_t>(value))
+			throw InvalidArgumentException();
+		return static_cast<_uint_t>(value);
+		}
+	template <std::unsigned_integral _uint_t, std::integral _value_t> static bool Unsigned(_value_t Value, _uint_t* Unsigned)
+		{
+		using uint_t=typename std::make_unsigned<_value_t>::type;
+		uint_t value=Value;
+		if(!Fits<_uint_t, uint_t>(value))
+			return false;
+		*Unsigned=static_cast<_uint_t>(value);
+		return true;
 		}
 };
