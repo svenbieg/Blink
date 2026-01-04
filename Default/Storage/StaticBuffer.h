@@ -31,19 +31,19 @@ public:
 	static inline Handle<StaticBuffer> Create(VOID* Buffer, SIZE_T Size) { return new StaticBuffer(Buffer, Size); }
 
 	// Common
-	VOID Reset() { m_Position=0; }
+	inline VOID Reset() { m_Position=0; }
 
 	// Input-Stream
-	SIZE_T Available()override { return m_Size-m_Position; }
+	SIZE_T Available()override;
 	SIZE_T Read(VOID* Buffer, SIZE_T Size)override;
 
 	// Output-Stream
-	inline VOID Flush()override {}
+	VOID Flush()override;
 	SIZE_T Write(VOID const* Buffer, SIZE_T Size)override;
 
 	// Seekable
-	FILE_SIZE GetSize()override { return m_Size; }
-	BOOL Seek(FILE_SIZE Position)override;
+	SIZE_T GetSize()override;
+	BOOL Seek(SIZE_T Position)override;
 
 private:
 	// Con-/Destructors

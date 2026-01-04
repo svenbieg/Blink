@@ -102,8 +102,8 @@ class Seekable: public RandomAccessStream
 {
 public:
 	// Common
-	virtual FILE_SIZE GetSize()=0;
-	virtual BOOL Seek(FILE_SIZE Position)=0;
+	virtual SIZE_T GetSize()=0;
+	virtual BOOL Seek(SIZE_T Position)=0;
 
 protected:
 	// Con-/Destructors

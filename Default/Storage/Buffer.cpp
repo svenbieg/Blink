@@ -47,6 +47,10 @@ return copy;
 // Output-Stream
 //===============
 
+VOID Buffer::Flush()
+{
+}
+
 SIZE_T Buffer::Write(VOID const* buf, SIZE_T size)
 {
 if(m_Size==0)
@@ -63,7 +67,12 @@ return copy;
 // Seekable
 //==========
 
-BOOL Buffer::Seek(FILE_SIZE pos)
+SIZE_T Buffer::GetSize()
+{
+return m_Size;
+}
+
+BOOL Buffer::Seek(SIZE_T pos)
 {
 if(m_Size&&pos>m_Size-1)
 	return false;

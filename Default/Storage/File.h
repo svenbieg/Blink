@@ -66,7 +66,7 @@ public:
 	// Common
 	virtual Handle<String> GetName()=0;
 	virtual Handle<String> GetPath()=0;
-	virtual BOOL SetSize(FILE_SIZE Size)=0;
+	virtual BOOL SetSize(SIZE_T Size)=0;
 
 protected:
 	// Con-/Destructors

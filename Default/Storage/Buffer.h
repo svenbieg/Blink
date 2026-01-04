@@ -38,12 +38,12 @@ public:
 	SIZE_T Read(VOID* Buffer, SIZE_T Size)override;
 
 	// Output-Stream
-	inline VOID Flush()override {}
+	VOID Flush()override;
 	SIZE_T Write(VOID const* Buffer, SIZE_T Size)override;
 
 	// Seekable
-	inline FILE_SIZE GetSize()override { return m_Size; }
-	BOOL Seek(FILE_SIZE Position)override;
+	SIZE_T GetSize()override;
+	BOOL Seek(SIZE_T Position)override;
 
 	// Access
 	inline BYTE* Begin()const { return m_Buffer; }

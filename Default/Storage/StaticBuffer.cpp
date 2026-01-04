@@ -23,6 +23,11 @@ namespace Storage {
 // Input-Stream
 //==============
 
+SIZE_T StaticBuffer::Available()
+{
+return m_Size-m_Position;
+}
+
 SIZE_T StaticBuffer::Read(VOID* buf, SIZE_T size)
 {
 SIZE_T copy=TypeHelper::Min(size, m_Size-m_Position);
@@ -35,6 +40,10 @@ return copy;
 //===============
 // Output-Stream
 //===============
+
+VOID StaticBuffer::Flush()
+{
+}
 
 SIZE_T StaticBuffer::Write(VOID const* buf, SIZE_T size)
 {
@@ -49,7 +58,12 @@ return copy;
 // Seekable
 //==========
 
-BOOL StaticBuffer::Seek(FILE_SIZE pos)
+SIZE_T StaticBuffer::GetSize()
+{
+return m_Size;
+}
+
+BOOL StaticBuffer::Seek(SIZE_T pos)
 {
 if(pos>=m_Size)
 	return false;
