@@ -9,10 +9,9 @@
 // Using
 //=======
 
-#include "Concurrency/Mutex.h"
+#include "Concurrency/WriteLock.h"
 #include "Handle.h"
 #include "MemoryHelper.h"
-#include <new>
 
 
 //========
@@ -31,27 +30,17 @@ public:
 	Global()=default;
 
 	// Access
-	operator Handle<_obj_t>()
+	template <class... _args_t> Handle<_obj_t> Create(_args_t... Arguments)
 		{
 		WriteLock lock(m_Mutex);
 		if(m_Object)
 			return m_Object;
-		auto obj=(_obj_t*)MemoryHelper::Allocate(sizeof(_obj_t));
-		try
-			{
-			new (obj) _obj_t();
-			}
-		catch(Exception e)
-			{
-			delete obj;
-			throw e;
-			}
-		m_Object=obj;
+		m_Object=Object::Create<_obj_t>(Arguments...);
 		return m_Object;
 		}
 
 private:
 	// Common
-	Concurrency::Mutex m_Mutex;
+	Mutex m_Mutex;
 	Handle<_obj_t> m_Object;
 };

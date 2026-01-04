@@ -18,6 +18,8 @@
 // Forward-Declarations
 //======================
 
+template <class _obj_t> class Global;
+
 class String;
 template <class _obj_t> class Handle;
 template <> class Handle<String>;
@@ -31,6 +33,7 @@ class Object
 {
 public:
 	// Friends
+	template <class _obj_t> friend class Global;
 	template <class _obj_t> friend class Handle;
 
 	// Using
