@@ -223,7 +223,7 @@ m_IrqMask(0)
 m_PcieHost=PcieHost::Get();
 }
 
-Global<GpioHost> GpioHost::s_Current;
+Global<GpioHost> GpioHost::s_Global;
 
 
 //================

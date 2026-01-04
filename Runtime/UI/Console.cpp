@@ -57,7 +57,7 @@ m_SerialPort->SetStreamFormat(StreamFormat::UTF8);
 m_SerialPort->DataReceived.Add(this, &Console::OnSerialPortDataReceived);
 }
 
-Global<Console> Console::s_Current;
+Global<Console> Console::s_Global;
 
 
 //================

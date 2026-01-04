@@ -30,10 +30,10 @@ class PcieHost: public Object
 {
 public:
 	// Friends
-	friend class Global<PcieHost>;
+	friend Object;
 
 	// Common
-	static inline Handle<PcieHost> Get() { return s_Current; }
+	static inline Handle<PcieHost> Get() { return s_Global.Create(); }
 	static inline SIZE_T GetDmaAddress(VOID* Buffer) { return (SIZE_T)Buffer|DMA_OFFSET; }
 	static inline SIZE_T GetDmaAddress(SIZE_T Address) { return Address|DMA_OFFSET; }
 	VOID SetInterruptHandler(Rp1Irq Irq, IRQ_HANDLER Handler, VOID* Parameter=nullptr);
@@ -41,7 +41,7 @@ public:
 private:
 	// Con-/Destructors
 	PcieHost();
-	static Global<PcieHost> s_Current;
+	static Global<PcieHost> s_Global;
 
 	// Common
 	VOID EnableDevice(UINT Id, BYTE Slot, BYTE Function);

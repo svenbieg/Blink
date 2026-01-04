@@ -34,11 +34,13 @@ public:
 	using SerialPort=Devices::Serial::SerialPort;
 
 	// Friends
-	friend class Global<Console>;
+	friend Object;
+
+	// Con-/Destructors
+	static inline Handle<Console> Get() { return s_Global.Create(); }
 
 	// Common
 	VOID AddCommand(Handle<String> Command, Function<VOID()> Function);
-	static inline Handle<Console> Get() { return s_Current; }
 	Event<Console, Handle<String>> CommandReceived;
 	static VOID Print(Handle<String> Text);
 	template <class... _args_t> static inline VOID Print(LPCSTR Format, _args_t... Arguments)
@@ -50,7 +52,7 @@ public:
 private:
 	// Con-/Destructors
 	Console();
-	static Global<Console> s_Current;
+	static Global<Console> s_Global;
 
 	// Common
 	VOID HandleCommand(Handle<String> Command);

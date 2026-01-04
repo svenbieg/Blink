@@ -39,7 +39,7 @@ if(handler)
 	{
 	m_IrqHandlers[irq]=handler;
 	m_IrqParameters[irq]=param;
-	if(FlagHelper::Get(irq_mask, RP1_IRQ_EDGE_MASK))
+	if(BitHelper::Get(irq_mask, RP1_IRQ_EDGE_MASK))
 		{
 		IoHelper::Write(intc->MSIX_CFG_CLEAR[irq], MSIX_CFG_IACK_EN);
 		}
@@ -70,7 +70,7 @@ MemoryHelper::Fill(m_IrqParameters, RP1_IRQ_COUNT*sizeof(VOID*), 0);
 Initialize();
 }
 
-Global<PcieHost> PcieHost::s_Current;
+Global<PcieHost> PcieHost::s_Global;
 
 
 //================
@@ -218,7 +218,7 @@ for(UINT irq=0; mask!=0; irq++)
 		{
 		UINT64 irq_mask=1ULL<<irq;
 		m_IrqHandlers[irq](m_IrqParameters[irq]);
-		if(!FlagHelper::Get(irq_mask, RP1_IRQ_EDGE_MASK))
+		if(!BitHelper::Get(irq_mask, RP1_IRQ_EDGE_MASK))
 			IoHelper::Write(intc->MSIX_CFG_SET[irq], MSIX_CFG_IACK);
 		}
 	mask>>=1;

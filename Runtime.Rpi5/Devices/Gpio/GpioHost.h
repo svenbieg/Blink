@@ -34,19 +34,19 @@ public:
 	using PcieHost=Devices::Pcie::PcieHost;
 
 	// Friends
-	friend class Global<GpioHost>;
+	friend Object;
 
 	// Common
 	BOOL DigitalRead(GpioRp1Pin Pin);
 	VOID DigitalWrite(GpioRp1Pin Pin, BOOL Value);
-	static inline Handle<GpioHost> Get() { return s_Current; }
+	static inline Handle<GpioHost> Get() { return s_Global.Create(); }
 	VOID SetInterruptHandler(GpioRp1Pin Pin, IRQ_HANDLER Handler, VOID* Parameter=0, GpioIrqMode Mode=GpioIrqMode::Edge);
 	VOID SetPinMode(GpioRp1Pin Pin, GpioRp1PinMode Mode, GpioPullMode PullMode=GpioPullMode::None);
 
 private:
 	// Con-/Destructors
 	GpioHost();
-	static Global<GpioHost> s_Current;
+	static Global<GpioHost> s_Global;
 
 	// Common
 	static VOID HandleInterrupt(VOID* Parameter);
