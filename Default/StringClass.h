@@ -51,7 +51,7 @@ public:
 	static Handle<String> Create(LPCWSTR Value);
 	static Handle<String> Create(UINT Length, LPCSTR Value);
 	static Handle<String> Create(UINT Length, LPCWSTR Value);
-	static Handle<String> Create(LPCSTR Format, VariableArguments const& Arguments);
+	static Handle<String> Create(LPCSTR Format, VariableArguments& Arguments);
 	template <class... _args_t> static inline Handle<String> Create(LPCSTR Format, _args_t... Arguments);
 
 	// Access
@@ -71,7 +71,7 @@ public:
 	inline BOOL IsEmpty()const { return m_Buffer[0]==0; }
 	template <class... _args_t> inline UINT Scan(LPCSTR Format, _args_t... Arguments)
 		{
-		UnknownClass args[]={ Arguments... };
+		VariableArgument args[]={ Arguments... };
 		VariableArguments vargs(args, TypeHelper::ArraySize(args));
 		return StringHelper::ScanArgs(m_Buffer, Format, vargs);
 		}
@@ -85,7 +85,7 @@ private:
 	String(LPTSTR Buffer);
 	String(LPTSTR Buffer, UINT Size, LPCSTR Value);
 	String(LPTSTR Buffer, UINT Size, LPCWSTR Value);
-	String(LPTSTR Buffer, UINT Size, LPCSTR Format, VariableArguments const& Arguments);
+	String(LPTSTR Buffer, UINT Size, LPCSTR Format, VariableArguments& Arguments);
 	static Handle<String> Create(UINT Length, nullptr_t);
 
 	// Common
@@ -224,7 +224,7 @@ private:
 
 template <class... _args_t> inline Handle<String> String::Create(LPCSTR Format, _args_t... Arguments)
 {
-UnknownClass args[]={ Arguments... };
+VariableArgument args[]={ Arguments... };
 VariableArguments vargs(args, TypeHelper::ArraySize(args));
 return Create(Format, vargs);
 }

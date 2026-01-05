@@ -45,10 +45,10 @@ public:
 	UINT Print(UINT Length, LPCSTR Value);
 	UINT Print(UINT Length, LPCWSTR Value);
 	UINT Print(Handle<String> Value);
-	UINT Print(LPCSTR Format, VariableArguments const& Arguments);
+	UINT Print(LPCSTR Format, VariableArguments& Arguments);
 	template <class... _args_t> UINT Print(LPCSTR Format, _args_t... Arguments)
 		{
-		UnknownClass args[]={ Arguments... };
+		VariableArgument args[]={ Arguments... };
 		VariableArguments vargs(args, TypeHelper::ArraySize(args));
 		return Print(Format, vargs);
 		}

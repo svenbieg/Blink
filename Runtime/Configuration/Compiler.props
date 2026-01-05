@@ -3,6 +3,7 @@
 
   <PropertyGroup>
     <AdditionalOptions>$(AdditionalOptions) /Zc:__cplusplus /std:c++latest /std:clatest</AdditionalOptions>
+    <AdditionalLinkerFlags>$(AdditionalLinkerFlags) -lm</AdditionalLinkerFlags>
     <CompilerFlags>$(CompilerFlags) -fdata-sections -ffunction-sections</CompilerFlags>
     <CompilerFlags>$(CompilerFlags) -fno-builtin -funwind-tables -nostartfiles</CompilerFlags>
     <CompilerFlags>$(CompilerFlags) -O0</CompilerFlags>
@@ -10,6 +11,7 @@
     <CompilerFlagsCpp>$(CompilerFlagsCpp) -std=c++26</CompilerFlagsCpp>
     <CompilerFlagsCpp>$(CompilerFlagsCpp) -Wno-multichar</CompilerFlagsCpp>
     <LinkerFlags>$(LinkerFlags) --gc-sections --nostdlib --eh-frame-hdr</LinkerFlags>
+    <LinkerFlags>$(LinkerFlags) -L$(CompilerPath)$(CompilerName)\lib\</LinkerFlags>
     <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(SolutionDir);$(ProjectDir)</NMakeIncludeSearchPath>
     <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(CompilerPath)$(CompilerName)\include\</NMakeIncludeSearchPath>
     <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(CompilerPath)$(CompilerName)\include\c++\$(CompilerVersion)\</NMakeIncludeSearchPath>

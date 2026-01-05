@@ -61,7 +61,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)StringHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StringView.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TypeHelper.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)UnknownClass.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VariableArguments.h" />
   </ItemGroup>
   <ItemGroup>
@@ -81,6 +80,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)StringClass.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StringHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StringView.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)UnknownClass.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VariableArguments.cpp" />
   </ItemGroup>
 </Project>

@@ -59,7 +59,7 @@ new (str) String(buf, len+1, Value);
 return str;
 }
 
-Handle<String> String::Create(LPCSTR Format, VariableArguments const& Arguments)
+Handle<String> String::Create(LPCSTR Format, VariableArguments& Arguments)
 {
 UINT len=StringHelper::Length(Format, Arguments);
 UINT size=sizeof(String)+(len+1)*sizeof(TCHAR);
@@ -122,7 +122,7 @@ m_Length=StringHelper::Copy(m_Buffer, Size, Value);
 m_Hash=StringHelper::GetHash(m_Buffer);
 }
 
-String::String(LPTSTR Buffer, UINT Size, LPCSTR Format, VariableArguments const& Arguments):
+String::String(LPTSTR Buffer, UINT Size, LPCSTR Format, VariableArguments& Arguments):
 m_Buffer(Buffer)
 {
 m_Length=StringHelper::PrintArgs(m_Buffer, Size, Format, Arguments);

@@ -4,7 +4,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)VariableArguments.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CharHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StringHelper.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)UnknownClass.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)PathHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)FlagHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MemoryHelper.h" />
@@ -103,9 +102,9 @@
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)StringHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CharHelper.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)UnknownClass.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Object.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StringClass.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VariableArguments.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Buffer.cpp">
       <Filter>Storage</Filter>
     </ClCompile>

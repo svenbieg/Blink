@@ -9,7 +9,6 @@
 // Using
 //=======
 
-#include "Exception.h"
 #include "Platform.h"
 
 
@@ -58,7 +57,10 @@ typedef float FLOAT;
 typedef double DOUBLE;
 
 typedef char CHAR;
+constexpr CHAR CHAR_MAX=0xFF;
+
 typedef wchar_t WCHAR;
+constexpr WCHAR WCHAR_MAX=0xFFFF;
 
 typedef char* LPSTR;
 typedef wchar_t* LPWSTR;
@@ -92,8 +94,22 @@ typedef LPCSTR LPCTSTR;
 // Additional Dependencies
 //=========================
 
+#include "Exception.h"
 #include <assert.h>
+#include <bit>
+#include <cmath>
 #include <concepts>
+#include <limits>
+
+
+//==========
+// Concepts
+//==========
+
+namespace std
+{
+template <class _Ty> concept numeric=is_integral_v<_Ty>||is_floating_point_v<_Ty>;
+}
 
 
 //=============
@@ -114,110 +130,87 @@ public:
 		assert(Align!=0);
 		return Value+(Align-Value%Align)%Align;
 		}
-	template <class _item_t, SIZE_T _Count> static constexpr SIZE_T ArraySize(_item_t (&)[_Count])
+	template <class _item_t, SIZE_T _count> static constexpr SIZE_T ArraySize(_item_t (&)[_count]) { return _count; }
+	template <std::unsigned_integral _value_t> static constexpr _value_t BigEndian(_value_t Value)
 		{
-		return _Count;
+		if constexpr(std::endian::native==std::endian::little)
+			return std::byteswap(Value);
+		return Value;
 		}
-	static inline WORD BigEndian(WORD Value)
+	static constexpr UINT HighLong(UINT64 Value) { return (UINT)(Value>>32); }
+	template <std::numeric _num_t, std::numeric _value_t> static constexpr BOOL Fits(_value_t Value)
 		{
-		return (Value>>8)|(Value<<8);
+		constexpr auto min=std::numeric_limits<_num_t>::min();
+		constexpr auto max=std::numeric_limits<_num_t>::max();
+		return std::isgreaterequal(Value, min)&&std::islessequal(Value, max);
 		}
-	static inline UINT BigEndian(UINT Value)
+	template <std::floating_point _float_t, std::numeric _value_t> static constexpr _float_t Float(_value_t Value)
 		{
-		UINT value=(Value>>24);
-		value|=(Value>>8)&0xFF00;
-		value|=(Value<<8)&0xFF0000;
-		value|=(Value<<24);
-		return value;
+		if(!Fits<_float_t, _value_t>(Value))
+			throw InvalidArgumentException();
+		return static_cast<_float_t>(Value);
 		}
-	static inline UINT HighLong(UINT64 Value) { return (UINT)(Value>>32); }
-	template <std::unsigned_integral _uint_t, std::unsigned_integral _value_t> static inline BOOL Fits(_value_t Value)
+	template <std::floating_point _float_t, std::numeric _value_t> static constexpr BOOL Float(_value_t Value, _float_t* Result)
 		{
-		return Value<=(_uint_t)~0;
-		}
-	template <std::unsigned_integral _uint_t, std::signed_integral _value_t> static inline BOOL Fits(_value_t Value)
-		{
-		if(Value<0)
+		if(!Fits<_float_t, _value_t>(Value))
 			return false;
-		return Value<=(_uint_t)~0;
+		*Result=static_cast<_float_t>(Value);
+		return true;
 		}
-	template <std::signed_integral _int_t, std::unsigned_integral _value_t> static inline BOOL Fits(_value_t Value)
+	template <std::unsigned_integral _value_t> static constexpr _value_t LittleEndian(_value_t Value)
 		{
-		using uint_t=typename std::make_unsigned<_int_t>::type;
-		_int_t max=((uint_t)~0)/2;
-		_int_t min=-max;
-		using value_t=typename std::make_signed<_value_t>::type;
-		value_t value=Value;
-		return (value>=min)&&(value<=max);
+		if constexpr(std::endian::native==std::endian::big)
+			return std::byteswap(Value);
+		return Value;
 		}
-	template <std::signed_integral _int_t, std::signed_integral _value_t> static inline BOOL Fits(_value_t Value)
-		{
-		using uint_t=typename std::make_unsigned<_int_t>::type;
-		_int_t max=((uint_t)~0)/2;
-		_int_t min=-max;
-		return (Value>=min)&&(Value<=max);
-		}
-	static inline UINT LowLong(UINT64 Value) { return (UINT)Value; }
-	static inline WORD MakeLong(BYTE Low, BYTE High)
+	static constexpr UINT LowLong(UINT64 Value) { return (UINT)Value; }
+	static constexpr WORD MakeLong(BYTE Low, BYTE High)
 		{
 		return (((WORD)High)<<8)|Low;
 		}
-	static inline UINT MakeLong(BYTE Low, BYTE High8, BYTE High16, BYTE High24)
+	static constexpr UINT MakeLong(BYTE Low, BYTE High8, BYTE High16, BYTE High24)
 		{
 		return (((UINT)High24)<<24)|((UINT)High16<<16)|((UINT)High8<<8)|Low;
 		}
-	static inline UINT MakeLong(WORD Low, WORD High)
+	static constexpr UINT MakeLong(WORD Low, WORD High)
 		{
 		return (((UINT)High)<<16)|Low;
 		}
-	static inline UINT64 MakeLong(UINT Low, UINT High)
+	static constexpr UINT64 MakeLong(UINT Low, UINT High)
 		{
 		return (((UINT64)High)<<32)|Low;
 		}
-	template <class _size1_t, class _size2_t> static inline _size1_t Max(_size1_t Value1, _size2_t Value2)
+	template <class _size1_t, class _size2_t> static constexpr _size1_t Max(_size1_t Value1, _size2_t Value2)
 		{
 		if(Value1>Value2)
 			return Value1;
 		return Value2;
 		}
-	template <class _size1_t, class _size2_t> static inline _size1_t Min(_size1_t Value1, _size2_t Value2)
+	template <class _size1_t, class _size2_t> static constexpr _size1_t Min(_size1_t Value1, _size2_t Value2)
 		{
 		if(Value1<Value2)
 			return Value1;
 		return Value2;
 		}
-	template <std::signed_integral _int_t, std::integral _value_t> static _int_t Signed(_value_t Value)
+	template <std::integral _int_t, std::integral _value_t> static constexpr _int_t Integral(_value_t Value)
 		{
-		using int_t=typename std::make_signed<_value_t>::type;
-		int_t value=Value;
-		if(!Fits<_int_t, int_t>(value))
+		if(!Fits<_int_t, _value_t>(Value))
 			throw InvalidArgumentException();
-		return static_cast<_int_t>(value);
+		return static_cast<_int_t>(Value);
 		}
-	template <std::signed_integral _int_t, std::integral _value_t> static bool Signed(_value_t Value, _int_t* Signed)
+	template <std::integral _int_t, std::floating_point _value_t> static constexpr _int_t Integral(_value_t Value)
 		{
-		using int_t=typename std::make_signed<_value_t>::type;
-		int_t value=Value;
-		if(!Fits<_int_t, int_t>(value))
+		return Integral<_int_t, long long>(std::llround(Value));
+		}
+	template <std::integral _int_t, std::integral _value_t> static constexpr bool Integral(_value_t Value, _int_t* Result)
+		{
+		if(!Fits<_int_t, _value_t>(Value))
 			return false;
-		*Signed=static_cast<_int_t>(value);
+		*Result=static_cast<_int_t>(Value);
 		return true;
 		}
-	template <std::unsigned_integral _uint_t, std::integral _value_t> static _uint_t Unsigned(_value_t Value)
+	template <std::integral _int_t, std::floating_point _value_t> static constexpr bool Integral(_value_t Value, _int_t* Result)
 		{
-		using uint_t=typename std::make_unsigned<_value_t>::type;
-		uint_t value=Value;
-		if(!Fits<_uint_t, uint_t>(value))
-			throw InvalidArgumentException();
-		return static_cast<_uint_t>(value);
-		}
-	template <std::unsigned_integral _uint_t, std::integral _value_t> static bool Unsigned(_value_t Value, _uint_t* Unsigned)
-		{
-		using uint_t=typename std::make_unsigned<_value_t>::type;
-		uint_t value=Value;
-		if(!Fits<_uint_t, uint_t>(value))
-			return false;
-		*Unsigned=static_cast<_uint_t>(value);
-		return true;
+		return Integral<_int_t, long long>(std::llround(Value), Result);
 		}
 };

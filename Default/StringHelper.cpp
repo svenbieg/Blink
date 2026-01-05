@@ -115,6 +115,8 @@ return len;
 
 template <class _dst_t, class _src_t> inline UINT StringCopy(_dst_t* dst, UINT size, _src_t const* src, UINT copy)
 {
+if(!dst)
+	return 0;
 if(!src)
 	{
 	if(dst)
@@ -1009,12 +1011,12 @@ return pos-start;
 // Formatting
 //============
 
-template <class _char_t> inline UINT StringPrintArgs(_char_t* str, UINT size, LPCSTR format, VariableArguments const& args)
+template <class _char_t> inline UINT StringPrintArgs(_char_t* str, UINT size, LPCSTR format, VariableArguments& args)
 {
 if(!format)
 	return 0;
+args.Reset();
 UINT pos=0;
-UINT arg=0;
 for(UINT fmt=0; format[fmt]; )
 	{
 	if(pos+1==size)
@@ -1036,93 +1038,84 @@ for(UINT fmt=0; format[fmt]; )
 		}
 	if(FlagHelper::Get(flags, FormatFlags::Width))
 		{
-		if(!args.GetAt(arg++, width))
-			return 0;
+		if(!args.Get(width))
+			break;
 		}
 	if(FlagHelper::Get(flags, FormatFlags::Precision))
 		{
-		if(!args.GetAt(arg++, prec))
-			return 0;
+		if(!args.Get(prec))
+			break;
 		}
 	switch(str_format)
 		{
 		case Format::Int:
 			{
 			INT64 i=0;
-			if(!args.GetAt(arg++, i))
-				return 0;
+			if(!args.Get(i))
+				break;
 			pos+=StringPrintInt(str, size, i, flags, width, pos);
 			continue;
 			}
 		case Format::UInt:
 			{
 			UINT64 u=0;
-			if(!args.GetAt(arg++, u))
-				return 0;
+			if(!args.Get(u))
+				break;
 			pos+=StringPrintUInt(str, size, u, flags, width, pos);
 			continue;
 			}
 		case Format::Hex:
 			{
 			UINT64 u=0;
-			if(!args.GetAt(arg++, u))
-				return 0;
+			if(!args.Get(u))
+				break;
 			pos+=StringPrintHex(str, size, u, flags, width, pos);
 			continue;
 			}
 		case Format::Float:
 			{
 			FLOAT f=0;
-			if(!args.GetAt(arg++, f))
-				return 0;
+			if(!args.Get(f))
+				break;
 			pos+=StringPrintFloat(str, size, f, flags, width, prec, pos);
 			continue;
 			}
 		case Format::Double:
 			{
 			DOUBLE d=0;
-			if(!args.GetAt(arg++, d))
-				return 0;
+			if(!args.Get(d))
+				break;
 			pos+=StringPrintFloat(str, size, d, flags, width, prec, pos);
 			continue;
 			}
 		case Format::Char:
 			{
 			WCHAR c=' ';
-			if(!args.GetAt(arg++, c))
-				return 0;
+			if(!args.Get(c))
+				break;
 			pos+=StringPrintChar(str, size, c, flags, pos);
 			continue;
 			}
 		case Format::String:
 			{
 			LPCSTR p=nullptr;
-			if(args.GetAt(arg, p))
+			if(args.Get(p))
 				{
-				arg++;
 				pos+=StringPrintString(str, size, p, flags, width, pos);
 				continue;
 				}
 			LPCWSTR pw=nullptr;
-			if(args.GetAt(arg, pw))
+			if(args.Get(pw))
 				{
-				arg++;
 				pos+=StringPrintString(str, size, pw, flags, width, pos);
 				continue;
 				}
-			Handle<String>* ph=nullptr;
-			if(args.GetAt(arg, ph))
-				{
-				auto pt=(*ph)? (*ph)->Begin(): nullptr;
-				arg++;
-				pos+=StringPrintString(str, size, pt, flags, width, pos);
-				continue;
-				}
-			return 0;
+			break;
 			}
 		default:
-			continue;
+			break;
 		}
+	break;
 	}
 if(pos<size)
 	str[pos]=0;
@@ -1138,8 +1131,8 @@ template <class _char_t> UINT StringHelper::StringScanArgs(_char_t const* str, L
 {
 if(!str||!format)
 	return 0;
+args.Reset();
 UINT pos=0;
-UINT arg=0;
 UINT read=0;
 for(UINT fmt=0; format[fmt]; )
 	{
@@ -1168,20 +1161,8 @@ for(UINT fmt=0; format[fmt]; )
 		case Format::Char:
 			{
 			_char_t tc=str[pos];
-			CHAR* pc=nullptr;
-			if(args.GetAt(arg, pc))
+			if(args.Set(tc))
 				{
-				*pc=CharHelper::ToAnsi(tc);
-				arg++;
-				read++;
-				pos++;
-				continue;
-				}
-			WCHAR* pwc=nullptr;
-			if(args.GetAt(arg, pwc))
-				{
-				*pwc=CharHelper::ToUnicode(tc);
-				arg++;
 				read++;
 				pos++;
 				continue;
@@ -1194,33 +1175,8 @@ for(UINT fmt=0; format[fmt]; )
 			UINT len=StringHelper::ScanInt(&str[pos], &i);
 			if(!len)
 				return read;
-			SHORT* p16=nullptr;
-			if(args.GetAt(arg, p16))
+			if(args.Set(i))
 				{
-				if(i<SHORT_MIN||i>SHORT_MAX)
-					return read;
-				*p16=(SHORT)i;
-				arg++;
-				read++;
-				pos+=len;
-				continue;
-				}
-			INT* p32=nullptr;
-			if(args.GetAt(arg, p32))
-				{
-				if(i<INT_MIN||i>INT_MAX)
-					return read;
-				*p32=(INT)i;
-				arg++;
-				read++;
-				pos+=len;
-				continue;
-				}
-			INT64* p64=nullptr;
-			if(args.GetAt(arg, p64))
-				{
-				*p64=i;
-				arg++;
 				read++;
 				pos+=len;
 				continue;
@@ -1236,44 +1192,8 @@ for(UINT fmt=0; format[fmt]; )
 			UINT len=StringHelper::ScanUInt(&str[pos], &u, base);
 			if(!len)
 				return read;
-			BYTE* p8=nullptr;
-			if(args.GetAt(arg, p8))
+			if(args.Set(u))
 				{
-				if(u>BYTE_MAX)
-					return read;
-				*p8=(BYTE)u;
-				arg++;
-				read++;
-				pos+=len;
-				continue;
-				}
-			WORD* p16=nullptr;
-			if(args.GetAt(arg, p16))
-				{
-				if(u>WORD_MAX)
-					return read;
-				*p16=(WORD)u;
-				arg++;
-				read++;
-				pos+=len;
-				continue;
-				}
-			UINT* p32=nullptr;
-			if(args.GetAt(arg, p32))
-				{
-				if(u>UINT_MAX)
-					return read;
-				*p32=(UINT)u;
-				arg++;
-				read++;
-				pos+=len;
-				continue;
-				}
-			UINT64* p64=nullptr;
-			if(args.GetAt(arg, p64))
-				{
-				*p64=u;
-				arg++;
 				read++;
 				pos+=len;
 				continue;
@@ -1286,11 +1206,8 @@ for(UINT fmt=0; format[fmt]; )
 			UINT len=StringHelper::ScanFloat(&str[pos], &f);
 			if(!len)
 				return read;
-			FLOAT* p=nullptr;
-			if(args.GetAt(arg, p))
+			if(args.Set(f))
 				{
-				*p=f;
-				arg++;
 				read++;
 				pos+=len;
 				continue;
@@ -1303,11 +1220,8 @@ for(UINT fmt=0; format[fmt]; )
 			UINT len=StringHelper::ScanFloat(&str[pos], &d);
 			if(!len)
 				return read;
-			DOUBLE* p=nullptr;
-			if(args.GetAt(arg, p))
+			if(args.Set(d))
 				{
-				*p=d;
-				arg++;
 				read++;
 				pos+=len;
 				continue;
@@ -1316,49 +1230,14 @@ for(UINT fmt=0; format[fmt]; )
 			}
 		case Format::String:
 			{
-			Handle<String>* ph=nullptr;
-			if(args.GetAt(arg, ph))
+			UINT len=StringScanString(&str[pos], (LPTSTR)nullptr, 0, format[fmt]);
+			if(args.Set(&str[pos], len))
 				{
-				*ph=nullptr;
-				UINT len=StringScanString(&str[pos], (LPTSTR)nullptr, 0, format[fmt]);
-				if(len)
-					{
-					*ph=String::Create(len, nullptr);
-					auto p=(*ph)->m_Buffer;
-					StringScanString(&str[pos], p, len+1, format[fmt]);
-					(*ph)->m_Length=len;
-					(*ph)->m_Hash=StringHash(p);
-					arg++;
-					read++;
-					pos+=len;
-					continue;
-					}
+				read++;
+				pos+=len;
+				continue;
 				}
-			LPSTR p=nullptr;
-			LPWSTR pw=nullptr;
-			if(!args.GetAt(arg, p))
-				{
-				if(!args.GetAt(arg, pw))
-					throw InvalidArgumentException();
-				}
-			UINT size=0;
-			if(!args.GetAt(arg+1, size))
-				throw InvalidArgumentException();
-			UINT len=0;
-			if(p)
-				{
-				len=StringScanString(&str[pos], p, size, format[fmt]);
-				}
-			else if(pw)
-				{
-				len=StringScanString(&str[pos], pw, size, format[fmt]);
-				}
-			if(!len)
-				return read;
-			arg+=2;
-			read++;
-			pos+=len;
-			continue;
+			return read;
 			}
 		default:
 			break;
@@ -1858,7 +1737,7 @@ UINT StringHelper::Length(LPCWSTR str, UINT max)
 return StringLength(str, max);
 }
 
-UINT StringHelper::Length(LPCSTR format, VariableArguments const& args)
+UINT StringHelper::Length(LPCSTR format, VariableArguments& args)
 {
 return PrintArgs((LPSTR)nullptr, 0, format, args);
 }
@@ -1890,12 +1769,12 @@ if(dst)
 return pos;
 }
 
-UINT StringHelper::PrintArgs(LPSTR str, UINT size, LPCSTR format, VariableArguments const& args)
+UINT StringHelper::PrintArgs(LPSTR str, UINT size, LPCSTR format, VariableArguments& args)
 {
 return StringPrintArgs(str, size, format, args);
 }
 
-UINT StringHelper::PrintArgs(LPWSTR str, UINT size, LPCSTR format, VariableArguments const& args)
+UINT StringHelper::PrintArgs(LPWSTR str, UINT size, LPCSTR format, VariableArguments& args)
 {
 return StringPrintArgs(str, size, format, args);
 }

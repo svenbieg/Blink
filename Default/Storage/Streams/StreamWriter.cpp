@@ -81,11 +81,11 @@ if(!value)
 return Print(0, value->Begin());
 }
 
-UINT StreamWriter::Print(LPCSTR str, VariableArguments const& args)
+UINT StreamWriter::Print(LPCSTR str, VariableArguments& args)
 {
+args.Reset();
 UINT written=0;
 UINT pos=0;
-UINT arg=0;
 while(str[pos])
 	{
 	Format format=Format::None;
@@ -105,93 +105,84 @@ while(str[pos])
 		}
 	if(FlagHelper::Get(flags, FormatFlags::Width))
 		{
-		if(!args.GetAt(arg++, width))
-			return written;
+		if(!args.Get(width))
+			break;
 		}
 	if(FlagHelper::Get(flags, FormatFlags::Precision))
 		{
-		if(!args.GetAt(arg++, prec))
-			return written;
+		if(!args.Get(prec))
+			break;
 		}
 	switch(format)
 		{
 		case Format::Int:
 			{
 			INT64 i=0;
-			if(!args.GetAt(arg++, i))
-				return written;
+			if(!args.Get(i))
+				break;
 			written+=PrintInt(i, flags, width);
 			continue;
 			}
 		case Format::UInt:
 			{
 			UINT64 u=0;
-			if(!args.GetAt(arg++, u))
-				return written;
+			if(!args.Get(u))
+				break;
 			written+=PrintUInt(u, flags, width);
 			continue;
 			}
 		case Format::Hex:
 			{
 			UINT64 u=0;
-			if(!args.GetAt(arg++, u))
-				return written;
+			if(!args.Get(u))
+				break;
 			written+=PrintHex(u, flags, width);
 			continue;
 			}
 		case Format::Float:
 			{
 			FLOAT f=0;
-			if(!args.GetAt(arg++, f))
-				return written;
+			if(!args.Get(f))
+				break;
 			written+=PrintFloat(f, flags, width, prec);
 			continue;
 			}
 		case Format::Double:
 			{
 			DOUBLE d=0;
-			if(!args.GetAt(arg++, d))
-				return written;
+			if(!args.Get(d))
+				break;
 			written+=PrintDouble(d, flags, width, prec);
 			continue;
 			}
 		case Format::Char:
 			{
 			WCHAR c=0;
-			if(!args.GetAt(arg++, c))
-				return written;
+			if(!args.Get(c))
+				break;
 			written+=PrintChar(c);
 			continue;
 			}
 		case Format::String:
 			{
 			LPCSTR p=nullptr;
-			if(args.GetAt(arg, p))
+			if(args.Get(p))
 				{
-				arg++;
 				written+=DoPrint(p, flags, width);
 				continue;
 				}
 			LPCWSTR pw=nullptr;
-			if(args.GetAt(arg, pw))
+			if(args.Get(pw))
 				{
-				arg++;
 				written+=DoPrint(pw, flags, width);
 				continue;
 				}
-			Handle<String>* ph=nullptr;
-			if(args.GetAt(arg, ph))
-				{
-				auto pt=(*ph)? (*ph)->Begin(): nullptr;
-				arg++;
-				written+=DoPrint(pt, flags, width);
-				continue;
-				}
-			return written;
+			break;
 			}
 		default:
-			return written;
+			break;
 		}
+	break;
 	}
 return written;
 }

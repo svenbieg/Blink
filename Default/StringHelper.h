@@ -90,10 +90,10 @@ public:
 	static UINT Length(LPCWSTR String);
 	static UINT Length(LPCSTR String, UINT Max);
 	static UINT Length(LPCWSTR String, UINT Max);
-	static UINT Length(LPCSTR Format, VariableArguments const& Arguments);
+	static UINT Length(LPCSTR Format, VariableArguments& Arguments);
 	template <class... _args_t> static inline UINT Length(LPCSTR Format, _args_t... Arguments)
 		{
-		UnknownClass args[]={ Arguments... };
+		VariableArgument args[]={ Arguments... };
 		VariableArguments vargs(args, TypeHelper::ArraySize(args));
 		return Length(Format, vargs);
 		}
@@ -102,12 +102,12 @@ public:
 	static UINT Lowercase(LPSTR Destination, UINT Size, LPCSTR String);
 	template <class _char_t, class... _args_t> static inline UINT Print(_char_t* Buffer, UINT Size, LPCSTR Format, _args_t... Arguments)
 		{
-		UnknownClass args[]={ Arguments... };
+		VariableArgument args[]={ Arguments... };
 		VariableArguments vargs(args, TypeHelper::ArraySize(args));
 		return PrintArgs(Buffer, Size, Format, vargs);
 		}
-	static UINT PrintArgs(LPSTR Buffer, UINT Size, LPCSTR Format, VariableArguments const& Arguments);
-	static UINT PrintArgs(LPWSTR Buffer, UINT Size, LPCSTR Format, VariableArguments const& Arguments);
+	static UINT PrintArgs(LPSTR Buffer, UINT Size, LPCSTR Format, VariableArguments& Arguments);
+	static UINT PrintArgs(LPWSTR Buffer, UINT Size, LPCSTR Format, VariableArguments& Arguments);
 	static UINT PrintDouble(LPSTR Buffer, UINT Size, DOUBLE Value, FormatFlags Flags=FormatFlags::None, UINT Width=0, UINT Precision=0);
 	static UINT PrintFloat(LPSTR Buffer, UINT Size, FLOAT Value, FormatFlags Flags=FormatFlags::None, UINT Width=0, UINT Precision=0);
 	static UINT PrintHex(LPSTR Buffer, UINT Size, UINT Value, FormatFlags Flags=FormatFlags::None, UINT Width=0);
@@ -122,7 +122,7 @@ public:
 	static UINT Replace(LPWSTR Destination, UINT Size, LPCWSTR String, LPCSTR Find, LPCSTR Replace, BOOL CaseSensitive=true, BOOL Repeat=false);
 	template <class _char_t, class... _args_t> static inline UINT Scan(_char_t const* String, LPCSTR Format, _args_t... Arguments)
 		{
-		UnknownClass args[]={ Arguments... };
+		VariableArgument args[]={ Arguments... };
 		VariableArguments vargs(args, TypeHelper::ArraySize(args));
 		return ScanArgs(String, Format, vargs);
 		}
