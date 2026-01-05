@@ -48,7 +48,6 @@ while(!Cpu::CompareAndSet(&m_Core, 0, core))
 	Interrupts::Enable();
 	Interrupts::Disable();
 	}
-Cpu::DataMemoryBarrier();
 }
 
 BOOL CriticalSection::TryLock()
@@ -57,10 +56,7 @@ Interrupts::Disable();
 UINT core=Cpu::GetId()|LOCKED;
 assert(m_Core!=core);
 if(Cpu::CompareAndSet(&m_Core, 0, core))
-	{
-	Cpu::DataMemoryBarrier();
 	return true;
-	}
 Interrupts::Enable();
 return false;
 }
@@ -70,7 +66,6 @@ VOID CriticalSection::Unlock()
 UINT core=Cpu::GetId()|LOCKED;
 if(m_Core!=core)
 	return;
-Cpu::DataMemoryBarrier();
 Cpu::StoreAndRelease(&m_Core, 0);
 Interrupts::Enable();
 }
@@ -79,7 +74,6 @@ VOID CriticalSection::Yield()
 {
 UINT core=Cpu::GetId()|LOCKED;
 assert(m_Core==core);
-Cpu::DataMemoryBarrier();
 Cpu::StoreAndRelease(&m_Core, 0);
 Interrupts::Enable();
 Interrupts::Disable();
@@ -88,7 +82,6 @@ while(!Cpu::CompareAndSet(&m_Core, 0, core))
 	Interrupts::Enable();
 	Interrupts::Disable();
 	}
-Cpu::DataMemoryBarrier();
 }
 
 }
