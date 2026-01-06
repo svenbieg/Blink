@@ -309,16 +309,56 @@ if(remainder>=0.5)
 // Common
 //========
 
-UINT StringHelper::Append(LPSTR Destination, UINT Size, LPCSTR Source, LPCSTR Value) { return Append<CHAR, CHAR, CHAR>(Destination, Size, Source, Value); }
-UINT StringHelper::Append(LPWSTR Destination, UINT Size, LPCSTR Source, LPCSTR Value) { return Append<WCHAR, CHAR, CHAR>(Destination, Size, Source, Value); }
-INT StringHelper::Compare(LPCSTR String1, LPCSTR String2, UINT Length, BOOL CaseSensitive) { return Compare<CHAR, CHAR>(String1, String2, Length, CaseSensitive); }
-INT StringHelper::Compare(LPCSTR String1, LPCWSTR String2, UINT Length, BOOL CaseSensitive) { return Compare<CHAR, WCHAR>(String1, String2, Length, CaseSensitive); }
-INT StringHelper::Compare(LPCWSTR String1, LPCSTR String2, UINT Length, BOOL CaseSensitive) { return Compare<WCHAR, CHAR>(String1, String2, Length, CaseSensitive); }
-INT StringHelper::Compare(LPCWSTR String1, LPCWSTR String2, UINT Length, BOOL CaseSensitive) { return Compare<WCHAR, WCHAR>(String1, String2, Length, CaseSensitive); }
-INT StringHelper::Compare(LPCSTR String1, String const* String2, UINT Length, BOOL CaseSensitive) { return Compare<CHAR>(String1, String2, Length, CaseSensitive); }
-INT StringHelper::Compare(LPCWSTR String1, String const* String2, UINT Length, BOOL CaseSensitive) { return Compare<WCHAR>(String1, String2, Length, CaseSensitive); }
-INT StringHelper::Compare(String const* String1, LPCSTR String2, UINT Length, BOOL CaseSensitive) { return Compare<CHAR>(String1, String2, Length, CaseSensitive); }
-INT StringHelper::Compare(String const* String1, LPCWSTR String2, UINT Length, BOOL CaseSensitive) { return Compare<WCHAR>(String1, String2, Length, CaseSensitive); }
+UINT StringHelper::Append(LPSTR dst, UINT size, LPCSTR src, LPCSTR value)
+{
+return Append<CHAR, CHAR, CHAR>(dst, size, src, value);
+}
+
+UINT StringHelper::Append(LPWSTR dst, UINT size, LPCSTR src, LPCSTR value)
+{
+return Append<WCHAR, CHAR, CHAR>(dst, size, src, value);
+}
+
+INT StringHelper::Compare(LPCSTR str1, LPCSTR str2, UINT len, BOOL cs)
+{
+return Compare<CHAR, CHAR>(str1, str2, len, cs);
+}
+
+INT StringHelper::Compare(LPCSTR str1, LPCWSTR str2, UINT len, BOOL cs)
+{
+return Compare<CHAR, WCHAR>(str1, str2, len, cs);
+}
+
+INT StringHelper::Compare(LPCWSTR str1, LPCSTR str2, UINT len, BOOL cs)
+{
+return Compare<WCHAR, CHAR>(str1, str2, len, cs);
+}
+
+INT StringHelper::Compare(LPCWSTR str1, LPCWSTR str2, UINT len, BOOL cs)
+{
+return Compare<WCHAR, WCHAR>(str1, str2, len, cs);
+}
+
+INT StringHelper::Compare(LPCSTR str1, String const* str2, UINT len, BOOL cs)
+{
+return Compare<CHAR>(str1, str2, len, cs);
+}
+
+INT StringHelper::Compare(LPCWSTR str1, String const* str2, UINT len, BOOL cs)
+{
+return Compare<WCHAR>(str1, str2, len, cs);
+}
+
+INT StringHelper::Compare(String const* str1, LPCSTR str2, UINT len, BOOL cs)
+{
+return Compare<CHAR>(str1, str2, len, cs);
+}
+
+INT StringHelper::Compare(String const* str1, LPCWSTR str2, UINT len, BOOL cs)
+{
+return Compare<WCHAR>(str1, str2, len, cs);
+}
+
 
 INT StringHelper::Compare(String const* str1, String const* str2)
 {
@@ -344,10 +384,26 @@ INT StringHelper::Compare(String const* str1, String const* str2, UINT len, BOOL
 return Compare(str1? str1->Begin(): nullptr, str2? str2->Begin(): nullptr, len, cs);
 }
 
-UINT StringHelper::Copy(LPSTR Destination, UINT Size, LPCSTR Source, UINT Length) { return Copy<CHAR, CHAR>(Destination, Size, Source, Length); }
-UINT StringHelper::Copy(LPSTR Destination, UINT Size, LPCWSTR Source, UINT Length) { return Copy<CHAR, WCHAR>(Destination, Size, Source, Length); }
-UINT StringHelper::Copy(LPWSTR Destination, UINT Size, LPCSTR Source, UINT Length) { return Copy<WCHAR, CHAR>(Destination, Size, Source, Length); }
-UINT StringHelper::Copy(LPWSTR Destination, UINT Size, LPCWSTR Source, UINT Length) { return Copy<WCHAR, WCHAR>(Destination, Size, Source, Length); }
+UINT StringHelper::Copy(LPSTR dst, UINT size, LPCSTR src, UINT len)
+{
+return Copy<CHAR, CHAR>(dst, size, src, len);
+}
+
+UINT StringHelper::Copy(LPSTR dst, UINT size, LPCWSTR src, UINT len)
+{
+return Copy<CHAR, WCHAR>(dst, size, src, len);
+}
+
+UINT StringHelper::Copy(LPWSTR dst, UINT size, LPCSTR src, UINT len)
+{
+return Copy<WCHAR, CHAR>(dst, size, src, len);
+}
+
+UINT StringHelper::Copy(LPWSTR dst, UINT size, LPCWSTR src, UINT len)
+{
+return Copy<WCHAR, WCHAR>(dst, size, src, len);
+}
+
 
 UINT StringHelper::Decrypt(LPSTR dst, UINT size, BYTE const* src, LPCSTR key_str)
 {
@@ -416,43 +472,191 @@ while(src[src_pos])
 return dst_pos;
 }
 
-BOOL StringHelper::FindChar(LPCSTR String, CHAR Char, UINT* Position, BOOL CaseSensitive) { return FindChar<CHAR, CHAR>(String, Char, Position, CaseSensitive); }
-BOOL StringHelper::FindChar(LPCSTR String, WCHAR Char, UINT* Position, BOOL CaseSensitive) { return FindChar<CHAR, WCHAR>(String, Char, Position, CaseSensitive); }
-BOOL StringHelper::FindChar(LPCWSTR String, CHAR Char, UINT* Position, BOOL CaseSensitive) { return FindChar<WCHAR, CHAR>(String, Char, Position, CaseSensitive); }
-BOOL StringHelper::FindChar(LPCWSTR String, WCHAR Char, UINT* Position, BOOL CaseSensitive) { return FindChar<WCHAR, WCHAR>(String, Char, Position, CaseSensitive); }
-BOOL StringHelper::FindChars(LPCSTR String, LPCSTR Find, UINT* Position, BOOL CaseSensitive) { return FindChars<CHAR, CHAR>(String, Find, Position, CaseSensitive); }
-BOOL StringHelper::FindChars(LPCSTR String, LPCWSTR Find, UINT* Position, BOOL CaseSensitive) { return FindChars<CHAR, WCHAR>(String, Find, Position, CaseSensitive); }
-BOOL StringHelper::FindChars(LPCWSTR String, LPCSTR Find, UINT* Position, BOOL CaseSensitive) { return FindChars<WCHAR, CHAR>(String, Find, Position, CaseSensitive); }
-BOOL StringHelper::FindChars(LPCWSTR String, LPCWSTR Find, UINT* Position, BOOL CaseSensitive) { return FindChars<WCHAR, WCHAR>(String, Find, Position, CaseSensitive); }
-BOOL StringHelper::FindString(LPCSTR String, LPCSTR Find, UINT* Position, BOOL CaseSensitive) { return FindString<CHAR, CHAR>(String, Find, Position, CaseSensitive); }
-BOOL StringHelper::FindString(LPCSTR String, LPCWSTR Find, UINT* Position, BOOL CaseSensitive) { return FindString<CHAR, WCHAR>(String, Find, Position, CaseSensitive); }
-BOOL StringHelper::FindString(LPCWSTR String, LPCSTR Find, UINT* Position, BOOL CaseSensitive) { return FindString<WCHAR, CHAR>(String, Find, Position, CaseSensitive); }
-BOOL StringHelper::FindString(LPCWSTR String, LPCWSTR Find, UINT* Position, BOOL CaseSensitive) { return FindString<WCHAR, WCHAR>(String, Find, Position, CaseSensitive); }
-UINT64 StringHelper::Hash(LPCSTR String) { return Hash<CHAR>(String); }
-UINT64 StringHelper::Hash(LPCWSTR String) { return Hash<WCHAR>(String); }
-UINT StringHelper::Insert(LPSTR Destination, UINT Size, LPCSTR Source, UINT Position, LPCSTR Value) { return Insert<CHAR, CHAR, CHAR>(Destination, Size, Source, Position, Value); }
-UINT StringHelper::Insert(LPWSTR Destination, UINT Size, LPCWSTR Source, UINT Position, LPCSTR Value) { return Insert<WCHAR, WCHAR, CHAR>(Destination, Size, Source, Position, Value); }
-UINT StringHelper::Length(LPCSTR String) { return Length<CHAR>(String); }
-UINT StringHelper::Length(LPCWSTR String) { return Length<WCHAR>(String); }
-UINT StringHelper::Length(LPCSTR String, UINT Max) { return Length<CHAR>(String, Max); }
-UINT StringHelper::Length(LPCWSTR String, UINT Max) { return Length<WCHAR>(String, Max); }
-UINT StringHelper::Length(LPCSTR Format, VariableArguments& Arguments) { return Print((LPSTR)nullptr, 0, Format, Arguments); }
-UINT StringHelper::Lowercase(LPSTR String) { return Lowercase<CHAR>(String); }
-UINT StringHelper::Lowercase(LPWSTR String) { return Lowercase<WCHAR>(String); }
-UINT StringHelper::Lowercase(LPSTR Destination, UINT Size, LPCSTR Source) { return Lowercase<CHAR, CHAR>(Destination, Size, Source); }
-UINT StringHelper::Lowercase(LPWSTR Destination, UINT Size, LPCWSTR Source) { return Lowercase<WCHAR, WCHAR>(Destination, Size, Source); }
-UINT StringHelper::Print(LPSTR Destination, UINT Size, LPCSTR Format, VariableArguments& Arguments) { return Print<CHAR>(Destination, Size, Format, Arguments); }
-UINT StringHelper::Print(LPWSTR Destination, UINT Size, LPCSTR Format, VariableArguments& Arguments) { return Print<WCHAR>(Destination, Size, Format, Arguments); }
-UINT StringHelper::Replace(LPSTR Destination, UINT Size, LPCSTR Source, LPCSTR Find, LPCSTR Insert, BOOL CaseSensitive, BOOL Repeat) { return Replace<CHAR, CHAR, CHAR>(Destination, Size, Source, Find, Insert, CaseSensitive, Repeat); }
-UINT StringHelper::Replace(LPWSTR Destination, UINT Size, LPCWSTR Source, LPCSTR Find, LPCSTR Insert, BOOL CaseSensitive, BOOL Repeat) { return Replace<WCHAR, WCHAR, CHAR>(Destination, Size, Source, Find, Insert, CaseSensitive, Repeat); }
-UINT StringHelper::Scan(LPCSTR String, LPCSTR Format, VariableArguments& Arguments) { return Scan<CHAR>(String, Format, Arguments); }
-UINT StringHelper::Scan(LPCWSTR String, LPCSTR Format, VariableArguments& Arguments) { return Scan<WCHAR>(String, Format, Arguments); }
-LPCSTR StringHelper::Truncate(LPCSTR String, LPCSTR Characters) { return Truncate<CHAR>(String, Characters); }
-LPCWSTR StringHelper::Truncate(LPCWSTR String, LPCSTR Characters) { return Truncate<WCHAR>(String, Characters); }
-UINT StringHelper::Uppercase(LPSTR String) { return Uppercase<CHAR>(String); }
-UINT StringHelper::Uppercase(LPWSTR String) { return Uppercase<WCHAR>(String); }
-UINT StringHelper::Uppercase(LPSTR Destination, UINT Size, LPCSTR Source) { return Uppercase<CHAR, CHAR>(Destination, Size, Source); }
-UINT StringHelper::Uppercase(LPWSTR Destination, UINT Size, LPCWSTR Source) { return Uppercase<WCHAR, WCHAR>(Destination, Size, Source); }
+BOOL StringHelper::FindChar(LPCSTR str, CHAR c, UINT* pos, BOOL cs)
+{
+return FindChar<CHAR, CHAR>(str, c, pos, cs);
+}
+
+BOOL StringHelper::FindChar(LPCSTR str, WCHAR c, UINT* pos, BOOL cs)
+{
+return FindChar<CHAR, WCHAR>(str, c, pos, cs);
+}
+
+BOOL StringHelper::FindChar(LPCWSTR str, CHAR c, UINT* pos, BOOL cs)
+{
+return FindChar<WCHAR, CHAR>(str, c, pos, cs);
+}
+
+BOOL StringHelper::FindChar(LPCWSTR str, WCHAR c, UINT* pos, BOOL cs)
+{
+return FindChar<WCHAR, WCHAR>(str, c, pos, cs);
+}
+
+BOOL StringHelper::FindChars(LPCSTR str, LPCSTR find, UINT* pos, BOOL cs)
+{
+return FindChars<CHAR, CHAR>(str, find, pos, cs);
+}
+
+BOOL StringHelper::FindChars(LPCSTR str, LPCWSTR find, UINT* pos, BOOL cs)
+{
+return FindChars<CHAR, WCHAR>(str, find, pos, cs);
+}
+
+BOOL StringHelper::FindChars(LPCWSTR str, LPCSTR find, UINT* pos, BOOL cs)
+{
+return FindChars<WCHAR, CHAR>(str, find, pos, cs);
+}
+
+BOOL StringHelper::FindChars(LPCWSTR str, LPCWSTR find, UINT* pos, BOOL cs)
+{
+return FindChars<WCHAR, WCHAR>(str, find, pos, cs);
+}
+
+BOOL StringHelper::FindString(LPCSTR str, LPCSTR find, UINT* pos, BOOL cs)
+{
+return FindString<CHAR, CHAR>(str, find, pos, cs);
+}
+
+BOOL StringHelper::FindString(LPCSTR str, LPCWSTR find, UINT* pos, BOOL cs)
+{
+return FindString<CHAR, WCHAR>(str, find, pos, cs);
+}
+
+BOOL StringHelper::FindString(LPCWSTR str, LPCSTR find, UINT* pos, BOOL cs)
+{
+return FindString<WCHAR, CHAR>(str, find, pos, cs);
+}
+
+BOOL StringHelper::FindString(LPCWSTR str, LPCWSTR find, UINT* pos, BOOL cs)
+{
+return FindString<WCHAR, WCHAR>(str, find, pos, cs);
+}
+
+UINT64 StringHelper::Hash(LPCSTR str)
+{
+return Hash<CHAR>(str);
+}
+
+UINT64 StringHelper::Hash(LPCWSTR str)
+{
+return Hash<WCHAR>(str);
+}
+
+UINT StringHelper::Insert(LPSTR dst, UINT size, LPCSTR src, UINT pos, LPCSTR value)
+{
+return Insert<CHAR, CHAR, CHAR>(dst, size, src, pos, value);
+}
+
+UINT StringHelper::Insert(LPWSTR dst, UINT size, LPCWSTR src, UINT pos, LPCSTR value)
+{
+return Insert<WCHAR, WCHAR, CHAR>(dst, size, src, pos, value);
+}
+
+UINT StringHelper::Length(LPCSTR str)
+{
+return Length<CHAR>(str);
+}
+
+UINT StringHelper::Length(LPCWSTR str)
+{
+return Length<WCHAR>(str);
+}
+
+UINT StringHelper::Length(LPCSTR str, UINT max)
+{
+return Length<CHAR>(str, max);
+}
+
+UINT StringHelper::Length(LPCWSTR str, UINT max)
+{
+return Length<WCHAR>(str, max);
+}
+
+UINT StringHelper::Length(LPCSTR format, VariableArguments& args)
+{
+return Print((LPSTR)nullptr, 0, format, args);
+}
+
+UINT StringHelper::Lowercase(LPSTR str)
+{
+return Lowercase<CHAR>(str);
+}
+
+UINT StringHelper::Lowercase(LPWSTR str)
+{
+return Lowercase<WCHAR>(str);
+}
+
+UINT StringHelper::Lowercase(LPSTR dst, UINT size, LPCSTR src)
+{
+return Lowercase<CHAR, CHAR>(dst, size, src);
+}
+
+UINT StringHelper::Lowercase(LPWSTR dst, UINT size, LPCWSTR src)
+{
+return Lowercase<WCHAR, WCHAR>(dst, size, src);
+}
+
+UINT StringHelper::Print(LPSTR dst, UINT size, LPCSTR format, VariableArguments& args)
+{
+return Print<CHAR>(dst, size, format, args);
+}
+
+UINT StringHelper::Print(LPWSTR dst, UINT size, LPCSTR format, VariableArguments& args)
+{
+return Print<WCHAR>(dst, size, format, args);
+}
+
+UINT StringHelper::Replace(LPSTR dst, UINT size, LPCSTR src, LPCSTR find, LPCSTR insert, BOOL cs, BOOL repeat)
+{
+return Replace<CHAR, CHAR, CHAR>(dst, size, src, find, insert, cs, repeat);
+}
+
+UINT StringHelper::Replace(LPWSTR dst, UINT size, LPCWSTR src, LPCSTR find, LPCSTR insert, BOOL cs, BOOL repeat)
+{
+return Replace<WCHAR, WCHAR, CHAR>(dst, size, src, find, insert, cs, repeat);
+}
+
+UINT StringHelper::Scan(LPCSTR str, LPCSTR format, VariableArguments& args)
+{
+return Scan<CHAR>(str, format, args);
+}
+
+UINT StringHelper::Scan(LPCWSTR str, LPCSTR format, VariableArguments& args)
+{
+return Scan<WCHAR>(str, format, args);
+}
+
+LPCSTR StringHelper::Truncate(LPCSTR str, LPCSTR chars)
+{
+return Truncate<CHAR>(str, chars);
+}
+
+LPCWSTR StringHelper::Truncate(LPCWSTR str, LPCSTR chars)
+{
+return Truncate<WCHAR>(str, chars);
+}
+
+UINT StringHelper::Uppercase(LPSTR str)
+{
+return Uppercase<CHAR>(str);
+}
+
+UINT StringHelper::Uppercase(LPWSTR str)
+{
+return Uppercase<WCHAR>(str);
+}
+
+UINT StringHelper::Uppercase(LPSTR dst, UINT size, LPCSTR src)
+{
+return Uppercase<CHAR, CHAR>(dst, size, src);
+}
+
+UINT StringHelper::Uppercase(LPWSTR dst, UINT size, LPCWSTR src)
+{
+return Uppercase<WCHAR, WCHAR>(dst, size, src);
+}
+
 
 
 //================
@@ -710,7 +914,7 @@ if(CharHelper::Equal(str[pos], '.'))
 		pos+=len;
 		}
 	}
-// Size
+// size
 if(CharHelper::Equal(str[pos], 'h'))
 	{
 	FlagHelper::Set(flags, FormatFlags::High);
