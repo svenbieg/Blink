@@ -13,7 +13,6 @@
 #include "Devices/IoHelper.h"
 #include "MemoryHelper.h"
 #include <assert.h>
-#include <attr.h>
 #include <base.h>
 
 using namespace Devices::System;
@@ -57,7 +56,7 @@ RW32 BufferSize;
 RW32 Status;
 }PROP_HEADER;
 
-__align(16) typedef struct
+typedef struct alignas(16)
 {
 PROP_HEADER Header;
 BYTE Data[44];
