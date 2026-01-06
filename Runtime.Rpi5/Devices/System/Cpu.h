@@ -53,6 +53,7 @@ public:
 			cmp %w4, %w2\n\
 			bne 1f\n\
 			stxr %w0, %w3, [%1]\n\
+			dmb ish\n\
 			1:": "=&r" (result): "r" (Value), "r" (Compare), "r" (Set), "r" (read): "cc", "memory");
 		return result==0;
 		}
@@ -120,7 +121,9 @@ public:
 		}
 	static inline VOID StoreAndRelease(volatile UINT* Address, UINT Set)noexcept
 		{
-		__asm inline volatile("stlr %w1, [%0]":: "r" (Address), "r" (Set));
+		__asm inline volatile("\
+			stlr %w1, [%0]\n\
+			dmb ish":: "r" (Address), "r" (Set));
 		}
 	static inline VOID WaitForEvent()noexcept
 		{
