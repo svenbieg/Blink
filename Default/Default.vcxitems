@@ -66,6 +66,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CharHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Collections\Node.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Collections\StringList.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Global.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)MemoryHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Object.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)PathHelper.cpp" />

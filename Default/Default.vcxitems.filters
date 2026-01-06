@@ -121,6 +121,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Collections\Node.cpp">
       <Filter>Collections</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Global.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)MemoryHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Encoding\Dwarf.cpp">
       <Filter>Storage\Encoding</Filter>

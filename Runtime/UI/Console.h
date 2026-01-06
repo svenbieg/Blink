@@ -27,7 +27,7 @@ namespace UI {
 // Console
 //=========
 
-class Console: public Object
+class Console: public Global
 {
 public:
 	// Using
@@ -37,7 +37,7 @@ public:
 	friend Object;
 
 	// Con-/Destructors
-	static inline Handle<Console> Get() { return s_Global.Create(); }
+	static inline Handle<Console> Get() { return Global::Create<Console>(); }
 
 	// Common
 	VOID AddCommand(Handle<String> Command, Function<VOID()> Function);
@@ -52,7 +52,6 @@ public:
 private:
 	// Con-/Destructors
 	Console();
-	static Global<Console> s_Global;
 
 	// Common
 	VOID HandleCommand(Handle<String> Command);
@@ -61,6 +60,7 @@ private:
 	Concurrency::Mutex m_Mutex;
 	Handle<SerialPort> m_SerialPort;
 	StringBuilder m_StringBuilder;
+	Handle<Console> m_This;
 };
 
 }
