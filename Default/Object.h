@@ -18,8 +18,6 @@
 // Forward-Declarations
 //======================
 
-template <class _obj_t> class Global;
-
 class String;
 template <class _obj_t> class Handle;
 template <> class Handle<String>;
@@ -33,7 +31,6 @@ class Object
 {
 public:
 	// Friends
-	template <class _obj_t> friend class Global;
 	template <class _obj_t> friend class Handle;
 
 	// Using
@@ -51,7 +48,7 @@ protected:
 	// Con-/Destructors
 	Object(): m_ReferenceCount(0) {}
 	template <class _obj_t, class... _args_t> static inline Handle<_obj_t> Create(_args_t... Arguments);
-	template <class _obj_t, class... _args_t> static inline Handle<_obj_t> CreateEx(SIZE_T Extra, SIZE_T Align, _args_t... Arguments);
+	template <class _obj_t, class... _args_t> static inline Handle<_obj_t> CreateEx(SIZE_T Extra, SIZE_T Align=sizeof(SIZE_T), _args_t... Arguments);
 
 	// Common
 	inline VOID AddReference()

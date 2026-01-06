@@ -247,10 +247,10 @@ m_Signal.Trigger(status);
 
 VOID SerialPort::ServiceTask()
 {
-m_GpioHost=GpioHost::Get();
+m_GpioHost=GpioHost::Create();
 m_GpioHost->SetPinMode(UART_DEVICES[m_Id].TX_PIN, UART_DEVICES[m_Id].TX_ALT);
 m_GpioHost->SetPinMode(UART_DEVICES[m_Id].RX_PIN, UART_DEVICES[m_Id].RX_ALT, GpioPullMode::PullUp);
-m_PcieHost=PcieHost::Get();
+m_PcieHost=PcieHost::Create();
 m_PcieHost->SetInterruptHandler(UART_DEVICES[m_Id].IRQ, HandleInterrupt, this);
 auto uart=(PL011_REGS*)m_Device;
 if(IoHelper::Read(uart->FLAGS, FLAG_BUSY))

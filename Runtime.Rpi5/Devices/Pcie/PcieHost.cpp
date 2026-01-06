@@ -70,8 +70,6 @@ MemoryHelper::Fill(m_IrqParameters, RP1_IRQ_COUNT*sizeof(VOID*), 0);
 Initialize();
 }
 
-Global<PcieHost> PcieHost::s_Global;
-
 
 //================
 // Common Private

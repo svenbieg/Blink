@@ -26,14 +26,16 @@ namespace Devices {
 // Pcie-Host
 //===========
 
-class PcieHost: public Object
+class PcieHost: public Global
 {
 public:
 	// Friends
 	friend Object;
 
+	// Con-/Destructors
+	static inline Handle<PcieHost> Create() { return Global::Create<PcieHost>(); }
+
 	// Common
-	static inline Handle<PcieHost> Get() { return s_Global.Create(); }
 	static inline SIZE_T GetDmaAddress(VOID* Buffer) { return (SIZE_T)Buffer|DMA_OFFSET; }
 	static inline SIZE_T GetDmaAddress(SIZE_T Address) { return Address|DMA_OFFSET; }
 	VOID SetInterruptHandler(Rp1Irq Irq, IRQ_HANDLER Handler, VOID* Parameter=nullptr);
@@ -41,7 +43,6 @@ public:
 private:
 	// Con-/Destructors
 	PcieHost();
-	static Global<PcieHost> s_Global;
 
 	// Common
 	VOID EnableDevice(UINT Id, BYTE Slot, BYTE Function);

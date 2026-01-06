@@ -108,8 +108,6 @@ s_DisableCount[core]++;
 VOID Interrupts::Enable()
 {
 UINT core=Cpu::GetId();
-if(core>0)
-	throw DeviceNotReadyException();
 if(--s_DisableCount[core]==0)
 	Cpu::EnableInterrupts();
 }

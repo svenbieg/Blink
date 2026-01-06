@@ -26,7 +26,7 @@ namespace Devices {
 // Gpio-Host
 //===========
 
-class GpioHost: public Object
+class GpioHost: public Global
 {
 public:
 	// Using
@@ -36,17 +36,18 @@ public:
 	// Friends
 	friend Object;
 
+	// Con-/Destructors
+	static inline Handle<GpioHost> Create() { return Global::Create<GpioHost>(); }
+
 	// Common
 	BOOL DigitalRead(GpioRp1Pin Pin);
 	VOID DigitalWrite(GpioRp1Pin Pin, BOOL Value);
-	static inline Handle<GpioHost> Get() { return s_Global.Create(); }
 	VOID SetInterruptHandler(GpioRp1Pin Pin, IRQ_HANDLER Handler, VOID* Parameter=0, GpioIrqMode Mode=GpioIrqMode::Edge);
 	VOID SetPinMode(GpioRp1Pin Pin, GpioRp1PinMode Mode, GpioPullMode PullMode=GpioPullMode::None);
 
 private:
 	// Con-/Destructors
 	GpioHost();
-	static Global<GpioHost> s_Global;
 
 	// Common
 	static VOID HandleInterrupt(VOID* Parameter);
@@ -56,6 +57,7 @@ private:
 	UINT m_IrqMask;
 	VOID* m_Parameters[RP1_GPIO_PIN_COUNT];
 	Handle<PcieHost> m_PcieHost;
+	Handle<GpioHost> m_This;
 };
 
 }}

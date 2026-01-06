@@ -218,12 +218,11 @@ else
 //==========================
 
 GpioHost::GpioHost():
-m_IrqMask(0)
+m_IrqMask(0),
+m_This(this)
 {
-m_PcieHost=PcieHost::Get();
+m_PcieHost=PcieHost::Create();
 }
-
-Global<GpioHost> GpioHost::s_Global;
 
 
 //================
