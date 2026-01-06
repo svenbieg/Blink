@@ -83,12 +83,14 @@ return obj;
 
 template <class _obj_t, class... _args_t> inline Handle<_obj_t> Object::CreateEx(SIZE_T Extra, SIZE_T Align, _args_t... Arguments)
 {
-auto obj=(_obj_t*)MemoryHelper::Allocate(sizeof(_obj_t)+Extra+Align);
+SIZE_T align=TypeHelper::Min(Align, sizeof(SIZE_T));
+SIZE_T extra=TypeHelper::AlignUp(Extra, align);
+auto obj=(_obj_t*)MemoryHelper::Allocate(sizeof(_obj_t)+extra+align);
 auto buf=(SIZE_T)obj+sizeof(_obj_t);
-buf=TypeHelper::AlignUp(buf, Align);
+buf=TypeHelper::AlignUp(buf, align);
 try
 	{
-	new (obj) _obj_t((VOID*)buf, Extra, Arguments...);
+	new (obj) _obj_t((BYTE*)buf, Extra, Arguments...);
 	}
 catch(Exception e)
 	{

@@ -26,18 +26,15 @@ namespace Devices {
 // Gpio-Host
 //===========
 
-class GpioHost: public Global
+class GpioHost: public Global<GpioHost>
 {
 public:
 	// Using
 	using IRQ_HANDLER=Devices::System::IRQ_HANDLER;
 	using PcieHost=Devices::Pcie::PcieHost;
 
-	// Friends
-	friend Object;
-
 	// Con-/Destructors
-	static inline Handle<GpioHost> Create() { return Global::Create<GpioHost>(); }
+	static inline Handle<GpioHost> Create() { return Global::Create(); }
 
 	// Common
 	BOOL DigitalRead(GpioRp1Pin Pin);
@@ -47,6 +44,7 @@ public:
 
 private:
 	// Con-/Destructors
+	friend Object;
 	GpioHost();
 
 	// Common

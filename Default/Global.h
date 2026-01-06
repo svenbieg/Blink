@@ -17,7 +17,7 @@
 // Global
 //========
 
-class Global: public Object
+template <class _obj_t> class Global: public Object
 {
 public:
 	// Using
@@ -25,14 +25,18 @@ public:
 	using WriteLock=Concurrency::WriteLock;
 
 	// Con-/Destructors
-	~Global();
+	~Global()
+		{
+		WriteLock lock(s_Mutex);
+		s_Global=nullptr;
+		}
 
 protected:
 	// Con-/Destructors
 	Global()=default;
 
 	// Common
-	template <class _obj_t, class... _args_t> static Handle<_obj_t> Create(_args_t... Arguments)
+	template <class... _args_t> static Handle<_obj_t> Create(_args_t... Arguments)
 		{
 		WriteLock lock(s_Mutex);
 		if(s_Global)
@@ -44,5 +48,8 @@ protected:
 private:
 	// Common
 	static Mutex s_Mutex;
-	static Global* s_Global;
+	static _obj_t* s_Global;
 };
+
+template <class _obj_t> Concurrency::Mutex Global<_obj_t>::s_Mutex;
+template <class _obj_t> _obj_t* Global<_obj_t>::s_Global=nullptr;

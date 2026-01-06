@@ -26,14 +26,11 @@ namespace Devices {
 // Pcie-Host
 //===========
 
-class PcieHost: public Global
+class PcieHost: public Global<PcieHost>
 {
 public:
-	// Friends
-	friend Object;
-
 	// Con-/Destructors
-	static inline Handle<PcieHost> Create() { return Global::Create<PcieHost>(); }
+	static inline Handle<PcieHost> Create() { return Global::Create(); }
 
 	// Common
 	static inline SIZE_T GetDmaAddress(VOID* Buffer) { return (SIZE_T)Buffer|DMA_OFFSET; }
@@ -42,6 +39,7 @@ public:
 
 private:
 	// Con-/Destructors
+	friend Object;
 	PcieHost();
 
 	// Common
