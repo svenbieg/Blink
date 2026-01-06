@@ -93,7 +93,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Volume.h">
       <Filter>Storage</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)StringView.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Global.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\Stream.h">
       <Filter>Storage\Streams</Filter>
@@ -104,7 +103,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CharHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Object.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StringClass.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)VariableArguments.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Buffer.cpp">
       <Filter>Storage</Filter>
     </ClCompile>
@@ -132,7 +130,7 @@
       <Filter>Storage</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)StringBuilder.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)StringView.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VariableArguments.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Storage">

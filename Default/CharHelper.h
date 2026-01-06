@@ -11,6 +11,23 @@
 
 #include "Storage/Streams/Stream.h"
 
+#include <concepts>
+
+template <std::floating_point _float> class f;
+
+
+//=========
+// Concept
+//=========
+
+namespace std
+{
+template <class _char_t> struct is_character { static constexpr bool value=false; };
+template <> struct is_character<CHAR> { static constexpr bool value=true; };
+template <> struct is_character<WCHAR> { static constexpr bool value=true; };
+template<class _Ty> concept character=is_character<_Ty>::value;
+}
+
 
 //============
 // Characters

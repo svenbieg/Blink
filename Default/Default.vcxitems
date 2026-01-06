@@ -59,7 +59,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)StringBuilder.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StringClass.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StringHelper.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)StringView.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TypeHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VariableArguments.h" />
   </ItemGroup>
@@ -79,7 +78,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)StringBuilder.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StringClass.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StringHelper.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)StringView.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VariableArguments.cpp" />
   </ItemGroup>
 </Project>

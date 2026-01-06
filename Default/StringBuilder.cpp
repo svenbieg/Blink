@@ -187,7 +187,7 @@ for(UINT pos=0; pos<m_Position; pos++)
 	buf[pos]=block->Buffer[block_pos];
 	}
 buf[m_Position]=0;
-str->m_Hash=StringHelper::GetHash(buf);
+str->m_Hash=StringHelper::Hash(buf);
 str->m_Length=m_Position;
 Clear();
 return str;
@@ -218,7 +218,7 @@ if(m_Position+1!=m_Size)
 auto str=m_String;
 auto buf=const_cast<LPTSTR>(str->Begin());
 buf[m_Position]=0;
-str->m_Hash=StringHelper::GetHash(buf);
+str->m_Hash=StringHelper::Hash(buf);
 str->m_Length=m_Position;
 Clear();
 return str;

@@ -49,19 +49,9 @@ UINT StreamWriter::Print(LPCSTR value)
 return DoPrint(m_WriteAnsi, 0, value);
 }
 
-UINT StreamWriter::Print(LPCSTR value, FormatFlags flags, UINT width)
-{
-return DoPrint(value, flags, width);
-}
-
 UINT StreamWriter::Print(LPCWSTR value)
 {
 return DoPrint(m_WriteUnicode, 0, value);
-}
-
-UINT StreamWriter::Print(LPCWSTR value, FormatFlags flags, UINT width)
-{
-return DoPrint(value, flags, width);
 }
 
 UINT StreamWriter::Print(UINT len, LPCSTR value)
@@ -81,110 +71,10 @@ if(!value)
 return Print(0, value->Begin());
 }
 
-UINT StreamWriter::Print(LPCSTR str, VariableArguments& args)
+UINT StreamWriter::Print(LPCSTR format, VariableArguments& args)
 {
-args.Reset();
-UINT written=0;
-UINT pos=0;
-while(str[pos])
-	{
-	Format format=Format::None;
-	FormatFlags flags=FormatFlags::None;
-	UINT width=0;
-	UINT prec=0;
-	pos+=StringHelper::GetFormat(&str[pos], format, flags, width, prec);
-	if(format==Format::None)
-		{
-		written+=PrintChar(str[pos++]);
-		continue;
-		}
-	if(format==Format::Percent)
-		{
-		written+=PrintChar('%');
-		continue;
-		}
-	if(FlagHelper::Get(flags, FormatFlags::Width))
-		{
-		if(!args.Get(width))
-			break;
-		}
-	if(FlagHelper::Get(flags, FormatFlags::Precision))
-		{
-		if(!args.Get(prec))
-			break;
-		}
-	switch(format)
-		{
-		case Format::Int:
-			{
-			INT64 i=0;
-			if(!args.Get(i))
-				break;
-			written+=PrintInt(i, flags, width);
-			continue;
-			}
-		case Format::UInt:
-			{
-			UINT64 u=0;
-			if(!args.Get(u))
-				break;
-			written+=PrintUInt(u, flags, width);
-			continue;
-			}
-		case Format::Hex:
-			{
-			UINT64 u=0;
-			if(!args.Get(u))
-				break;
-			written+=PrintHex(u, flags, width);
-			continue;
-			}
-		case Format::Float:
-			{
-			FLOAT f=0;
-			if(!args.Get(f))
-				break;
-			written+=PrintFloat(f, flags, width, prec);
-			continue;
-			}
-		case Format::Double:
-			{
-			DOUBLE d=0;
-			if(!args.Get(d))
-				break;
-			written+=PrintDouble(d, flags, width, prec);
-			continue;
-			}
-		case Format::Char:
-			{
-			WCHAR c=0;
-			if(!args.Get(c))
-				break;
-			written+=PrintChar(c);
-			continue;
-			}
-		case Format::String:
-			{
-			LPCSTR p=nullptr;
-			if(args.Get(p))
-				{
-				written+=DoPrint(p, flags, width);
-				continue;
-				}
-			LPCWSTR pw=nullptr;
-			if(args.Get(pw))
-				{
-				written+=DoPrint(pw, flags, width);
-				continue;
-				}
-			break;
-			}
-		default:
-			break;
-		}
-	break;
-	}
-return written;
+auto str=String::Create(format, args);
+return Print(str);
 }
 
 UINT StreamWriter::PrintChar(CHAR c, UINT count)
@@ -195,62 +85,6 @@ return DoPrintChar(m_WriteAnsi, c, count);
 UINT StreamWriter::PrintChar(WCHAR c, UINT count)
 {
 return DoPrintChar(m_WriteUnicode, c, count);
-}
-
-UINT StreamWriter::PrintDouble(DOUBLE value, FormatFlags flags, UINT width, UINT prec)
-{
-CHAR buf[64];
-StringHelper::PrintDouble(buf, 64, value, flags, width, prec);
-return DoPrint(m_WriteAnsi, 0, buf);
-}
-
-UINT StreamWriter::PrintFloat(FLOAT value, FormatFlags flags, UINT width, UINT prec)
-{
-CHAR buf[32];
-StringHelper::PrintFloat(buf, 32, value, flags, width, prec);
-return DoPrint(m_WriteAnsi, 0, buf);
-}
-
-UINT StreamWriter::PrintHex(UINT value, FormatFlags flags, UINT width)
-{
-CHAR buf[32];
-StringHelper::PrintHex(buf, 32, value, flags, width);
-return DoPrint(m_WriteAnsi, 0, buf);
-}
-
-UINT StreamWriter::PrintHex(UINT64 value, FormatFlags flags, UINT width)
-{
-CHAR buf[64];
-StringHelper::PrintHex(buf, 64, value, flags, width);
-return DoPrint(m_WriteAnsi, 0, buf);
-}
-
-UINT StreamWriter::PrintInt(INT value, FormatFlags flags, UINT width)
-{
-CHAR buf[32];
-StringHelper::PrintInt(buf, 32, value, flags, width);
-return DoPrint(m_WriteAnsi, 0, buf);
-}
-
-UINT StreamWriter::PrintInt(INT64 value, FormatFlags flags, UINT width)
-{
-CHAR buf[64];
-StringHelper::PrintInt(buf, 64, value, flags, width);
-return DoPrint(m_WriteAnsi, 0, buf);
-}
-
-UINT StreamWriter::PrintUInt(UINT value, FormatFlags flags, UINT width)
-{
-CHAR buf[32];
-StringHelper::PrintUInt(buf, 32, value, flags, width);
-return DoPrint(m_WriteAnsi, 0, buf);
-}
-
-UINT StreamWriter::PrintUInt(UINT64 value, FormatFlags flags, UINT width)
-{
-CHAR buf[64];
-StringHelper::PrintUInt(buf, 64, value, flags, width);
-return DoPrint(m_WriteAnsi, 0, buf);
 }
 
 VOID StreamWriter::SetStream(OutputStream* stream)
@@ -288,28 +122,6 @@ for(UINT u=0; value[u]; u++)
 	size+=write_fn(m_Stream, value[u]);
 	}
 return size;
-}
-
-template <class _char_t> UINT StreamWriter::DoPrint(_char_t const* value, FormatFlags flags, UINT width)
-{
-if(!value)
-	return 0;
-UINT len=0;
-if(width>0)
-	len=StringHelper::Length(value);
-UINT written=0;
-if(len<width)
-	{
-	if(!FlagHelper::Get(flags, FormatFlags::Left))
-		written+=PrintChar(' ', width-len);
-	}
-written+=Print(value);
-if(len<width)
-	{
-	if(FlagHelper::Get(flags, FormatFlags::Left))
-		written+=PrintChar(' ', width-len);
-	}
-return written;
 }
 
 template <class _func_t, class _char_t> UINT StreamWriter::DoPrintChar(_func_t write_fn, _char_t c, UINT count)

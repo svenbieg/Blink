@@ -58,11 +58,11 @@ public:
 	inline LPCTSTR Begin()const { return m_Buffer; }
 	inline BOOL Contains(LPCSTR Value, BOOL CaseSensitive=true)
 		{
-		return StringHelper::Find(m_Buffer, Value, nullptr, CaseSensitive);
+		return StringHelper::FindString(m_Buffer, Value, nullptr, CaseSensitive);
 		}
 	inline BOOL Contains(LPCWSTR Value, BOOL CaseSensitive=true)
 		{
-		return StringHelper::Find(m_Buffer, Value, nullptr, CaseSensitive);
+		return StringHelper::FindString(m_Buffer, Value, nullptr, CaseSensitive);
 		}
 	inline UINT Copy(LPSTR Buffer, UINT Size) { return StringHelper::Copy(Buffer, Size, m_Buffer); }
 	inline UINT Copy(LPWSTR Buffer, UINT Size) { return StringHelper::Copy(Buffer, Size, m_Buffer); }
@@ -73,7 +73,7 @@ public:
 		{
 		VariableArgument args[]={ Arguments... };
 		VariableArguments vargs(args, TypeHelper::ArraySize(args));
-		return StringHelper::ScanArgs(m_Buffer, Format, vargs);
+		return StringHelper::Scan(m_Buffer, Format, vargs);
 		}
 	Handle<String> ToString(LanguageCode Language=LanguageCode::None)override;
 
@@ -184,7 +184,7 @@ public:
 		for(UINT u=0; u<len; u++)
 			size+=reader.ReadChar(&buf[u]);
 		buf[len]=0;
-		str->m_Hash=StringHelper::GetHash(buf);
+		str->m_Hash=StringHelper::Hash(buf);
 		str->m_Length=len;
 		operator=(str);
 		return size;

@@ -86,7 +86,7 @@ return this;
 
 Handle<String> String::Replace(LPCSTR find, LPCSTR replace, BOOL cs, BOOL repeat)
 {
-UINT len=StringHelper::Replace(nullptr, 0, m_Buffer, find, replace);
+UINT len=StringHelper::Replace((LPTSTR)nullptr, 0, m_Buffer, find, replace, cs, repeat);
 if(!len)
 	return nullptr;
 auto str=String::Create(len+1, nullptr);
@@ -112,21 +112,21 @@ String::String(LPTSTR Buffer, UINT Size, LPCSTR Value):
 m_Buffer(Buffer)
 {
 m_Length=StringHelper::Copy(m_Buffer, Size, Value);
-m_Hash=StringHelper::GetHash(m_Buffer);
+m_Hash=StringHelper::Hash(m_Buffer);
 }
 
 String::String(LPTSTR Buffer, UINT Size, LPCWSTR Value):
 m_Buffer(Buffer)
 {
 m_Length=StringHelper::Copy(m_Buffer, Size, Value);
-m_Hash=StringHelper::GetHash(m_Buffer);
+m_Hash=StringHelper::Hash(m_Buffer);
 }
 
 String::String(LPTSTR Buffer, UINT Size, LPCSTR Format, VariableArguments& Arguments):
 m_Buffer(Buffer)
 {
-m_Length=StringHelper::PrintArgs(m_Buffer, Size, Format, Arguments);
-m_Hash=StringHelper::GetHash(m_Buffer);
+m_Length=StringHelper::Print(m_Buffer, Size, Format, Arguments);
+m_Hash=StringHelper::Hash(m_Buffer);
 }
 
 Handle<String> String::Create(UINT Length, nullptr_t)

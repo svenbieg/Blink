@@ -44,7 +44,6 @@ public:
 
 	// Common
 	virtual StreamFormat GetStreamFormat()const=0;
-	virtual VOID SetStreamFormat(StreamFormat Format)=0;
 };
 
 
@@ -83,7 +82,7 @@ class RandomAccessStream: public Object, public InputStream, public OutputStream
 public:
 	// Common
 	StreamFormat GetStreamFormat()const override { return m_StreamFormat; }
-	VOID SetStreamFormat(StreamFormat Format)override { m_StreamFormat=Format; }
+	VOID SetStreamFormat(StreamFormat Format) { m_StreamFormat=Format; }
 
 protected:
 	// Con-/Destructors
