@@ -57,8 +57,6 @@ FlagHelper::Set(current->m_Flags, TaskFlags::Suspended);
 current->m_Signal=this;
 Scheduler::AddParallelTask(&m_Waiting, current);
 Scheduler::SuspendCurrentTask(core, current, resume_time);
-lock.Yield();
-current->m_Signal=nullptr;
 lock.Unlock();
 if(current->m_ResumeTime)
 	throw TimeoutException();
@@ -79,7 +77,6 @@ current->m_Signal=this;
 Scheduler::AddParallelTask(&m_Waiting, current);
 Scheduler::SuspendCurrentTask(core, current, resume_time);
 scoped_lock.Yield(lock);
-current->m_Signal=nullptr;
 lock.Unlock();
 if(current->m_ResumeTime)
 	throw TimeoutException();
@@ -101,7 +98,6 @@ current->m_Signal=this;
 Scheduler::AddParallelTask(&m_Waiting, current);
 Scheduler::SuspendCurrentTask(core, current);
 scoped_lock.Yield(lock);
-current->m_Signal=nullptr;
 }
 
 }

@@ -202,8 +202,6 @@ while(*current_ptr)
 	if(locked&&!FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
 		{
 		task->m_Parallel=current;
-		task->m_Waiting=current->m_Waiting;
-		current->m_Waiting=nullptr;
 		*current_ptr=task;
 		return;
 		}
@@ -484,17 +482,15 @@ if(FlagHelper::Get(current->m_Flags, TaskFlags::Owner))
 	FlagHelper::Clear(current->m_Flags, TaskFlags::Owner);
 	CreateTasks();
 	}
+current->m_ResumeTime=resume_time;
 if(resume_time)
-	{
-	current->m_ResumeTime=resume_time;
 	AddSleepingTask(&s_Sleeping, current);
-	}
 auto next=current->m_Next;
 if(next)
 	{
-	if(FlagHelper::Get(next->m_Flags, TaskFlags::Locked))
-		return;
 	if(!s_WaitingLocked)
+		return;
+	if(FlagHelper::Get(next->m_Flags, TaskFlags::Locked))
 		return;
 	current->m_Next=GetWaitingTask();
 	AddWaitingTask(next);
@@ -518,6 +514,7 @@ while(wakeup)
 		}
 	auto parallel=wakeup->m_Parallel;
 	wakeup->m_Parallel=nullptr;
+	wakeup->m_Signal=nullptr;
 	wakeup->m_Status=status;
 	FlagHelper::Clear(wakeup->m_Flags, TaskFlags::Suspended);
 	AddWaitingTask(wakeup);
