@@ -681,7 +681,7 @@ Copy(&dst[len], size, append);
 return new_len;
 }
 
-template <std::character _char1_t, std::character _char2_t> INT StringHelper::Compare(_char1_t const* str1, _char2_t const* str2, UINT count, BOOL cs)
+template <std::character _str1_t, std::character _str2_t> INT StringHelper::Compare(_str1_t const* str1, _str2_t const* str2, UINT count, BOOL cs)
 {
 if(!str1)
 	{
@@ -740,13 +740,13 @@ if(str1[pos1]==0)
 return 1;
 }
 
-template <std::character _char_t> INT StringHelper::Compare(String const* str, _char_t const* value2, UINT len, BOOL cs)
+template <std::character _str_t> INT StringHelper::Compare(String const* str, _str_t const* value2, UINT len, BOOL cs)
 {
 auto value1=str? str->Begin(): nullptr;
 return Compare(value1, value2, len, cs);
 }
 
-template <std::character _char_t> INT StringHelper::Compare(_char_t const* value1, String const* str, UINT len, BOOL cs)
+template <std::character _str_t> INT StringHelper::Compare(_str_t const* value1, String const* str, UINT len, BOOL cs)
 {
 auto value2=str? str->Begin(): nullptr;
 return Compare(value1, value2, len, cs);
@@ -990,7 +990,7 @@ switch(c)
 return pos+1;
 }
 
-template <std::character _char_t> UINT64 StringHelper::Hash(_char_t const* str)
+template <std::character _str_t> UINT64 StringHelper::Hash(_str_t const* str)
 {
 if(!str)
 	return 0;
@@ -1028,7 +1028,7 @@ Copy(&dst[pos+insert_len], size, &str[pos]);
 return new_len;
 }
 
-template <std::character _char_t> UINT StringHelper::Length(_char_t const* value)
+template <std::character _str_t> UINT StringHelper::Length(_str_t const* value)
 {
 if(!value)
 	return 0;
@@ -1037,7 +1037,7 @@ for(; value[len]; len++);
 return len;
 }
 
-template <std::character _char_t> UINT StringHelper::Length(_char_t const* value, UINT max)
+template <std::character _str_t> UINT StringHelper::Length(_str_t const* value, UINT max)
 {
 if(!value)
 	return 0;
@@ -1079,7 +1079,7 @@ if(dst)
 return pos;
 }
 
-template <std::character _char_t> UINT StringHelper::Print(_char_t* str, UINT size, LPCSTR format, VariableArguments& args)
+template <std::character _str_t> UINT StringHelper::Print(_str_t* str, UINT size, LPCSTR format, VariableArguments& args)
 {
 if(!format)
 	return 0;
@@ -1545,7 +1545,7 @@ if(dst)
 return pos;
 }
 
-template <std::character _char_t> UINT StringHelper::Scan(_char_t const* str, LPCSTR format, VariableArguments& args)
+template <std::character _str_t> UINT StringHelper::Scan(_str_t const* str, LPCSTR format, VariableArguments& args)
 {
 if(!str||!format)
 	return 0;
@@ -1578,7 +1578,7 @@ for(UINT fmt=0; format[fmt]; )
 		{
 		case Format::Char:
 			{
-			_char_t tc=str[pos];
+			_str_t tc=str[pos];
 			if(args.Set(tc))
 				{
 				count++;
@@ -1664,7 +1664,7 @@ for(UINT fmt=0; format[fmt]; )
 return count;
 }
 
-template <std::character _char_t, std::floating_point _float_t> UINT StringHelper::ScanFloat(_char_t const* str, _float_t* value_ptr)
+template <std::character _str_t, std::floating_point _float_t> UINT StringHelper::ScanFloat(_str_t const* str, _float_t* value_ptr)
 {
 if(!str)
 	return 0;
@@ -1726,7 +1726,7 @@ if(value_ptr)
 return pos;
 }
 
-template <std::character _char_t, std::signed_integral _int_t> UINT StringHelper::ScanInt(_char_t const* str, _int_t* value_ptr)
+template <std::character _str_t, std::signed_integral _int_t> UINT StringHelper::ScanInt(_str_t const* str, _int_t* value_ptr)
 {
 if(value_ptr)
 	*value_ptr=0;
@@ -1756,7 +1756,7 @@ if(value_ptr)
 return pos;
 }
 
-template <std::character _char_t, std::unsigned_integral _uint_t> UINT StringHelper::ScanUInt(_char_t const* str, _uint_t* value_ptr, UINT base, UINT len)
+template <std::character _str_t, std::unsigned_integral _uint_t> UINT StringHelper::ScanUInt(_str_t const* str, _uint_t* value_ptr, UINT base, UINT len)
 {
 if(!str)
 	return 0;
@@ -1800,7 +1800,7 @@ if(value_ptr)
 return pos;
 }
 
-template <std::character _char_t, std::character _buf_t> UINT StringHelper::ScanString(_char_t const* str, _buf_t* buf, UINT size, CHAR esc)
+template <std::character _str_t, std::character _buf_t> UINT StringHelper::ScanString(_str_t const* str, _buf_t* buf, UINT size, CHAR esc)
 {
 if(!str)
 	return 0;
@@ -1810,14 +1810,14 @@ for(; str[pos]; pos++)
 	if(CharHelper::Equal(str[pos], esc))
 		break;
 	if(pos<size)
-		buf[pos]=CharToChar<_buf_t, _char_t>(str[pos]);
+		buf[pos]=CharToChar<_buf_t, _str_t>(str[pos]);
 	}
 if(pos<size)
 	buf[pos]=0;
 return pos;
 }
 
-template <std::character _char_t> _char_t const* StringHelper::Truncate(_char_t const* str, LPCSTR chars)
+template <std::character _str_t> _str_t const* StringHelper::Truncate(_str_t const* str, LPCSTR chars)
 {
 UINT len=Length(chars);
 while(*str)
@@ -1838,13 +1838,13 @@ while(*str)
 return str;
 }
 
-template <std::character _char_t> UINT StringHelper::Uppercase(_char_t* str)
+template <std::character _str_t> UINT StringHelper::Uppercase(_str_t* str)
 {
 if(!str)
 	return 0;
 UINT pos=0;
 for(; str[pos]; pos++)
-	str[pos]=CharToCapital<_char_t, _char_t>(str[pos]);
+	str[pos]=CharToCapital<_str_t, _str_t>(str[pos]);
 return pos;
 }
 
