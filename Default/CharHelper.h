@@ -11,10 +11,6 @@
 
 #include "Storage/Streams/Stream.h"
 
-#include <concepts>
-
-template <std::floating_point _float> class f;
-
 
 //=========
 // Concept
@@ -134,18 +130,15 @@ public:
 	static UINT ReadUtf8(InputStream* Stream, CHAR* Char);
 	static UINT ReadUtf8(InputStream* Stream, WCHAR* Char);
 	static CHAR ToAnsi(WCHAR Char);
-	static TCHAR ToCapital(CHAR Char);
-	static TCHAR ToCapital(WCHAR Char);
+	template <class _dst_t, class _src_t> static _dst_t ToCapital(_src_t Char);
 	static CHAR ToCapitalAnsi(CHAR Char);
 	static CHAR ToCapitalAnsi(WCHAR Char);
 	static WCHAR ToCapitalUnicode(CHAR Char);
 	static WCHAR ToCapitalUnicode(WCHAR Char);
-	static TCHAR ToChar(CHAR Char);
-	static TCHAR ToChar(WCHAR Char);
+	template <class _dst_t, class _src_t> static _dst_t ToChar(_src_t Char);
 	static BOOL ToDigit(CHAR Char, UINT* Digit, UINT Base=10);
 	static BOOL ToDigit(WCHAR Char, UINT* Digit, UINT Base=10);
-	static TCHAR ToSmall(CHAR Char);
-	static TCHAR ToSmall(WCHAR Char);
+	template <class _dst_t, class _src_t> static _dst_t ToSmall(_src_t Char);
 	static CHAR ToSmallAnsi(CHAR Char);
 	static CHAR ToSmallAnsi(WCHAR Char);
 	static WCHAR ToSmallUnicode(CHAR Char);
@@ -158,3 +151,18 @@ public:
 	static UINT WriteUtf8(OutputStream* Stream, CHAR Char);
 	static UINT WriteUtf8(OutputStream* Stream, WCHAR Char);
 };
+
+template <> inline CHAR CharHelper::ToCapital(CHAR Char) { return ToCapitalAnsi(Char); }
+template <> inline CHAR CharHelper::ToCapital(WCHAR Char) { return ToCapitalAnsi(Char); }
+template <> inline WCHAR CharHelper::ToCapital(CHAR Char) { return ToCapitalUnicode(Char); }
+template <> inline WCHAR CharHelper::ToCapital(WCHAR Char) { return ToCapitalUnicode(Char); }
+
+template <> inline CHAR CharHelper::ToChar(CHAR Char) {return Char; }
+template <> inline CHAR CharHelper::ToChar(WCHAR Char) { return ToAnsi(Char); }
+template <> inline WCHAR CharHelper::ToChar(CHAR Char) { return ToUnicode(Char); }
+template <> inline WCHAR CharHelper::ToChar(WCHAR Char) { return Char; }
+
+template <> inline CHAR CharHelper::ToSmall(CHAR Char) { return ToSmallAnsi(Char); }
+template <> inline CHAR CharHelper::ToSmall(WCHAR Char) { return ToSmallAnsi(Char); }
+template <> inline WCHAR CharHelper::ToSmall(CHAR Char) { return ToSmallUnicode(Char); }
+template <> inline WCHAR CharHelper::ToSmall(WCHAR Char) { return ToSmallUnicode(Char); }

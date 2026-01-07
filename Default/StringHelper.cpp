@@ -18,70 +18,6 @@
 using namespace Storage::Streams;
 
 
-//=============
-// Char-Helper
-//=============
-
-template <class _dst_t, class _src_t> inline _dst_t CharToCapital(_src_t c) {}
-
-template <> inline CHAR CharToCapital(CHAR c)
-{
-return CharHelper::ToCapitalAnsi(c);
-}
-
-template <> inline CHAR CharToCapital(WCHAR c)
-{
-return CharHelper::ToCapitalAnsi(c);
-}
-
-template <> inline WCHAR CharToCapital(CHAR c)
-{
-return CharHelper::ToCapitalUnicode(c);
-}
-
-template <> inline WCHAR CharToCapital(WCHAR c)
-{
-return CharHelper::ToCapitalUnicode(c);
-}
-
-template <class _dst_t, class _src_t> inline _dst_t CharToChar(_src_t c)
-{
-return c;
-}
-
-template <> inline CHAR CharToChar(WCHAR c)
-{
-return CharHelper::ToAnsi(c);
-}
-
-template <> inline WCHAR CharToChar(CHAR c)
-{
-return CharHelper::ToUnicode(c);
-}
-
-template <class _dst_t, class _src_t> inline _dst_t CharToSmall(_src_t c) {}
-
-template <> inline CHAR CharToSmall(CHAR c)
-{
-return CharHelper::ToSmallAnsi(c);
-}
-
-template <> inline CHAR CharToSmall(WCHAR c)
-{
-return CharHelper::ToSmallAnsi(c);
-}
-
-template <> inline WCHAR CharToSmall(CHAR c)
-{
-return CharHelper::ToSmallUnicode(c);
-}
-
-template <> inline WCHAR CharToSmall(WCHAR c)
-{
-return CharHelper::ToSmallUnicode(c);
-}
-
-
 //======
 // Hash
 //======
@@ -359,7 +295,6 @@ INT StringHelper::Compare(String const* str1, LPCWSTR str2, UINT len, BOOL cs)
 return Compare<WCHAR>(str1, str2, len, cs);
 }
 
-
 INT StringHelper::Compare(String const* str1, String const* str2)
 {
 if(!str1)
@@ -403,7 +338,6 @@ UINT StringHelper::Copy(LPWSTR dst, UINT size, LPCWSTR src, UINT len)
 {
 return Copy<WCHAR, WCHAR>(dst, size, src, len);
 }
-
 
 UINT StringHelper::Decrypt(LPSTR dst, UINT size, BYTE const* src, LPCSTR key_str)
 {
@@ -658,7 +592,6 @@ return Uppercase<WCHAR, WCHAR>(dst, size, src);
 }
 
 
-
 //================
 // Common Private
 //================
@@ -773,7 +706,7 @@ for(; pos<end; pos++)
 	if(src[pos]==0)
 		break;
 	if(dst)
-		dst[pos]=CharToChar<_dst_t, _src_t>(src[pos]);
+		dst[pos]=CharHelper::ToChar<_dst_t, _src_t>(src[pos]);
 	}
 if(dst)
 	dst[pos]=0;
@@ -1058,7 +991,7 @@ if(!str)
 	return 0;
 UINT pos=0;
 for(; str[pos]; pos++)
-	str[pos]=CharToSmall<_str_t, _str_t>(str[pos]);
+	str[pos]=CharHelper::ToSmall<_str_t, _str_t>(str[pos]);
 return pos;
 }
 
@@ -1072,7 +1005,7 @@ for(; dst[pos]; pos++)
 	if(pos+1==size)
 		break;
 	if(dst)
-		dst[pos]=CharToSmall<_dst_t, _src_t>(src[pos]);
+		dst[pos]=CharHelper::ToSmall<_dst_t, _src_t>(src[pos]);
 	}
 if(dst)
 	dst[pos]=0;
@@ -1196,7 +1129,7 @@ if(!dst)
 	return 1;
 if(pos>=size)
 	return 0;
-dst[pos]=CharToChar<_dst_t, _char_t>(c);
+dst[pos]=CharHelper::ToChar<_dst_t, _char_t>(c);
 return 1;
 }
 
@@ -1208,15 +1141,15 @@ if(pos>=size)
 	return 0;
 if(FlagHelper::Get(flags, FormatFlags::High))
 	{
-	dst[pos]=CharToCapital<_dst_t, _char_t>(c);
+	dst[pos]=CharHelper::ToCapital<_dst_t, _char_t>(c);
 	}
 else if(FlagHelper::Get(flags, FormatFlags::Low))
 	{
-	dst[pos]=CharToSmall<_dst_t, _char_t>(c);
+	dst[pos]=CharHelper::ToSmall<_dst_t, _char_t>(c);
 	}
 else
 	{
-	dst[pos]=CharToChar<_dst_t, _char_t>(c);
+	dst[pos]=CharHelper::ToChar<_dst_t, _char_t>(c);
 	}
 return 1;
 }
@@ -1229,7 +1162,7 @@ if(pos>=size)
 	return 0;
 UINT print=TypeHelper::Min(size-pos, count);
 for(UINT u=0; u<print; u++)
-	dst[pos++]=CharToChar<_dst_t, _char_t>(c);
+	dst[pos++]=CharHelper::ToChar<_dst_t, _char_t>(c);
 return print;
 }
 
@@ -1386,7 +1319,7 @@ for(; src[src_pos]; src_pos++)
 	if(pos+1==size)
 		break;
 	if(dst)
-		dst[pos++]=CharToChar<_dst_t, _src_t>(src[src_pos]);
+		dst[pos++]=CharHelper::ToChar<_dst_t, _src_t>(src[src_pos]);
 	}
 return src_pos;
 }
@@ -1436,7 +1369,7 @@ for(; src[src_pos]; src_pos++)
 	if(pos+1==size)
 		break;
 	if(dst)
-		dst[pos++]=CharToCapital<_dst_t, _src_t>(src[src_pos]);
+		dst[pos++]=CharHelper::ToCapital<_dst_t, _src_t>(src[src_pos]);
 	}
 return src_pos;
 }
@@ -1451,7 +1384,7 @@ for(; src[src_pos]; src_pos++)
 	if(pos+1==size)
 		break;
 	if(dst)
-		dst[pos++]=CharToSmall<_dst_t, _src_t>(src[src_pos]);
+		dst[pos++]=CharHelper::ToSmall<_dst_t, _src_t>(src[src_pos]);
 	}
 return src_pos;
 }
@@ -1810,7 +1743,7 @@ for(; str[pos]; pos++)
 	if(CharHelper::Equal(str[pos], esc))
 		break;
 	if(pos<size)
-		buf[pos]=CharToChar<_buf_t, _str_t>(str[pos]);
+		buf[pos]=CharHelper::ToChar<_buf_t, _str_t>(str[pos]);
 	}
 if(pos<size)
 	buf[pos]=0;
@@ -1844,7 +1777,7 @@ if(!str)
 	return 0;
 UINT pos=0;
 for(; str[pos]; pos++)
-	str[pos]=CharToCapital<_str_t, _str_t>(str[pos]);
+	str[pos]=CharHelper::ToCapital<_str_t, _str_t>(str[pos]);
 return pos;
 }
 
@@ -1858,7 +1791,7 @@ for(; str[pos]; pos++)
 	if(pos+1==size)
 		break;
 	if(dst)
-		dst[pos]=CharToCapital<_dst_t, _src_t>(str[pos]);
+		dst[pos]=CharHelper::ToCapital<_dst_t, _src_t>(str[pos]);
 	}
 if(dst)
 	dst[pos]=0;

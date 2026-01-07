@@ -162,13 +162,13 @@ return 1;
 
 UINT StringBuilder::BufferAppendAnsi(CHAR c)
 {
-TCHAR tc=CharHelper::ToChar(c);
+TCHAR tc=CharHelper::ToChar<TCHAR, CHAR>(c);
 return BufferAppend(tc);
 }
 
 UINT StringBuilder::BufferAppendUnicode(WCHAR c)
 {
-TCHAR tc=CharHelper::ToChar(c);
+TCHAR tc=CharHelper::ToChar<TCHAR, WCHAR>(c);
 return BufferAppend(tc);
 }
 
@@ -198,7 +198,7 @@ UINT StringBuilder::StringAppendAnsi(CHAR c)
 if(m_Position+1>=m_Size)
 	throw BufferOverrunException();
 auto buf=const_cast<LPTSTR>(m_String->Begin());
-buf[m_Position++]=CharHelper::ToChar(c);
+buf[m_Position++]=CharHelper::ToChar<TCHAR, CHAR>(c);
 return 1;
 }
 
@@ -207,7 +207,7 @@ UINT StringBuilder::StringAppendUnicode(WCHAR c)
 if(m_Position+1>=m_Size)
 	throw BufferOverrunException();
 auto buf=const_cast<LPTSTR>(m_String->Begin());
-buf[m_Position++]=CharHelper::ToChar(c);
+buf[m_Position++]=CharHelper::ToChar<TCHAR, WCHAR>(c);
 return 1;
 }
 
