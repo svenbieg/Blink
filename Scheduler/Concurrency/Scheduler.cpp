@@ -157,6 +157,8 @@ if(s_Sleeping)
 		auto next=current->m_Sleeping;
 		current->m_Sleeping=nullptr;
 		FlagHelper::Clear(current->m_Flags, TaskFlags::Suspended);
+		FlagHelper::Set(current->m_Flags, TaskFlags::Timeout);
+		current->m_ResumeTime=0;
 		AddWaitingTask(current);
 		*current_ptr=next;
 		}
@@ -482,9 +484,11 @@ if(FlagHelper::Get(current->m_Flags, TaskFlags::Owner))
 	FlagHelper::Clear(current->m_Flags, TaskFlags::Owner);
 	CreateTasks();
 	}
-current->m_ResumeTime=resume_time;
 if(resume_time)
+	{
+	current->m_ResumeTime=resume_time;
 	AddSleepingTask(&s_Sleeping, current);
+	}
 auto next=current->m_Next;
 if(next)
 	{

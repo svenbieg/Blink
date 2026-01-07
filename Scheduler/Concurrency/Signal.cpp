@@ -54,11 +54,12 @@ SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 FlagHelper::Set(current->m_Flags, TaskFlags::Suspended);
+FlagHelper::Clear(current->m_Flags, TaskFlags::Timeout);
 current->m_Signal=this;
 Scheduler::AddParallelTask(&m_Waiting, current);
 Scheduler::SuspendCurrentTask(core, current, resume_time);
 lock.Unlock();
-if(current->m_ResumeTime)
+if(FlagHelper::Get(current->m_Flags, TaskFlags::Timeout))
 	throw TimeoutException();
 StatusHelper::ThrowIfFailed(current->m_Status);
 }
@@ -73,12 +74,13 @@ SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 FlagHelper::Set(current->m_Flags, TaskFlags::Suspended);
+FlagHelper::Clear(current->m_Flags, TaskFlags::Timeout);
 current->m_Signal=this;
 Scheduler::AddParallelTask(&m_Waiting, current);
 Scheduler::SuspendCurrentTask(core, current, resume_time);
 scoped_lock.Yield(lock);
 lock.Unlock();
-if(current->m_ResumeTime)
+if(FlagHelper::Get(current->m_Flags, TaskFlags::Timeout))
 	throw TimeoutException();
 StatusHelper::ThrowIfFailed(current->m_Status);
 }

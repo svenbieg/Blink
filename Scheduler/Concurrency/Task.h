@@ -48,14 +48,15 @@ class ServiceTask;
 enum class TaskFlags: UINT
 {
 None=0,
-Done=1,
-Idle=2,
-Locked=4,
-LockedSharing=36,
-Owner=8,
-Release=16,
-Sharing=32,
-Suspended=64
+Done=(1<<0),
+Idle=(1<<1),
+Locked=(1<<2),
+LockedSharing=(1<<2)|(1<<5),
+Owner=(1<<3),
+Release=(1<<4),
+Sharing=(1<<5),
+Suspended=(1<<7),
+Timeout=(1<<8)
 };
 
 
