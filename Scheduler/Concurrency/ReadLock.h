@@ -33,28 +33,18 @@ public:
 	// Con-/Destructors
 	ReadLock()=delete;
 	ReadLock(ReadLock const&)=delete;
-	inline ReadLock(Mutex& Mutex): m_Mutex(&Mutex)
-		{
-		m_Mutex->Lock(AccessMode::ReadOnly);
-		}
-	inline ~ReadLock()
-		{
-		if(m_Mutex)
-			{
-			m_Mutex->Unlock(AccessMode::ReadOnly);
-			m_Mutex=nullptr;
-			}
-		}
+	ReadLock(Mutex& Mutex);
+	~ReadLock();
 
 	// Common
-	inline VOID Lock()override { m_Mutex->Lock(AccessMode::ReadOnly); }
-	inline VOID Release() { m_Mutex=nullptr; }
-	inline BOOL TryLock()override { return m_Mutex->TryLock(AccessMode::ReadOnly); }
-	inline VOID Unlock()override { m_Mutex->Unlock(AccessMode::ReadOnly); }
+	VOID Lock()override;
+	VOID Release();
+	BOOL TryLock()override;
+	VOID Unlock()override;
 
 private:
 	// Common
-	inline VOID Yield(SpinLock& SchedulerLock)override { m_Mutex->Yield(SchedulerLock, AccessMode::ReadOnly); }
+	VOID Yield(SpinLock& SchedulerLock)override;
 	Mutex* m_Mutex;
 };
 

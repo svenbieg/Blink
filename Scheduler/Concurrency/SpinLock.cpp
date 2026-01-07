@@ -35,6 +35,31 @@ if(m_CriticalSection)
 }
 
 
+//========
+// Common
+//========
+
+VOID SpinLock::Lock()
+{
+m_CriticalSection->Lock();
+}
+
+BOOL SpinLock::TryLock()
+{
+return m_CriticalSection->TryLock();
+}
+
+VOID SpinLock::Unlock()
+{
+m_CriticalSection->Unlock();
+}
+
+VOID SpinLock::Yield()
+{
+m_CriticalSection->Yield();
+}
+
+
 //================
 // Common Private
 //================
@@ -42,7 +67,7 @@ if(m_CriticalSection)
 VOID SpinLock::Yield(SpinLock& sched_lock)
 {
 m_CriticalSection->Unlock();
-sched_lock.Yield();
+sched_lock.m_CriticalSection->Yield();
 m_CriticalSection->Lock();
 }
 

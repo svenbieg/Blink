@@ -37,10 +37,10 @@ public:
 	~SpinLock();
 
 	// Common
-	inline VOID Lock()override { m_CriticalSection->Lock(); }
-	inline BOOL TryLock()override { return m_CriticalSection->TryLock(); }
-	inline VOID Unlock()override { m_CriticalSection->Unlock(); }
-	inline VOID Yield() { m_CriticalSection->Yield(); }
+	VOID Lock()override;
+	BOOL TryLock()override;
+	VOID Unlock()override;
+	VOID Yield();
 
 private:
 	// Common

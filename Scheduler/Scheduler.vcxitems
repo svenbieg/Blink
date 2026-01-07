@@ -14,10 +14,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\CriticalSection.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\DispatchedQueue.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Mutex.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\ReadLock.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Scheduler.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Signal.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\SpinLock.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Task.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\WriteLock.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\CriticalMutex.h" />

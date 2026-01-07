@@ -33,28 +33,18 @@ public:
 	// Con-/Destructors
 	WriteLock()=delete;
 	WriteLock(WriteLock const&)=delete;
-	inline WriteLock(Mutex& Mutex): m_Mutex(&Mutex)
-		{
-		m_Mutex->Lock();
-		}
-	inline ~WriteLock()
-		{
-		if(m_Mutex)
-			{
-			m_Mutex->Unlock();
-			m_Mutex=nullptr;
-			}
-		}
+	WriteLock(Mutex& Mutex);
+	~WriteLock();
 
 	// Common
-	inline VOID Lock()override { m_Mutex->Lock(); }
-	inline VOID Release() { m_Mutex=nullptr; }
-	inline BOOL TryLock()override { return m_Mutex->TryLock(); }
-	inline VOID Unlock()override { m_Mutex->Unlock(); }
+	VOID Lock()override;
+	VOID Release();
+	BOOL TryLock()override;
+	VOID Unlock()override;
 
 private:
 	// Common
-	inline VOID Yield(SpinLock& SchedulerLock)override { m_Mutex->Yield(SchedulerLock); }
+	VOID Yield(SpinLock& SchedulerLock)override;
 	Mutex* m_Mutex;
 };
 
