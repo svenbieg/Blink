@@ -25,7 +25,7 @@
       <IncludeDirs>$([System.String]::Copy('$(IncludeDirs)').Replace('$(SolutionDir)', '${workspaceFolder}/'))</IncludeDirs>
       <IncludeDirs>$([System.String]::Copy('$(IncludeDirs)').Replace('\', '/'))</IncludeDirs>
       <OpenOcdExePath>$([System.String]::Copy('$(OpenOcdExe)').Replace('\', '/'))</OpenOcdExePath>
-      <OpenOcdSearchPath>$([System.String]::Copy('$(OpenOcdPath)scripts').Replace('\', '/'))</OpenOcdSearchPath>
+      <OpenOcdSearchPath>$([System.String]::Copy('$(OpenOcdPath)share\openocd\scripts').Replace('\', '/'))</OpenOcdSearchPath>
       <PreprocessorDefs Condition="'@(PreprocessorList)'!=''">@(PreprocessorList->'%22%(Identity)%22', ', ')</PreprocessorDefs>
       <SvdFilePath>$([System.String]::Copy('$(SvdFile)').Replace('\', '/'))</SvdFilePath>
     </PropertyGroup>

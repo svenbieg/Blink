@@ -2,7 +2,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <AdditionalOptions>$(AdditionalOptions) /Zc:__cplusplus /std:c++latest /std:clatest</AdditionalOptions>
     <AdditionalLinkerFlags>$(AdditionalLinkerFlags) -lm</AdditionalLinkerFlags>
     <CompilerFlags>$(CompilerFlags) -fdata-sections -ffunction-sections</CompilerFlags>
     <CompilerFlags>$(CompilerFlags) -fno-builtin -funwind-tables -nostartfiles</CompilerFlags>
