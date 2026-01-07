@@ -45,8 +45,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Soc.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\System.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\Wifi.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiAdapter.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiEvents.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiPacket.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)except.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)irq.h" />

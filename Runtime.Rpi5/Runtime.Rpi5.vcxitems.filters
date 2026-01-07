@@ -107,7 +107,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiPacket.h">
       <Filter>Devices\Wifi</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiEvents.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\Wifi.h">
       <Filter>Devices\Wifi</Filter>
     </ClInclude>
   </ItemGroup>
