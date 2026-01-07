@@ -37,7 +37,7 @@ WCHAR UnicodeMap[128]=
 	0x00F0, 0x00F1, 0x00F2, 0x00F3, 0x00F4, 0x00F5, 0x00F6, 0x00F7, 0x00F8, 0x00F9, 0x00FA, 0x00FB, 0x00FC, 0x00FD, 0x00FE, 0x00FF, // 0xF0
 };
 
-template <class _dst_t, class _src_t> inline _dst_t CharToChar(_src_t c)
+template <std::character _dst_t, std::character _src_t> inline _dst_t CharToChar(_src_t c)
 {
 return c;
 }
@@ -52,7 +52,7 @@ template <> inline WCHAR CharToChar(CHAR c)
 return CharHelper::ToUnicode(c);
 }
 
-template <class _dst_t, class _src_t> inline _dst_t CharToCapital(_src_t tc)
+template <std::character _dst_t, std::character _src_t> inline _dst_t CharToCapital(_src_t tc)
 {
 CHAR c=CharToChar<CHAR, _src_t>(tc);
 if(c>='a'&&c<='z')
@@ -69,7 +69,7 @@ switch(c)
 return CharToChar<_dst_t, _src_t>(tc);
 }
 
-template <class _char_t> inline BOOL CharToDigit(_char_t tc, UINT* digit_ptr, UINT base)
+template <std::character _char_t> inline BOOL CharToDigit(_char_t tc, UINT* digit_ptr, UINT base)
 {
 CHAR c=CharToChar<CHAR, _char_t>(tc);
 if(c<'0')
@@ -93,7 +93,7 @@ if(digit<base)
 return false;
 }
 
-template <class _dst_t, class _src_t> inline _dst_t CharToSmall(_src_t tc)
+template <std::character _dst_t, std::character _src_t> inline _dst_t CharToSmall(_src_t tc)
 {
 CHAR c=CharToChar<_dst_t, _src_t>(tc);
 if(c>='A'&&c<='Z')
@@ -115,7 +115,7 @@ return CharToChar<_dst_t, _src_t>(tc);
 // UTF-8
 //=======
 
-template <class _char_t> UINT CharReadUtf8(InputStream* stream, _char_t* c_ptr)
+template <std::character _char_t> UINT CharReadUtf8(InputStream* stream, _char_t* c_ptr)
 {
 if(!stream||!c_ptr)
 	return 0;
@@ -169,7 +169,7 @@ if(read==1)
 return size;
 }
 
-template <class _char_t> UINT CharWriteUtf8(OutputStream* stream, _char_t tc)
+template <std::character _char_t> UINT CharWriteUtf8(OutputStream* stream, _char_t tc)
 {
 WCHAR c=CharToChar<WCHAR, _char_t>(tc);
 if(c<0x80)
@@ -260,7 +260,7 @@ const BYTE CharCompareNotCaseSensitive[]=
 	 22,  41,  43,  44,  45,  46,  47, 255, 255,  55,  56,  57,  58,  63, 255, 255, // 0xF0
 	};
 
-template <class _char1_t, class _char2_t> inline INT CharCompare(_char1_t tc1, _char2_t tc2, BOOL cs)
+template <std::character _char1_t, std::character _char2_t> inline INT CharCompare(_char1_t tc1, _char2_t tc2, BOOL cs)
 {
 CHAR c1=CharToChar<CHAR, _char1_t>(tc1);
 CHAR c2=CharToChar<CHAR, _char2_t>(tc2);
@@ -280,7 +280,7 @@ if(c1<c2)
 return 0;
 }
 
-template <class _char1_t, class _char2_t> inline BOOL CharEqual(_char1_t tc1, _char2_t tc2, BOOL cs)
+template <std::character _char1_t, std::character _char2_t> inline BOOL CharEqual(_char1_t tc1, _char2_t tc2, BOOL cs)
 {
 CHAR c1=CharToChar<CHAR, _char1_t>(tc1);
 CHAR c2=CharToChar<CHAR, _char2_t>(tc2);
@@ -292,7 +292,7 @@ if(!cs)
 return c1==c2;
 }
 
-template <class _char_t> inline BOOL CharIsAlpha(_char_t tc)
+template <std::character _char_t> inline BOOL CharIsAlpha(_char_t tc)
 {
 CHAR c=CharToChar<CHAR, _char_t>(tc);
 if(c>='A'&&c<='Z')
@@ -312,7 +312,7 @@ switch(c)
 return false;
 }
 
-template <class _char_t> inline BOOL CharIsBreak(_char_t tc)
+template <std::character _char_t> inline BOOL CharIsBreak(_char_t tc)
 {
 if(tc==0)
 	return true;
@@ -326,7 +326,7 @@ for(UINT u=0; u<TypeHelper::ArraySize(str); u++)
 return false;
 }
 
-template <class _char_t> inline BOOL CharIsCapital(_char_t tc)
+template <std::character _char_t> inline BOOL CharIsCapital(_char_t tc)
 {
 CHAR c=CharToChar<CHAR, _char_t>(tc);
 if(c>='A'&&c<='Z')
@@ -341,7 +341,7 @@ switch(c)
 return false;
 }
 
-template <class _char_t> inline BOOL CharIsLineBreak(_char_t tc)
+template <std::character _char_t> inline BOOL CharIsLineBreak(_char_t tc)
 {
 if(tc==0)
 	return true;
@@ -355,7 +355,7 @@ for(UINT u=0; u<TypeHelper::ArraySize(str); u++)
 return false;
 }
 
-template <class _char_t> inline BOOL CharIsPrintable(_char_t tc)
+template <std::character _char_t> inline BOOL CharIsPrintable(_char_t tc)
 {
 CHAR c=CharToChar<CHAR, _char_t>(tc);
 if(c>=' '&&c<='~')
@@ -363,7 +363,7 @@ if(c>=' '&&c<='~')
 return false;
 }
 
-template <class _char_t> inline BOOL CharIsSmall(_char_t tc)
+template <std::character _char_t> inline BOOL CharIsSmall(_char_t tc)
 {
 CHAR c=CharToChar<CHAR, _char_t>(tc);
 if(c>='a'&&c<='z')
@@ -378,7 +378,7 @@ switch(c)
 return false;
 }
 
-template <class _char_t> inline BOOL CharIsSpecial(_char_t tc)
+template <std::character _char_t> inline BOOL CharIsSpecial(_char_t tc)
 {
 CHAR c=CharToChar<CHAR, _char_t>(tc);
 CHAR str[]="\"*/:<>?\\|";

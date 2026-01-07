@@ -130,15 +130,15 @@ public:
 	static UINT ReadUtf8(InputStream* Stream, CHAR* Char);
 	static UINT ReadUtf8(InputStream* Stream, WCHAR* Char);
 	static CHAR ToAnsi(WCHAR Char);
-	template <class _dst_t, class _src_t> static _dst_t ToCapital(_src_t Char);
+	template <std::character _dst_t, std::character _src_t> static _dst_t ToCapital(_src_t Char);
 	static CHAR ToCapitalAnsi(CHAR Char);
 	static CHAR ToCapitalAnsi(WCHAR Char);
 	static WCHAR ToCapitalUnicode(CHAR Char);
 	static WCHAR ToCapitalUnicode(WCHAR Char);
-	template <class _dst_t, class _src_t> static _dst_t ToChar(_src_t Char);
+	template <std::character _dst_t, std::character _src_t> static _dst_t ToChar(_src_t Char);
 	static BOOL ToDigit(CHAR Char, UINT* Digit, UINT Base=10);
 	static BOOL ToDigit(WCHAR Char, UINT* Digit, UINT Base=10);
-	template <class _dst_t, class _src_t> static _dst_t ToSmall(_src_t Char);
+	template <std::character _dst_t, std::character _src_t> static _dst_t ToSmall(_src_t Char);
 	static CHAR ToSmallAnsi(CHAR Char);
 	static CHAR ToSmallAnsi(WCHAR Char);
 	static WCHAR ToSmallUnicode(CHAR Char);
