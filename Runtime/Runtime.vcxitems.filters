@@ -9,7 +9,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)new" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mutex" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stdexcept" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)attr.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\RingBuffer.h">
       <Filter>Storage</Filter>
     </ClInclude>
@@ -28,6 +27,15 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\IoHelper.h">
       <Filter>Devices</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Network\Ethernet\MacAddress.h">
+      <Filter>Network\Ethernet</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\Queue.h">
+      <Filter>Collections</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\PacketBuffer.h">
+      <Filter>Storage</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -84,6 +92,12 @@
       <Filter>Concurrency</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)string.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Network\Ethernet\MacAddress.cpp">
+      <Filter>Network\Ethernet</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\PacketBuffer.cpp">
+      <Filter>Storage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">
@@ -103,6 +117,15 @@
     </Filter>
     <Filter Include="Devices">
       <UniqueIdentifier>{7409c0a8-a473-40b4-8a2d-85d77a29c54c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network">
+      <UniqueIdentifier>{e245800e-cf6d-4216-acba-e936a74dc604}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\Ethernet">
+      <UniqueIdentifier>{748bc5b3-e0fc-4911-9c99-2a912ba00ff2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Collections">
+      <UniqueIdentifier>{9c7dbe47-1ed0-44a2-b46b-8115079a3768}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

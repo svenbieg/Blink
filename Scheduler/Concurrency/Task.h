@@ -133,7 +133,7 @@ public:
 		if(!Scheduler::IsMainTask())
 			throw InvalidContextException();
 		}
-	Status Wait();
+	Status Wait(UINT Timeout=0);
 
 protected:
 	// Con-/Destructors

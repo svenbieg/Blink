@@ -62,13 +62,13 @@ assert(!Task::IsMainTask());
 Scheduler::SuspendCurrentTask(ms);
 }
 
-Status Task::Wait()
+Status Task::Wait(UINT timeout)
 {
 assert(!Task::IsMainTask());
 WriteLock lock(m_Mutex);
 if(FlagHelper::Get(m_Flags, TaskFlags::Done))
 	return m_Status;
-m_Done.Wait(lock);
+m_Done.Wait(lock, timeout);
 return m_Status;
 }
 

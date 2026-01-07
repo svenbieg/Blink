@@ -27,17 +27,14 @@ namespace UI {
 // Console
 //=========
 
-class Console: public Global
+class Console: public Global<Console>
 {
 public:
 	// Using
 	using SerialPort=Devices::Serial::SerialPort;
 
-	// Friends
-	friend Object;
-
 	// Con-/Destructors
-	static inline Handle<Console> Get() { return Global::Create<Console>(); }
+	static inline Handle<Console> Get() { return Global::Create(); }
 
 	// Common
 	VOID AddCommand(Handle<String> Command, Function<VOID()> Function);
@@ -51,6 +48,7 @@ public:
 
 private:
 	// Con-/Destructors
+	friend Object;
 	Console();
 
 	// Common
