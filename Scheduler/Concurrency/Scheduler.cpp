@@ -113,8 +113,7 @@ VOID Scheduler::ExitTask()
 SpinLock lock(s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
-FlagHelper::Set(current->m_Flags, TaskFlags::Suspended);
-FlagHelper::Set(current->m_Flags, TaskFlags::Release);
+FlagHelper::Set(current->m_Flags, TaskFlags::ReleaseSuspended);
 SuspendCurrentTask(core, current);
 lock.Unlock();
 while(1)
@@ -204,6 +203,8 @@ while(*current_ptr)
 	if(locked&&!FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
 		{
 		task->m_Parallel=current;
+		task->m_Waiting=current->m_Waiting;
+		current->m_Waiting=nullptr;
 		*current_ptr=task;
 		return;
 		}
@@ -285,14 +286,16 @@ while(*current_ptr)
 	{
 	auto current=*current_ptr;
 	auto owner=current->m_Owner;
-	auto next=current->m_Create;
 	if(!FlagHelper::Get(owner->m_Flags, TaskFlags::Owner))
 		{
-		current->m_Owner=nullptr;
+		auto next=current->m_Create;
 		current->m_Create=nullptr;
+		current->m_Owner=nullptr;
 		AddWaitingTask(current);
+		*current_ptr=next;
+		continue;
 		}
-	*current_ptr=next;
+	current_ptr=&current->m_Next;
 	}
 }
 
@@ -416,7 +419,12 @@ while(*current_ptr)
 	if(current==task)
 		{
 		auto parallel=current->m_Parallel;
-		current->m_Parallel=nullptr;
+		if(parallel)
+			{
+			parallel->m_Waiting=current->m_Waiting;
+			current->m_Parallel=nullptr;
+			current->m_Waiting=nullptr;
+			}
 		*current_ptr=parallel;
 		return true;
 		}

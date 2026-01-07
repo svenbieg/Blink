@@ -188,8 +188,8 @@ if(FlagHelper::Get(task->m_Flags, TaskFlags::Locked))
 		assert(current!=task);
 		if(!FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
 			{
-			*current_ptr=task;
 			task->m_Waiting=current;
+			*current_ptr=task;
 			return;
 			}
 		current_ptr=&current->m_Waiting;
@@ -219,8 +219,8 @@ if(FlagHelper::Get(task->m_Flags, TaskFlags::Locked))
 		assert(current!=task);
 		if(!FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
 			{
-			*current_ptr=task;
 			task->m_Waiting=current;
+			*current_ptr=task;
 			return;
 			}
 		if(FlagHelper::Get(current->m_Flags, TaskFlags::Sharing))

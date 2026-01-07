@@ -54,6 +54,7 @@ Locked=(1<<2),
 LockedSharing=(1<<2)|(1<<5),
 Owner=(1<<3),
 Release=(1<<4),
+ReleaseSuspended=(1<<4)|(1<<7),
 Sharing=(1<<5),
 Suspended=(1<<7),
 Timeout=(1<<8)
