@@ -44,7 +44,7 @@ public:
 
 private:
 	// Common
-	VOID Yield(SpinLock& SchedulerLock);
+	VOID Yield(SpinLock& SchedulerLock)override;
 	CriticalSection* m_CriticalSection;
 };
 
