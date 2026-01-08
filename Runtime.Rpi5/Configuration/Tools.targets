@@ -19,11 +19,8 @@
 
   <Target Name="InstallCompiler" Condition="!Exists('$(CompilerPath)')">
     <Message Text="Installing Compiler..." Importance="High" />
-    <PropertyGroup>
-      <UrlCompilerVersion>14.3.rel1</UrlCompilerVersion>
-    </PropertyGroup>
-    <DownloadFile SourceUrl="https://developer.arm.com/-/media/Files/downloads/gnu/$(UrlCompilerVersion)/binrel/arm-gnu-toolchain-$(UrlCompilerVersion)-mingw-w64-i686-aarch64-none-elf.zip" DestinationFolder="$(TEMP)" Condition="!Exists('$(TEMP)\arm-gnu-toolchain-$(UrlCompilerVersion)-mingw-w64-i686-aarch64-none-elf.zip')" />
-    <Unzip SourceFiles="$(TEMP)\arm-gnu-toolchain-$(UrlCompilerVersion)-mingw-w64-i686-aarch64-none-elf.zip" DestinationFolder="$(HomePath)gcc\arm-gnu-toolchain-$(UrlCompilerVersion)-mingw-w64-i686-aarch64-none-elf" />
+    <DownloadFile SourceUrl="https://developer.arm.com/-/media/Files/downloads/gnu/$(CompilerTag)/binrel/arm-gnu-toolchain-$(CompilerTag)-mingw-w64-i686-aarch64-none-elf.zip" DestinationFolder="$(TEMP)" Condition="!Exists('$(TEMP)\arm-gnu-toolchain-$(UrlCompilerVersion)-mingw-w64-i686-aarch64-none-elf.zip')" />
+    <Unzip SourceFiles="$(TEMP)\arm-gnu-toolchain-$(CompilerTag)-mingw-w64-i686-aarch64-none-elf.zip" DestinationFolder="$(HomePath)gcc\arm-gnu-toolchain-$(CompilerTag)-mingw-w64-i686-aarch64-none-elf" />
   </Target>
 
 </Project>

@@ -28,11 +28,6 @@ public:
 		extern VOID* Allocate(SIZE_T);
 		return Allocate(Size);
 		}
-	static inline VOID* AllocateAligned(SIZE_T Size, SIZE_T Align)
-		{
-		extern VOID* AllocateAligned(SIZE_T, SIZE_T);
-		return AllocateAligned(Size, Align);
-		}
 	static INT Compare(VOID const* Buffer1, VOID const* Buffer2, SIZE_T Size);
 	template <class _value_t> static INT CompareT(_value_t const* Values1, _value_t const* Values2, SIZE_T Count)
 		{

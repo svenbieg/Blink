@@ -30,33 +30,6 @@ heap_free_cache(heap);
 return buf;
 }
 
-void* heap_alloc_aligned(heap_t* heap, size_t size, size_t align)
-{
-assert(heap!=nullptr);
-assert(size!=0);
-assert(align>=sizeof(size_t));
-assert(align%sizeof(size_t)==0);
-void* buf=heap_alloc_internal(heap, size+align);
-heap_free_cache(heap);
-size_t buf_pos=(size_t)buf;
-if(buf_pos%align==0)
-	return buf;
-size_t buf_aligned=align_up(buf_pos, align);
-align=buf_aligned-buf_pos;
-heap_block_info_t* info=(heap_block_info_t*)(buf_pos-sizeof(heap_block_info_t));
-info->aligned=true;
-info=(heap_block_info_t*)(buf_pos-sizeof(size_t));
-info->header=align;
-info->aligned=true;
-if(align>sizeof(size_t))
-	{
-	info=(heap_block_info_t*)(buf_aligned-sizeof(heap_block_info_t));
-	info->header=align;
-	info->aligned=true;
-	}
-return (void*)buf_aligned;
-}
-
 size_t heap_available(heap_t* heap)
 {
 if(heap==nullptr)
@@ -85,8 +58,6 @@ if(!buf)
 	return;
 size_t offset=(size_t)buf;
 heap_block_info_t* info=(heap_block_info_t*)(offset-sizeof(heap_block_info_t));
-if(info->aligned)
-	buf=(void*)(offset-info->size);
 heap_free_to_map(heap, buf);
 heap_free_cache(heap);
 }
@@ -107,26 +78,34 @@ void heap_reserve(heap_t* heap, size_t offset, size_t size)
 {
 assert(heap!=nullptr);
 assert(size!=0);
-offset-=sizeof(size_t);
-size+=2*sizeof(size_t);
+assert((size&0xFFFF)==0);
 size_t heap_start=(size_t)heap;
-size_t heap_used=heap_start+heap->used;
 size_t heap_end=heap_start+heap->size;
-assert(offset>heap_used);
-assert(offset+size<=heap_end);
-heap_block_info_t info;
-info.offset=heap_used;
-info.size=offset-heap_used;
-info.free=true;
-heap_block_init(heap, &info);
-heap->free+=info.size;
-heap->used+=info.size;
-block_map_add_block(heap, (block_map_t*)&heap->map_free, &info);
-info.offset=offset;
-info.size=size;
-info.free=false;
-heap_block_init(heap, &info);
-heap->used+=size;
+if(offset+size==heap_end)
+	{
+	heap->free-=size;
+	heap->size-=size;
+	return;
+	}
+size_t res_start=offset-sizeof(size_t);
+size_t res_size=size+2*sizeof(size_t);
+size_t res_end=res_start+res_size;
+size_t heap_used=heap_start+heap->used;
+assert(res_start>heap_used);
+assert(res_end<heap_end);
+heap_block_info_t free_info;
+free_info.offset=heap_used;
+free_info.size=res_start-heap_used;
+free_info.free=true;
+heap_block_init(heap, &free_info);
+heap_block_info_t res_info;
+res_info.offset=res_start;
+res_info.size=res_size;
+res_info.free=false;
+heap_block_init(heap, &res_info);
+heap->used=res_end-heap_start;
+heap->free-=res_size;
+block_map_add_block(heap, (block_map_t*)&heap->map_free, &free_info);
 }
 
 
@@ -1575,9 +1554,8 @@ for(uint32_t pos=child_count; pos>0; pos--)
 
 bool block_map_add_block(heap_t* heap, block_map_t* map, heap_block_info_t const* info)
 {
-heap_t* heap_ptr=(heap_t*)heap;
 assert(info->offset>=(size_t)heap+sizeof(heap_t));
-assert(info->offset<(size_t)heap+heap_ptr->used);
+assert(info->offset<(size_t)heap+heap->used);
 if(!map->root)
 	{
 	map->root=(block_map_group_t*)block_map_item_group_create(heap);

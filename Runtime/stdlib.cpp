@@ -51,18 +51,6 @@ WriteLock lock(g_heap_mutex);
 return heap_alloc(g_heap, size);
 }
 
-VOID* AllocateAligned(SIZE_T size, SIZE_T align)
-{
-WriteLock lock(g_heap_mutex);
-return heap_alloc_aligned(g_heap, size, align);
-}
-
-extern "C" VOID free(VOID* buf)
-{
-WriteLock lock(g_heap_mutex);
-heap_free(g_heap, buf);
-}
-
 VOID Free(VOID* buf)
 {
 WriteLock lock(g_heap_mutex);
