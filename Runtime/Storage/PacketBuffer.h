@@ -35,16 +35,16 @@ public:
 	Handle<PacketBuffer> Next;
 	template <class _item_t> _item_t* Read(UINT Count=1)
 		{
-		assert(m_Read+Count*sizeof(_item_t)<=m_Size);
 		auto p=(_item_t*)&m_Buffer[m_Read];
 		m_Read+=Count*sizeof(_item_t);
+		assert(m_Read<=m_Size);
 		return p;
 		}
 	template <class _item_t> _item_t* Write(UINT Count=1)
 		{
-		assert(m_Written+Count*sizeof(_item_t)<=m_Size);
 		auto p=(_item_t*)&m_Buffer[m_Written];
 		m_Written+=Count*sizeof(_item_t);
+		assert(m_Written<=m_Size);
 		return p;
 		}
 
