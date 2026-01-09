@@ -284,10 +284,13 @@ if(next)
 	{
 	if(FlagHelper::Get(next->m_Flags, TaskFlags::Locked))
 		return;
-	auto service_task=s_Waiting.RemoveFirstIf([](Task* task){ return FlagHelper::Get(task->m_Flags, TaskFlags::Locked); });
-	if(!service_task)
+	auto waiting=s_Waiting.First();
+	if(!waiting)
 		return;
-	current->m_Next=service_task;
+	if(!FlagHelper::Get(waiting->m_Flags, TaskFlags::Locked))
+		return;
+	s_Waiting.RemoveFirst();
+	current->m_Next=waiting;
 	if(!FlagHelper::Get(next->m_Flags, TaskFlags::Idle))
 		s_Waiting.Insert(next, &Task::Priority);
 	return;

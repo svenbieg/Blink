@@ -45,7 +45,6 @@ template <class _item_t, size_t _member> class ForwardList
 {
 public:
 	// Comparison
-	typedef bool (*CHECK_FN)(_item_t* Item);
 	typedef bool (*COMPARE_FN)(_item_t* First, _item_t* Second);
 
 	// Con-/Destructors
@@ -138,21 +137,6 @@ public:
 		assert(First!=nullptr);
 		auto first=*First;
 		if(!first)
-			return nullptr;
-		auto first_next=MemberNext(first);
-		*First=*first_next;
-		*first_next=nullptr;
-		return first;
-		}
-	inline _item_t* RemoveFirstIf(CHECK_FN Check) { return RemoveFirstIf(&m_First, Check); }
-	static _item_t* RemoveFirstIf(_item_t** First, CHECK_FN Check)
-		{
-		assert(First!=nullptr);
-		assert(Check!=nullptr);
-		auto first=*First;
-		if(!first)
-			return nullptr;
-		if(!Check(first))
 			return nullptr;
 		auto first_next=MemberNext(first);
 		*First=*first_next;
