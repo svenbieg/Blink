@@ -103,7 +103,7 @@ UnlockInternal(core, current);
 if(--current->m_LockCount==0)
 	{
 	FlagHelper::Clear(current->m_Flags, TaskFlags::Locked);
-	ResumeWaitingTask(core, current);
+	Scheduler::ResumeWaitingTask(core, current, false);
 	}
 }
 
@@ -116,7 +116,7 @@ UnlockInternal(core, current, AccessMode::ReadOnly);
 if(--current->m_LockCount==0)
 	{
 	FlagHelper::Clear(current->m_Flags, TaskFlags::Locked);
-	ResumeWaitingTask(core, current);
+	Scheduler::ResumeWaitingTask(core, current, false);
 	}
 }
 
