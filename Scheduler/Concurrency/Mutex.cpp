@@ -165,8 +165,9 @@ if(FlagHelper::Get(waiting->m_Flags, TaskFlags::Sharing))
 		if(!FlagHelper::Get(m_Waiting->m_Flags, TaskFlags::Sharing))
 			break;
 		auto resume=Scheduler::WaitingList::RemoveFirst(&m_Waiting);
-		FlagHelper::Clear(resume->m_Flags, TaskFlags::Suspended);
 		Scheduler::OwnerList::Append(&m_Owners, resume);
+		FlagHelper::Clear(resume->m_Flags, TaskFlags::Suspended);
+		Scheduler::s_Waiting.Insert(waiting, Task::Priority);
 		}
 	}
 Scheduler::ResumeWaitingTask(core, current, false);
