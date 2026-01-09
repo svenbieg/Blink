@@ -12,8 +12,8 @@
 // Using
 //=======
 
-#include "Concurrency/ScopedLock.h"
 #include "Status.h"
+#include "TypeHelper.h"
 
 
 //===========
@@ -29,6 +29,7 @@ namespace Concurrency {
 
 class DispatchedQueue;
 class Scheduler;
+class ScopedLock;
 class Task;
 
 

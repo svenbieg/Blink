@@ -9,6 +9,8 @@
 // Using
 //=======
 
+#include "Concurrency/SpinLock.h"
+
 using namespace Concurrency;
 
 

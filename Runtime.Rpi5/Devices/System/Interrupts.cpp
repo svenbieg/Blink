@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include "Concurrency/SpinLock.h"
 #include "Devices/System/Cpu.h"
 #include "Devices/IoHelper.h"
 #include <assert.h>

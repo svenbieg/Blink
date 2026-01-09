@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include "Concurrency/DispatchedQueue.h"
 #include "Devices/System/System.h"
 #include "Storage/Streams/StreamWriter.h"
 

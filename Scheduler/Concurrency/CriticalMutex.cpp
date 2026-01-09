@@ -12,8 +12,7 @@
 // Using
 //=======
 
-#include "Concurrency/Task.h"
-#include "Devices/System/Cpu.h"
+#include "Concurrency/Scheduler.h"
 #include "Devices/System/Interrupts.h"
 #include "FlagHelper.h"
 
@@ -55,7 +54,7 @@ auto current=Scheduler::s_CurrentTask[core];
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
 if(!LockInternal(core, current, AccessMode::ReadOnly))
 	lock.Yield();
-FlagHelper::Set(current->m_Flags, TaskFlags::LockedSharing);
+FlagHelper::Set(current->m_Flags, TaskFlags::Locked);
 current->m_LockCount++;
 }
 
@@ -63,14 +62,14 @@ BOOL CriticalMutex::TryLock()
 {
 assert(!Interrupts::Active());
 SpinLock lock(Scheduler::s_CriticalSection);
-if(m_Owner)
+if(m_Owners)
 	return false;
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
+m_Owners=current;
 FlagHelper::Set(current->m_Flags, TaskFlags::Locked);
 current->m_LockCount++;
-m_Owner=current;
 return true;
 }
 
@@ -78,9 +77,9 @@ BOOL CriticalMutex::TryLock(AccessMode)
 {
 assert(!Interrupts::Active());
 SpinLock lock(Scheduler::s_CriticalSection);
-if(m_Owner)
+if(m_Owners)
 	{
-	if(!FlagHelper::Get(m_Owner->m_Flags, TaskFlags::Sharing))
+	if(!FlagHelper::Get(m_Owners->m_Flags, TaskFlags::Sharing))
 		return false;
 	}
 UINT core=Cpu::GetId();
@@ -88,25 +87,21 @@ auto current=Scheduler::s_CurrentTask[core];
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
 FlagHelper::Set(current->m_Flags, TaskFlags::LockedSharing);
 current->m_LockCount++;
-Scheduler::AddParallelTask(&m_Owner, current);
+Scheduler::OwnerList::Append(&m_Owners, current);
 return true;
 }
 
 VOID CriticalMutex::Unlock()
 {
 SpinLock lock(Scheduler::s_CriticalSection);
-if(!m_Owner)
+if(!m_Owners)
 	return;
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
-assert(m_Owner==current);
+assert(m_Owners==current);
 UnlockInternal(core, current);
-current->m_LockCount--;
-if(current->m_LockCount==0)
-	{
+if(--current->m_LockCount==0)
 	FlagHelper::Clear(current->m_Flags, TaskFlags::Locked);
-	Scheduler::ResumeWaitingTask(core, current);
-	}
 }
 
 VOID CriticalMutex::Unlock(AccessMode)
@@ -115,12 +110,8 @@ SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 UnlockInternal(core, current, AccessMode::ReadOnly);
-current->m_LockCount--;
-if(current->m_LockCount==0)
-	{
+if(--current->m_LockCount==0)
 	FlagHelper::Clear(current->m_Flags, TaskFlags::Locked);
-	Scheduler::ResumeWaitingTask(core, current);
-	}
 }
 
 }

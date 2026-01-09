@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include "Concurrency/Signal.h"
 #include "Devices/Gpio/GpioHost.h"
 #include "Devices/Pcie/PcieHost.h"
 #include "Storage/Streams/OutputBuffer.h"

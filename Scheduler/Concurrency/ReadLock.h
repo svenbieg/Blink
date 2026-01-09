@@ -31,7 +31,6 @@ class ReadLock: public ScopedLock
 {
 public:
 	// Con-/Destructors
-	ReadLock()=delete;
 	ReadLock(ReadLock const&)=delete;
 	ReadLock(Mutex& Mutex);
 	~ReadLock();

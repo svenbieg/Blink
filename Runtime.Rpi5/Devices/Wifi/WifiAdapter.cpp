@@ -48,6 +48,9 @@ constexpr SIZE_T EMMC_BASE					=AXI_EMMC1_BASE;
 constexpr UINT EMMC_BASE_CLOCK				=54'000'000;
 constexpr UINT EMMC_CLOCK					=25'000'000;
 
+constexpr auto WIFI_COUNTRY_DEFAULT			=WIFI_COUNTRY(WifiCountry::Germany);
+constexpr UINT WIFI_TIMEOUT					=500;
+
 
 //==================
 // Con-/Destructors
@@ -67,20 +70,34 @@ GpioHelper::DigitalWrite(GpioArmPin::WifiOn, false);
 
 VOID WifiAdapter::Send(WifiPacket* pkt)
 {
-SpinLock lock(m_CriticalSection);
-m_OutputQueue.Append(pkt);
-m_ServicePending.Trigger();
+WriteLock lock(m_Mutex);
+UINT size=pkt->GetSize();
+auto buf=pkt->Begin();
+WifiWrite(buf, size);
 }
 
 Handle<WifiPacket> WifiAdapter::SendAndReceive(WifiPacket* pkt)
 {
-SpinLock lock(m_CriticalSection);
-m_OutputQueue.Append(pkt);
-m_ServicePending.Trigger();
-m_ResponseReceived.Wait(lock, WIFI_TIMEOUT);
-auto response=m_Response;
-m_Response=nullptr;
-return response;
+WriteLock lock(m_Mutex);
+BYTE seq=pkt->GetSequenceId();
+UINT size=pkt->GetSize();
+auto buf=pkt->Begin();
+WifiWrite(buf, size);
+UINT64 time=SystemTimer::GetTickCount64();
+UINT64 timeout=time+WIFI_TIMEOUT;
+while(time<=timeout)
+	{
+	m_ResponseReceived.Wait(lock, timeout-time);
+	BYTE resp_id=m_Response->GetSequenceId();
+	if(resp_id==seq+1)
+		{
+		auto response=m_Response;
+		m_Response=nullptr;
+		return response;
+		}
+	time=SystemTimer::GetTickCount64();
+	}
+throw TimeoutException();
 }
 
 
@@ -90,7 +107,8 @@ return response;
 
 WifiAdapter::WifiAdapter():
 m_Device((EMMC_REGS*)EMMC_BASE),
-m_IoWindow(0)
+m_IoWindow(0),
+m_MacAddress(0)
 {
 Initialize();
 }
@@ -144,6 +162,45 @@ pkt->Read(buf, size);
 return size;
 }
 
+VOID WifiAdapter::HandleFrame()
+{
+WIFI_HEADER header;
+WifiRead(&header, sizeof(WIFI_HEADER));
+UINT len=header.Length;
+if(len)
+	{
+	UINT len_chk=header.LengthChk;
+	if(len_chk!=(len^0xFFFF)||len<sizeof(WIFI_HEADER)||len>WIFI_PACKET_MAX)
+		throw DeviceNotReadyException();
+	}
+if(!len)
+	return;
+auto type=(WifiPacketType)BitHelper::Get(header.Flags, WIFI_HEADER_FLAGS_TYPE);
+if(type==WifiPacketType::Event)
+	return;
+auto pkt=WifiPacket::Create(header);
+if(len>sizeof(WIFI_HEADER))
+	{
+	UINT copy=TypeHelper::AlignUp(len-sizeof(WIFI_HEADER), 4U);
+	auto data=pkt->Write<BYTE>(copy);
+	WifiRead(data, copy);
+	}
+switch(type)
+	{
+	case WifiPacketType::Response:
+		{
+		m_Response=pkt;
+		m_ResponseReceived.Trigger();
+		break;
+		}
+	default:
+		{
+		PacketReceived(this, pkt);
+		break;
+		}
+	}
+}
+
 VOID WifiAdapter::Initialize()
 {
 GpioHelper::SetPinMode(GpioArmPin::WifiOn, GpioArmPinMode::Output);
@@ -192,9 +249,7 @@ m_EmmcHost->WriteRegister(CCCR_BLKSIZE_FN2_0, (BYTE)FN2.BLOCK_SIZE);
 m_EmmcHost->WriteRegister(CCCR_BLKSIZE_FN2_1, (BYTE)(FN2.BLOCK_SIZE>>8));
 m_EmmcHost->SetRegister(CCCR_IOENABLE, FN2_BIT);
 m_EmmcHost->PollRegister(CCCR_IOREADY, FN2_BIT, FN2_BIT);
-m_EmmcHost->CardIrq.Add(this, &WifiAdapter::OnEmmcHostCardInterrupt);
 m_ServiceTask=ServiceTask::Create(this, &WifiAdapter::ServiceTask, "wifi");
-Task::Sleep(0);
 UploadRegulatory();
 GetVariable("cur_etheraddr", &m_MacAddress, MAC_ADDR_SIZE);
 SetInt("assoc_listen", 10);
@@ -209,6 +264,13 @@ SetInt("roam_off", 1);
 SetInt(WifiCmd::SetInfra, 1);
 SetInt(WifiCmd::SetPromisc, 0);
 SetInt(WifiCmd::Up, 1);
+SetVariable("country", WIFI_COUNTRY_DEFAULT.data(), WIFI_COUNTRY_DEFAULT.size());
+INT up=GetInt(WifiCmd::Up);
+INT assoc_retry_max=GetInt("assoc_retry_max");
+Task::Sleep(50);
+BYTE country[12];
+GetVariable("country", country, 12);
+INT i=0;
 }
 
 UINT WifiAdapter::InitializeConfiguration(BYTE* buf, UINT size)
@@ -355,43 +417,6 @@ while(pos<size)
 	}
 }
 
-VOID WifiAdapter::OnEmmcHostCardInterrupt()
-{
-m_ServicePending.Trigger();
-}
-
-Handle<WifiPacket> WifiAdapter::ReadPacket()
-{
-WIFI_HEADER header;
-WifiRead(&header, sizeof(WIFI_HEADER));
-UINT len=header.Length;
-if(len)
-	{
-	UINT len_chk=header.LengthChk;
-	if(len_chk!=(len^0xFFFF)||len<sizeof(WIFI_HEADER))
-		throw DeviceNotReadyException();
-	}
-if(!len)
-	return nullptr;
-auto type=(WifiPacketType)BitHelper::Get(header.Flags, HEADER_FLAGS_TYPE);
-switch(type)
-	{
-	case WifiPacketType::Response:
-		{
-		m_Response=WifiPacket::Create(header);
-		if(len>sizeof(WIFI_HEADER))
-			{
-			UINT copy=TypeHelper::AlignUp(len-sizeof(WIFI_HEADER), 4U);
-			auto data=m_Response->Write<BYTE>(copy);
-			WifiRead(data, copy);
-			}
-		m_ResponseReceived.Trigger();
-		break;
-		}
-	}
-return nullptr;
-}
-
 VOID WifiAdapter::Reset(UINT addr, UINT flags)
 {
 IoWrite(FN1, addr+RESET, RESET_BIT);
@@ -404,43 +429,37 @@ IoWrite(FN1, addr+IOCTRL, flags|IOCTRL_CLOCK);
 
 VOID WifiAdapter::ServiceTask()
 {
+WriteLock lock(m_Mutex);
 IoHelper::Set(m_Device->IRQ_MASK, IRQF_CARD);
 IoHelper::Set(m_Device->IRQ_EN, IRQF_CARD);
 m_EmmcHost->WriteRegister(CCCR_INT_EN, FN2_BIT|FN1_BIT|FN0_BIT);
 auto task=Task::Get();
-Handle<WifiPacket> output;
-SpinLock lock(m_CriticalSection);
 while(!task->Cancelled)
 	{
-	m_ServicePending.Wait(lock);
-	output=m_OutputQueue.Dequeue();
-	lock.Unlock();
+	m_EmmcHost->CardIrq.Wait(lock);
 	UINT int_pending=m_EmmcHost->ReadRegister(CCCR_INT_PENDING);
-	UINT host_flags=0;
-	if(int_pending)
+	if(!int_pending)
+		continue;
+	UINT int_status=IoRead(FN1, SDIO_INT_STATUS);
+	UINT host_flags=BitHelper::Get(int_status, INT_HOST);
+	IoHelper::Write(m_Device->IRQ, IRQF_CARD);
+	if(!host_flags)
+		continue;
+	IoWrite(FN1, SDIO_INT_STATUS, host_flags);
+	while(host_flags)
 		{
-		UINT int_status=IoRead(FN1, SDIO_INT_STATUS);
-		host_flags=BitHelper::Get(int_status, INT_HOST);
-		IoHelper::Write(m_Device->IRQ, IRQF_CARD);
-		}
-	if(host_flags)
-		{
-		IoWrite(FN1, SDIO_INT_STATUS, host_flags);
-		if(BitHelper::Get(host_flags, INT_FRAME))
+		UINT bit=Cpu::GetLeastSignificantBitPosition(host_flags);
+		UINT host_flag=1<<bit;
+		BitHelper::Clear(host_flags, host_flag);
+		switch(host_flag)
 			{
-			auto input=ReadPacket();
-			if(input)
-				PacketReceived(this, input);
+			case INT_FRAME:
+				{
+				HandleFrame();
+				break;
+				}
 			}
 		}
-	if(output)
-		{
-		UINT size=output->GetSize();
-		auto buf=output->Begin();
-		WifiWrite(buf, size);
-		output=nullptr;
-		}
-	lock.Lock();
 	}
 }
 

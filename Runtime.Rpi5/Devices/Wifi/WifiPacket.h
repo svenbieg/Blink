@@ -45,7 +45,7 @@ BYTE Window;
 WORD Reserved;
 }WIFI_HEADER;
 
-static constexpr BITS8 HEADER_FLAGS_TYPE={ 0xF, 0 };
+static constexpr BITS8 WIFI_HEADER_FLAGS_TYPE={ 0xF, 0 };
 
 enum class WifiPacketType
 {
@@ -99,10 +99,17 @@ public:
 	static Handle<WifiPacket> Create(UINT Size);
 	static Handle<WifiPacket> Create(WIFI_HEADER const& Header);
 
+	// Common
+	BYTE GetSequenceId()const;
+	WifiPacketType GetType()const;
+
 private:
 	// Con-/Destructors
 	friend Object;
 	WifiPacket(BYTE* Buffer, SIZE_T Size);
+
+	// Common
+	static BYTE s_Sequence;
 };
 
 }}

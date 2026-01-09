@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include "Concurrency/WriteLock.h"
 #include "Devices/System/Interrupts.h"
 #include "Devices/IoHelper.h"
 #include "BitHelper.h"
@@ -135,7 +136,7 @@ try
 catch(Exception e)
 	{
 	WriteLock lock(s_Mutex);
-	FlagHelper::Clear(s_Used, 1<<id);
+	BitHelper::Clear(s_Used, 1<<id);
 	throw e;
 	}
 return dma_channel;
@@ -149,7 +150,7 @@ IoHelper::Write(ch->CS, 0);
 Irq irq=(Irq)((UINT)Irq::Dma0+m_Id);
 Interrupts::SetHandler(irq, nullptr);
 WriteLock lock(s_Mutex);
-FlagHelper::Clear(s_Used, 1<<m_Id);
+BitHelper::Clear(s_Used, 1<<m_Id);
 }
 
 
@@ -258,9 +259,9 @@ UINT DmaChannel::GetChannel()
 WriteLock lock(s_Mutex);
 for(UINT id=DMA_CHANNEL_MIN; id<=DMA_CHANNEL_MAX; id++)
 	{
-	if(!FlagHelper::Get(s_Used, 1<<id))
+	if(!BitHelper::Get(s_Used, 1<<id))
 		{
-		FlagHelper::Set(s_Used, 1<<id);
+		BitHelper::Set(s_Used, 1<<id);
 		return id;
 		}
 	}
@@ -281,7 +282,7 @@ auto ch=&dma->CH[m_Id];
 UINT cs=IoHelper::Read(ch->CS);
 IoHelper::Write(ch->CS, cs);
 Status status=Status::Success;
-if(FlagHelper::Get(cs, CS_ERROR))
+if(BitHelper::Get(cs, CS_ERROR))
 	status=Status::DeviceNotReady;
 m_Signal.Trigger(status);
 }

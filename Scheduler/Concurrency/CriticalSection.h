@@ -32,7 +32,6 @@ public:
 	// Con-/Destructors
 	CriticalSection()=default;
 	CriticalSection(CriticalSection const&)=delete;
-	~CriticalSection()=default;
 
 	// Common
 	VOID Lock();

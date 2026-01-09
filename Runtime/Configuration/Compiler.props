@@ -8,7 +8,7 @@
     <CompilerFlags>$(CompilerFlags) -O0</CompilerFlags>
     <CompilerFlagsC>$(CompilerFlagsCpp) -std=c23</CompilerFlagsC>
     <CompilerFlagsCpp>$(CompilerFlagsCpp) -std=c++26</CompilerFlagsCpp>
-    <CompilerFlagsCpp>$(CompilerFlagsCpp) -Wno-multichar</CompilerFlagsCpp>
+    <CompilerFlagsCpp>$(CompilerFlagsCpp) -Wno-invalid-offsetof -Wno-multichar</CompilerFlagsCpp>
     <LinkerFlags>$(LinkerFlags) --gc-sections --nostdlib --eh-frame-hdr</LinkerFlags>
     <LinkerFlags>$(LinkerFlags) -L$(CompilerPath)$(CompilerName)\lib\</LinkerFlags>
     <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(SolutionDir);$(ProjectDir)</NMakeIncludeSearchPath>

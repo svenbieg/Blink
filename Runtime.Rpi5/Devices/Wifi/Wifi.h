@@ -128,8 +128,6 @@ constexpr UINT MBOX_DATA_ACK			=(1<<1);
 // Wifi
 //======
 
-constexpr UINT WIFI_TIMEOUT				=100;
-
 constexpr EMMC_FN FN2					={ 2, 512 };
 
 typedef struct
@@ -191,5 +189,23 @@ constexpr BYTE WIFI_EVENT_MASK[16]=
 	WIFI_EVENT_FLAGS.at(8), WIFI_EVENT_FLAGS.at(9), WIFI_EVENT_FLAGS.at(10), WIFI_EVENT_FLAGS.at(11),
 	WIFI_EVENT_FLAGS.at(12), WIFI_EVENT_FLAGS.at(13), WIFI_EVENT_FLAGS.at(14), WIFI_EVENT_FLAGS.at(15)
 	};
+
+
+//=========
+// Country
+//=========
+
+enum class WifiCountry: UINT
+{
+Germany='DE',
+Worldwide='XX',
+};
+
+constexpr auto WIFI_COUNTRY(WifiCountry Country)
+{
+auto country=std::bit_cast<std::array<BYTE, 4>, WifiCountry>(Country);
+std::array<BYTE, 12> code={ country.at(1), country.at(0), 0, 0, 0xFF, 0xFF, 0xFF, 0xFF, country.at(1), country.at(0), 0, 0 };
+return code;
+}
 
 }}

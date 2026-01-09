@@ -56,7 +56,7 @@ public:
 	// Con-/Destructors
 	Mutex()=default;
 	Mutex(Mutex const&)=delete;
-	~Mutex()=default;
+	~Mutex();
 
 	// Common
 	virtual VOID Lock();
@@ -70,15 +70,14 @@ protected:
 	// Common
 	BOOL LockInternal(UINT Core, Task* Current);
 	BOOL LockInternal(UINT Core, Task* Current, AccessMode);
+	VOID ResumeWaitingTask(UINT Core, Task* Current);
 	VOID UnlockInternal(UINT Core, Task* Current);
 	VOID UnlockInternal(UINT Core, Task* Current, AccessMode);
-	Task* m_Owner=nullptr;
+	Task* m_Owners=nullptr;
 	Task* m_Waiting=nullptr;
 
 private:
 	// Common
-	VOID AddWaitingTask(Task* Task);
-	VOID AddWaitingTask(Task* Task, AccessMode);
 	VOID Yield(SpinLock& SchedulerLock);
 	VOID Yield(SpinLock& SchedulerLock, AccessMode Access);
 };

@@ -27,6 +27,7 @@ MemoryHelper::Zero(header, sizeof(WIFI_HEADER));
 header->Length=pkt_size;
 header->LengthChk=~pkt_size;
 header->DataOffset=sizeof(WIFI_HEADER);
+header->Sequence=s_Sequence++;
 pkt->m_Read=sizeof(WIFI_HEADER);
 return pkt;
 }
@@ -43,6 +44,23 @@ return pkt;
 }
 
 
+//========
+// Common
+//========
+
+BYTE WifiPacket::GetSequenceId()const
+{
+auto header=(WIFI_HEADER const*)m_Buffer;
+return header->Sequence;
+}
+
+WifiPacketType WifiPacket::GetType()const
+{
+auto header=(WIFI_HEADER const*)m_Buffer;
+return (WifiPacketType)BitHelper::Get(header->Flags, WIFI_HEADER_FLAGS_TYPE);
+}
+
+
 //==========================
 // Con-/Destructors Private
 //==========================
@@ -50,5 +68,12 @@ return pkt;
 WifiPacket::WifiPacket(BYTE* buf, SIZE_T size):
 PacketBuffer(buf, size)
 {}
+
+
+//================
+// Common Private
+//================
+
+BYTE WifiPacket::s_Sequence=0;
 
 }}

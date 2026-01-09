@@ -12,10 +12,14 @@
 // Using
 //=======
 
-#include "Concurrency/CriticalSection.h"
-#include "Concurrency/Mutex.h"
+#include "Concurrency/CriticalMutex.h"
+#include "Concurrency/DispatchedQueue.h"
+#include "Concurrency/ReadLock.h"
+#include "Concurrency/Signal.h"
+#include "Concurrency/SpinLock.h"
+#include "Concurrency/Task.h"
+#include "Concurrency/WriteLock.h"
 #include "Devices/System/Cpu.h"
-#include "Status.h"
 
 
 //===========
@@ -23,15 +27,6 @@
 //===========
 
 namespace Concurrency {
-
-
-//======================
-// Forward-Declarations
-//======================
-
-class CriticalMutex;
-class Signal;
-class Task;
 
 
 //===========
@@ -53,7 +48,6 @@ public:
 	// Common
 	static VOID Begin();
 	static VOID Initialize();
-	static BOOL IsMainTask();
 
 protected:
 	// Common
@@ -61,43 +55,39 @@ protected:
 	static VOID CancelTask(Task* Task);
 	static VOID ExitTask();
 	static Task* GetCurrentTask();
+	static BOOL IsMainTask();
 	static VOID Schedule();
 	static VOID SuspendCurrentTask(UINT MilliSeconds);
 
 private:
 	// Using
 	static constexpr UINT CPU_COUNT=Devices::System::Cpu::CPU_COUNT;
+	using AllList=Collections::LinkedList<LNK_LIST(Task, m_All)>;
+	using CreateList=Collections::LinkedList<LNK_LIST(Task, m_Create)>;
+	using OwnerList=Collections::ForwardList<FWD_LIST(Task, m_Owner)>;
+	using ReleaseList=Collections::LinkedList<LNK_LIST(Task, m_Release)>;
+	using SleepingList=Collections::ForwardList<FWD_LIST(Task, m_Sleeping)>;
+	using WaitingList=Collections::ForwardList<FWD_LIST(Task, m_Waiting)>;
 
 	// Common
-	static VOID AddCreateTask(Task** First, Task* Task);
-	static VOID AddParallelTask(Task** First, Task* Task);
-	static VOID AddReleaseTask(Task** First, Task* Task);
-	static VOID AddSleepingTask(Task** First, Task* Task);
-	static VOID AddWaitingTask(Task* Task);
 	static VOID CreateTasks();
 	static UINT GetAvailableCores(UINT* Cores, UINT Max);
-	static UINT GetWaitingCount(Task* Task, UINT Max);
-	static Task* GetWaitingTask();
 	static VOID HandleTaskSwitch(VOID* Parameter);
 	static VOID IdleTask();
 	static VOID MainTask();
-	static BOOL RemoveParallelTask(Task** First, Task* Remove);
-	static VOID RemoveSleepingTask(Task** First, Task* Sleeping);
-	static VOID ResumeWaitingTask(UINT Core, Task* Current);
+	static VOID ResumeWaitingTask(UINT Core, Task* Current, BOOL Suspend);
 	static VOID ResumeWaitingTasks();
 	static VOID SuspendCurrentTask(UINT Core, Task* Current, UINT64 ResumeTime=0);
-	static VOID WakeupTasks(Task* Wakeup, Status Status);
+	static AllList s_All;
 	static UINT s_CoreCount;
-	static Task* s_Create;
+	static CreateList s_Create;
 	static CriticalSection s_CriticalSection;
 	static Task* s_CurrentTask[CPU_COUNT];
 	static Task* s_IdleTask[CPU_COUNT];
 	static Task* s_MainTask;
-	static Task* s_Release;
-	static Task* s_Sleeping;
-	static Task* s_WaitingFirst;
-	static Task* s_WaitingLast;
-	static Task* s_WaitingLocked;
+	static ReleaseList s_Release;
+	static SleepingList s_Sleeping;
+	static WaitingList s_Waiting;
 };
 
 }

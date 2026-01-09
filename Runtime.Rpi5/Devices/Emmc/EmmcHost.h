@@ -9,10 +9,9 @@
 // Using
 //=======
 
-#include "Concurrency/Task.h"
+#include "Concurrency/Scheduler.h"
 #include "Devices/Emmc/Emmc.h"
 #include "Devices/System/Interrupts.h"
-#include "Event.h"
 
 
 //===========
@@ -42,7 +41,7 @@ public:
 	static inline Handle<EmmcHost> Create(SIZE_T Address, Irq Irq) { return new EmmcHost(Address, Irq); }
 
 	// Common
-	Event<EmmcHost> CardIrq;
+	Signal CardIrq;
 	UINT Command(EmmcCmd Command, UINT Argument=0);
 	VOID Command(EmmcCmd Command, UINT Argument, UINT* Response, VOID* Buffer=nullptr, UINT BlockCount=0, UINT BlockSize=0);
 	UINT Command(EmmcAppCmd Command, UINT Argument=0);

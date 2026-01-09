@@ -19,8 +19,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)CharHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\Array.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\cluster.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\ForwardList.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\Index.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\index.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\LinkedList.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\List.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\list.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\Map.h" />

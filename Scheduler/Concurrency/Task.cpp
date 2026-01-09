@@ -12,13 +12,11 @@
 // Using
 //=======
 
+#include "Concurrency/DispatchedQueue.h"
 #include "Concurrency/Scheduler.h"
-#include "Concurrency/SpinLock.h"
-#include "Devices/Timers/SystemTimer.h"
-#include "FlagHelper.h"
+#include "Concurrency/TaskHelper.h"
 
 using namespace Concurrency;
-using namespace Devices::Timers;
 
 
 //===========
@@ -41,6 +39,16 @@ if(m_Exception)
 	}
 }
 
+Handle<Task> Task::Create(VOID (*Procedure)(), Handle<String> Name, SIZE_T StackSize)
+{
+SIZE_T task_size=TypeHelper::AlignUp(sizeof(TaskProcedure), sizeof(SIZE_T));
+auto task=(TaskProcedure*)MemoryHelper::Allocate(task_size+StackSize);
+auto stack=(BYTE*)task+task_size;
+new (task) TaskProcedure(stack, StackSize, Procedure, Name);
+Schedule(task);
+return task;
+}
+
 
 //========
 // Common
@@ -56,20 +64,31 @@ m_Status=Status::Aborted;
 Scheduler::CancelTask(this);
 }
 
+Handle<Task> Task::Get()
+{
+return Scheduler::GetCurrentTask();
+}
+
+BOOL Task::IsMainTask()
+{
+return Scheduler::IsMainTask();
+}
+
 VOID Task::Sleep(UINT ms)
 {
 assert(!Task::IsMainTask());
 Scheduler::SuspendCurrentTask(ms);
 }
 
-Status Task::Wait(UINT timeout)
+VOID Task::ThrowIfMain()
 {
-assert(!Task::IsMainTask());
-WriteLock lock(m_Mutex);
-if(FlagHelper::Get(m_Flags, TaskFlags::Done))
-	return m_Status;
-m_Done.Wait(lock, timeout);
-return m_Status;
+if(Scheduler::IsMainTask())
+	throw InvalidContextException();
+}
+VOID Task::ThrowIfNotMain()
+{
+if(!Scheduler::IsMainTask())
+	throw InvalidContextException();
 }
 
 
@@ -77,28 +96,23 @@ return m_Status;
 // Con-/Destructors Protected
 //============================
 
-Task::Task(Handle<String> name, SIZE_T stack_top, SIZE_T stack_size):
+Task::Task(BYTE* stack, SIZE_T stack_size, Handle<String> name):
 Cancelled(false),
 Name(name->Begin()),
-m_Create(nullptr),
 m_Exception(nullptr),
 m_Flags(TaskFlags::None),
 m_LockCount(0),
 m_Name(name),
 m_Next(nullptr),
 m_Owner(nullptr),
-m_Parallel(nullptr),
-m_Release(nullptr),
 m_ResumeTime(0),
 m_Signal(nullptr),
-m_Sleeping(nullptr),
-m_StackBottom((SIZE_T)stack_top-stack_size),
-m_StackPointer(stack_top),
+m_StackBottom((SIZE_T)stack),
+m_StackPointer((SIZE_T)stack+stack_size),
 m_StackSize(stack_size),
 m_Status(Status::Success),
 m_Then(nullptr),
-m_This(this),
-m_Waiting(nullptr)
+m_This(this)
 {
 TaskHelper::Initialize(&m_StackPointer, TaskProc, this);
 }
@@ -107,6 +121,20 @@ TaskHelper::Initialize(&m_StackPointer, TaskProc, this);
 //==================
 // Common Protected
 //==================
+
+bool Task::Priority(Task* first, Task* second)
+{
+if(!FlagHelper::Get(first->m_Flags, TaskFlags::Locked))
+	return false;
+if(!FlagHelper::Get(second->m_Flags, TaskFlags::Locked))
+	return true;
+return false;
+}
+
+VOID Task::Schedule(Task* task)
+{
+Scheduler::AddTask(task);
+}
 
 VOID Task::TaskProc(VOID* param)
 {
@@ -131,7 +159,6 @@ catch(...)
 WriteLock lock(task->m_Mutex);
 FlagHelper::Set(task->m_Flags, TaskFlags::Done);
 task->m_Status=status;
-task->m_Done.Trigger();
 if(task->m_Then)
 	{
 	DispatchedQueue::Append(task->m_Then);
@@ -140,6 +167,20 @@ if(task->m_Then)
 lock.Unlock();
 task=nullptr;
 Scheduler::ExitTask();
+}
+
+
+//==========================
+// Con-/Destructors Private
+//==========================
+
+Task* Task::CreateInternal(VOID (*Procedure)(), Handle<String> Name, SIZE_T StackSize)
+{
+SIZE_T task_size=TypeHelper::AlignUp(sizeof(TaskProcedure), sizeof(SIZE_T));
+auto task=(TaskProcedure*)MemoryHelper::Allocate(task_size+StackSize);
+auto stack=(BYTE*)task+task_size;
+new (task) TaskProcedure(stack, StackSize, Procedure, Name);
+return task;
 }
 
 }

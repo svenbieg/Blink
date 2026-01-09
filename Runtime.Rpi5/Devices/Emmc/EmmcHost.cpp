@@ -319,7 +319,7 @@ while(!task->Cancelled)
 				{
 				if(m_IrqFlags!=IRQF_CARD)
 					break;
-				CardIrq(this);
+				CardIrq.Trigger();
 				break;
 				}
 			case IRQF_CMD_DONE:
