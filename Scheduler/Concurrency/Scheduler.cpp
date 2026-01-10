@@ -113,7 +113,7 @@ SpinLock lock(s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
 s_All.Remove(current);
-FlagHelper::Set(current->m_Flags, TaskFlags::ReleaseSuspended);
+FlagHelper::Set(current->m_Flags, TaskFlags::Release);
 SuspendCurrentTask(core, current);
 lock.Unlock();
 while(1)
@@ -174,7 +174,6 @@ UINT64 resume_time=SystemTimer::GetTickCount64()+ms;
 SpinLock lock(s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
-FlagHelper::Set(current->m_Flags, TaskFlags::Suspended);
 SuspendCurrentTask(core, current, resume_time);
 lock.Unlock();
 StatusHelper::ThrowIfFailed(current->m_Status);
@@ -323,6 +322,7 @@ for(UINT core_id=0; core_id<core_count; core_id++)
 
 VOID Scheduler::SuspendCurrentTask(UINT core, Task* current, UINT64 resume_time)
 {
+FlagHelper::Set(current->m_Flags, TaskFlags::Suspended);
 if(FlagHelper::Get(current->m_Flags, TaskFlags::Owner))
 	{
 	FlagHelper::Clear(current->m_Flags, TaskFlags::Owner);

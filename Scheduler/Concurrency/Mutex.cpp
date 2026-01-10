@@ -122,9 +122,8 @@ if(!m_Owners)
 	return true;
 	}
 assert(m_Owners!=current);
-Scheduler::WaitingList::Insert(&m_Waiting, current, Task::Priority);
-FlagHelper::Set(current->m_Flags, TaskFlags::Suspended);
 Scheduler::SuspendCurrentTask(core, current);
+Scheduler::WaitingList::Insert(&m_Waiting, current, Task::Priority);
 return false;
 }
 
@@ -144,9 +143,8 @@ if(FlagHelper::Get(m_Owners->m_Flags, TaskFlags::Sharing))
 		return true;
 		}
 	}
-Scheduler::WaitingList::Insert(&m_Waiting, current, Task::Priority);
-FlagHelper::Set(current->m_Flags, TaskFlags::Suspended);
 Scheduler::SuspendCurrentTask(core, current);
+Scheduler::WaitingList::Insert(&m_Waiting, current, Task::Priority);
 return false;
 }
 
@@ -210,9 +208,8 @@ if(!m_Owners)
 	m_Owners=current;
 	return;
 	}
-Scheduler::WaitingList::Insert(&m_Waiting, current, Task::Priority);
-FlagHelper::Set(current->m_Flags, TaskFlags::Suspended);
 Scheduler::SuspendCurrentTask(core, current);
+Scheduler::WaitingList::Insert(&m_Waiting, current, Task::Priority);
 }
 
 VOID Mutex::Yield(SpinLock& sched_lock, AccessMode access)
@@ -233,9 +230,8 @@ if(FlagHelper::Get(m_Owners->m_Flags, TaskFlags::Sharing))
 	Scheduler::OwnerList::Append(&m_Owners, current);
 	return;
 	}
-Scheduler::WaitingList::Insert(&m_Waiting, current, Task::Priority);
-FlagHelper::Set(current->m_Flags, TaskFlags::Suspended);
 Scheduler::SuspendCurrentTask(core, current);
+Scheduler::WaitingList::Insert(&m_Waiting, current, Task::Priority);
 }
 
 }
