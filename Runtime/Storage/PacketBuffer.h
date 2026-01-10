@@ -30,6 +30,7 @@ public:
 	static Handle<PacketBuffer> Create(UINT Size) { return Object::CreateEx<PacketBuffer>(Size); }
 
 	// Common
+	inline UINT AvailableForWrite()const { return m_Size-m_Written; }
 	inline BYTE* Begin()const { return m_Buffer; }
 	inline UINT GetSize()const { return m_Size; }
 	Handle<PacketBuffer> Next;
