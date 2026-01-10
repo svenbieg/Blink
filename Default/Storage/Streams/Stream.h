@@ -51,7 +51,7 @@ public:
 // Input-Stream
 //==============
 
-class InputStream: public Stream
+class InputStream: public virtual Stream
 {
 public:
 	// Common
@@ -64,7 +64,7 @@ public:
 // Output-Stream
 //===============
 
-class OutputStream: public Stream
+class OutputStream: public virtual Stream
 {
 public:
 	// Common
