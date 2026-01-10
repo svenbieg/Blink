@@ -28,6 +28,7 @@ namespace Concurrency {
 
 class Signal;
 class SpinLock;
+class Task;
 
 
 //=============
@@ -54,7 +55,7 @@ protected:
 
 private:
 	// Common
-	virtual VOID Yield(SpinLock& SchedulerLock)=0;
+	virtual VOID Yield(SpinLock& SchedulerLock, UINT Core, Task* Current)=0;
 };
 
 }

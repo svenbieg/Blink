@@ -78,8 +78,8 @@ protected:
 
 private:
 	// Common
-	VOID Yield(SpinLock& SchedulerLock);
-	VOID Yield(SpinLock& SchedulerLock, AccessMode Access);
+	VOID Yield(SpinLock& SchedulerLock, UINT Core, Task* Current);
+	VOID Yield(SpinLock& SchedulerLock, UINT Core, Task* Current, AccessMode Access);
 };
 
 }

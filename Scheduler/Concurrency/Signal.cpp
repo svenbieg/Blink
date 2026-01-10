@@ -88,11 +88,7 @@ Scheduler::SuspendCurrentTask(core, current, resume_time);
 FlagHelper::Clear(current->m_Flags, TaskFlags::Timeout);
 current->m_Signal=this;
 Scheduler::WaitingList::Insert(&m_Waiting, current, Task::Priority);
-scoped_lock.Yield(lock);
-lock.Unlock();
-if(FlagHelper::Get(current->m_Flags, TaskFlags::Timeout))
-	throw TimeoutException();
-StatusHelper::ThrowIfFailed(current->m_Status);
+scoped_lock.Yield(lock, core, current);
 }
 
 
@@ -109,7 +105,7 @@ Scheduler::SuspendCurrentTask(core, current);
 FlagHelper::Clear(current->m_Flags, TaskFlags::Timeout);
 current->m_Signal=this;
 Scheduler::WaitingList::Append(&m_Waiting, current);
-scoped_lock.Yield(lock);
+scoped_lock.Yield(lock, core, current);
 }
 
 }

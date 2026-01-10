@@ -43,7 +43,7 @@ public:
 
 private:
 	// Common
-	VOID Yield(SpinLock& SchedulerLock)override;
+	VOID Yield(SpinLock& SchedulerLock, UINT Core, Task* Current)override;
 	Mutex* m_Mutex;
 };
 

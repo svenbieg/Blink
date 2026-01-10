@@ -16,6 +16,7 @@
 #include "Devices/System/Cpu.h"
 #include "Devices/System/Interrupts.h"
 #include "FlagHelper.h"
+#include "StatusHelper.h"
 
 using namespace Devices::System;
 
@@ -194,15 +195,17 @@ if(FlagHelper::Get(waiting->m_Flags, TaskFlags::Sharing))
 // Common Private
 //================
 
-VOID Mutex::Yield(SpinLock& sched_lock)
+VOID Mutex::Yield(SpinLock& sched_lock, UINT core, Task* current)
 {
-UINT core=Cpu::GetId();
-auto current=Scheduler::s_CurrentTask[core];
 assert(m_Owners==current);
 Scheduler::OwnerList::RemoveFirst(&m_Owners);
 WakeupWaitingTasks();
 Scheduler::ResumeWaitingTask(core, current);
-sched_lock.Yield();
+sched_lock.Unlock();
+if(FlagHelper::Get(current->m_Flags, TaskFlags::Timeout))
+	throw TimeoutException();
+StatusHelper::ThrowIfFailed(current->m_Status);
+sched_lock.Lock();
 if(!m_Owners)
 	{
 	m_Owners=current;
@@ -212,16 +215,18 @@ Scheduler::SuspendCurrentTask(core, current);
 Scheduler::WaitingList::Insert(&m_Waiting, current, Task::Priority);
 }
 
-VOID Mutex::Yield(SpinLock& sched_lock, AccessMode access)
+VOID Mutex::Yield(SpinLock& sched_lock, UINT core, Task* current, AccessMode access)
 {
-UINT core=Cpu::GetId();
-auto current=Scheduler::s_CurrentTask[core];
 BOOL removed=Scheduler::OwnerList::TryRemove(&m_Owners, current);
 assert(removed);
 if(!m_Owners)
 	WakeupWaitingTasks();
 Scheduler::ResumeWaitingTask(core, current);
-sched_lock.Yield();
+sched_lock.Unlock();
+if(FlagHelper::Get(current->m_Flags, TaskFlags::Timeout))
+	throw TimeoutException();
+StatusHelper::ThrowIfFailed(current->m_Status);
+sched_lock.Lock();
 if(!m_Owners)
 	{
 	m_Owners=current;
