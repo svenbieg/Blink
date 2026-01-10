@@ -67,9 +67,9 @@ s_MainTask=main;
 }
 
 
-//==================
-// Common Protected
-//==================
+//================
+// Common Private
+//================
 
 VOID Scheduler::AddTask(Task* task)
 {
@@ -107,83 +107,6 @@ if(resume)
 	}
 }
 
-VOID Scheduler::ExitTask()
-{
-SpinLock lock(s_CriticalSection);
-UINT core=Cpu::GetId();
-auto current=s_CurrentTask[core];
-s_All.Remove(current);
-FlagHelper::Set(current->m_Flags, TaskFlags::Release);
-SuspendCurrentTask(core, current);
-lock.Unlock();
-while(1)
-	Cpu::WaitForInterrupt();
-}
-
-Task* Scheduler::GetCurrentTask()
-{
-SpinLock lock(s_CriticalSection);
-UINT core=Cpu::GetId();
-return s_CurrentTask[core];
-}
-
-BOOL Scheduler::IsMainTask()
-{
-SpinLock lock(s_CriticalSection);
-UINT core=Cpu::GetId();
-auto current=s_CurrentTask[core];
-return current==s_MainTask;
-}
-
-VOID Scheduler::Schedule()
-{
-SpinLock lock(s_CriticalSection);
-if(s_Release)
-	{
-	auto release=s_Release.RemoveFirst();
-	while(release)
-		{
-		lock.Unlock();
-		release->m_This=nullptr;
-		lock.Lock();
-		release=s_Release.RemoveFirst();
-		}
-	}
-if(s_Sleeping)
-	{
-	UINT64 time=SystemTimer::GetTickCount64();
-	auto sleeping=s_Sleeping.First();
-	while(sleeping)
-		{
-		if(sleeping->m_ResumeTime>time)
-			break;
-		s_Sleeping.RemoveFirst();
-		FlagHelper::Clear(sleeping->m_Flags, TaskFlags::Suspended);
-		FlagHelper::Set(sleeping->m_Flags, TaskFlags::Timeout);
-		sleeping->m_ResumeTime=0;
-		s_Waiting.Insert(sleeping, Task::Priority);
-		sleeping=s_Sleeping.First();
-		}
-	}
-ResumeWaitingTasks();
-}
-
-VOID Scheduler::SuspendCurrentTask(UINT ms)
-{
-UINT64 resume_time=SystemTimer::GetTickCount64()+ms;
-SpinLock lock(s_CriticalSection);
-UINT core=Cpu::GetId();
-auto current=s_CurrentTask[core];
-SuspendCurrentTask(core, current, resume_time);
-lock.Unlock();
-StatusHelper::ThrowIfFailed(current->m_Status);
-}
-
-
-//================
-// Common Private
-//================
-
 VOID Scheduler::CreateTasks()
 {
 auto create=s_Create.First();
@@ -204,6 +127,19 @@ while(create)
 	}
 }
 
+VOID Scheduler::ExitTask()
+{
+SpinLock lock(s_CriticalSection);
+UINT core=Cpu::GetId();
+auto current=s_CurrentTask[core];
+s_All.Remove(current);
+FlagHelper::Set(current->m_Flags, TaskFlags::Release);
+SuspendCurrentTask(core, current);
+lock.Unlock();
+while(1)
+	Cpu::WaitForInterrupt();
+}
+
 UINT Scheduler::GetAvailableCores(UINT* cores, UINT max)
 {
 UINT count=0;
@@ -211,22 +147,22 @@ static_assert(CPU_COUNT<=32);
 for(UINT core=0; core<s_CoreCount; core++)
 	{
 	auto current=s_CurrentTask[core];
-	auto next=current->m_Next;
+	if(current->m_Next)
+		continue;
 	if(FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
-		{
-		if(!next)
-			continue;
-		}
-	if(next)
-		{
-		if(FlagHelper::Get(next->m_Flags, TaskFlags::Locked))
-			continue;
-		}
+		continue;
 	cores[count++]=core;
 	if(count==max)
 		return count;
 	}
 return count;
+}
+
+Task* Scheduler::GetCurrentTask()
+{
+SpinLock lock(s_CriticalSection);
+UINT core=Cpu::GetId();
+return s_CurrentTask[core];
 }
 
 VOID Scheduler::HandleTaskSwitch(VOID* param)
@@ -260,6 +196,14 @@ while(1)
 	}
 }
 
+BOOL Scheduler::IsMainTask()
+{
+SpinLock lock(s_CriticalSection);
+UINT core=Cpu::GetId();
+auto current=s_CurrentTask[core];
+return current==s_MainTask;
+}
+
 VOID Scheduler::MainTask()
 {
 auto timer=SystemTimer::Get();
@@ -276,37 +220,54 @@ catch(...)
 System::Restart();
 }
 
-VOID Scheduler::ResumeWaitingTask(UINT core, Task* current, BOOL suspend)
+VOID Scheduler::ResumeWaitingTask(UINT core, Task* current)
 {
+auto waiting=s_Waiting.First();
+if(!waiting)
+	return;
 auto next=current->m_Next;
 if(next)
 	{
 	if(FlagHelper::Get(next->m_Flags, TaskFlags::Locked))
 		return;
-	auto waiting=s_Waiting.First();
-	if(!waiting)
-		return;
-	if(!FlagHelper::Get(waiting->m_Flags, TaskFlags::Locked))
-		return;
-	s_Waiting.RemoveFirst();
-	current->m_Next=waiting;
 	if(!FlagHelper::Get(next->m_Flags, TaskFlags::Idle))
-		s_Waiting.Insert(next, &Task::Priority);
-	return;
+		s_Waiting.Insert(next, Task::Prepend);
 	}
 auto resume=s_Waiting.RemoveFirst();
-if(!resume)
-	{
-	if(!suspend)
-		return;
-	resume=s_IdleTask[core];
-	}
 current->m_Next=resume;
 Interrupts::Send(Irq::TaskSwitch, core);
 }
 
-VOID Scheduler::ResumeWaitingTasks()
+VOID Scheduler::Schedule()
 {
+SpinLock lock(s_CriticalSection);
+if(s_Release)
+	{
+	auto release=s_Release.RemoveFirst();
+	while(release)
+		{
+		lock.Unlock();
+		release->m_This=nullptr;
+		lock.Lock();
+		release=s_Release.RemoveFirst();
+		}
+	}
+if(s_Sleeping)
+	{
+	UINT64 time=SystemTimer::GetTickCount64();
+	auto sleeping=s_Sleeping.First();
+	while(sleeping)
+		{
+		if(sleeping->m_ResumeTime>time)
+			break;
+		s_Sleeping.RemoveFirst();
+		FlagHelper::Clear(sleeping->m_Flags, TaskFlags::Suspended);
+		FlagHelper::Set(sleeping->m_Flags, TaskFlags::Timeout);
+		sleeping->m_ResumeTime=0;
+		s_Waiting.Insert(sleeping, Task::Priority);
+		sleeping=s_Sleeping.First();
+		}
+	}
 UINT waiting_count=s_Waiting.Count(s_CoreCount);
 if(!waiting_count)
 	return;
@@ -316,8 +277,19 @@ for(UINT core_id=0; core_id<core_count; core_id++)
 	{
 	UINT core=cores[core_id];
 	auto current=s_CurrentTask[core];
-	ResumeWaitingTask(core, current, false);
+	ResumeWaitingTask(core, current);
 	}
+}
+
+VOID Scheduler::SuspendCurrentTask(UINT ms)
+{
+UINT64 resume_time=SystemTimer::GetTickCount64()+ms;
+SpinLock lock(s_CriticalSection);
+UINT core=Cpu::GetId();
+auto current=s_CurrentTask[core];
+SuspendCurrentTask(core, current, resume_time);
+lock.Unlock();
+StatusHelper::ThrowIfFailed(current->m_Status);
 }
 
 VOID Scheduler::SuspendCurrentTask(UINT core, Task* current, UINT64 resume_time)
@@ -333,7 +305,13 @@ if(resume_time)
 	current->m_ResumeTime=resume_time;
 	s_Sleeping.Insert(current, [](Task* first, Task* second){ return first->m_ResumeTime<second->m_ResumeTime; });
 	}
-ResumeWaitingTask(core, current, true);
+if(current->m_Next)
+	return;
+auto resume=s_Waiting.RemoveFirst();
+if(!resume)
+	resume=s_IdleTask[core];
+current->m_Next=resume;
+Interrupts::Send(Irq::TaskSwitch, core);
 }
 
 Scheduler::AllList Scheduler::s_All;

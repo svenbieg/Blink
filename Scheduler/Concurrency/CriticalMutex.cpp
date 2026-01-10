@@ -99,11 +99,11 @@ if(!m_Owners)
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 assert(m_Owners==current);
-UnlockInternal(core, current);
+UnlockInternal(current);
 if(--current->m_LockCount==0)
 	{
 	FlagHelper::Clear(current->m_Flags, TaskFlags::Locked);
-	Scheduler::ResumeWaitingTask(core, current, false);
+	Scheduler::ResumeWaitingTask(core, current);
 	}
 }
 
@@ -112,11 +112,11 @@ VOID CriticalMutex::Unlock(AccessMode)
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
-UnlockInternal(core, current, AccessMode::ReadOnly);
+UnlockInternal(current, AccessMode::ReadOnly);
 if(--current->m_LockCount==0)
 	{
 	FlagHelper::Clear(current->m_Flags, TaskFlags::Locked);
-	Scheduler::ResumeWaitingTask(core, current, false);
+	Scheduler::ResumeWaitingTask(core, current);
 	}
 }
 

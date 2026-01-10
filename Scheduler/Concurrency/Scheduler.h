@@ -51,13 +51,6 @@ public:
 
 protected:
 	// Common
-	static VOID AddTask(Task* Task);
-	static VOID CancelTask(Task* Task);
-	static VOID ExitTask();
-	static Task* GetCurrentTask();
-	static BOOL IsMainTask();
-	static VOID Schedule();
-	static VOID SuspendCurrentTask(UINT MilliSeconds);
 
 private:
 	// Using
@@ -70,13 +63,19 @@ private:
 	using WaitingList=Collections::ForwardList<FWD_LIST(Task, m_Waiting)>;
 
 	// Common
+	static VOID AddTask(Task* Task);
+	static VOID CancelTask(Task* Task);
 	static VOID CreateTasks();
+	static VOID ExitTask();
 	static UINT GetAvailableCores(UINT* Cores, UINT Max);
+	static Task* GetCurrentTask();
 	static VOID HandleTaskSwitch(VOID* Parameter);
 	static VOID IdleTask();
+	static BOOL IsMainTask();
 	static VOID MainTask();
-	static VOID ResumeWaitingTask(UINT Core, Task* Current, BOOL Suspend);
-	static VOID ResumeWaitingTasks();
+	static VOID ResumeWaitingTask(UINT Core, Task* Current);
+	static VOID Schedule();
+	static VOID SuspendCurrentTask(UINT MilliSeconds);
 	static VOID SuspendCurrentTask(UINT Core, Task* Current, UINT64 ResumeTime=0);
 	static AllList s_All;
 	static UINT s_CoreCount;

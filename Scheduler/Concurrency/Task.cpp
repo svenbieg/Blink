@@ -122,6 +122,13 @@ TaskHelper::Initialize(&m_StackPointer, TaskProc, this);
 // Common Protected
 //==================
 
+bool Task::Prepend(Task* first, Task* second)
+{
+if(FlagHelper::Get(second->m_Flags, TaskFlags::Locked))
+	return false;
+return true;
+}
+
 bool Task::Priority(Task* first, Task* second)
 {
 if(!FlagHelper::Get(first->m_Flags, TaskFlags::Locked))

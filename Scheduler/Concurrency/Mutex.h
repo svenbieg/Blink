@@ -70,9 +70,9 @@ protected:
 	// Common
 	BOOL LockInternal(UINT Core, Task* Current);
 	BOOL LockInternal(UINT Core, Task* Current, AccessMode);
-	VOID ResumeWaitingTask(UINT Core, Task* Current);
-	VOID UnlockInternal(UINT Core, Task* Current);
-	VOID UnlockInternal(UINT Core, Task* Current, AccessMode);
+	VOID UnlockInternal(Task* Current);
+	VOID UnlockInternal(Task* Current, AccessMode);
+	VOID WakeupWaitingTasks();
 	Task* m_Owners=nullptr;
 	Task* m_Waiting=nullptr;
 

@@ -36,22 +36,24 @@ namespace Concurrency {
 VOID Signal::Trigger(Status status)
 {
 SpinLock lock(Scheduler::s_CriticalSection);
-auto wakeup=Scheduler::WaitingList::RemoveFirst(&m_Waiting);
-while(wakeup)
+auto waiting=Scheduler::WaitingList::RemoveFirst(&m_Waiting);
+if(!waiting)
+	return;
+while(waiting)
 	{
-	if(wakeup->m_ResumeTime)
+	if(waiting->m_ResumeTime)
 		{
-		Scheduler::s_Sleeping.Remove(wakeup);
-		wakeup->m_ResumeTime=0;
+		Scheduler::s_Sleeping.Remove(waiting);
+		waiting->m_ResumeTime=0;
 		}
-	FlagHelper::Clear(wakeup->m_Flags, TaskFlags::Suspended);
-	wakeup->m_Status=status;
-	Scheduler::s_Waiting.Insert(wakeup, Task::Priority);
-	wakeup=Scheduler::WaitingList::RemoveFirst(&m_Waiting);
+	FlagHelper::Clear(waiting->m_Flags, TaskFlags::Suspended);
+	waiting->m_Status=status;
+	Scheduler::s_Waiting.Insert(waiting, Task::Priority);
+	waiting=Scheduler::WaitingList::RemoveFirst(&m_Waiting);
 	}
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
-Scheduler::ResumeWaitingTask(core, current, false);
+Scheduler::ResumeWaitingTask(core, current);
 }
 
 VOID Signal::Wait(UINT timeout)

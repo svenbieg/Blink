@@ -98,7 +98,7 @@ SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 assert(m_Owners==current);
-UnlockInternal(core, current);
+UnlockInternal(current);
 }
 
 VOID Mutex::Unlock(AccessMode)
@@ -106,7 +106,7 @@ VOID Mutex::Unlock(AccessMode)
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
-UnlockInternal(core, current, AccessMode::ReadOnly);
+UnlockInternal(current, AccessMode::ReadOnly);
 }
 
 
@@ -148,8 +148,27 @@ Scheduler::WaitingList::Insert(&m_Waiting, current, Task::Priority);
 return false;
 }
 
-VOID Mutex::ResumeWaitingTask(UINT core, Task* current)
+VOID Mutex::UnlockInternal(Task* current)
 {
+if(m_Owners!=current)
+	return;
+Scheduler::OwnerList::RemoveFirst(&m_Owners);
+WakeupWaitingTasks();
+}
+
+VOID Mutex::UnlockInternal(Task* current, AccessMode)
+{
+BOOL removed=Scheduler::OwnerList::TryRemove(&m_Owners, current);
+if(!removed)
+	return;
+FlagHelper::Clear(current->m_Flags, TaskFlags::Sharing);
+if(!m_Owners)
+	WakeupWaitingTasks();
+}
+
+VOID Mutex::WakeupWaitingTasks()
+{
+assert(m_Owners==nullptr);
 auto waiting=Scheduler::WaitingList::RemoveFirst(&m_Waiting);
 if(!waiting)
 	return;
@@ -168,26 +187,6 @@ if(FlagHelper::Get(waiting->m_Flags, TaskFlags::Sharing))
 		Scheduler::s_Waiting.Insert(waiting, Task::Priority);
 		}
 	}
-Scheduler::ResumeWaitingTask(core, current, false);
-}
-
-VOID Mutex::UnlockInternal(UINT core, Task* current)
-{
-if(m_Owners!=current)
-	return;
-Scheduler::OwnerList::RemoveFirst(&m_Owners);
-ResumeWaitingTask(core, current);
-}
-
-VOID Mutex::UnlockInternal(UINT core, Task* current, AccessMode)
-{
-BOOL removed=Scheduler::OwnerList::TryRemove(&m_Owners, current);
-if(!removed)
-	return;
-FlagHelper::Clear(current->m_Flags, TaskFlags::Sharing);
-if(m_Owners)
-	return;
-ResumeWaitingTask(core, current);
 }
 
 
@@ -201,7 +200,8 @@ UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 assert(m_Owners==current);
 Scheduler::OwnerList::RemoveFirst(&m_Owners);
-ResumeWaitingTask(core, current);
+WakeupWaitingTasks();
+Scheduler::ResumeWaitingTask(core, current);
 sched_lock.Yield();
 if(!m_Owners)
 	{
@@ -218,7 +218,9 @@ UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 BOOL removed=Scheduler::OwnerList::TryRemove(&m_Owners, current);
 assert(removed);
-ResumeWaitingTask(core, current);
+if(!m_Owners)
+	WakeupWaitingTasks();
+Scheduler::ResumeWaitingTask(core, current);
 sched_lock.Yield();
 if(!m_Owners)
 	{
