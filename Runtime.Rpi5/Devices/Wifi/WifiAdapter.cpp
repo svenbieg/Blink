@@ -68,6 +68,78 @@ GpioHelper::DigitalWrite(GpioArmPin::WifiOn, false);
 // Common
 //========
 
+VOID WifiAdapter::Initialize()
+{
+GpioHelper::SetPinMode(GpioArmPin::WifiOn, GpioArmPinMode::Output);
+GpioHelper::DigitalWrite(GpioArmPin::WifiOn, true);
+GpioHelper::SetPinMode(GpioArmPin::WifiSdioClk, GpioArmPinMode::Func4);
+GpioHelper::SetPinMode(GpioArmPin::WifiSdioCmd, GpioArmPinMode::Func4, GpioPullMode::PullUp);
+GpioHelper::SetPinMode(GpioArmPin::WifiSdioD0, GpioArmPinMode::Func4, GpioPullMode::PullUp);
+GpioHelper::SetPinMode(GpioArmPin::WifiSdioD1, GpioArmPinMode::Func3, GpioPullMode::PullUp);
+GpioHelper::SetPinMode(GpioArmPin::WifiSdioD2, GpioArmPinMode::Func4, GpioPullMode::PullUp);
+GpioHelper::SetPinMode(GpioArmPin::WifiSdioD3, GpioArmPinMode::Func3, GpioPullMode::PullUp);
+Task::Sleep(150);
+m_EmmcHost=EmmcHost::Create(EMMC_BASE, Irq::Wifi);
+m_EmmcHost->SetClockRate(EMMC_BASE_CLOCK, EMMC_CLOCK);
+m_EmmcHost->Command(EmmcCmd::GoIdle);
+UINT op_cond=m_EmmcHost->Command(EmmcCmd::SendOpCond, 0);
+for(UINT retry=0; retry<5; retry++)
+	{
+	if(FlagHelper::Get(op_cond, OP_COND_SUCCESS))
+		break;
+	Task::Sleep(10);
+	op_cond=m_EmmcHost->Command(EmmcCmd::SendOpCond, OP_COND_3V3);
+	}
+if(!FlagHelper::Get(op_cond, OP_COND_SUCCESS))
+	throw DeviceNotReadyException();
+UINT rel_addr=m_EmmcHost->Command(EmmcCmd::SendRelAddr);
+UINT rca=BitHelper::Get(rel_addr, RELADDR_RCA);
+m_EmmcHost->SelectCard(rca);
+m_EmmcHost->SetRegister(CCCR_SPEED_CTRL, SPEED_CTRL_EHS);
+m_EmmcHost->SetRegister(CCCR_BUS_IFC, BUS_IFC_32BIT);
+IoHelper::Set(m_Device->CTRL0, CTRL0_HCTL_HS_EN|CTRL0_HCTL_DWIDTH4);
+m_EmmcHost->WriteRegister(CCCR_BLKSIZE_FN1, FN1.BLOCK_SIZE);
+m_EmmcHost->WriteRegister(CCCR_IOENABLE, FN1_BIT);
+m_EmmcHost->PollRegister(CCCR_IOREADY, FN1_BIT, FN1_BIT);
+m_EmmcHost->WriteRegister(SB_PULLUPS, 0);
+Reset(ARM_BASE, ARM_IOCTRL_HALT);
+wifi_config_size=InitializeConfiguration(wifi_config, wifi_config_size);
+IoWrite(FN1, ARM_RAM_BASE, &wifi_firmware, wifi_firmware_size);
+IoWrite(FN1, ARM_RAM_BASE+ARM_RAM_SIZE-wifi_config_size, wifi_config, wifi_config_size);
+IoWrite(FN1, ARM_RESET_VECTOR, *(UINT*)wifi_firmware);
+Reset(ARM_BASE, 0);
+m_EmmcHost->PollRegister(SB_CLK_CSR, CLK_CSR_HT_AVAIL, CLK_CSR_HT_AVAIL);
+m_EmmcHost->WriteRegister(SB_CLK_CSR, CLK_CSR_FORCE_HT);
+IoWrite(FN1, SDIO_MBOX_DATA_OUT, MBOX_DATA_VER);
+IoWrite(FN1, SDIO_INT_MASK, INT_HOST|INT_FRAME|INT_FCCHANGE);
+IoWrite(FN1, SDIO_INT_STATUS, ~0U);
+m_EmmcHost->WriteRegister(CCCR_BLKSIZE_FN2_0, (BYTE)FN2.BLOCK_SIZE);
+m_EmmcHost->WriteRegister(CCCR_BLKSIZE_FN2_1, (BYTE)(FN2.BLOCK_SIZE>>8));
+m_EmmcHost->SetRegister(CCCR_IOENABLE, FN2_BIT);
+m_EmmcHost->PollRegister(CCCR_IOREADY, FN2_BIT, FN2_BIT);
+m_ServiceTask=ServiceTask::Create(this, &WifiAdapter::ServiceTask, "wifi");
+UploadRegulatory();
+GetVariable("cur_etheraddr", &m_MacAddress, MAC_ADDR_SIZE);
+assert(m_MacAddress==0x6CF274EB27B8);
+//SetInt("assoc_listen", 10);
+//SetInt("bus:txglom", 0);
+//SetInt("bcn_timeout", 10);
+//SetInt("assoc_retry_max", 3);
+//SetVariable("event_msgs", WIFI_EVENT_MASK.data(), WIFI_EVENT_MASK.size());
+//SetInt(WifiCmd::SetScanChannelTime, 40);
+//SetInt(WifiCmd::SetScanUnassocTime, 40);
+//SetInt(WifiCmd::SetScanPassiveTime, 130);
+//SetInt("roam_off", 1);
+//SetInt(WifiCmd::SetInfra, 1);
+//SetInt(WifiCmd::SetPromisc, 0);
+//SetInt(WifiCmd::Up, 1);
+//SetVariable("country", WIFI_COUNTRY_DEFAULT.data(), WIFI_COUNTRY_DEFAULT.size());
+//Task::Sleep(50);
+//BYTE country[12];
+//GetVariable("country", country, 12);
+//INT i=0;
+}
+
 VOID WifiAdapter::Send(WifiPacket* pkt)
 {
 WriteLock lock(m_Mutex);
@@ -110,9 +182,7 @@ m_Device((EMMC_REGS*)EMMC_BASE),
 m_IoWindow(0),
 m_MacAddress(0),
 m_RequestId(0)
-{
-Initialize();
-}
+{}
 
 
 //================
@@ -189,10 +259,6 @@ if(len>sizeof(WIFI_HEADER))
 	}
 switch(type)
 	{
-	case WifiPacketType::Event:
-		{
-		break;
-		}
 	case WifiPacketType::Response:
 		{
 		m_Response=pkt;
@@ -205,78 +271,6 @@ switch(type)
 		break;
 		}
 	}
-}
-
-VOID WifiAdapter::Initialize()
-{
-GpioHelper::SetPinMode(GpioArmPin::WifiOn, GpioArmPinMode::Output);
-GpioHelper::DigitalWrite(GpioArmPin::WifiOn, true);
-GpioHelper::SetPinMode(GpioArmPin::WifiSdioClk, GpioArmPinMode::Func4);
-GpioHelper::SetPinMode(GpioArmPin::WifiSdioCmd, GpioArmPinMode::Func4, GpioPullMode::PullUp);
-GpioHelper::SetPinMode(GpioArmPin::WifiSdioD0, GpioArmPinMode::Func4, GpioPullMode::PullUp);
-GpioHelper::SetPinMode(GpioArmPin::WifiSdioD1, GpioArmPinMode::Func3, GpioPullMode::PullUp);
-GpioHelper::SetPinMode(GpioArmPin::WifiSdioD2, GpioArmPinMode::Func4, GpioPullMode::PullUp);
-GpioHelper::SetPinMode(GpioArmPin::WifiSdioD3, GpioArmPinMode::Func3, GpioPullMode::PullUp);
-Task::Sleep(150);
-m_EmmcHost=EmmcHost::Create(EMMC_BASE, Irq::Wifi);
-m_EmmcHost->SetClockRate(EMMC_BASE_CLOCK, EMMC_CLOCK);
-m_EmmcHost->Command(EmmcCmd::GoIdle);
-UINT op_cond=m_EmmcHost->Command(EmmcCmd::SendOpCond, 0);
-for(UINT retry=0; retry<5; retry++)
-	{
-	if(FlagHelper::Get(op_cond, OP_COND_SUCCESS))
-		break;
-	Task::Sleep(10);
-	op_cond=m_EmmcHost->Command(EmmcCmd::SendOpCond, OP_COND_3V3);
-	}
-if(!FlagHelper::Get(op_cond, OP_COND_SUCCESS))
-	throw DeviceNotReadyException();
-UINT rel_addr=m_EmmcHost->Command(EmmcCmd::SendRelAddr);
-UINT rca=BitHelper::Get(rel_addr, RELADDR_RCA);
-m_EmmcHost->SelectCard(rca);
-m_EmmcHost->SetRegister(CCCR_SPEED_CTRL, SPEED_CTRL_EHS);
-m_EmmcHost->SetRegister(CCCR_BUS_IFC, BUS_IFC_32BIT);
-IoHelper::Set(m_Device->CTRL0, CTRL0_HCTL_HS_EN|CTRL0_HCTL_DWIDTH4);
-m_EmmcHost->WriteRegister(CCCR_BLKSIZE_FN1, FN1.BLOCK_SIZE);
-m_EmmcHost->WriteRegister(CCCR_IOENABLE, FN1_BIT);
-m_EmmcHost->PollRegister(CCCR_IOREADY, FN1_BIT, FN1_BIT);
-m_EmmcHost->WriteRegister(SB_PULLUPS, 0);
-Reset(ARM_BASE, ARM_IOCTRL_HALT);
-wifi_config_size=InitializeConfiguration(wifi_config, wifi_config_size);
-IoWrite(FN1, ARM_RAM_BASE, &wifi_firmware, wifi_firmware_size);
-IoWrite(FN1, ARM_RAM_BASE+ARM_RAM_SIZE-wifi_config_size, wifi_config, wifi_config_size);
-IoWrite(FN1, ARM_RESET_VECTOR, *(UINT*)wifi_firmware);
-Reset(ARM_BASE, 0);
-m_EmmcHost->PollRegister(SB_CLK_CSR, CLK_CSR_HT_AVAIL, CLK_CSR_HT_AVAIL);
-m_EmmcHost->WriteRegister(SB_CLK_CSR, CLK_CSR_FORCE_HT);
-IoWrite(FN1, SDIO_MBOX_DATA_OUT, MBOX_DATA_VER);
-IoWrite(FN1, SDIO_INT_MASK, INT_HOST|INT_FRAME|INT_FCCHANGE);
-IoWrite(FN1, SDIO_INT_STATUS, ~0U);
-m_EmmcHost->WriteRegister(CCCR_BLKSIZE_FN2_0, (BYTE)FN2.BLOCK_SIZE);
-m_EmmcHost->WriteRegister(CCCR_BLKSIZE_FN2_1, (BYTE)(FN2.BLOCK_SIZE>>8));
-m_EmmcHost->SetRegister(CCCR_IOENABLE, FN2_BIT);
-m_EmmcHost->PollRegister(CCCR_IOREADY, FN2_BIT, FN2_BIT);
-m_ServiceTask=ServiceTask::Create(this, &WifiAdapter::ServiceTask, "wifi");
-UploadRegulatory();
-GetVariable("cur_etheraddr", &m_MacAddress, MAC_ADDR_SIZE);
-assert(m_MacAddress==0x6CF274EB27B8);
-SetInt("assoc_listen", 10);
-SetInt("bus:txglom", 0);
-SetInt("bcn_timeout", 10);
-SetInt("assoc_retry_max", 3);
-SetVariable("event_msgs", WIFI_EVENT_MASK.data(), WIFI_EVENT_MASK.size());
-SetInt(WifiCmd::SetScanChannelTime, 40);
-SetInt(WifiCmd::SetScanUnassocTime, 40);
-SetInt(WifiCmd::SetScanPassiveTime, 130);
-SetInt("roam_off", 1);
-SetInt(WifiCmd::SetInfra, 1);
-SetInt(WifiCmd::SetPromisc, 0);
-SetInt(WifiCmd::Up, 1);
-SetVariable("country", WIFI_COUNTRY_DEFAULT.data(), WIFI_COUNTRY_DEFAULT.size());
-Task::Sleep(50);
-BYTE country[12];
-GetVariable("country", country, 12);
-INT i=0;
 }
 
 UINT WifiAdapter::InitializeConfiguration(BYTE* buf, UINT size)
@@ -443,11 +437,11 @@ auto task=Task::Get();
 while(!task->Cancelled)
 	{
 	m_EmmcHost->CardIrq.Wait(lock);
+	IoHelper::Write(m_Device->IRQ, IRQF_CARD);
 	if(!m_EmmcHost->ReadRegister(CCCR_INT_PENDING))
 		continue;
 	UINT int_status=IoRead(FN1, SDIO_INT_STATUS);
 	IoWrite(FN1, SDIO_INT_STATUS, int_status);
-	IoHelper::Write(m_Device->IRQ, IRQF_CARD);
 	UINT host_flags=BitHelper::Get(int_status, INT_HOST);
 	while(host_flags)
 		{

@@ -46,6 +46,7 @@ public:
 	// Con-/Destructors
 	~WifiAdapter();
 	static inline Handle<WifiAdapter> Create() { return Object::Create<WifiAdapter>(); }
+	VOID Initialize();
 	Event<WifiAdapter, WifiPacket*> PacketReceived;
 	VOID Send(WifiPacket* Packet);
 	Handle<WifiPacket> SendAndReceive(WifiPacket* Packet);
@@ -60,7 +61,6 @@ private:
 	INT GetInt(LPCSTR Name);
 	UINT GetVariable(LPCSTR Name, VOID* Buffer, UINT Size);
 	VOID HandleFrame();
-	VOID Initialize();
 	UINT InitializeConfiguration(BYTE* Buffer, UINT Size);
 	VOID IoPoll(EMMC_FN Function, UINT Address, UINT Mask, UINT Value, UINT Timeout=100);
 	UINT IoRead(EMMC_FN Function, UINT Address);
