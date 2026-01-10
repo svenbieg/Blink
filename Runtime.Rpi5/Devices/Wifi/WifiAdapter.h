@@ -82,6 +82,7 @@ private:
 	UINT m_IoWindow;
 	MAC_ADDR m_MacAddress;
 	Mutex m_Mutex;
+	WORD m_RequestId;
 	Handle<WifiPacket> m_Response;
 	Signal m_ResponseReceived;
 	Handle<Task> m_ServiceTask;

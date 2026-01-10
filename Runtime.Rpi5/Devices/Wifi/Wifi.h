@@ -172,23 +172,14 @@ WIFI_EVENT_PROBRESP_MSG,
 WIFI_EVENT_CCA_CHAN_QUAL
 };
 
-constexpr auto WIFI_EVENT_FLAGS=[]()
+constexpr auto WIFI_EVENT_MASK=[]()
 {
-std::array<BYTE, 16> wifi_mask{};
-for(auto& flags: wifi_mask)
-	flags=0xFF;
+std::array<BYTE, 16> flags;
+flags.fill(0xFF);
 for(auto id: WIFI_DISABLED_EVENTS)
-	wifi_mask.at(id/8)&=~(1<<(id%8));
-return wifi_mask;
+	flags[id/8]&=~(1<<(id%8));
+return flags;
 }();
-
-constexpr BYTE WIFI_EVENT_MASK[16]=
-	{
-	WIFI_EVENT_FLAGS.at(0), WIFI_EVENT_FLAGS.at(1), WIFI_EVENT_FLAGS.at(2), WIFI_EVENT_FLAGS.at(3),
-	WIFI_EVENT_FLAGS.at(4), WIFI_EVENT_FLAGS.at(5), WIFI_EVENT_FLAGS.at(6), WIFI_EVENT_FLAGS.at(7),
-	WIFI_EVENT_FLAGS.at(8), WIFI_EVENT_FLAGS.at(9), WIFI_EVENT_FLAGS.at(10), WIFI_EVENT_FLAGS.at(11),
-	WIFI_EVENT_FLAGS.at(12), WIFI_EVENT_FLAGS.at(13), WIFI_EVENT_FLAGS.at(14), WIFI_EVENT_FLAGS.at(15)
-	};
 
 
 //=========
@@ -204,8 +195,7 @@ Worldwide='XX',
 constexpr auto WIFI_COUNTRY(WifiCountry Country)
 {
 auto country=std::bit_cast<std::array<BYTE, 4>, WifiCountry>(Country);
-std::array<BYTE, 12> code={ country.at(1), country.at(0), 0, 0, 0xFF, 0xFF, 0xFF, 0xFF, country.at(1), country.at(0), 0, 0 };
-return code;
+return std::array<BYTE, 12>{ country[1], country[0], 0, 0, 0xFF, 0xFF, 0xFF, 0xFF, country[1], country[0], 0, 0 };
 }
 
 }}

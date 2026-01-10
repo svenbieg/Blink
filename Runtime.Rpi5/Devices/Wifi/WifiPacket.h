@@ -32,7 +32,7 @@ static constexpr UINT WIFI_PACKET_MAX=2048;
 // Header
 //========
 
-typedef struct alignas(UINT)
+typedef struct
 {
 WORD Length;
 WORD LengthChk;
@@ -109,7 +109,7 @@ private:
 	WifiPacket(BYTE* Buffer, SIZE_T Size);
 
 	// Common
-	static BYTE s_Sequence;
+	static BYTE s_SequenceId;
 };
 
 }}

@@ -26,8 +26,8 @@ auto header=pkt->Write<WIFI_HEADER>();
 MemoryHelper::Zero(header, sizeof(WIFI_HEADER));
 header->Length=pkt_size;
 header->LengthChk=~pkt_size;
+header->Sequence=s_SequenceId++;
 header->DataOffset=sizeof(WIFI_HEADER);
-header->Sequence=s_Sequence++;
 pkt->m_Read=sizeof(WIFI_HEADER);
 return pkt;
 }
@@ -74,6 +74,6 @@ PacketBuffer(buf, size)
 // Common Private
 //================
 
-BYTE WifiPacket::s_Sequence=0;
+BYTE WifiPacket::s_SequenceId=0;
 
 }}

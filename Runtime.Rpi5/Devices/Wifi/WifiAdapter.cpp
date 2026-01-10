@@ -48,7 +48,7 @@ constexpr SIZE_T EMMC_BASE					=AXI_EMMC1_BASE;
 constexpr UINT EMMC_BASE_CLOCK				=54'000'000;
 constexpr UINT EMMC_CLOCK					=25'000'000;
 
-constexpr auto WIFI_COUNTRY_DEFAULT			=WIFI_COUNTRY(WifiCountry::Germany);
+constexpr auto WIFI_COUNTRY_DEFAULT			=WIFI_COUNTRY(WifiCountry::Worldwide);
 constexpr UINT WIFI_TIMEOUT					=500;
 
 
@@ -108,7 +108,8 @@ throw TimeoutException();
 WifiAdapter::WifiAdapter():
 m_Device((EMMC_REGS*)EMMC_BASE),
 m_IoWindow(0),
-m_MacAddress(0)
+m_MacAddress(0),
+m_RequestId(0)
 {
 Initialize();
 }
@@ -125,6 +126,7 @@ auto pkt=WifiPacket::Create(cmd_size);
 auto cmd=pkt->Write<WIFI_CMD>();
 MemoryHelper::Zero(cmd, sizeof(WIFI_CMD));
 cmd->Command=id;
+cmd->Id=++m_RequestId;
 cmd->Flags=WifiCmdFlags::Read;
 cmd->Length=sizeof(INT);
 auto response=SendAndReceive(pkt);
@@ -146,19 +148,21 @@ return value;
 UINT WifiAdapter::GetVariable(LPCSTR name, VOID* buf, UINT size)
 {
 UINT name_size=StringHelper::Length(name)+1;
-UINT cmd_size=sizeof(WIFI_CMD)+name_size+size;
+UINT data_size=TypeHelper::Max(name_size, size);
+UINT cmd_size=sizeof(WIFI_CMD)+data_size;
 auto pkt=WifiPacket::Create(cmd_size);
 auto cmd=pkt->Write<WIFI_CMD>();
 MemoryHelper::Zero(cmd, sizeof(WIFI_CMD));
 cmd->Command=WifiCmd::GetVariable;
+cmd->Id=++m_RequestId;
 cmd->Flags=WifiCmdFlags::Read;
-cmd->Length=name_size+size;
+cmd->Length=data_size;
 pkt->Write(name, name_size);
 auto response=SendAndReceive(pkt);
 cmd=response->Read<WIFI_CMD>();
 if(FlagHelper::Get(cmd->Flags, WifiCmdFlags::Error))
 	throw InvalidArgumentException();
-pkt->Read(buf, size);
+response->Read(buf, size);
 return size;
 }
 
@@ -176,8 +180,6 @@ if(len)
 if(!len)
 	return;
 auto type=(WifiPacketType)BitHelper::Get(header.Flags, WIFI_HEADER_FLAGS_TYPE);
-if(type==WifiPacketType::Event)
-	return;
 auto pkt=WifiPacket::Create(header);
 if(len>sizeof(WIFI_HEADER))
 	{
@@ -187,6 +189,10 @@ if(len>sizeof(WIFI_HEADER))
 	}
 switch(type)
 	{
+	case WifiPacketType::Event:
+		{
+		break;
+		}
 	case WifiPacketType::Response:
 		{
 		m_Response=pkt;
@@ -211,6 +217,7 @@ GpioHelper::SetPinMode(GpioArmPin::WifiSdioD0, GpioArmPinMode::Func4, GpioPullMo
 GpioHelper::SetPinMode(GpioArmPin::WifiSdioD1, GpioArmPinMode::Func3, GpioPullMode::PullUp);
 GpioHelper::SetPinMode(GpioArmPin::WifiSdioD2, GpioArmPinMode::Func4, GpioPullMode::PullUp);
 GpioHelper::SetPinMode(GpioArmPin::WifiSdioD3, GpioArmPinMode::Func3, GpioPullMode::PullUp);
+Task::Sleep(150);
 m_EmmcHost=EmmcHost::Create(EMMC_BASE, Irq::Wifi);
 m_EmmcHost->SetClockRate(EMMC_BASE_CLOCK, EMMC_CLOCK);
 m_EmmcHost->Command(EmmcCmd::GoIdle);
@@ -252,11 +259,12 @@ m_EmmcHost->PollRegister(CCCR_IOREADY, FN2_BIT, FN2_BIT);
 m_ServiceTask=ServiceTask::Create(this, &WifiAdapter::ServiceTask, "wifi");
 UploadRegulatory();
 GetVariable("cur_etheraddr", &m_MacAddress, MAC_ADDR_SIZE);
+assert(m_MacAddress==0x6CF274EB27B8);
 SetInt("assoc_listen", 10);
 SetInt("bus:txglom", 0);
 SetInt("bcn_timeout", 10);
 SetInt("assoc_retry_max", 3);
-SetVariable("event_msgs", WIFI_EVENT_MASK, sizeof(WIFI_EVENT_MASK));
+SetVariable("event_msgs", WIFI_EVENT_MASK.data(), WIFI_EVENT_MASK.size());
 SetInt(WifiCmd::SetScanChannelTime, 40);
 SetInt(WifiCmd::SetScanUnassocTime, 40);
 SetInt(WifiCmd::SetScanPassiveTime, 130);
@@ -265,8 +273,6 @@ SetInt(WifiCmd::SetInfra, 1);
 SetInt(WifiCmd::SetPromisc, 0);
 SetInt(WifiCmd::Up, 1);
 SetVariable("country", WIFI_COUNTRY_DEFAULT.data(), WIFI_COUNTRY_DEFAULT.size());
-INT up=GetInt(WifiCmd::Up);
-INT assoc_retry_max=GetInt("assoc_retry_max");
 Task::Sleep(50);
 BYTE country[12];
 GetVariable("country", country, 12);
@@ -437,15 +443,12 @@ auto task=Task::Get();
 while(!task->Cancelled)
 	{
 	m_EmmcHost->CardIrq.Wait(lock);
-	UINT int_pending=m_EmmcHost->ReadRegister(CCCR_INT_PENDING);
-	if(!int_pending)
+	if(!m_EmmcHost->ReadRegister(CCCR_INT_PENDING))
 		continue;
 	UINT int_status=IoRead(FN1, SDIO_INT_STATUS);
-	UINT host_flags=BitHelper::Get(int_status, INT_HOST);
+	IoWrite(FN1, SDIO_INT_STATUS, int_status);
 	IoHelper::Write(m_Device->IRQ, IRQF_CARD);
-	if(!host_flags)
-		continue;
-	IoWrite(FN1, SDIO_INT_STATUS, host_flags);
+	UINT host_flags=BitHelper::Get(int_status, INT_HOST);
 	while(host_flags)
 		{
 		UINT bit=Cpu::GetLeastSignificantBitPosition(host_flags);
@@ -470,6 +473,7 @@ auto pkt=WifiPacket::Create(cmd_size);
 auto cmd=pkt->Write<WIFI_CMD>();
 MemoryHelper::Zero(cmd, sizeof(WIFI_CMD));
 cmd->Command=id;
+cmd->Id=++m_RequestId;
 cmd->Flags=WifiCmdFlags::Write;
 cmd->Length=sizeof(INT);
 pkt->Write(&value, sizeof(INT));
@@ -487,13 +491,15 @@ SetVariable(name, &value, sizeof(INT));
 VOID WifiAdapter::SetVariable(LPCSTR name, VOID const* buf, UINT size)
 {
 UINT name_size=StringHelper::Length(name)+1;
-UINT cmd_size=sizeof(WIFI_CMD)+name_size+size;
+UINT data_size=name_size+size;
+UINT cmd_size=sizeof(WIFI_CMD)+data_size;
 auto pkt=WifiPacket::Create(cmd_size);
 auto cmd=pkt->Write<WIFI_CMD>();
 MemoryHelper::Zero(cmd, sizeof(WIFI_CMD));
 cmd->Command=WifiCmd::SetVariable;
+cmd->Id=++m_RequestId;
 cmd->Flags=WifiCmdFlags::Write;
-cmd->Length=name_size+size;
+cmd->Length=data_size;
 pkt->Write(name, name_size);
 pkt->Write(buf, size);
 auto response=SendAndReceive(pkt);
@@ -507,7 +513,6 @@ VOID WifiAdapter::UploadRegulatory()
 CHAR name[]="clmload";
 UINT name_size=sizeof(name);
 WORD clm_flags=CLMF_CLM|CLMF_FIRST;
-WORD request=0;
 WORD pos=0;
 while(pos<wifi_clm_size)
 	{
@@ -520,8 +525,8 @@ while(pos<wifi_clm_size)
 	auto cmd=pkt->Write<WIFI_CMD>();
 	MemoryHelper::Zero(cmd, sizeof(WIFI_CMD));
 	cmd->Command=WifiCmd::SetVariable;
+	cmd->Id=++m_RequestId;
 	cmd->Flags=WifiCmdFlags::Write;
-	cmd->Id=++request;
 	cmd->Length=name_size+clm_size;
 	pkt->Write(name, name_size);
 	auto clm=pkt->Write<CLM_HEADER>();
