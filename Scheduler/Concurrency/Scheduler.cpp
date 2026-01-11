@@ -222,8 +222,7 @@ System::Restart();
 
 VOID Scheduler::ResumeWaitingTask(UINT core, Task* current)
 {
-auto waiting=s_Waiting.First();
-if(!waiting)
+if(!s_Waiting.First())
 	return;
 auto next=current->m_Next;
 if(next)

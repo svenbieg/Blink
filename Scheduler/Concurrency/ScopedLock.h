@@ -55,7 +55,8 @@ protected:
 
 private:
 	// Common
-	virtual VOID Yield(SpinLock& SchedulerLock, UINT Core, Task* Current)=0;
+	virtual BOOL Lock(UINT Core, Task* Current)=0;
+	virtual VOID Unlock(UINT Core, Task* Current)=0;
 };
 
 }

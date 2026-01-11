@@ -84,11 +84,18 @@ if(timeout)
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
+scoped_lock.Unlock(core, current);
 Scheduler::SuspendCurrentTask(core, current, resume_time);
 FlagHelper::Clear(current->m_Flags, TaskFlags::Timeout);
 current->m_Signal=this;
 Scheduler::WaitingList::Insert(&m_Waiting, current, Task::Priority);
-scoped_lock.Yield(lock, core, current);
+lock.Unlock();
+if(FlagHelper::Get(current->m_Flags, TaskFlags::Timeout))
+	throw TimeoutException();
+StatusHelper::ThrowIfFailed(current->m_Status);
+lock.Lock();
+if(!scoped_lock.Lock(core, current))
+	lock.Yield();
 }
 
 
@@ -101,11 +108,14 @@ VOID Signal::WaitInternal(ScopedLock& scoped_lock)
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
+scoped_lock.Unlock(core, current);
 Scheduler::SuspendCurrentTask(core, current);
 FlagHelper::Clear(current->m_Flags, TaskFlags::Timeout);
 current->m_Signal=this;
 Scheduler::WaitingList::Append(&m_Waiting, current);
-scoped_lock.Yield(lock, core, current);
+lock.Yield();
+if(!scoped_lock.Lock(core, current))
+	lock.Yield();
 }
 
 }

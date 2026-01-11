@@ -64,11 +64,15 @@ m_CriticalSection->Yield();
 // Common Private
 //================
 
-VOID SpinLock::Yield(SpinLock& sched_lock, UINT core, Task* current)
+BOOL SpinLock::Lock(UINT core, Task* current)
+{
+m_CriticalSection->Lock();
+return true;
+}
+
+VOID SpinLock::Unlock(UINT core, Task* current)
 {
 m_CriticalSection->Unlock();
-sched_lock.m_CriticalSection->Yield();
-m_CriticalSection->Lock();
 }
 
 }

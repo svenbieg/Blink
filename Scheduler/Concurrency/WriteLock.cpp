@@ -64,9 +64,14 @@ m_Mutex->Unlock();
 // Common Private
 //================
 
-VOID WriteLock::Yield(SpinLock& sched_lock, UINT core, Task* current)
+BOOL WriteLock::Lock(UINT core, Task* current)
 {
-m_Mutex->Yield(sched_lock, core, current);
+return m_Mutex->Lock(core, current);
+}
+
+VOID WriteLock::Unlock(UINT core, Task* current)
+{
+m_Mutex->Unlock(current);
 }
 
 }

@@ -64,9 +64,14 @@ m_Mutex->Unlock(AccessMode::ReadOnly);
 // Common Private
 //================
 
-VOID ReadLock::Yield(SpinLock& sched_lock, UINT core, Task* current)
+BOOL ReadLock::Lock(UINT core, Task* current)
 {
-m_Mutex->Yield(sched_lock, core, current, AccessMode::ReadOnly);
+return m_Mutex->Lock(core, current, AccessMode::ReadOnly);
+}
+
+VOID ReadLock::Unlock(UINT core, Task* current)
+{
+m_Mutex->Unlock(current, AccessMode::ReadOnly);
 }
 
 }

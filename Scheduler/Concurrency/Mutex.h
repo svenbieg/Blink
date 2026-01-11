@@ -68,18 +68,13 @@ public:
 
 protected:
 	// Common
-	BOOL LockInternal(UINT Core, Task* Current);
-	BOOL LockInternal(UINT Core, Task* Current, AccessMode);
-	VOID UnlockInternal(Task* Current);
-	VOID UnlockInternal(Task* Current, AccessMode);
-	VOID WakeupWaitingTasks();
+	BOOL Lock(UINT Core, Task* Current);
+	BOOL Lock(UINT Core, Task* Current, AccessMode);
+	BOOL Unlock(Task* Current);
+	BOOL Unlock(Task* Current, AccessMode);
+	BOOL WakeupWaitingTasks();
 	Task* m_Owners=nullptr;
 	Task* m_Waiting=nullptr;
-
-private:
-	// Common
-	VOID Yield(SpinLock& SchedulerLock, UINT Core, Task* Current);
-	VOID Yield(SpinLock& SchedulerLock, UINT Core, Task* Current, AccessMode Access);
 };
 
 }

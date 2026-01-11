@@ -43,7 +43,8 @@ public:
 
 private:
 	// Common
-	VOID Yield(SpinLock& SchedulerLock, UINT Core, Task* Current)override;
+	BOOL Lock(UINT Core, Task* Current)override;
+	VOID Unlock(UINT Core, Task* Current)override;
 	CriticalSection* m_CriticalSection;
 };
 

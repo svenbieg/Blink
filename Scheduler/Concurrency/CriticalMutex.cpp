@@ -39,7 +39,7 @@ auto current=Scheduler::s_CurrentTask[core];
 if(!current)
 	return;
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
-if(!LockInternal(core, current))
+if(!Mutex::Lock(core, current))
 	lock.Yield();
 FlagHelper::Set(current->m_Flags, TaskFlags::Locked);
 current->m_LockCount++;
@@ -52,7 +52,7 @@ SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
-if(!LockInternal(core, current, AccessMode::ReadOnly))
+if(!Mutex::Lock(core, current, AccessMode::ReadOnly))
 	lock.Yield();
 FlagHelper::Set(current->m_Flags, TaskFlags::Locked);
 current->m_LockCount++;
@@ -99,12 +99,16 @@ if(!m_Owners)
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 assert(m_Owners==current);
-UnlockInternal(current);
+BOOL resume=Mutex::Unlock(current);
 if(--current->m_LockCount==0)
 	{
 	FlagHelper::Clear(current->m_Flags, TaskFlags::Locked);
-	Scheduler::ResumeWaitingTask(core, current);
+	auto waiting=Scheduler::s_Waiting.First();
+	if(waiting)
+		resume|=FlagHelper::Get(waiting->m_Flags, TaskFlags::Locked);
 	}
+if(resume)
+	Scheduler::ResumeWaitingTask(core, current);
 }
 
 VOID CriticalMutex::Unlock(AccessMode)
@@ -112,12 +116,16 @@ VOID CriticalMutex::Unlock(AccessMode)
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
-UnlockInternal(current, AccessMode::ReadOnly);
+BOOL resume=Mutex::Unlock(current, AccessMode::ReadOnly);
 if(--current->m_LockCount==0)
 	{
 	FlagHelper::Clear(current->m_Flags, TaskFlags::Locked);
-	Scheduler::ResumeWaitingTask(core, current);
+	auto waiting=Scheduler::s_Waiting.First();
+	if(waiting)
+		resume|=FlagHelper::Get(waiting->m_Flags, TaskFlags::Locked);
 	}
+if(resume)
+	Scheduler::ResumeWaitingTask(core, current);
 }
 
 }
