@@ -71,7 +71,8 @@ return Scheduler::GetCurrentTask();
 
 BOOL Task::IsMainTask()
 {
-return Scheduler::IsMainTask();
+auto current=Scheduler::GetCurrentTask();
+return current==Scheduler::s_MainTask;
 }
 
 VOID Task::Sleep(UINT ms)
@@ -82,12 +83,14 @@ Scheduler::SuspendCurrentTask(ms);
 
 VOID Task::ThrowIfMain()
 {
-if(Scheduler::IsMainTask())
+auto current=Scheduler::GetCurrentTask();
+if(current==Scheduler::s_MainTask)
 	throw InvalidContextException();
 }
 VOID Task::ThrowIfNotMain()
 {
-if(!Scheduler::IsMainTask())
+auto current=Scheduler::GetCurrentTask();
+if(current!=Scheduler::s_MainTask)
 	throw InvalidContextException();
 }
 

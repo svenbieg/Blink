@@ -71,7 +71,6 @@ private:
 	static Task* GetCurrentTask();
 	static VOID HandleTaskSwitch(VOID* Parameter);
 	static VOID IdleTask();
-	static BOOL IsMainTask();
 	static VOID MainTask();
 	static VOID ResumeWaitingTask(UINT Core, Task* Current);
 	static VOID Schedule();

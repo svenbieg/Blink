@@ -196,14 +196,6 @@ while(1)
 	}
 }
 
-BOOL Scheduler::IsMainTask()
-{
-SpinLock lock(s_CriticalSection);
-UINT core=Cpu::GetId();
-auto current=s_CurrentTask[core];
-return current==s_MainTask;
-}
-
 VOID Scheduler::MainTask()
 {
 auto timer=SystemTimer::Get();
