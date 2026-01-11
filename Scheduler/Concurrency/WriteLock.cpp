@@ -64,9 +64,9 @@ m_Mutex->Unlock();
 // Common Private
 //================
 
-BOOL WriteLock::Lock(UINT core, Task* current)
+VOID WriteLock::Lock(UINT core, Task* current)
 {
-return m_Mutex->Lock(core, current);
+m_Mutex->Lock(core, current);
 }
 
 VOID WriteLock::Unlock(UINT core, Task* current)

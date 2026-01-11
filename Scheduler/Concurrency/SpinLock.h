@@ -43,7 +43,7 @@ public:
 
 private:
 	// Common
-	BOOL Lock(UINT Core, Task* Current)override;
+	VOID Lock(UINT Core, Task* Current)override;
 	VOID Unlock(UINT Core, Task* Current)override;
 	CriticalSection* m_CriticalSection;
 };

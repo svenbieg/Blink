@@ -64,9 +64,9 @@ m_Mutex->Unlock(AccessMode::ReadOnly);
 // Common Private
 //================
 
-BOOL ReadLock::Lock(UINT core, Task* current)
+VOID ReadLock::Lock(UINT core, Task* current)
 {
-return m_Mutex->Lock(core, current, AccessMode::ReadOnly);
+m_Mutex->Lock(core, current, AccessMode::ReadOnly);
 }
 
 VOID ReadLock::Unlock(UINT core, Task* current)

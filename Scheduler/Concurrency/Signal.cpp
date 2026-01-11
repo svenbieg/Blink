@@ -94,8 +94,7 @@ if(FlagHelper::Get(current->m_Flags, TaskFlags::Timeout))
 	throw TimeoutException();
 StatusHelper::ThrowIfFailed(current->m_Status);
 lock.Lock();
-if(!scoped_lock.Lock(core, current))
-	lock.Yield();
+scoped_lock.Lock(core, current);
 }
 
 
@@ -114,8 +113,7 @@ FlagHelper::Clear(current->m_Flags, TaskFlags::Timeout);
 current->m_Signal=this;
 Scheduler::WaitingList::Append(&m_Waiting, current);
 lock.Yield();
-if(!scoped_lock.Lock(core, current))
-	lock.Yield();
+scoped_lock.Lock(core, current);
 }
 
 }
