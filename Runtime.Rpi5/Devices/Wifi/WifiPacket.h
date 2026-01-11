@@ -64,6 +64,7 @@ enum class WifiCmd: UINT
 Up						=2,
 SetPromisc				=10,
 SetInfra				=20,
+SetPassiveScan			=49,
 SetScanChannelTime		=185,
 SetScanUnassocTime		=187,
 SetScanPassiveTime		=258,

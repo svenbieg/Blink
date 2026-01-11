@@ -14,6 +14,7 @@
 #include "Devices/Timers/SystemTimer.h"
 #include "Devices/Wifi/Wifi.h"
 #include "Storage/Buffer.h"
+#include "DebugHelper.h"
 #include <base.h>
 
 using namespace Concurrency;
@@ -48,7 +49,6 @@ constexpr SIZE_T EMMC_BASE					=AXI_EMMC1_BASE;
 constexpr UINT EMMC_BASE_CLOCK				=54'000'000;
 constexpr UINT EMMC_CLOCK					=25'000'000;
 
-constexpr auto WIFI_COUNTRY_DEFAULT			=WIFI_COUNTRY(WifiCountry::Worldwide);
 constexpr UINT WIFI_TIMEOUT					=500;
 
 
@@ -67,6 +67,45 @@ GpioHelper::DigitalWrite(GpioArmPin::WifiOn, false);
 //========
 // Common
 //========
+
+VOID WifiAdapter::Command(WifiCmd id, UINT arg)
+{
+UINT cmd_size=sizeof(WIFI_CMD)+sizeof(UINT);
+auto request=WifiPacket::Create(cmd_size);
+auto cmd=request->Write<WIFI_CMD>();
+MemoryHelper::Zero(cmd, sizeof(WIFI_CMD));
+cmd->Command=id;
+cmd->Id=++m_RequestId;
+cmd->Flags=WifiCmdFlags::Write;
+cmd->Length=sizeof(UINT);
+request->Write(&arg, sizeof(UINT));
+auto response=SendAndReceive(request);
+cmd=response->Read<WIFI_CMD>();
+if(FlagHelper::Get(cmd->Flags, WifiCmdFlags::Error))
+	throw InvalidArgumentException();
+}
+
+VOID WifiAdapter::GetVariable(LPCSTR name, VOID* buf, UINT size)
+{
+UINT name_size=StringHelper::Length(name)+1;
+UINT data_size=TypeHelper::Max(name_size, size);
+UINT cmd_size=sizeof(WIFI_CMD)+data_size;
+auto request=WifiPacket::Create(cmd_size);
+auto cmd=request->Write<WIFI_CMD>();
+MemoryHelper::Zero(cmd, sizeof(WIFI_CMD));
+cmd->Command=WifiCmd::GetVariable;
+cmd->Id=++m_RequestId;
+cmd->Flags=WifiCmdFlags::Read;
+cmd->Length=data_size;
+request->Write(name, name_size);
+auto response=SendAndReceive(request);
+cmd=response->Read<WIFI_CMD>();
+if(FlagHelper::Get(cmd->Flags, WifiCmdFlags::Error))
+	throw InvalidArgumentException();
+UINT available=response->Available();
+UINT copy=TypeHelper::Min(size, available);
+response->Read(buf, copy);
+}
 
 VOID WifiAdapter::Initialize()
 {
@@ -121,23 +160,18 @@ m_ServiceTask=ServiceTask::Create(this, &WifiAdapter::ServiceTask, "wifi");
 UploadRegulatory();
 GetVariable("cur_etheraddr", &m_MacAddress, MAC_ADDR_SIZE);
 assert(m_MacAddress==0x6CF274EB27B8);
-//SetInt("assoc_listen", 10);
-//SetInt("bus:txglom", 0);
-//SetInt("bcn_timeout", 10);
-//SetInt("assoc_retry_max", 3);
-//SetVariable("event_msgs", WIFI_EVENT_MASK.data(), WIFI_EVENT_MASK.size());
-//SetInt(WifiCmd::SetScanChannelTime, 40);
-//SetInt(WifiCmd::SetScanUnassocTime, 40);
-//SetInt(WifiCmd::SetScanPassiveTime, 130);
-//SetInt("roam_off", 1);
-//SetInt(WifiCmd::SetInfra, 1);
-//SetInt(WifiCmd::SetPromisc, 0);
-//SetInt(WifiCmd::Up, 1);
-//SetVariable("country", WIFI_COUNTRY_DEFAULT.data(), WIFI_COUNTRY_DEFAULT.size());
-//Task::Sleep(50);
-//BYTE country[12];
-//GetVariable("country", country, 12);
-//INT i=0;
+SetVariable("assoc_listen", 10);
+SetVariable("bus:txglom", 0);
+SetVariable("bcn_timeout", 10);
+SetVariable("assoc_retry_max", 3);
+SetVariable("event_msgs", WIFI_EVENT_MASK.data(), WIFI_EVENT_MASK.size());
+Command(WifiCmd::SetScanChannelTime, 40);
+Command(WifiCmd::SetScanUnassocTime, 40);
+Command(WifiCmd::SetScanPassiveTime, 130);
+SetVariable("roam_off", 1);
+Command(WifiCmd::SetInfra, 1);
+Command(WifiCmd::SetPromisc, 0);
+Command(WifiCmd::Up, 1);
 }
 
 VOID WifiAdapter::Send(WifiPacket* pkt)
@@ -148,28 +182,43 @@ auto buf=pkt->Begin();
 WifiWrite(buf, size);
 }
 
-Handle<WifiPacket> WifiAdapter::SendAndReceive(WifiPacket* pkt)
+Handle<WifiPacket> WifiAdapter::SendAndReceive(WifiPacket* request)
 {
 WriteLock lock(m_Mutex);
-BYTE seq=pkt->GetSequenceId();
-UINT size=pkt->GetSize();
-auto buf=pkt->Begin();
+BYTE seq=request->GetSequenceId();
+UINT size=request->GetSize();
+auto buf=request->Begin();
 WifiWrite(buf, size);
-UINT64 time=SystemTimer::GetTickCount64();
-UINT64 timeout=time+WIFI_TIMEOUT;
-while(time<=timeout)
-	{
-	m_ResponseReceived.Wait(lock, timeout-time);
-	BYTE resp_id=m_Response->GetSequenceId();
-	if(resp_id==seq+1)
-		{
-		auto response=m_Response;
-		m_Response=nullptr;
-		return response;
-		}
-	time=SystemTimer::GetTickCount64();
-	}
-throw TimeoutException();
+m_Request=request;
+m_ResponseReceived.Wait(lock, WIFI_TIMEOUT);
+auto response=m_Response;
+m_Response=nullptr;
+return response;
+}
+
+VOID WifiAdapter::SetVariable(LPCSTR name, UINT value)
+{
+SetVariable(name, &value, sizeof(UINT));
+}
+
+VOID WifiAdapter::SetVariable(LPCSTR name, VOID const* buf, UINT size)
+{
+UINT name_size=StringHelper::Length(name)+1;
+UINT data_size=name_size+size;
+UINT cmd_size=sizeof(WIFI_CMD)+data_size;
+auto request=WifiPacket::Create(cmd_size);
+auto cmd=request->Write<WIFI_CMD>();
+MemoryHelper::Zero(cmd, sizeof(WIFI_CMD));
+cmd->Command=WifiCmd::SetVariable;
+cmd->Id=++m_RequestId;
+cmd->Flags=WifiCmdFlags::Write;
+cmd->Length=data_size;
+request->Write(name, name_size);
+request->Write(buf, size);
+auto response=SendAndReceive(request);
+cmd=response->Read<WIFI_CMD>();
+if(FlagHelper::Get(cmd->Flags, WifiCmdFlags::Error))
+	throw InvalidArgumentException();
 }
 
 
@@ -189,53 +238,6 @@ m_RequestId(0)
 // Common Private
 //================
 
-INT WifiAdapter::GetInt(WifiCmd id)
-{
-UINT cmd_size=sizeof(WIFI_CMD)+sizeof(INT);
-auto pkt=WifiPacket::Create(cmd_size);
-auto cmd=pkt->Write<WIFI_CMD>();
-MemoryHelper::Zero(cmd, sizeof(WIFI_CMD));
-cmd->Command=id;
-cmd->Id=++m_RequestId;
-cmd->Flags=WifiCmdFlags::Read;
-cmd->Length=sizeof(INT);
-auto response=SendAndReceive(pkt);
-cmd=response->Read<WIFI_CMD>();
-if(FlagHelper::Get(cmd->Flags, WifiCmdFlags::Error))
-	throw InvalidArgumentException();
-INT value=0;
-pkt->Read(&value, sizeof(INT));
-return value;
-}
-
-INT WifiAdapter::GetInt(LPCSTR name)
-{
-INT value=0;
-GetVariable(name, &value, sizeof(INT));
-return value;
-}
-
-UINT WifiAdapter::GetVariable(LPCSTR name, VOID* buf, UINT size)
-{
-UINT name_size=StringHelper::Length(name)+1;
-UINT data_size=TypeHelper::Max(name_size, size);
-UINT cmd_size=sizeof(WIFI_CMD)+data_size;
-auto pkt=WifiPacket::Create(cmd_size);
-auto cmd=pkt->Write<WIFI_CMD>();
-MemoryHelper::Zero(cmd, sizeof(WIFI_CMD));
-cmd->Command=WifiCmd::GetVariable;
-cmd->Id=++m_RequestId;
-cmd->Flags=WifiCmdFlags::Read;
-cmd->Length=data_size;
-pkt->Write(name, name_size);
-auto response=SendAndReceive(pkt);
-cmd=response->Read<WIFI_CMD>();
-if(FlagHelper::Get(cmd->Flags, WifiCmdFlags::Error))
-	throw InvalidArgumentException();
-response->Read(buf, size);
-return size;
-}
-
 VOID WifiAdapter::HandleFrame()
 {
 WIFI_HEADER header;
@@ -243,9 +245,14 @@ WifiRead(&header, sizeof(WIFI_HEADER));
 UINT len=header.Length;
 if(len)
 	{
-	UINT len_chk=header.LengthChk;
-	if(len_chk!=(len^0xFFFF)||len<sizeof(WIFI_HEADER)||len>WIFI_PACKET_MAX)
-		throw DeviceNotReadyException();
+	if(header.LengthChk!=(len^0xFFFF)||len<sizeof(WIFI_HEADER)||len>WIFI_PACKET_MAX)
+		{
+		DebugHelper::Print("wifi: checksum error\n");
+		m_EmmcHost->WriteRegister(SB_FRAME_CTRL, FRAME_CTRL_RFHALT);
+		m_EmmcHost->PollRegister(SB_RFRM_CNT_1, 0xFF, 0);
+		m_EmmcHost->PollRegister(SB_RFRM_CNT_0, 0xFF, 0);
+		return;
+		}
 	}
 if(!len)
 	return;
@@ -257,20 +264,19 @@ if(len>sizeof(WIFI_HEADER))
 	auto data=pkt->Write<BYTE>(copy);
 	WifiRead(data, copy);
 	}
-switch(type)
+if(m_Request&&type==WifiPacketType::Response)
 	{
-	case WifiPacketType::Response:
+	BYTE pkt_id=pkt->GetSequenceId();
+	BYTE request_id=m_Request->GetSequenceId();
+	if(pkt_id==request_id+1)
 		{
+		m_Request=nullptr;
 		m_Response=pkt;
 		m_ResponseReceived.Trigger();
-		break;
-		}
-	default:
-		{
-		PacketReceived(this, pkt);
-		break;
+		return;
 		}
 	}
+PacketReceived(this, pkt);
 }
 
 UINT WifiAdapter::InitializeConfiguration(BYTE* buf, UINT size)
@@ -458,48 +464,6 @@ while(!task->Cancelled)
 			}
 		}
 	}
-}
-
-VOID WifiAdapter::SetInt(WifiCmd id, INT value)
-{
-UINT cmd_size=sizeof(WIFI_CMD)+sizeof(INT);
-auto pkt=WifiPacket::Create(cmd_size);
-auto cmd=pkt->Write<WIFI_CMD>();
-MemoryHelper::Zero(cmd, sizeof(WIFI_CMD));
-cmd->Command=id;
-cmd->Id=++m_RequestId;
-cmd->Flags=WifiCmdFlags::Write;
-cmd->Length=sizeof(INT);
-pkt->Write(&value, sizeof(INT));
-auto response=SendAndReceive(pkt);
-cmd=response->Read<WIFI_CMD>();
-if(FlagHelper::Get(cmd->Flags, WifiCmdFlags::Error))
-	throw InvalidArgumentException();
-}
-
-VOID WifiAdapter::SetInt(LPCSTR name, INT value)
-{
-SetVariable(name, &value, sizeof(INT));
-}
-
-VOID WifiAdapter::SetVariable(LPCSTR name, VOID const* buf, UINT size)
-{
-UINT name_size=StringHelper::Length(name)+1;
-UINT data_size=name_size+size;
-UINT cmd_size=sizeof(WIFI_CMD)+data_size;
-auto pkt=WifiPacket::Create(cmd_size);
-auto cmd=pkt->Write<WIFI_CMD>();
-MemoryHelper::Zero(cmd, sizeof(WIFI_CMD));
-cmd->Command=WifiCmd::SetVariable;
-cmd->Id=++m_RequestId;
-cmd->Flags=WifiCmdFlags::Write;
-cmd->Length=data_size;
-pkt->Write(name, name_size);
-pkt->Write(buf, size);
-auto response=SendAndReceive(pkt);
-cmd=response->Read<WIFI_CMD>();
-if(FlagHelper::Get(cmd->Flags, WifiCmdFlags::Error))
-	throw InvalidArgumentException();
 }
 
 VOID WifiAdapter::UploadRegulatory()

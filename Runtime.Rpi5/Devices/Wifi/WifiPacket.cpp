@@ -19,7 +19,7 @@ namespace Devices {
 
 Handle<WifiPacket> WifiPacket::Create(UINT size)
 {
-UINT pkt_size=TypeHelper::AlignUp(sizeof(WIFI_HEADER)+size, 8U);
+UINT pkt_size=TypeHelper::AlignUp(sizeof(WIFI_HEADER)+size, 4U);
 assert(pkt_size<=WIFI_PACKET_MAX);
 auto pkt=Object::CreateEx<WifiPacket>(pkt_size);
 auto header=pkt->Write<WIFI_HEADER>();
@@ -34,7 +34,7 @@ return pkt;
 
 Handle<WifiPacket> WifiPacket::Create(WIFI_HEADER const& init)
 {
-UINT pkt_size=TypeHelper::AlignUp(init.Length, 8U);
+UINT pkt_size=TypeHelper::AlignUp(init.Length, 4U);
 assert(pkt_size<=WIFI_PACKET_MAX);
 auto pkt=Object::CreateEx<WifiPacket>(pkt_size);
 auto header=pkt->Write<WIFI_HEADER>();

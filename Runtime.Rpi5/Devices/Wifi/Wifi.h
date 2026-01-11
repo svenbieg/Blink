@@ -182,20 +182,61 @@ return flags;
 }();
 
 
-//=========
-// Country
-//=========
+//==========
+// Channels
+//==========
 
-enum class WifiCountry: UINT
+typedef struct
 {
-Germany='DE',
-Worldwide='XX',
+BYTE Id;
+BYTE Flags;
+}WIFI_SCAN_CHANNEL;
+
+constexpr auto WIFI_SCAN_CHANNELS=std::array<WIFI_SCAN_CHANNEL, 14>({
+		{ 1, 0x2B }, { 2, 0x2B }, { 3, 0x2B }, { 4, 0x2B }, { 5, 0x2E }, { 6, 0x2E }, { 7, 0x2E },
+		{ 8, 0x2B }, { 9, 0x2B }, { 10, 0x2B }, { 11, 0x2B }, { 12, 0x2B }, { 13, 0x2B }, { 14, 0x2B }});
+
+
+//======
+// Scan
+//======
+
+constexpr UINT WIFI_SCAN_VERSION=1;
+
+enum class WifiBssType: BYTE
+{
+Independent,
+Infrastructure,
+Any=2
 };
 
-constexpr auto WIFI_COUNTRY(WifiCountry Country)
+enum class WifiScanAction: WORD
 {
-auto country=std::bit_cast<std::array<BYTE, 4>, WifiCountry>(Country);
-return std::array<BYTE, 12>{ country[1], country[0], 0, 0, 0xFF, 0xFF, 0xFF, 0xFF, country[1], country[0], 0, 0 };
-}
+Start=1,
+Continue=2,
+Abort=3
+};
+
+enum class WifiScanType: BYTE
+{
+Active=0,
+Passive=1
+};
+
+typedef struct
+{
+UINT Version;
+WifiScanAction Action;
+WORD SyncId;
+UINT SsidLength;
+CHAR Ssid[32];
+std::array<BYTE, 6> BssId;
+WifiBssType BssType;
+WifiScanType ScanType;
+UINT ProbesCount;
+UINT ActiveTime;
+UINT PassiveTime;
+UINT HomeTime;
+}WIFI_SCAN_PARAMS;
 
 }}

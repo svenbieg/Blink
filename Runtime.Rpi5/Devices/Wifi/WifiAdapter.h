@@ -14,7 +14,6 @@
 #include "Devices/Wifi/WifiPacket.h"
 #include "Network/Ethernet/MacAddress.h"
 #include "Event.h"
-#include <span>
 
 
 //===========
@@ -45,11 +44,15 @@ public:
 
 	// Con-/Destructors
 	~WifiAdapter();
+	VOID Command(WifiCmd Command, UINT Argument);
 	static inline Handle<WifiAdapter> Create() { return Object::Create<WifiAdapter>(); }
+	VOID GetVariable(LPCSTR Name, VOID* Buffer, UINT Size);
 	VOID Initialize();
 	Event<WifiAdapter, WifiPacket*> PacketReceived;
 	VOID Send(WifiPacket* Packet);
-	Handle<WifiPacket> SendAndReceive(WifiPacket* Packet);
+	Handle<WifiPacket> SendAndReceive(WifiPacket* Request);
+	VOID SetVariable(LPCSTR Name, UINT Value);
+	VOID SetVariable(LPCSTR Name, VOID const* Buffer, UINT Size);
 
 private:
 	// Con-/Destructors
@@ -57,9 +60,6 @@ private:
 	WifiAdapter();
 
 	// Common
-	INT GetInt(WifiCmd Id);
-	INT GetInt(LPCSTR Name);
-	UINT GetVariable(LPCSTR Name, VOID* Buffer, UINT Size);
 	VOID HandleFrame();
 	UINT InitializeConfiguration(BYTE* Buffer, UINT Size);
 	VOID IoPoll(EMMC_FN Function, UINT Address, UINT Mask, UINT Value, UINT Timeout=100);
@@ -70,9 +70,6 @@ private:
 	VOID IoWrite(EMMC_FN Function, UINT Address, VOID const* Buffer, UINT Size);
 	VOID Reset(UINT Address, UINT Flags);
 	VOID ServiceTask();
-	VOID SetInt(WifiCmd Id, INT Value);
-	VOID SetInt(LPCSTR Name, INT Value);
-	VOID SetVariable(LPCSTR Name, VOID const* Buffer, UINT Size);
 	VOID UploadRegulatory();
 	VOID WaitForInterrupt(ScopedLock& Lock);
 	VOID WifiRead(VOID* Buffer, UINT Size);
@@ -82,6 +79,7 @@ private:
 	UINT m_IoWindow;
 	MAC_ADDR m_MacAddress;
 	Mutex m_Mutex;
+	Handle<WifiPacket> m_Request;
 	WORD m_RequestId;
 	Handle<WifiPacket> m_Response;
 	Signal m_ResponseReceived;
