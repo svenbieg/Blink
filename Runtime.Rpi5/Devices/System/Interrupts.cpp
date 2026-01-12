@@ -83,7 +83,8 @@ extern "C" VOID HandleInterrupt()
 auto gicc=(GICC_REGS*)ARM_GICC_BASE;
 UINT iar=IoHelper::Read(gicc->IAR);
 UINT irq=BitHelper::Get(iar, GICC_IAR_IRQ_MASK);
-assert(irq<IRQ_COUNT);
+if(irq>=IRQ_COUNT)
+	return;
 Interrupts::HandleInterrupt(irq);
 IoHelper::Write(gicc->EOIR, iar);
 }
