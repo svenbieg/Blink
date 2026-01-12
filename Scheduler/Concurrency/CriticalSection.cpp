@@ -42,7 +42,7 @@ VOID CriticalSection::Lock()
 {
 Interrupts::Disable();
 UINT core=Cpu::GetId()|LOCKED;
-assert(m_Core!=core);
+assert(m_Core!=core); // Deadlock
 while(!Cpu::CompareAndSet(&m_Core, 0, core))
 	{
 	Interrupts::Enable();
@@ -54,7 +54,7 @@ BOOL CriticalSection::TryLock()
 {
 Interrupts::Disable();
 UINT core=Cpu::GetId()|LOCKED;
-assert(m_Core!=core);
+assert(m_Core!=core); // Deadlock
 if(Cpu::CompareAndSet(&m_Core, 0, core))
 	return true;
 Interrupts::Enable();

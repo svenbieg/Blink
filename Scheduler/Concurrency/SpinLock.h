@@ -31,8 +31,8 @@ class SpinLock: public ScopedLock
 {
 public:
 	// Con-/Destructors
-	SpinLock(SpinLock const&)=delete;
 	SpinLock(CriticalSection& CriticalSection);
+	SpinLock(SpinLock const&)=delete;
 	~SpinLock();
 
 	// Common

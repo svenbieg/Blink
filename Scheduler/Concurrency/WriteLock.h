@@ -31,8 +31,8 @@ class WriteLock: public ScopedLock
 {
 public:
 	// Con-/Destructors
-	WriteLock(WriteLock const&)=delete;
 	WriteLock(Mutex& Mutex);
+	WriteLock(WriteLock const&)=delete;
 	~WriteLock();
 
 	// Common

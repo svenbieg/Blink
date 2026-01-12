@@ -76,8 +76,8 @@ VOID Scheduler::AddTask(Task* task)
 SpinLock lock(s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
-FlagHelper::Set(current->m_Flags, TaskFlags::Owner);
-task->m_Owner=current;
+FlagHelper::Set(current->m_Flags, TaskFlags::Creator);
+task->m_Creator=current;
 s_Create.Append(task);
 }
 
@@ -111,15 +111,15 @@ VOID Scheduler::CreateTasks()
 auto create=s_Create.First();
 while(create)
 	{
-	auto owner=create->m_Owner;
-	if(FlagHelper::Get(owner->m_Flags, TaskFlags::Owner))
+	auto creator=create->m_Creator;
+	if(FlagHelper::Get(creator->m_Flags, TaskFlags::Creator))
 		{
 		create=s_Create.Next(create);
 		}
 	else
 		{
 		auto next=s_Create.Remove(create);
-		create->m_Owner=nullptr;
+		create->m_Creator=nullptr;
 		s_Waiting.Insert(create, Task::Priority);
 		create=next;
 		}
@@ -147,7 +147,7 @@ for(UINT core=0; core<s_CoreCount; core++)
 	auto current=s_CurrentTask[core];
 	if(current->m_Next)
 		continue;
-	if(FlagHelper::Get(current->m_Flags, TaskFlags::Locked))
+	if(FlagHelper::Get(current->m_Flags, TaskFlags::Priority))
 		continue;
 	cores[count++]=core;
 	if(count==max)
@@ -217,7 +217,7 @@ if(!s_Waiting.First())
 auto next=current->m_Next;
 if(next)
 	{
-	if(FlagHelper::Get(next->m_Flags, TaskFlags::Locked))
+	if(FlagHelper::Get(next->m_Flags, TaskFlags::Priority))
 		return;
 	if(!FlagHelper::Get(next->m_Flags, TaskFlags::Idle))
 		s_Waiting.Insert(next, Task::Prepend);
@@ -284,9 +284,9 @@ StatusHelper::ThrowIfFailed(current->m_Status);
 VOID Scheduler::SuspendCurrentTask(UINT core, Task* current, UINT64 resume_time)
 {
 FlagHelper::Set(current->m_Flags, TaskFlags::Suspended);
-if(FlagHelper::Get(current->m_Flags, TaskFlags::Owner))
+if(FlagHelper::Get(current->m_Flags, TaskFlags::Creator))
 	{
-	FlagHelper::Clear(current->m_Flags, TaskFlags::Owner);
+	FlagHelper::Clear(current->m_Flags, TaskFlags::Creator);
 	CreateTasks();
 	}
 if(resume_time)

@@ -56,7 +56,7 @@ private:
 	// Using
 	static constexpr UINT CPU_COUNT=Devices::System::Cpu::CPU_COUNT;
 	using CreateList=Collections::LinkedList<LNK_LIST(Task, m_Create)>;
-	using OwnerList=Collections::ForwardList<FWD_LIST(Task, m_Owner)>;
+	using OwnerList=Collections::ForwardList<FWD_LIST(Task, m_Owners)>;
 	using ReleaseList=Collections::LinkedList<LNK_LIST(Task, m_Release)>;
 	using SleepingList=Collections::ForwardList<FWD_LIST(Task, m_Sleeping)>;
 	using WaitingList=Collections::ForwardList<FWD_LIST(Task, m_Waiting)>;

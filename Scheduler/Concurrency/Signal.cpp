@@ -13,7 +13,6 @@
 //=======
 
 #include "Concurrency/Scheduler.h"
-#include "Concurrency/SpinLock.h"
 #include "Devices/System/Cpu.h"
 #include "Devices/Timers/SystemTimer.h"
 #include "StatusHelper.h"
@@ -51,6 +50,9 @@ while(waiting)
 	Scheduler::s_Waiting.Insert(waiting, Task::Priority);
 	waiting=Scheduler::WaitingList::RemoveFirst(&m_Waiting);
 	}
+waiting=Scheduler::s_Waiting.First();
+if(!FlagHelper::Get(waiting->m_Flags, TaskFlags::Priority))
+	return;
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 Scheduler::ResumeWaitingTask(core, current);

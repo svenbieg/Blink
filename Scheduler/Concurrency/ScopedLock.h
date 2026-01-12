@@ -27,7 +27,6 @@ namespace Concurrency {
 //======================
 
 class Signal;
-class SpinLock;
 class Task;
 
 

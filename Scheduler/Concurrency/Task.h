@@ -51,9 +51,9 @@ enum class TaskFlags: UINT
 None=0,
 Done=(1<<0),
 Idle=(1<<1),
-Locked=(1<<2),
-LockedSharing=(1<<2)|(1<<5),
-Owner=(1<<3),
+Priority=(1<<2),
+PrioritySharing=(1<<2)|(1<<5),
+Creator=(1<<3),
 Release=(1<<4),
 Sharing=(1<<5),
 Suspended=(1<<7),
@@ -131,8 +131,6 @@ public:
 		assert(m_Then==nullptr);
 		m_Then=new DispatchedLambda<nullptr_t, _lambda_t>(std::forward<_lambda_t>(Lambda));
 		}
-	static VOID ThrowIfMain();
-	static VOID ThrowIfNotMain();
 
 protected:
 	// Using
@@ -150,14 +148,14 @@ protected:
 	static VOID Schedule(Task* Task);
 	static VOID TaskProc(VOID* Parameter);
 	Link<Task> m_Create;
+	Task* m_Creator;
 	UnwindException* m_Exception;
 	TaskFlags m_Flags;
-	UINT m_LockCount;
 	Mutex m_Mutex;
 	Handle<String> m_Name;
 	Task* m_Next;
-	Task* m_Owner;
 	FwdLink<Task> m_Owners;
+	UINT m_PriorityCount;
 	Link<Task> m_Release;
 	UINT64 m_ResumeTime;
 	Signal* m_Signal;

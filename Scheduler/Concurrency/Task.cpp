@@ -81,19 +81,6 @@ assert(!Task::IsMainTask());
 Scheduler::SuspendCurrentTask(ms);
 }
 
-VOID Task::ThrowIfMain()
-{
-auto current=Scheduler::GetCurrentTask();
-if(current==Scheduler::s_MainTask)
-	throw InvalidContextException();
-}
-VOID Task::ThrowIfNotMain()
-{
-auto current=Scheduler::GetCurrentTask();
-if(current!=Scheduler::s_MainTask)
-	throw InvalidContextException();
-}
-
 
 //============================
 // Con-/Destructors Protected
@@ -102,12 +89,12 @@ if(current!=Scheduler::s_MainTask)
 Task::Task(BYTE* stack, SIZE_T stack_size, Handle<String> name):
 Cancelled(false),
 Name(name->Begin()),
+m_Creator(nullptr),
 m_Exception(nullptr),
 m_Flags(TaskFlags::None),
-m_LockCount(0),
 m_Name(name),
 m_Next(nullptr),
-m_Owner(nullptr),
+m_PriorityCount(0),
 m_ResumeTime(0),
 m_Signal(nullptr),
 m_StackBottom((SIZE_T)stack),
@@ -127,16 +114,16 @@ TaskHelper::Initialize(&m_StackPointer, TaskProc, this);
 
 bool Task::Prepend(Task* first, Task* second)
 {
-if(FlagHelper::Get(second->m_Flags, TaskFlags::Locked))
+if(FlagHelper::Get(second->m_Flags, TaskFlags::Priority))
 	return false;
 return true;
 }
 
 bool Task::Priority(Task* first, Task* second)
 {
-if(!FlagHelper::Get(first->m_Flags, TaskFlags::Locked))
+if(!FlagHelper::Get(first->m_Flags, TaskFlags::Priority))
 	return false;
-if(!FlagHelper::Get(second->m_Flags, TaskFlags::Locked))
+if(!FlagHelper::Get(second->m_Flags, TaskFlags::Priority))
 	return true;
 return false;
 }

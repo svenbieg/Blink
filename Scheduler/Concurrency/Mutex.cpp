@@ -45,32 +45,38 @@ assert(!m_Waiting);
 
 VOID Mutex::Lock()
 {
+// You can not use a Mutex in an ISR, You have to use a CriticalSection instead.
 assert(!Interrupts::Active());
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
+// You can only hold one ReadLock at a time.
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
 Lock(core, current);
 }
 
 VOID Mutex::Lock(AccessMode)
 {
+// You can not use a Mutex in an ISR, You have to use a CriticalSection instead.
 assert(!Interrupts::Active());
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
+// You can only hold one ReadLock at a time.
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
 Lock(core, current, AccessMode::ReadOnly);
 }
 
 BOOL Mutex::TryLock()
 {
+// You can not use a Mutex in an ISR, You have to use a CriticalSection instead.
 assert(!Interrupts::Active());
 SpinLock lock(Scheduler::s_CriticalSection);
 if(m_Owners)
 	return false;
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
+// You can only hold one ReadLock at a time.
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
 m_Owners=current;
 return true;
@@ -78,6 +84,7 @@ return true;
 
 BOOL Mutex::TryLock(AccessMode)
 {
+// You can not use a Mutex in an ISR, You have to use a CriticalSection instead.
 assert(!Interrupts::Active());
 SpinLock lock(Scheduler::s_CriticalSection);
 if(m_Owners)
@@ -87,6 +94,7 @@ if(m_Owners)
 	}
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
+// You can only hold one ReadLock at a time.
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
 FlagHelper::Set(current->m_Flags, TaskFlags::Sharing);
 Scheduler::OwnerList::Append(&m_Owners, current);

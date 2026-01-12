@@ -32,7 +32,6 @@ public:
 	// Con-/Destructors
 	CriticalMutex()=default;
 	CriticalMutex(CriticalMutex const&)=delete;
-	~CriticalMutex()=default;
 
 	// Common
 	VOID Lock()override;
