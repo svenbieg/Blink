@@ -149,7 +149,6 @@ protected:
 	virtual VOID Run()=0;
 	static VOID Schedule(Task* Task);
 	static VOID TaskProc(VOID* Parameter);
-	Link<Task> m_All;
 	Link<Task> m_Create;
 	UnwindException* m_Exception;
 	TaskFlags m_Flags;

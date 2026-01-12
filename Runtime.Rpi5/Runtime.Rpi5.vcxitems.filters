@@ -20,12 +20,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHelper.cpp">
       <Filter>Devices\Gpio</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Emmc\EmmcHost.cpp">
-      <Filter>Devices\Emmc</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiAdapter.cpp">
-      <Filter>Devices\Wifi</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Pcie\PcieHost.cpp">
       <Filter>Devices\Pcie</Filter>
     </ClCompile>
@@ -38,13 +32,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\MailBox.cpp">
       <Filter>Devices\System</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Dma\DmaChannel.cpp">
-      <Filter>Devices\Dma</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)UnwindException.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiPacket.cpp">
-      <Filter>Devices\Wifi</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
@@ -72,15 +60,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHelper.h">
       <Filter>Devices\Gpio</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Emmc\EmmcHost.h">
-      <Filter>Devices\Emmc</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Emmc\Emmc.h">
-      <Filter>Devices\Emmc</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiAdapter.h">
-      <Filter>Devices\Wifi</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Soc.h">
       <Filter>Devices\System</Filter>
     </ClInclude>
@@ -100,16 +79,7 @@
       <Filter>Devices\System</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Dma\DmaChannel.h">
-      <Filter>Devices\Dma</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)UnwindException.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiPacket.h">
-      <Filter>Devices\Wifi</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\Wifi.h">
-      <Filter>Devices\Wifi</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">
@@ -127,20 +97,11 @@
     <Filter Include="Devices\Gpio">
       <UniqueIdentifier>{605f50fa-4556-45f8-bc01-9b5daa298ea6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Devices\Emmc">
-      <UniqueIdentifier>{dce6942c-2dda-4212-abaa-7f6da8ab54e9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Devices\Wifi">
-      <UniqueIdentifier>{e23294cb-0eda-48b8-80e5-aac268cb9757}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Devices\Pcie">
       <UniqueIdentifier>{c571a4a4-e467-44c5-8a28-2469e2ec1257}</UniqueIdentifier>
     </Filter>
     <Filter Include="Devices\Serial">
       <UniqueIdentifier>{870ee661-e3a2-49ea-91ff-ea7a7e88ec14}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Devices\Dma">
-      <UniqueIdentifier>{4f720f33-21b1-4486-850a-3473b832aa3c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -166,8 +127,5 @@
       <Filter>Configuration</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)mmu.S" />
-    <None Include="$(MSBuildThisFileDirectory)Devices\Wifi\firmware.S">
-      <Filter>Devices\Wifi</Filter>
-    </None>
   </ItemGroup>
 </Project>

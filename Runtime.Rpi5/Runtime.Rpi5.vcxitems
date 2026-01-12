@@ -10,8 +10,6 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Dma\DmaChannel.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Emmc\EmmcHost.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHost.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Pcie\PcieHost.cpp" />
@@ -22,17 +20,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Memory.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\System.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiAdapter.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiPacket.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)start.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)UnwindException.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)base.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cpu.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Dma\DmaChannel.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Emmc\Emmc.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Emmc\EmmcHost.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHost.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pcie\Pcie.h" />
@@ -45,9 +38,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Soc.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\System.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\Wifi.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiAdapter.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiPacket.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)except.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)irq.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
@@ -62,7 +52,6 @@
     <None Include="$(MSBuildThisFileDirectory)Configuration\Platform.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.targets" />
-    <None Include="$(MSBuildThisFileDirectory)Devices\Wifi\firmware.S" />
     <None Include="$(MSBuildThisFileDirectory)except.S" />
     <None Include="$(MSBuildThisFileDirectory)mmu.S" />
     <None Include="$(MSBuildThisFileDirectory)vectors.S" />

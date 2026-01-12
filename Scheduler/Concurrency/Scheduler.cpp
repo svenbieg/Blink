@@ -78,7 +78,6 @@ UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
 FlagHelper::Set(current->m_Flags, TaskFlags::Owner);
 task->m_Owner=current;
-s_All.Append(task);
 s_Create.Append(task);
 }
 
@@ -132,7 +131,6 @@ VOID Scheduler::ExitTask()
 SpinLock lock(s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
-s_All.Remove(current);
 FlagHelper::Set(current->m_Flags, TaskFlags::Release);
 SuspendCurrentTask(core, current);
 lock.Unlock();
@@ -305,7 +303,6 @@ current->m_Next=resume;
 Interrupts::Send(Irq::TaskSwitch, core);
 }
 
-Scheduler::AllList Scheduler::s_All;
 UINT Scheduler::s_CoreCount=0;
 Scheduler::CreateList Scheduler::s_Create;
 CriticalSection Scheduler::s_CriticalSection;

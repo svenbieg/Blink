@@ -55,7 +55,6 @@ protected:
 private:
 	// Using
 	static constexpr UINT CPU_COUNT=Devices::System::Cpu::CPU_COUNT;
-	using AllList=Collections::LinkedList<LNK_LIST(Task, m_All)>;
 	using CreateList=Collections::LinkedList<LNK_LIST(Task, m_Create)>;
 	using OwnerList=Collections::ForwardList<FWD_LIST(Task, m_Owner)>;
 	using ReleaseList=Collections::LinkedList<LNK_LIST(Task, m_Release)>;
@@ -76,7 +75,6 @@ private:
 	static VOID Schedule();
 	static VOID SuspendCurrentTask(UINT MilliSeconds);
 	static VOID SuspendCurrentTask(UINT Core, Task* Current, UINT64 ResumeTime=0);
-	static AllList s_All;
 	static UINT s_CoreCount;
 	static CreateList s_Create;
 	static CriticalSection s_CriticalSection;
