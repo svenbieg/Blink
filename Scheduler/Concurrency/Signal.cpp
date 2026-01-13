@@ -84,7 +84,10 @@ if(!waiting)
 while(waiting)
 	{
 	if(--waiting->m_SignalCount)
+		{
+		waiting=Scheduler::WaitingList::Next(waiting);
 		continue;
+		}
 	if(waiting->m_ResumeTime)
 		{
 		Scheduler::s_Sleeping.Remove(waiting);
@@ -93,7 +96,7 @@ while(waiting)
 	FlagHelper::Clear(waiting->m_Flags, TaskFlags::Suspended);
 	waiting->m_Status=status;
 	Scheduler::s_Waiting.Insert(waiting, Task::Priority);
-	waiting=Scheduler::WaitingList::RemoveFirst(&m_Waiting);
+	waiting=Scheduler::WaitingList::Remove(&m_Waiting, waiting);
 	}
 waiting=Scheduler::s_Waiting.First();
 if(!FlagHelper::Get(waiting->m_Flags, TaskFlags::Priority))
