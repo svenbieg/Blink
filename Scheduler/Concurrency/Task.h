@@ -159,6 +159,7 @@ protected:
 	Link<Task> m_Release;
 	UINT64 m_ResumeTime;
 	Signal* m_Signal;
+	UINT m_SignalCount;
 	Link<Task> m_Sleeping;
 	SIZE_T m_StackBottom;
 	SIZE_T m_StackPointer;
