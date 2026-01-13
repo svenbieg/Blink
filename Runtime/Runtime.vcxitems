@@ -32,6 +32,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)new" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mutex" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stdexcept" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\PacketBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\RingBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\InputBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\OutputBuffer.h" />
@@ -44,6 +45,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)heap.c" />
     <ClCompile Include="$(MSBuildThisFileDirectory)new.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)stdlib.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\PacketBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\RingBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\InputBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\OutputBuffer.cpp" />
