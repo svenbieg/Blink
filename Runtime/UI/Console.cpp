@@ -35,6 +35,17 @@ WriteLock lock(m_Mutex);
 m_Commands.add(cmd, func);
 }
 
+VOID Console::Print(LPCSTR text)
+{
+if(!text)
+	return;
+auto console=Get();
+WriteLock lock(console->m_Mutex);
+StreamWriter writer(console->m_SerialPort);
+writer.Print(text);
+writer.Flush();
+}
+
 VOID Console::Print(Handle<String> text)
 {
 if(!text)

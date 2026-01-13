@@ -39,6 +39,7 @@ public:
 	// Common
 	VOID AddCommand(Handle<String> Command, Function<VOID()> Function);
 	Event<Console, Handle<String>> CommandReceived;
+	static VOID Print(LPCSTR Text);
 	static VOID Print(Handle<String> Text);
 	template <class... _args_t> static inline VOID Print(LPCSTR Format, _args_t... Arguments)
 		{
