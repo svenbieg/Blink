@@ -4,6 +4,9 @@
   <Target Name="DownloadFirmware" Condition="!Exists('$(FirmwarePath)')" BeforeTargets="Build">
     <Message Text="Downloading Firmware..." Importance="High" />
     <DownloadFile SourceUrl="https://github.com/raspberrypi/firmware/raw/refs/heads/master/boot/bcm2712-rpi-5-b.dtb" DestinationFolder="$(SolutionDir)Firmware" />
+    <DownloadFile SourceUrl="https://github.com/RPi-Distro/firmware-nonfree/raw/refs/heads/trixie/debian/config/brcm80211/cypress/cyfmac43455-sdio-minimal.bin" DestinationFolder="$(FirmwarePath)" />
+    <DownloadFile SourceUrl="https://github.com/RPi-Distro/firmware-nonfree/raw/refs/heads/trixie/debian/config/brcm80211/cypress/cyfmac43455-sdio.clm_blob" DestinationFolder="$(FirmwarePath)" />
+    <DownloadFile SourceUrl="https://github.com/RPi-Distro/firmware-nonfree/raw/refs/heads/trixie/debian/config/brcm80211/brcm/brcmfmac43455-sdio.txt" DestinationFolder="$(FirmwarePath)" />
   </Target>
 
   <Target Name="CreateConfig" AfterTargets="Build">
