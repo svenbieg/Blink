@@ -7,7 +7,7 @@ while the <a href="https://github.com/svenbieg/Heap">memory-manager</a> supports
 </p>
 <br />
 
-<img src="https://github.com/user-attachments/assets/406441c4-adf4-41be-881d-24403dbeecab" width="500" /><br />
+<img src="https://github.com/user-attachments/assets/75f2fcf0-f95d-40f8-94c9-ae9aee2af6bb" width="500" /><br />
 
 <br />
 
