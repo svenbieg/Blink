@@ -64,7 +64,7 @@ private:
 	// Common
 	static VOID AddTask(Task* Task);
 	static VOID CancelTask(Task* Task);
-	static VOID CreateTasks();
+	static UINT CreateTasks();
 	static VOID ExitTask();
 	static UINT GetAvailableCores(UINT* Cores, UINT Max);
 	static Task* GetCurrentTask();

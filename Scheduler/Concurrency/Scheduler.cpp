@@ -106,8 +106,9 @@ if(resume)
 	}
 }
 
-VOID Scheduler::CreateTasks()
+UINT Scheduler::CreateTasks()
 {
+UINT count=0;
 auto create=s_Create.First();
 while(create)
 	{
@@ -122,8 +123,10 @@ while(create)
 		create->m_Creator=nullptr;
 		s_Waiting.Insert(create, Task::Priority);
 		create=next;
+		count++;
 		}
 	}
+return count;
 }
 
 VOID Scheduler::ExitTask()
@@ -292,23 +295,27 @@ StatusHelper::ThrowIfFailed(current->m_Status);
 VOID Scheduler::SuspendCurrentTask(UINT core, Task* current, UINT64 resume_time)
 {
 FlagHelper::Set(current->m_Flags, TaskFlags::Suspended);
+UINT resume_count=0;
 if(FlagHelper::Get(current->m_Flags, TaskFlags::Creator))
 	{
 	FlagHelper::Clear(current->m_Flags, TaskFlags::Creator);
-	CreateTasks();
+	resume_count=CreateTasks();
 	}
 if(resume_time)
 	{
 	current->m_ResumeTime=resume_time;
 	s_Sleeping.Insert(current, [](Task* first, Task* second){ return first->m_ResumeTime<second->m_ResumeTime; });
 	}
-if(current->m_Next)
-	return;
-auto resume=s_Waiting.RemoveFirst();
-if(!resume)
-	resume=s_IdleTask[core];
-current->m_Next=resume;
-Interrupts::Send(Irq::TaskSwitch, core);
+if(resume_count)
+	ResumeWaitingTasks(resume_count);
+if(!current->m_Next)
+	{
+	auto resume=s_Waiting.RemoveFirst();
+	if(!resume)
+		resume=s_IdleTask[core];
+	current->m_Next=resume;
+	Interrupts::Send(Irq::TaskSwitch, core);
+	}
 }
 
 UINT Scheduler::s_CoreCount=0;
