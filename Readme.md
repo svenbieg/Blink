@@ -7,7 +7,8 @@ while the <a href="https://github.com/svenbieg/Heap">memory-manager</a> supports
 </p>
 <br />
 
-<img src="https://github.com/user-attachments/assets/d6a96592-7131-46cd-b393-7d10fd25c553" width="500" /><br />
+<img src="https://github.com/user-attachments/assets/75f2fcf0-f95d-40f8-94c9-ae9aee2af6bb" width="500" /><br />
+
 <br />
 
 You can find detailed information in the <a href="https://github.com/svenbieg/Blink/wiki">Wiki</a>.
