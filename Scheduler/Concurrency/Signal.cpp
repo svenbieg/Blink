@@ -81,6 +81,7 @@ SpinLock lock(Scheduler::s_CriticalSection);
 auto waiting=Scheduler::WaitingList::RemoveFirst(&m_Waiting);
 if(!waiting)
 	return;
+UINT resume_count=0;
 while(waiting)
 	{
 	if(--waiting->m_SignalCount)
@@ -97,13 +98,10 @@ while(waiting)
 	waiting->m_Status=status;
 	Scheduler::s_Waiting.Insert(waiting, Task::Priority);
 	waiting=Scheduler::WaitingList::Remove(&m_Waiting, waiting);
+	resume_count++;
 	}
-waiting=Scheduler::s_Waiting.First();
-if(!FlagHelper::Get(waiting->m_Flags, TaskFlags::Priority))
-	return;
-UINT core=Cpu::GetId();
-auto current=Scheduler::s_CurrentTask[core];
-Scheduler::ResumeWaitingTask(core, current);
+if(resume_count)
+	Scheduler::ResumeWaitingTasks(resume_count);
 }
 
 
@@ -120,6 +118,7 @@ scoped_lock.Unlock(core, current);
 Scheduler::SuspendCurrentTask(core, current);
 FlagHelper::Clear(current->m_Flags, TaskFlags::Timeout);
 current->m_Signal=this;
+current->m_SignalCount=1;
 Scheduler::WaitingList::Append(&m_Waiting, current);
 lock.Yield();
 scoped_lock.Lock(core, current);

@@ -72,12 +72,14 @@ private:
 	static VOID IdleTask();
 	static VOID MainTask();
 	static VOID ResumeWaitingTask(UINT Core, Task* Current);
+	static VOID ResumeWaitingTasks(UINT Count=0);
 	static VOID Schedule();
 	static VOID SuspendCurrentTask(UINT MilliSeconds);
 	static VOID SuspendCurrentTask(UINT Core, Task* Current, UINT64 ResumeTime=0);
 	static UINT s_CoreCount;
 	static CreateList s_Create;
 	static CriticalSection s_CriticalSection;
+	static UINT s_CurrentCore;
 	static Task* s_CurrentTask[CPU_COUNT];
 	static Task* s_IdleTask[CPU_COUNT];
 	static Task* s_MainTask;

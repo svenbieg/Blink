@@ -70,10 +70,10 @@ protected:
 	// Common
 	BOOL Lock(UINT Core, Task* Current);
 	BOOL Lock(UINT Core, Task* Current, AccessMode);
-	BOOL Unlock(Task* Current);
-	BOOL Unlock(Task* Current, AccessMode);
-	BOOL WakeupWaitingTasks();
-	Task* m_Owners=nullptr;
+	UINT Unlock(Task* Current);
+	UINT Unlock(Task* Current, AccessMode);
+	UINT WakeupWaitingTasks();
+	Task* m_Owner=nullptr;
 	Task* m_Waiting=nullptr;
 };
 

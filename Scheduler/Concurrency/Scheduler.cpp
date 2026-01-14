@@ -142,8 +142,9 @@ UINT Scheduler::GetAvailableCores(UINT* cores, UINT max)
 {
 UINT count=0;
 static_assert(CPU_COUNT<=32);
-for(UINT core=0; core<s_CoreCount; core++)
+for(UINT u=0; u<s_CoreCount; u++)
 	{
+	UINT core=(s_CurrentCore+u)%s_CoreCount;
 	auto current=s_CurrentTask[core];
 	if(current->m_Next)
 		continue;
@@ -151,8 +152,9 @@ for(UINT core=0; core<s_CoreCount; core++)
 		continue;
 	cores[count++]=core;
 	if(count==max)
-		return count;
+		break;
 	}
+s_CurrentCore=(s_CurrentCore+count)%s_CoreCount;
 return count;
 }
 
@@ -227,6 +229,22 @@ current->m_Next=resume;
 Interrupts::Send(Irq::TaskSwitch, core);
 }
 
+VOID Scheduler::ResumeWaitingTasks(UINT count)
+{
+UINT waiting_count=s_Waiting.Count(s_CoreCount);
+if(!waiting_count)
+	return;
+UINT resume_count=TypeHelper::Min(waiting_count, count);
+UINT cores[CPU_COUNT];
+UINT core_count=GetAvailableCores(cores, resume_count);
+for(UINT core_id=0; core_id<core_count; core_id++)
+	{
+	UINT core=cores[core_id];
+	auto current=s_CurrentTask[core];
+	ResumeWaitingTask(core, current);
+	}
+}
+
 VOID Scheduler::Schedule()
 {
 SpinLock lock(s_CriticalSection);
@@ -257,17 +275,7 @@ if(s_Sleeping)
 		sleeping=s_Sleeping.First();
 		}
 	}
-UINT waiting_count=s_Waiting.Count(s_CoreCount);
-if(!waiting_count)
-	return;
-UINT cores[CPU_COUNT];
-UINT core_count=GetAvailableCores(cores, waiting_count);
-for(UINT core_id=0; core_id<core_count; core_id++)
-	{
-	UINT core=cores[core_id];
-	auto current=s_CurrentTask[core];
-	ResumeWaitingTask(core, current);
-	}
+ResumeWaitingTasks(CPU_COUNT);
 }
 
 VOID Scheduler::SuspendCurrentTask(UINT ms)
@@ -306,6 +314,7 @@ Interrupts::Send(Irq::TaskSwitch, core);
 UINT Scheduler::s_CoreCount=0;
 Scheduler::CreateList Scheduler::s_Create;
 CriticalSection Scheduler::s_CriticalSection;
+UINT Scheduler::s_CurrentCore=0;
 Task* Scheduler::s_CurrentTask[CPU_COUNT]={ nullptr };
 Task* Scheduler::s_IdleTask[CPU_COUNT]={ nullptr };
 Task* Scheduler::s_MainTask=nullptr;
