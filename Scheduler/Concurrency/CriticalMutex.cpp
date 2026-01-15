@@ -119,7 +119,7 @@ if(--current->m_PriorityCount==0)
 		}
 	}
 if(resume_count)
-	Scheduler::ResumeWaitingTasks(resume_count);
+	Scheduler::ResumeWaitingTasks(resume_count, true);
 }
 
 VOID CriticalMutex::Unlock(AccessMode)
@@ -139,7 +139,7 @@ if(--current->m_PriorityCount==0)
 		}
 	}
 if(resume_count)
-	Scheduler::ResumeWaitingTasks(resume_count);
+	Scheduler::ResumeWaitingTasks(resume_count, true);
 }
 
 }

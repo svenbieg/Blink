@@ -142,7 +142,6 @@ protected:
 	static Task* CreateInternal(VOID (*Procedure)(), Handle<String> Name, SIZE_T StackSize=MemoryHelper::PAGE_SIZE);
 
 	// Common
-	static bool Prepend(Task* First, Task* Second);
 	static bool Priority(Task* First, Task* Second);
 	virtual VOID Run()=0;
 	static VOID Schedule(Task* Task);

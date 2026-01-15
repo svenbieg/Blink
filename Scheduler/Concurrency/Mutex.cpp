@@ -109,7 +109,7 @@ auto current=Scheduler::s_CurrentTask[core];
 assert(m_Owner==current);
 UINT resume_count=Unlock(current);
 if(resume_count)
-	Scheduler::ResumeWaitingTasks(resume_count);
+	Scheduler::ResumeWaitingTasks(resume_count, false);
 }
 
 VOID Mutex::Unlock(AccessMode)
@@ -119,7 +119,7 @@ UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 UINT resume_count=Unlock(current, AccessMode::ReadOnly);
 if(resume_count)
-	Scheduler::ResumeWaitingTasks(resume_count);
+	Scheduler::ResumeWaitingTasks(resume_count, false);
 }
 
 
@@ -134,9 +134,9 @@ if(!m_Owner)
 	m_Owner=current;
 	return true;
 	}
-assert(m_Owner!=current);
+assert(m_Owner!=current); // Deadlock
 Scheduler::SuspendCurrentTask(core, current);
-Scheduler::WaitingList::Insert(&m_Waiting, current, Task::Priority);
+Scheduler::WaitingList::Append(&m_Waiting, current);
 return false;
 }
 
@@ -157,14 +157,14 @@ if(FlagHelper::Get(m_Owner->m_Flags, TaskFlags::Sharing))
 		}
 	}
 Scheduler::SuspendCurrentTask(core, current);
-Scheduler::WaitingList::Insert(&m_Waiting, current, Task::Priority);
+Scheduler::WaitingList::Append(&m_Waiting, current);
 return false;
 }
 
 UINT Mutex::Unlock(Task* current)
 {
-if(m_Owner!=current)
-	return false;
+if(m_Owner!=current) // Maybe unlocked in lock-destructor
+	return 0;
 Scheduler::OwnerList::RemoveFirst(&m_Owner);
 return WakeupWaitingTasks();
 }
@@ -172,23 +172,22 @@ return WakeupWaitingTasks();
 UINT Mutex::Unlock(Task* current, AccessMode)
 {
 BOOL removed=Scheduler::OwnerList::TryRemove(&m_Owner, current);
-if(!removed)
-	return false;
+if(!removed) // Maybe unlocked in lock-destructor
+	return 0;
 FlagHelper::Clear(current->m_Flags, TaskFlags::Sharing);
 if(m_Owner)
-	return false;
+	return 0;
 return WakeupWaitingTasks();
 }
 
 UINT Mutex::WakeupWaitingTasks()
 {
-assert(m_Owner==nullptr);
 auto waiting=Scheduler::WaitingList::RemoveFirst(&m_Waiting);
 if(!waiting)
 	return 0;
 m_Owner=waiting;
 FlagHelper::Clear(waiting->m_Flags, TaskFlags::Suspended);
-Scheduler::s_Waiting.Insert(waiting, Task::Prepend);
+Scheduler::s_Waiting.Insert(waiting, Task::Priority);
 UINT count=1;
 if(FlagHelper::Get(waiting->m_Flags, TaskFlags::Sharing))
 	{
@@ -197,9 +196,9 @@ if(FlagHelper::Get(waiting->m_Flags, TaskFlags::Sharing))
 		if(!FlagHelper::Get(m_Waiting->m_Flags, TaskFlags::Sharing))
 			break;
 		auto resume=Scheduler::WaitingList::RemoveFirst(&m_Waiting);
-		Scheduler::OwnerList::Append(&m_Owner, resume);
+		Scheduler::OwnerList::Insert(&m_Owner, resume, Task::Priority);
 		FlagHelper::Clear(resume->m_Flags, TaskFlags::Suspended);
-		Scheduler::s_Waiting.Insert(waiting, Task::Prepend);
+		Scheduler::s_Waiting.Insert(waiting, Task::Priority);
 		count++;
 		}
 	}

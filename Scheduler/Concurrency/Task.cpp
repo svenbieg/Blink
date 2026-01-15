@@ -113,20 +113,11 @@ TaskHelper::Initialize(&m_StackPointer, TaskProc, this);
 // Common Protected
 //==================
 
-bool Task::Prepend(Task* first, Task* second)
+bool Task::Priority(Task* first, Task* second)
 {
 if(FlagHelper::Get(second->m_Flags, TaskFlags::Priority))
 	return false;
 return true;
-}
-
-bool Task::Priority(Task* first, Task* second)
-{
-if(!FlagHelper::Get(first->m_Flags, TaskFlags::Priority))
-	return false;
-if(!FlagHelper::Get(second->m_Flags, TaskFlags::Priority))
-	return true;
-return false;
 }
 
 VOID Task::Schedule(Task* task)

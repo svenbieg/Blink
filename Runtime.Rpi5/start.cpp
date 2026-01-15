@@ -33,7 +33,6 @@ VOID start()
 {
 Memory::Initialize();
 Interrupts::Initialize();
-Scheduler::Initialize();
 Scheduler::Begin();
 }
 

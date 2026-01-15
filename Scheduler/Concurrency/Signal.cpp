@@ -41,11 +41,11 @@ if(timeout)
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
-Scheduler::SuspendCurrentTask(core, current, resume_time);
 FlagHelper::Clear(current->m_Flags, TaskFlags::Timeout);
 current->m_Signal=this;
 current->m_SignalCount=times;
 Scheduler::WaitingList::Insert(&m_Waiting, current, Task::Priority);
+Scheduler::SuspendCurrentTask(core, current, resume_time);
 lock.Unlock();
 if(FlagHelper::Get(current->m_Flags, TaskFlags::Timeout))
 	throw TimeoutException();
@@ -62,11 +62,11 @@ SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 scoped_lock.Unlock(core, current);
-Scheduler::SuspendCurrentTask(core, current, resume_time);
 FlagHelper::Clear(current->m_Flags, TaskFlags::Timeout);
 current->m_Signal=this;
 current->m_SignalCount=times;
 Scheduler::WaitingList::Insert(&m_Waiting, current, Task::Priority);
+Scheduler::SuspendCurrentTask(core, current, resume_time);
 lock.Unlock();
 if(FlagHelper::Get(current->m_Flags, TaskFlags::Timeout))
 	throw TimeoutException();
@@ -101,7 +101,7 @@ while(waiting)
 	resume_count++;
 	}
 if(resume_count)
-	Scheduler::ResumeWaitingTasks(resume_count);
+	Scheduler::ResumeWaitingTasks(resume_count, false);
 }
 
 
@@ -115,11 +115,11 @@ SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 scoped_lock.Unlock(core, current);
-Scheduler::SuspendCurrentTask(core, current);
 FlagHelper::Clear(current->m_Flags, TaskFlags::Timeout);
 current->m_Signal=this;
 current->m_SignalCount=1;
 Scheduler::WaitingList::Append(&m_Waiting, current);
+Scheduler::SuspendCurrentTask(core, current);
 lock.Yield();
 scoped_lock.Lock(core, current);
 }

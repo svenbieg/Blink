@@ -47,10 +47,6 @@ public:
 
 	// Common
 	static VOID Begin();
-	static VOID Initialize();
-
-protected:
-	// Common
 
 private:
 	// Using
@@ -66,17 +62,15 @@ private:
 	static VOID CancelTask(Task* Task);
 	static UINT CreateTasks();
 	static VOID ExitTask();
-	static UINT GetAvailableCores(UINT* Cores, UINT Max);
 	static Task* GetCurrentTask();
+	static UINT GetNextCore(BOOL Suspend);
 	static VOID HandleTaskSwitch(VOID* Parameter);
 	static VOID IdleTask();
 	static VOID MainTask();
-	static VOID ResumeWaitingTask(UINT Core, Task* Current);
-	static VOID ResumeWaitingTasks(UINT Count=0);
+	static VOID ResumeWaitingTasks(UINT Count, BOOL Suspend);
 	static VOID Schedule();
 	static VOID SuspendCurrentTask(UINT MilliSeconds);
 	static VOID SuspendCurrentTask(UINT Core, Task* Current, UINT64 ResumeTime=0);
-	static UINT s_CoreCount;
 	static CreateList s_Create;
 	static CriticalSection s_CriticalSection;
 	static UINT s_CurrentCore;
