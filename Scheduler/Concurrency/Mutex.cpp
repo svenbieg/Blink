@@ -50,6 +50,8 @@ assert(!Interrupts::Active());
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
+// There is a CriticalMutex for service-tasks.
+assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Priority));
 // You can only hold one ReadLock at a time.
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
 Lock(core, current);
@@ -62,6 +64,8 @@ assert(!Interrupts::Active());
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
+// There is a CriticalMutex for service-tasks.
+assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Priority));
 // You can only hold one ReadLock at a time.
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
 Lock(core, current, AccessMode::ReadOnly);
@@ -76,6 +80,8 @@ if(m_Owner)
 	return false;
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
+// There is a CriticalMutex for service-tasks.
+assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Priority));
 // You can only hold one ReadLock at a time.
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
 m_Owner=current;
@@ -94,6 +100,8 @@ if(m_Owner)
 	}
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
+// There is a CriticalMutex for service-tasks.
+assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Priority));
 // You can only hold one ReadLock at a time.
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
 FlagHelper::Set(current->m_Flags, TaskFlags::Sharing);
