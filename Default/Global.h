@@ -21,15 +21,9 @@ template <class _obj_t> class Global: public Object
 {
 public:
 	// Using
+	using Cpu=Devices::System::Cpu;
 	using Mutex=Concurrency::Mutex;
 	using WriteLock=Concurrency::WriteLock;
-
-	// Con-/Destructors
-	~Global()
-		{
-		WriteLock lock(s_Mutex);
-		s_Global=nullptr;
-		}
 
 protected:
 	// Con-/Destructors
@@ -43,6 +37,17 @@ protected:
 			return s_Global;
 		s_Global=Object::Create<_obj_t>(Arguments...);
 		return s_Global;
+		}
+	virtual UINT Release()override
+		{
+		WriteLock lock(s_Mutex);
+		UINT ref_count=Cpu::InterlockedDecrement(&m_ReferenceCount);
+		if(ref_count==0)
+			{
+			delete this;
+			s_Global=nullptr;
+			}
+		return ref_count;
 		}
 
 private:
