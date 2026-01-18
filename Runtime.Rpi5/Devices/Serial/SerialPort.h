@@ -68,10 +68,14 @@ public:
 	friend Object;
 
 	// Using
+	using CriticalMutex=Concurrency::CriticalMutex;
+	using CriticalSection=Concurrency::CriticalSection;
 	using GpioHost=Devices::Gpio::GpioHost;
 	using OutputBuffer=Storage::Streams::OutputBuffer;
 	using PcieHost=Devices::Pcie::PcieHost;
 	using RingBuffer=Storage::RingBuffer;
+	using Signal=Concurrency::Signal;
+	using Task=Concurrency::Task;
 
 	// Con-/Destructors
 	~SerialPort();
@@ -92,21 +96,21 @@ private:
 	// Con-/Destructors
 	SerialPort(SerialDevice Device, BaudRate Baud);
 	static SerialPort* s_Current[UART_COUNT];
-	static Concurrency::Mutex s_Mutex;
+	static CriticalMutex s_Mutex;
 
 	// Common
 	static VOID HandleInterrupt(VOID* Parameter);
 	VOID OnInterrupt();
 	VOID ServiceTask();
 	BaudRate m_BaudRate;
-	Concurrency::CriticalSection m_CriticalSection;
+	CriticalSection m_CriticalSection;
 	VOID* m_Device;
 	Handle<GpioHost> m_GpioHost;
 	UINT m_Id;
 	Handle<RingBuffer> m_InputBuffer;
 	Handle<PcieHost> m_PcieHost;
-	Handle<Concurrency::Task> m_ServiceTask;
-	Concurrency::Signal m_Signal;
+	Handle<Task> m_ServiceTask;
+	Signal m_Signal;
 	Handle<OutputBuffer> m_OutputBuffer;
 };
 

@@ -31,6 +31,7 @@ class Console: public Global<Console>
 {
 public:
 	// Using
+	using CriticalMutex=Concurrency::CriticalMutex;
 	using SerialPort=Devices::Serial::SerialPort;
 
 	// Con-/Destructors
@@ -56,7 +57,7 @@ private:
 	VOID HandleCommand(Handle<String> Command);
 	VOID OnSerialPortDataReceived();
 	Collections::map<Handle<String>, Function<VOID()>> m_Commands;
-	Concurrency::Mutex m_Mutex;
+	CriticalMutex m_Mutex;
 	Handle<SerialPort> m_SerialPort;
 	StringBuilder m_StringBuilder;
 	Handle<Console> m_This;

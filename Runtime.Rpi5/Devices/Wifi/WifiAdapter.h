@@ -32,11 +32,11 @@ class WifiAdapter: public Object
 {
 public:
 	// Using
+	using CriticalMutex=Concurrency::CriticalMutex;
 	using EMMC_FN=Devices::Emmc::EMMC_FN;
 	using EMMC_REGS=Devices::Emmc::EMMC_REGS;
 	using EmmcHost=Devices::Emmc::EmmcHost;
 	using MAC_ADDR=Network::Ethernet::MAC_ADDR;
-	using Mutex=Concurrency::Mutex;
 	using PacketBuffer=Storage::PacketBuffer;
 	using ScopedLock=Concurrency::ScopedLock;
 	using Signal=Concurrency::Signal;
@@ -78,7 +78,7 @@ private:
 	Handle<EmmcHost> m_EmmcHost;
 	UINT m_IoWindow;
 	MAC_ADDR m_MacAddress;
-	Mutex m_Mutex;
+	CriticalMutex m_Mutex;
 	Handle<WifiPacket> m_Request;
 	WORD m_RequestId;
 	Handle<WifiPacket> m_Response;

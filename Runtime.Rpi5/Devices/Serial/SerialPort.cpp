@@ -208,7 +208,7 @@ m_ServiceTask=ServiceTask::Create(this, &SerialPort::ServiceTask, name);
 }
 
 SerialPort* SerialPort::s_Current[UART_COUNT]={ nullptr };
-Mutex SerialPort::s_Mutex;
+CriticalMutex SerialPort::s_Mutex;
 
 
 //================
