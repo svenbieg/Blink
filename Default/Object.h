@@ -47,8 +47,8 @@ public:
 protected:
 	// Con-/Destructors
 	Object(): m_ReferenceCount(0) {}
-	template <class _obj_t, class... _args_t> static inline Handle<_obj_t> Create(_args_t... Arguments);
-	template <class _obj_t, class... _args_t> static inline Handle<_obj_t> CreateEx(SIZE_T Extra, SIZE_T Align=sizeof(SIZE_T), _args_t... Arguments);
+	template <class _obj_t, class... _args_t> static _obj_t* Create(_args_t... Arguments);
+	template <class _obj_t, class... _args_t> static _obj_t* CreateEx(SIZE_T Extra, SIZE_T Align=sizeof(SIZE_T), _args_t... Arguments);
 
 	// Common
 	inline VOID AddReference()
@@ -66,7 +66,7 @@ protected:
 
 #include "Handle.h"
 
-template <class _obj_t, class... _args_t> inline Handle<_obj_t> Object::Create(_args_t... Arguments)
+template <class _obj_t, class... _args_t> _obj_t* Object::Create(_args_t... Arguments)
 {
 auto obj=(_obj_t*)MemoryHelper::Allocate(sizeof(_obj_t));
 try
@@ -81,7 +81,7 @@ catch(Exception e)
 return obj;
 }
 
-template <class _obj_t, class... _args_t> inline Handle<_obj_t> Object::CreateEx(SIZE_T Extra, SIZE_T Align, _args_t... Arguments)
+template <class _obj_t, class... _args_t> _obj_t* Object::CreateEx(SIZE_T Extra, SIZE_T Align, _args_t... Arguments)
 {
 SIZE_T align=TypeHelper::Min(Align, sizeof(SIZE_T));
 SIZE_T extra=TypeHelper::AlignUp(Extra, align);

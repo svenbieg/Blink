@@ -36,7 +36,7 @@ protected:
 	Global()=default;
 
 	// Common
-	template <class... _args_t> static Handle<_obj_t> Create(_args_t... Arguments)
+	template <class... _args_t> static _obj_t* Create(_args_t... Arguments)
 		{
 		WriteLock lock(s_Mutex);
 		if(s_Global)
