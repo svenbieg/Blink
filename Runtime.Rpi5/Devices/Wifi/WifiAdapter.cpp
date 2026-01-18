@@ -13,8 +13,8 @@
 #include "Devices/Gpio/GpioHelper.h"
 #include "Devices/Timers/SystemTimer.h"
 #include "Devices/Wifi/Wifi.h"
+#include "Devices/Wifi/WifiEvent.h"
 #include "Storage/Buffer.h"
-#include "DebugHelper.h"
 #include <base.h>
 
 using namespace Concurrency;
@@ -50,6 +50,26 @@ constexpr UINT EMMC_BASE_CLOCK				=54'000'000;
 constexpr UINT EMMC_CLOCK					=25'000'000;
 
 constexpr UINT WIFI_TIMEOUT					=500;
+
+
+//============
+// Regulatory
+//============
+
+typedef struct
+{
+WORD Flags;
+WORD Type;
+UINT Size;
+UINT Crc;
+}CLM_HEADER;
+
+constexpr WORD CLM_TYPE			=2;
+constexpr UINT CLM_DATA_MAX		=1024;
+
+constexpr WORD CLMF_CLM			=(1<<12);
+constexpr WORD CLMF_LAST		=(1<<2);
+constexpr WORD CLMF_FIRST		=(1<<1);
 
 
 //==================
@@ -247,7 +267,6 @@ if(len)
 	{
 	if(header.LengthChk!=(len^0xFFFF)||len<sizeof(WIFI_HEADER)||len>WIFI_PACKET_MAX)
 		{
-		DebugHelper::Print("wifi: checksum error\n");
 		m_EmmcHost->WriteRegister(SB_FRAME_CTRL, FRAME_CTRL_RFHALT);
 		m_EmmcHost->PollRegister(SB_RFRM_CNT_1, 0xFF, 0);
 		m_EmmcHost->PollRegister(SB_RFRM_CNT_0, 0xFF, 0);

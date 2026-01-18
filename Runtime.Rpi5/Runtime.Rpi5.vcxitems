@@ -24,7 +24,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiAdapter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiPacket.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Network\Wifi\WifiStation.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)start.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\FlashMemory.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)UnwindException.cpp" />
@@ -49,12 +48,14 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\Wifi.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiCommand.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiEvent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiPacket.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiScan.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)except.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)irq.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)config.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Network\Wifi\WifiStation.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\FlashMemory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)task.h" />

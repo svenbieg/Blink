@@ -9,7 +9,6 @@
 // Using
 //=======
 
-#include "Concurrency/CriticalMutex.h"
 #include "Concurrency/WriteLock.h"
 #include "Handle.h"
 
@@ -22,7 +21,7 @@ template <class _obj_t> class Global: public Object
 {
 public:
 	// Using
-	using CriticalMutex=Concurrency::CriticalMutex;
+	using Mutex=Concurrency::Mutex;
 	using WriteLock=Concurrency::WriteLock;
 
 	// Con-/Destructors
@@ -48,9 +47,9 @@ protected:
 
 private:
 	// Common
-	static CriticalMutex s_Mutex;
+	static Mutex s_Mutex;
 	static _obj_t* s_Global;
 };
 
-template <class _obj_t> Concurrency::CriticalMutex Global<_obj_t>::s_Mutex;
+template <class _obj_t> Concurrency::Mutex Global<_obj_t>::s_Mutex;
 template <class _obj_t> _obj_t* Global<_obj_t>::s_Global=nullptr;

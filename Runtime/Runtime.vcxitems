@@ -29,6 +29,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)heap.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mutex" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Network\Ethernet\MacAddress.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)new" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mutex" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stdexcept" />
@@ -43,6 +44,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)cxxabi.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)heap.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Network\Ethernet\MacAddress.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)new.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)stdlib.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\PacketBuffer.cpp" />

@@ -41,15 +41,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\MailBox.cpp">
       <Filter>Devices\System</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)UnwindException.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Network\Wifi\WifiStation.cpp">
-      <Filter>Network\Wifi</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiPacket.cpp">
-      <Filter>Devices\Wifi</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Dma\DmaChannel.cpp">
       <Filter>Devices\Dma</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)UnwindException.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiPacket.cpp">
+      <Filter>Devices\Wifi</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -109,6 +106,9 @@
       <Filter>Devices\System</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Dma\DmaChannel.h">
+      <Filter>Devices\Dma</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)UnwindException.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiPacket.h">
       <Filter>Devices\Wifi</Filter>
@@ -116,11 +116,14 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\Wifi.h">
       <Filter>Devices\Wifi</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Network\Wifi\WifiStation.h">
-      <Filter>Network\Wifi</Filter>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiCommand.h">
+      <Filter>Devices\Wifi</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Dma\DmaChannel.h">
-      <Filter>Devices\Dma</Filter>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiEvent.h">
+      <Filter>Devices\Wifi</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiScan.h">
+      <Filter>Devices\Wifi</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -154,14 +157,8 @@
     <Filter Include="Devices\Serial">
       <UniqueIdentifier>{870ee661-e3a2-49ea-91ff-ea7a7e88ec14}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Network">
-      <UniqueIdentifier>{d31dee22-6dd9-4357-8563-de4a30d1130e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Network\Wifi">
-      <UniqueIdentifier>{8e9b5f5d-7f08-4dff-9388-8a7c00d3de4a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Devices\Dma">
-      <UniqueIdentifier>{64496161-c42a-4843-afae-d7d36712a9f1}</UniqueIdentifier>
+      <UniqueIdentifier>{4f720f33-21b1-4486-850a-3473b832aa3c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

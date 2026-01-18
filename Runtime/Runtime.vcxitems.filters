@@ -31,6 +31,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\PacketBuffer.h">
       <Filter>Storage</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Network\Ethernet\MacAddress.h">
+      <Filter>Network\Ethernet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props">
@@ -89,6 +92,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\PacketBuffer.cpp">
       <Filter>Storage</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Network\Ethernet\MacAddress.cpp">
+      <Filter>Network\Ethernet</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">
@@ -108,6 +114,12 @@
     </Filter>
     <Filter Include="Devices">
       <UniqueIdentifier>{7409c0a8-a473-40b4-8a2d-85d77a29c54c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network">
+      <UniqueIdentifier>{58bb5132-6d38-4a64-83cc-616873da9ea3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\Ethernet">
+      <UniqueIdentifier>{2b2dc9e9-835d-48df-9fd1-ad6feacb3b33}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

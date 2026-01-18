@@ -11,7 +11,6 @@
 
 #include "Devices/Emmc/Emmc.h"
 #include "BitHelper.h"
-#include <array>
 
 using EMMC_FN=Devices::Emmc::EMMC_FN;
 using EMMC_REG=Devices::Emmc::EMMC_REG;
@@ -29,7 +28,7 @@ namespace Devices {
 // Emmc
 //======
 
-constexpr EMMC_FN FN0						={ 0, 64 };
+constexpr EMMC_FN FN0={ 0, 64 };
 
 constexpr EMMC_REG CCCR_IOENABLE			={ FN0, 0x02 };
 constexpr EMMC_REG CCCR_IOREADY				={ FN0, 0x03 };
@@ -55,7 +54,7 @@ constexpr UINT SPEED_CTRL_EHS				=2;
 // Backplane
 //===========
 
-constexpr EMMC_FN FN1						={ 1, 64 };
+constexpr EMMC_FN FN1={ 1, 64 };
 
 constexpr EMMC_REG SB_WINDOW_0				={ FN1, 0x1000A };
 constexpr EMMC_REG SB_WINDOW_1				={ FN1, 0x1000B };
@@ -82,13 +81,13 @@ constexpr UINT SB_WND_MASK					=0x7FFF;
 // Common
 //========
 
-constexpr UINT COM_BASE					=0x18000000;
+constexpr UINT COM_BASE				=0x18000000;
 
-constexpr UINT IOCTRL					=0x408;
-constexpr UINT IOCTRL_FGC				=(1<<1);
-constexpr UINT IOCTRL_CLOCK				=(1<<0);
-constexpr UINT RESET					=0x800;
-constexpr UINT RESET_BIT				=(1<<0);
+constexpr UINT IOCTRL				=0x408;
+constexpr UINT IOCTRL_FGC			=(1<<1);
+constexpr UINT IOCTRL_CLOCK			=(1<<0);
+constexpr UINT RESET				=0x800;
+constexpr UINT RESET_BIT			=(1<<0);
 
 
 //=====
@@ -96,6 +95,7 @@ constexpr UINT RESET_BIT				=(1<<0);
 //=====
 
 constexpr UINT ARM_BASE					=0x18102000;
+
 constexpr UINT ARM_IOCTRL_HALT			=(1<<5);
 constexpr UINT ARM_RAM_BASE				=0x198000;
 constexpr UINT ARM_RAM_SIZE				=0xC8000;
@@ -128,115 +128,6 @@ constexpr UINT MBOX_DATA_ACK			=(1<<1);
 // Wifi
 //======
 
-constexpr EMMC_FN FN2					={ 2, 512 };
-
-typedef struct
-{
-WORD Flags;
-WORD Type;
-UINT Size;
-UINT Crc;
-}CLM_HEADER;
-
-constexpr WORD CLM_TYPE=2;
-constexpr UINT CLM_DATA_MAX=1024;
-
-constexpr WORD CLMF_CLM=(1<<12);
-constexpr WORD CLMF_LAST=(1<<2);
-constexpr WORD CLMF_FIRST=(1<<1);
-
-
-//========
-// Events
-//========
-
-constexpr UINT WIFI_EVENT_TX_FAIL			=20;
-constexpr UINT WIFI_EVENT_RADIO				=40;
-constexpr UINT WIFI_EVENT_PROBREQ_MSG		=44;
-constexpr UINT WIFI_EVENT_IF				=54;
-constexpr UINT WIFI_EVENT_PROBRESP_MSG		=71;
-constexpr UINT WIFI_EVENT_CCA_CHAN_QUAL		=124;
-
-
-//============
-// Event-Mask
-//============
-
-constexpr UINT WIFI_DISABLED_EVENTS[]=
-{
-WIFI_EVENT_TX_FAIL,
-WIFI_EVENT_RADIO,
-WIFI_EVENT_PROBREQ_MSG,
-WIFI_EVENT_IF,
-WIFI_EVENT_PROBRESP_MSG,
-WIFI_EVENT_CCA_CHAN_QUAL
-};
-
-constexpr auto WIFI_EVENT_MASK=[]()
-{
-std::array<BYTE, 16> flags;
-flags.fill(0xFF);
-for(auto id: WIFI_DISABLED_EVENTS)
-	flags[id/8]&=~(1<<(id%8));
-return flags;
-}();
-
-
-//==========
-// Channels
-//==========
-
-typedef struct
-{
-BYTE Id;
-BYTE Flags;
-}WIFI_SCAN_CHANNEL;
-
-constexpr auto WIFI_SCAN_CHANNELS=std::array<WIFI_SCAN_CHANNEL, 14>({
-		{ 1, 0x2B }, { 2, 0x2B }, { 3, 0x2B }, { 4, 0x2B }, { 5, 0x2E }, { 6, 0x2E }, { 7, 0x2E },
-		{ 8, 0x2B }, { 9, 0x2B }, { 10, 0x2B }, { 11, 0x2B }, { 12, 0x2B }, { 13, 0x2B }, { 14, 0x2B }});
-
-
-//======
-// Scan
-//======
-
-constexpr UINT WIFI_SCAN_VERSION=1;
-
-enum class WifiBssType: BYTE
-{
-Independent,
-Infrastructure,
-Any=2
-};
-
-enum class WifiScanAction: WORD
-{
-Start=1,
-Continue=2,
-Abort=3
-};
-
-enum class WifiScanType: BYTE
-{
-Active=0,
-Passive=1
-};
-
-typedef struct
-{
-UINT Version;
-WifiScanAction Action;
-WORD SyncId;
-UINT SsidLength;
-CHAR Ssid[32];
-std::array<BYTE, 6> BssId;
-WifiBssType BssType;
-WifiScanType ScanType;
-UINT ProbesCount;
-UINT ActiveTime;
-UINT PassiveTime;
-UINT HomeTime;
-}WIFI_SCAN_PARAMS;
+constexpr EMMC_FN FN2={ 2, 512 };
 
 }}

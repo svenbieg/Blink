@@ -11,7 +11,7 @@
 
 #include "Concurrency/Task.h"
 #include "Devices/Emmc/EmmcHost.h"
-#include "Devices/Wifi/WifiPacket.h"
+#include "Devices/Wifi/WifiCommand.h"
 #include "Network/Ethernet/MacAddress.h"
 #include "Event.h"
 

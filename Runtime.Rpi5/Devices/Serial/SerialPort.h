@@ -68,9 +68,9 @@ public:
 	friend Object;
 
 	// Using
-	using CriticalMutex=Concurrency::CriticalMutex;
 	using CriticalSection=Concurrency::CriticalSection;
 	using GpioHost=Devices::Gpio::GpioHost;
+	using Mutex=Concurrency::Mutex;
 	using OutputBuffer=Storage::Streams::OutputBuffer;
 	using PcieHost=Devices::Pcie::PcieHost;
 	using RingBuffer=Storage::RingBuffer;
@@ -96,7 +96,7 @@ private:
 	// Con-/Destructors
 	SerialPort(SerialDevice Device, BaudRate Baud);
 	static SerialPort* s_Current[UART_COUNT];
-	static CriticalMutex s_Mutex;
+	static Mutex s_Mutex;
 
 	// Common
 	static VOID HandleInterrupt(VOID* Parameter);
