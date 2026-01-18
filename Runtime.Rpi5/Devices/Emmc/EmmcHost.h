@@ -65,7 +65,6 @@ private:
 	VOID Command(SpinLock& Lock, EmmcCmd Command, UINT Argument, UINT* Response=nullptr, VOID* Buffer=nullptr, UINT BlockCount=0, UINT BlockSize=0);
 	static VOID HandleInterrupt(VOID* Parameter);
 	VOID OnInterrupt();
-	VOID ServiceTask();
 	UINT m_BlockSize;
 	UINT* m_Buffer;
 	Signal m_CommandDone;
@@ -73,8 +72,6 @@ private:
 	Signal m_DataDone;
 	EMMC_REGS* m_Device;
 	Irq m_Irq;
-	UINT m_IrqFlags;
-	Signal m_IrqPending;
 	UINT m_OutputCount;
 	UINT m_RelativeCardAddress;
 	Handle<Task> m_ServiceTask;

@@ -221,7 +221,6 @@ m_BlockSize(0),
 m_Buffer(nullptr),
 m_Device((EMMC_REGS*)addr),
 m_Irq(irq),
-m_IrqFlags(0),
 m_RelativeCardAddress(0)
 {
 IoHelper::Write(m_Device->CTRL1, CTRL1_RESET_HOST);
@@ -230,7 +229,6 @@ if(IoHelper::Read(m_Device->CTRL1, CTRL1_RESET_ALL))
 	throw DeviceNotReadyException();
 IoHelper::Set(m_Device->CTRL0, CTRL0_POWER, CTRL0_POWER_VDD1);
 Task::Sleep(10);
-m_ServiceTask=ServiceTask::Create(this, &EmmcHost::ServiceTask, "emmc");
 Interrupts::SetHandler(m_Irq, HandleInterrupt, this);
 IoHelper::Write(m_Device->IRQ_MASK, IRQF_DEFAULT);
 IoHelper::Write(m_Device->IRQ_EN, IRQF_DEFAULT);
@@ -290,65 +288,51 @@ emmc->OnInterrupt();
 VOID EmmcHost::OnInterrupt()
 {
 SpinLock lock(m_CriticalSection);
-m_IrqFlags=IoHelper::Read(m_Device->IRQ);
-Status status=Status::Success;
-if(FlagHelper::Get(m_IrqFlags, IRQF_ERR))
-	status=Status::DeviceNotReady;
-m_IrqPending.Trigger(status);
-}
-
-VOID EmmcHost::ServiceTask()
-{
-auto task=Task::Get();
-SpinLock lock(m_CriticalSection);
-while(!task->Cancelled)
+UINT irq_flags=IoHelper::Read(m_Device->IRQ);
+UINT irq_ack=irq_flags;
+BitHelper::Clear(irq_ack, IRQF_CARD);
+IoHelper::Write(m_Device->IRQ, irq_ack);
+UINT flags=irq_flags;
+while(flags)
 	{
-	m_IrqPending.Wait(lock);
-	UINT irq_flags=m_IrqFlags;
-	UINT irq_ack=m_IrqFlags;
-	BitHelper::Clear(irq_ack, IRQF_CARD);
-	IoHelper::Write(m_Device->IRQ, irq_ack);
-	while(irq_flags)
+	UINT lsb=Cpu::GetLeastSignificantBitPosition(flags);
+	UINT flag=1<<lsb;
+	BitHelper::Clear(flags, flag);
+	switch(flag)
 		{
-		UINT lsb=Cpu::GetLeastSignificantBitPosition(irq_flags);
-		UINT irq_flag=1<<lsb;
-		BitHelper::Clear(irq_flags, irq_flag);
-		switch(irq_flag)
+		case IRQF_CARD:
 			{
-			case IRQF_CARD:
-				{
-				if(m_IrqFlags!=IRQF_CARD)
-					break;
-				CardIrq.Trigger();
+			if(irq_flags!=IRQF_CARD)
 				break;
-				}
-			case IRQF_CMD_DONE:
-				{
-				m_CommandDone.Trigger();
-				break;
-				}
-			case IRQF_DATA_DONE:
-				{
-				m_Buffer=nullptr;
-				m_DataDone.Trigger();
-				break;
-				}
-			case IRQF_WRITE_RDY:
-				{
-				assert(m_Buffer);
-				auto end=&m_Buffer[m_BlockSize/sizeof(UINT)];
-				while(m_Buffer<end)
-					m_Device->DATA=*m_Buffer++;
-				break;
-				}
-			case IRQF_READ_RDY:
-				{
-				assert(m_Buffer);
-				auto end=&m_Buffer[m_BlockSize/sizeof(UINT)];
-				while(m_Buffer<end)
-					*m_Buffer++=m_Device->DATA;
-				break;
-				}
+			CardIrq.Trigger();
+			break;
+			}
+		case IRQF_CMD_DONE:
+			{
+			m_CommandDone.Trigger();
+			break;
+			}
+		case IRQF_DATA_DONE:
+			{
+			m_Buffer=nullptr;
+			m_DataDone.Trigger();
+			break;
+			}
+		case IRQF_WRITE_RDY:
+			{
+			assert(m_Buffer);
+			auto end=&m_Buffer[m_BlockSize/sizeof(UINT)];
+			while(m_Buffer<end)
+				m_Device->DATA=*m_Buffer++;
+			break;
+			}
+		case IRQF_READ_RDY:
+			{
+			assert(m_Buffer);
+			auto end=&m_Buffer[m_BlockSize/sizeof(UINT)];
+			while(m_Buffer<end)
+				*m_Buffer++=m_Device->DATA;
+			break;
 			}
 		}
 	}
