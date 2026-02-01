@@ -32,7 +32,7 @@ typedef VOID (*IRQ_HANDLER)(VOID* Parameter);
 // IRQs
 //======
 
-constexpr UINT IRQ_COUNT=512;
+const UINT IRQ_COUNT=512;
 
 enum class Irq
 {
@@ -95,7 +95,7 @@ public:
 
 private:
 	// Using
-	static constexpr UINT CPU_COUNT=Devices::System::Cpu::CPU_COUNT;
+	static const UINT CPU_COUNT=Devices::System::Cpu::CPU_COUNT;
 
 	// Common
 	static VOID Disable(UINT Irq);

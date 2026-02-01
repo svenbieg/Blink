@@ -39,8 +39,8 @@ RW32 RES1;
 RW32 WRITE;
 }mailbox_regs_t;
 
-constexpr UINT STATUS_FULL=(1<<31);
-constexpr UINT STATUS_EMPTY=(1<<30);
+const UINT STATUS_FULL=(1<<31);
+const UINT STATUS_EMPTY=(1<<30);
 
 
 //=================
@@ -62,7 +62,7 @@ PROP_HEADER Header;
 BYTE Data[44];
 }PROP_BUF;
 
-constexpr UINT PROPERTY_REQUEST=0;
+const UINT PROPERTY_REQUEST=0;
 
 PROP_BUF g_PropertyBuffer;
 

@@ -28,10 +28,10 @@ namespace Devices {
 // Settings
 //==========
 
-constexpr UINT64 FREQ_HZ=54000000;
-constexpr UINT64 KHZ=1000;
-constexpr UINT64 MHZ=1000000;
-constexpr UINT64 PERIOD=FREQ_HZ/100;
+const UINT64 FREQ_HZ=54000000;
+const UINT64 KHZ=1000;
+const UINT64 MHZ=1000000;
+const UINT64 PERIOD=FREQ_HZ/100;
 
 
 //==================

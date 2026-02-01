@@ -45,11 +45,11 @@ namespace Devices {
 // Settings
 //==========
 
-constexpr SIZE_T EMMC_BASE					=AXI_EMMC1_BASE;
-constexpr UINT EMMC_BASE_CLOCK				=54'000'000;
-constexpr UINT EMMC_CLOCK					=25'000'000;
+const SIZE_T EMMC_BASE					=AXI_EMMC1_BASE;
+const UINT EMMC_BASE_CLOCK				=54'000'000;
+const UINT EMMC_CLOCK					=25'000'000;
 
-constexpr UINT WIFI_TIMEOUT					=500;
+const UINT WIFI_TIMEOUT					=500;
 
 
 //============
@@ -64,12 +64,12 @@ UINT Size;
 UINT Crc;
 }CLM_HEADER;
 
-constexpr WORD CLM_TYPE			=2;
-constexpr UINT CLM_DATA_MAX		=1024;
+const WORD CLM_TYPE			=2;
+const UINT CLM_DATA_MAX		=1024;
 
-constexpr WORD CLMF_CLM			=(1<<12);
-constexpr WORD CLMF_LAST		=(1<<2);
-constexpr WORD CLMF_FIRST		=(1<<1);
+const WORD CLMF_CLM			=(1<<12);
+const WORD CLMF_LAST		=(1<<2);
+const WORD CLMF_FIRST		=(1<<1);
 
 
 //==================

@@ -90,7 +90,7 @@ ActivityLed=41,
 CpuFan=45
 };
 
-constexpr UINT RP1_GPIO_PIN_COUNT=28;
+const UINT RP1_GPIO_PIN_COUNT=28;
 
 enum class GpioRp1Pin
 {

@@ -103,13 +103,13 @@ public:
 
 private:
 	// Flags
-	static constexpr BYTE VAF_UNSIGNED=(1<<0);
-	static constexpr BYTE VAF_INT=(1<<1);
-	static constexpr BYTE VAF_FLOAT=(1<<2);
-	static constexpr BYTE VAF_CHAR=(1<<3);
-	static constexpr BYTE VAF_PTR=(1<<4);
-	static constexpr BYTE VAF_CONST=(1<<5);
-	static constexpr BYTE VAF_STRING=(1<<6);
+	static const BYTE VAF_UNSIGNED=(1<<0);
+	static const BYTE VAF_INT=(1<<1);
+	static const BYTE VAF_FLOAT=(1<<2);
+	static const BYTE VAF_CHAR=(1<<3);
+	static const BYTE VAF_PTR=(1<<4);
+	static const BYTE VAF_CONST=(1<<5);
+	static const BYTE VAF_STRING=(1<<6);
 
 	// Access
 	BOOL GetStringPointer(BYTE Flags, BYTE Size, VOID** Pointer)const;

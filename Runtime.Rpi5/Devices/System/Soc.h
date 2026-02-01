@@ -31,6 +31,6 @@ RW32 STEPPING;
 }SOC_REGS;
 
 // STEPPING
-constexpr BITS SOC_STEPPING={ 0xFF, 0 };
+const BITS SOC_STEPPING={ 0xFF, 0 };
 
 }}

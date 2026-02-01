@@ -110,8 +110,8 @@ pcie_host->OnInterrupt();
 VOID PcieHost::Initialize()
 {
 auto pcie=(PCIE_HOST_REGS*)AXI_PCIE_HOST_BASE;
-constexpr BYTE regs[]={ 0x16, 0x17, 0x18, 0x19, 0x1B, 0x1C, 0x1E };
-constexpr WORD data[]={ 0x50B9, 0xBDA1, 0x0094, 0x97B4, 0x5030, 0x5030, 0x0007 };
+const BYTE regs[]={ 0x16, 0x17, 0x18, 0x19, 0x1B, 0x1C, 0x1E };
+const WORD data[]={ 0x50B9, 0xBDA1, 0x0094, 0x97B4, 0x5030, 0x5030, 0x0007 };
 MdioWrite(0, MDIO_REG_SET_ADDR_OFFSET, 0x1600);
 for(UINT u=0; u<TypeHelper::ArraySize(regs); u++)
 	MdioWrite(0, regs[u], data[u]);
@@ -124,7 +124,7 @@ IoHelper::Write(pcie->MISC_CTRL, misc_ctrl);
 IoHelper::Clear(pcie->AXI_INTF_CTRL, AXI_INTF_CTRL_REQFIFO_EN_QOS_PROP);
 IoHelper::Clear(pcie->MISC_CTRL1, MISC_CTRL1_EN_VDM_QOS_CONTROL);
 IoHelper::Set(pcie->MISC_CTRL1, MISC_CTRL1_EN_VDM_QOS_CONTROL);
-constexpr UINT QOS_MAP=0xBBAA9888U;
+const UINT QOS_MAP=0xBBAA9888U;
 IoHelper::Write(pcie->VDM_PRIORITY_TO_QOS_MAP_LO, QOS_MAP);
 IoHelper::Write(pcie->VDM_PRIORITY_TO_QOS_MAP_HI, QOS_MAP);
 IoHelper::Write(pcie->CFG.TL_VDM_CTL1, 0);
@@ -158,7 +158,7 @@ IoHelper::Write(bridge->MEM_LIMIT, 0);
 IoHelper::Write(bridge->BRIDGE_CTRL, BRIDGE_CTRL_PARITY);
 IoHelper::Write(bridge->ROOT_CTRL, ROOT_CTRL_CRSSVE);
 IoHelper::Write(bridge->CMD, CMD_MEMORY|CMD_MASTER|CMD_PARITY|CMD_SERR);
-constexpr UINT RP1_CLASS=0x20000;
+const UINT RP1_CLASS=0x20000;
 EnableDevice(RP1_CLASS, 0, 0);
 Interrupts::SetHandler(Irq::PcieHostIntA, HandleInterrupt, this);
 }

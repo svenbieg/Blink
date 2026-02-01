@@ -39,8 +39,8 @@ RW32 RES1;
 RW32 PADS[3];
 }PM_REGS;
 
-constexpr UINT PM_PASSWD=(0x5A<<24);
-constexpr UINT PM_FULL_RESET=0x20;
+const UINT PM_PASSWD=(0x5A<<24);
+const UINT PM_FULL_RESET=0x20;
 
 
 //=======
@@ -73,7 +73,7 @@ GpioHelper::DigitalWrite(GpioArmPin::ActivityLed, on);
 
 VOID System::PowerOff()
 {
-constexpr UINT64 PSCI_POWER_OFF=0x84000008;
+const UINT64 PSCI_POWER_OFF=0x84000008;
 __asm volatile("\
 mov	x0, %0\n\
 smc	#0\n\
@@ -101,7 +101,7 @@ Cpu::Delay(100);
 
 VOID System::Restart()
 {
-constexpr UINT64 PSCI_RESET=0x84000009;
+const UINT64 PSCI_RESET=0x84000009;
 __asm volatile("\
 mov	x0, %0\n\
 smc	#0\n\

@@ -25,7 +25,7 @@ namespace Network {
 //======
 
 typedef UINT64 MAC_ADDR;
-constexpr UINT MAC_ADDR_SIZE=6;
+const UINT MAC_ADDR_SIZE=6;
 
 
 //=============

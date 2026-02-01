@@ -25,7 +25,7 @@ namespace Devices {
 // Settings
 //==========
 
-static constexpr UINT WIFI_PACKET_MAX=2048;
+static const UINT WIFI_PACKET_MAX=2048;
 
 
 //========
@@ -45,7 +45,7 @@ BYTE Window;
 WORD Reserved;
 }WIFI_HEADER;
 
-static constexpr BITS8 WIFI_HEADER_FLAGS_TYPE={ 0xF, 0 };
+static const BITS8 WIFI_HEADER_FLAGS_TYPE={ 0xF, 0 };
 
 enum class WifiPacketType
 {

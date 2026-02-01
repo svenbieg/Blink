@@ -24,7 +24,7 @@ using namespace Storage::Encoding;
 // Settings
 //==========
 
-constexpr UINT64 CATCH_ANY=0xFFFFFF0000000000ULL;
+const UINT64 CATCH_ANY=0xFFFFFF0000000000ULL;
 
 
 //===========

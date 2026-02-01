@@ -20,7 +20,7 @@ class MemoryHelper
 {
 public:
 	// Settings
-	static constexpr UINT PAGE_SIZE=4096;
+	static const UINT PAGE_SIZE=4096;
 
 	// Common
 	static inline VOID* Allocate(SIZE_T Size)

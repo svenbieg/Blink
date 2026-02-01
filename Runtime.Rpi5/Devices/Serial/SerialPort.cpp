@@ -32,12 +32,12 @@ namespace Devices {
 // Settings
 //==========
 
-constexpr UINT UART_CLOCK			=50'000'000;
+const UINT UART_CLOCK			=50'000'000;
 
-constexpr UINT UART_INPUT_BUF		=48;
-constexpr UINT UART_OUTPUT_BUF		=32;
+const UINT UART_INPUT_BUF		=48;
+const UINT UART_OUTPUT_BUF		=32;
 
-constexpr UINT UART_INPUT_RING		=UART_INPUT_BUF*4;
+const UINT UART_INPUT_RING		=UART_INPUT_BUF*4;
 
 
 //======
@@ -54,7 +54,7 @@ GpioRp1PinMode RX_ALT;
 Rp1Irq IRQ;
 }UART_INFO;
 
-constexpr UART_INFO UART_DEVICES[UART_COUNT]=
+const UART_INFO UART_DEVICES[UART_COUNT]=
 	{
 	{ RP1_UART0_BASE, GpioRp1Pin::Gpio14, GpioRp1Pin::Gpio15, GpioRp1PinMode::Alt4, GpioRp1PinMode::Alt4, Rp1Irq::UArt0 },
 	{ RP1_UART1_BASE, GpioRp1Pin::Gpio0, GpioRp1Pin::Gpio1, GpioRp1PinMode::Alt2, GpioRp1PinMode::Alt2, Rp1Irq::UArt1 },
@@ -88,31 +88,31 @@ RW32 ICR;
 RW32 DMACR;
 }PL011_REGS;
 
-constexpr UINT CTRL_RX_ENABLE		=(1<<9);
-constexpr UINT CTRL_TX_ENABLE		=(1<<8);
-constexpr UINT CTRL_ENABLE			=(1<<0);
+const UINT CTRL_RX_ENABLE		=(1<<9);
+const UINT CTRL_TX_ENABLE		=(1<<8);
+const UINT CTRL_ENABLE			=(1<<0);
 
-constexpr UINT FLAG_TX_EMPTY		=(1<<7);
-constexpr UINT FLAG_RX_FULL			=(1<<6);
-constexpr UINT FLAG_TX_FULL			=(1<<5);
-constexpr UINT FLAG_RX_EMPTY		=(1<<4);
-constexpr UINT FLAG_BUSY			=(1<<3);
+const UINT FLAG_TX_EMPTY		=(1<<7);
+const UINT FLAG_RX_FULL			=(1<<6);
+const UINT FLAG_TX_FULL			=(1<<5);
+const UINT FLAG_RX_EMPTY		=(1<<4);
+const UINT FLAG_BUSY			=(1<<3);
 
-constexpr BITS IFLS_RXIFSEL			={ 7, 3 };
-constexpr BITS IFLS_TXIFSEL			={ 7, 0 };
-constexpr UINT IFLS_IFSEL_1_8		=0;
-constexpr UINT IFLS_IFSEL_1_4		=1;
-constexpr UINT IFLS_IFSEL_1_2		=2;
-constexpr UINT IFLS_IFSEL_3_4		=3;
-constexpr UINT IFLS_IFSEL_7_8		=4;
+const BITS IFLS_RXIFSEL			={ 7, 3 };
+const BITS IFLS_TXIFSEL			={ 7, 0 };
+const UINT IFLS_IFSEL_1_8		=0;
+const UINT IFLS_IFSEL_1_4		=1;
+const UINT IFLS_IFSEL_1_2		=2;
+const UINT IFLS_IFSEL_3_4		=3;
+const UINT IFLS_IFSEL_7_8		=4;
 
-constexpr UINT IMSC_INT_OE			=(1<<10);
-constexpr UINT IMSC_INT_RT			=(1<<6);
-constexpr UINT IMSC_INT_TX			=(1<<5);
-constexpr UINT IMSC_INT_RX			=(1<<4);
+const UINT IMSC_INT_OE			=(1<<10);
+const UINT IMSC_INT_RT			=(1<<6);
+const UINT IMSC_INT_TX			=(1<<5);
+const UINT IMSC_INT_RX			=(1<<4);
 
-constexpr UINT LCRH_WORD_LEN_8		=3<<5;
-constexpr UINT LCRH_FIFO_ENABLE		=1<<4;
+const UINT LCRH_WORD_LEN_8		=3<<5;
+const UINT LCRH_FIFO_ENABLE		=1<<4;
 
 
 //===========

@@ -31,7 +31,7 @@ namespace Concurrency {
 // Settings
 //==========
 
-constexpr UINT LOCKED=0x80000000;
+const UINT LOCKED=0x80000000;
 
 
 //========

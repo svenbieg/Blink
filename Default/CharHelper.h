@@ -31,56 +31,56 @@ template<class _Ty> concept character=is_character<_Ty>::value;
 
 namespace Ansi
 {
-constexpr CHAR AE='\xC4';
-constexpr CHAR ae='\xE4';
-constexpr CHAR Average='\xD8';
-constexpr CHAR Degree='\xB0';
-constexpr CHAR Enumeration='\x95';
-constexpr CHAR OE='\xD6';
-constexpr CHAR oe='\xF6';
-constexpr CHAR UE='\xDC';
-constexpr CHAR ue='\xFC';
+const CHAR AE='\xC4';
+const CHAR ae='\xE4';
+const CHAR Average='\xD8';
+const CHAR Degree='\xB0';
+const CHAR Enumeration='\x95';
+const CHAR OE='\xD6';
+const CHAR oe='\xF6';
+const CHAR UE='\xDC';
+const CHAR ue='\xFC';
 }
 
 #ifdef _UNICODE
 namespace Chars
 {
-constexpr WCHAR AE=L'\x00C4';
-constexpr WCHAR ae=L'\x00E4';
-constexpr WCHAR Average=L'\x00D8';
-constexpr WCHAR Degree=L'\x00B0';
-constexpr WCHAR Enumeration=L'\x2022';
-constexpr WCHAR OE=L'\x00D6';
-constexpr WCHAR oe=L'\x00F6';
-constexpr WCHAR UE=L'\x00DC';
-constexpr WCHAR ue=L'\x00FC';
+const WCHAR AE=L'\x00C4';
+const WCHAR ae=L'\x00E4';
+const WCHAR Average=L'\x00D8';
+const WCHAR Degree=L'\x00B0';
+const WCHAR Enumeration=L'\x2022';
+const WCHAR OE=L'\x00D6';
+const WCHAR oe=L'\x00F6';
+const WCHAR UE=L'\x00DC';
+const WCHAR ue=L'\x00FC';
 }
 #else
 namespace Chars
 {
-constexpr CHAR AE='\xC4';
-constexpr CHAR ae='\xE4';
-constexpr CHAR Average='\xD8';
-constexpr CHAR Degree='\xB0';
-constexpr CHAR Enumeration='\x95';
-constexpr CHAR OE='\xD6';
-constexpr CHAR oe='\xF6';
-constexpr CHAR UE='\xDC';
-constexpr CHAR ue='\xFC';
+const CHAR AE='\xC4';
+const CHAR ae='\xE4';
+const CHAR Average='\xD8';
+const CHAR Degree='\xB0';
+const CHAR Enumeration='\x95';
+const CHAR OE='\xD6';
+const CHAR oe='\xF6';
+const CHAR UE='\xDC';
+const CHAR ue='\xFC';
 }
 #endif
 
 namespace Unicode
 {
-constexpr WCHAR AE=L'\x00C4';
-constexpr WCHAR ae=L'\x00E4';
-constexpr WCHAR Average=L'\x00D8';
-constexpr WCHAR Degree=L'\x00B0';
-constexpr WCHAR Enumeration=L'\x2022';
-constexpr WCHAR OE=L'\x00D6';
-constexpr WCHAR oe=L'\x00F6';
-constexpr WCHAR UE=L'\x00DC';
-constexpr WCHAR ue=L'\x00FC';
+const WCHAR AE=L'\x00C4';
+const WCHAR ae=L'\x00E4';
+const WCHAR Average=L'\x00D8';
+const WCHAR Degree=L'\x00B0';
+const WCHAR Enumeration=L'\x2022';
+const WCHAR OE=L'\x00D6';
+const WCHAR oe=L'\x00F6';
+const WCHAR UE=L'\x00DC';
+const WCHAR ue=L'\x00FC';
 }
 
 

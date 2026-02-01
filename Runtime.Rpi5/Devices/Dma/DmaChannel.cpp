@@ -31,10 +31,10 @@ namespace Devices {
 // Settings
 //==========
 
-constexpr UINT DMA_CHANNEL_COUNT=12;
-constexpr UINT DMA_CHANNEL_MAX=11;
-constexpr UINT DMA_CHANNEL_MIN=6;
-constexpr UINT DMA_COPY_MAX=0x3FFFFFFF;
+const UINT DMA_CHANNEL_COUNT=12;
+const UINT DMA_CHANNEL_MAX=11;
+const UINT DMA_CHANNEL_MIN=6;
+const UINT DMA_COPY_MAX=0x3FFFFFFF;
 
 
 //===============
@@ -53,19 +53,19 @@ UINT NEXT;
 UINT DEBUG;
 }DMA_CB;
 
-constexpr UINT DSTI_INC=(1<<12);
+const UINT DSTI_INC=(1<<12);
 
-constexpr UINT SRCI_INC=(1<<12);
+const UINT SRCI_INC=(1<<12);
 
-constexpr BITS TI_DST_WAIT={ 0xFF, 24 };
-constexpr BITS TI_SRC_WAIT={ 0xFF, 16 };
-constexpr UINT TI_DST_DREQ=(1<<15);
-constexpr UINT TI_SRC_DREQ=(1<<14);
-constexpr BITS TI_PERMAP={ 0x1F, 9 };
-constexpr UINT TI_WAIT_RD_RESP=(1<<3);
-constexpr UINT TI_WAIT_RESP=(1<<2);
-constexpr UINT TI_2DMODE=(1<<1);
-constexpr UINT TI_INTEN=(1<<0);
+const BITS TI_DST_WAIT={ 0xFF, 24 };
+const BITS TI_SRC_WAIT={ 0xFF, 16 };
+const UINT TI_DST_DREQ=(1<<15);
+const UINT TI_SRC_DREQ=(1<<14);
+const BITS TI_PERMAP={ 0x1F, 9 };
+const UINT TI_WAIT_RD_RESP=(1<<3);
+const UINT TI_WAIT_RESP=(1<<2);
+const UINT TI_2DMODE=(1<<1);
+const UINT TI_INTEN=(1<<0);
 
 
 //=========
@@ -82,33 +82,33 @@ DMA_CB CB;
 RW32 RES1[52];
 }DMA_CHANNEL_REGS;
 
-constexpr UINT CB_ADDR_SHIFT=5;
+const UINT CB_ADDR_SHIFT=5;
 
-constexpr UINT CS_HALT=(1<<31);
-constexpr UINT CS_ABORT=(1<<30);
-constexpr UINT CS_DISDEBUG(1<<29);
-constexpr UINT CS_WAIT_FOR_WRITES=(1<<28);
-constexpr UINT CS_TRANSACTIONS=(1<<25);
-constexpr BITS CS_PANIC_PRIORITY={ 0xF, 20 };
-constexpr UINT CS_PANIC_PRIORITY_DEFAULT=15;
-constexpr BITS CS_PRIORITY={ 0xF, 16 };
-constexpr UINT CS_PRIORITY_DEFAULT=1;
-constexpr UINT CS_ERROR=(1<<10);
-constexpr UINT CS_PROT=(3<<8);
-constexpr UINT CS_WAITING_FOR_WRITES=(1<<7);
-constexpr UINT CS_DREQ_PAUSED=(1<<6);
-constexpr UINT CS_WR_PAUSED=(1<<5);
-constexpr UINT CS_RD_PAUSED=(1<<4);
-constexpr UINT CS_DREQ=(1<<3);
-constexpr UINT CS_INT=(1<<2);
-constexpr UINT CS_END=(1<<1);
-constexpr UINT CS_ACTIVE=(1<<0);
+const UINT CS_HALT=(1<<31);
+const UINT CS_ABORT=(1<<30);
+const UINT CS_DISDEBUG(1<<29);
+const UINT CS_WAIT_FOR_WRITES=(1<<28);
+const UINT CS_TRANSACTIONS=(1<<25);
+const BITS CS_PANIC_PRIORITY={ 0xF, 20 };
+const UINT CS_PANIC_PRIORITY_DEFAULT=15;
+const BITS CS_PRIORITY={ 0xF, 16 };
+const UINT CS_PRIORITY_DEFAULT=1;
+const UINT CS_ERROR=(1<<10);
+const UINT CS_PROT=(3<<8);
+const UINT CS_WAITING_FOR_WRITES=(1<<7);
+const UINT CS_DREQ_PAUSED=(1<<6);
+const UINT CS_WR_PAUSED=(1<<5);
+const UINT CS_RD_PAUSED=(1<<4);
+const UINT CS_DREQ=(1<<3);
+const UINT CS_INT=(1<<2);
+const UINT CS_END=(1<<1);
+const UINT CS_ACTIVE=(1<<0);
 
-constexpr UINT DEBUG_RESET=(1<<23);
-constexpr UINT DEBUG_READ_CB_ERR=(1<<3);
-constexpr UINT DEBUG_READ_ERR=(1<<2);
-constexpr UINT DEBUG_FIFO_ERR=(1<<1);
-constexpr UINT DEBUG_WRITE_ERR=(1<<0);
+const UINT DEBUG_RESET=(1<<23);
+const UINT DEBUG_READ_CB_ERR=(1<<3);
+const UINT DEBUG_READ_ERR=(1<<2);
+const UINT DEBUG_FIFO_ERR=(1<<1);
+const UINT DEBUG_WRITE_ERR=(1<<0);
 
 
 //======

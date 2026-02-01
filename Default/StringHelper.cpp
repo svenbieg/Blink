@@ -326,8 +326,8 @@ template <std::floating_point _float_t> INT FloatNormalize(_float_t& f, _float_t
 {
 if(f==0)
 	return 0;
-constexpr _float_t exps[]={  1e32f,  1e16f,  1e8f,  1e4f,  1e2f, 1e1f };
-constexpr _float_t negs[]={ 1e-31f, 1e-15f, 1e-7f, 1e-3f, 1e-1f, 1e0f };
+const _float_t exps[]={  1e32f,  1e16f,  1e8f,  1e4f,  1e2f, 1e1f };
+const _float_t negs[]={ 1e-31f, 1e-15f, 1e-7f, 1e-3f, 1e-1f, 1e0f };
 INT ex=0;
 INT num=32;
 if(f>=max)
@@ -362,8 +362,8 @@ template <> INT FloatNormalize<DOUBLE>(DOUBLE& f, DOUBLE max, DOUBLE min)
 {
 if(f==0)
 	return 0;
-constexpr DOUBLE exps[]={  1e256,  1e128,  1e64,  1e32,  1e16,  1e8,  1e4,  1e2, 1e1 };
-constexpr DOUBLE negs[]={ 1e-255, 1e-127, 1e-63, 1e-31, 1e-15, 1e-7, 1e-3, 1e-1, 1e0 };
+const DOUBLE exps[]={  1e256,  1e128,  1e64,  1e32,  1e16,  1e8,  1e4,  1e2, 1e1 };
+const DOUBLE negs[]={ 1e-255, 1e-127, 1e-63, 1e-31, 1e-15, 1e-7, 1e-3, 1e-1, 1e0 };
 INT ex=0;
 INT num=256;
 if(f>=max)
@@ -1374,10 +1374,10 @@ return str;
 // Hash
 //======
 
-constexpr UINT BITS_PER_CHAR=5;
-constexpr UINT CHARS_PER_HASH=6;
+const UINT BITS_PER_CHAR=5;
+const UINT CHARS_PER_HASH=6;
 
-constexpr BYTE HASH_CODE[]=
+const BYTE HASH_CODE[]=
 {
 //     0     1     2     3     4     5     6     7     8     9     A     B     C     D     E     F
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // 0x00
@@ -1435,10 +1435,10 @@ return hash;
 // Encryption
 //============
 
-constexpr UINT ENCRYPT_BLOCK=16;
-constexpr UINT ENCRYPT_LOOPS=16;
+const UINT ENCRYPT_BLOCK=16;
+const UINT ENCRYPT_LOOPS=16;
 
-constexpr BYTE ENCRYPT_FWD[256]=
+const BYTE ENCRYPT_FWD[256]=
 	{
 	0x39, 0x47, 0x77, 0x09, 0x64, 0x20, 0x69, 0x94, 0x42, 0xE0, 0x0A, 0x36, 0x6D, 0x2B, 0x7A, 0x12,
 	0x23, 0x24, 0x5B, 0x57, 0x85, 0x22, 0x62, 0x26, 0xE3, 0xFC, 0x25, 0x84, 0xF7, 0x11, 0x0D, 0x3F,
@@ -1458,7 +1458,7 @@ constexpr BYTE ENCRYPT_FWD[256]=
 	0x50, 0x89, 0xAB, 0x4B, 0xF6, 0xF2, 0xA2, 0xB0, 0xB7, 0x51, 0xBA, 0x1C, 0xD3, 0xB3, 0xC4, 0xA5
 	};
 
-constexpr BYTE ENCRYPT_BACK[256]=
+const BYTE ENCRYPT_BACK[256]=
 	{
 	0x52, 0xC6, 0xD7, 0x5D, 0x90, 0xB2, 0x41, 0xA1, 0xC4, 0x03, 0x0A, 0x5E, 0xA2, 0x1E, 0x26, 0xE8,
 	0xDC, 0x1D, 0x0F, 0x5B, 0x61, 0x84, 0x98, 0xDF, 0x96, 0xC9, 0x81, 0xA6, 0xFB, 0x33, 0xCF, 0xBA,

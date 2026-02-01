@@ -31,7 +31,7 @@ namespace Devices {
 // Settings
 //==========
 
-constexpr UINT EMMC_TIMEOUT=100;
+const UINT EMMC_TIMEOUT=100;
 
 
 //==================

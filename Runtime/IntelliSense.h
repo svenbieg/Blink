@@ -35,10 +35,12 @@
 // Types
 //=======
 
-#define __INT64_TYPE__ long long int
-#define __INT32_TYPE__ int
+#define __INT8_TYPE__ char
 #define __INT16_TYPE__ short int
-#define __UINT64_TYPE__ long long unsigned int
+#define __INT32_TYPE__ int
+#define __INT64_TYPE__ long long int
+#define __UINT8_TYPE__ unsigned char
 #define __UINT16_TYPE__ short unsigned int
+#define __UINT64_TYPE__ long long unsigned int
 #define __SIZE_TYPE__ long long unsigned int
 #define __PTRDIFF_TYPE__ long long int

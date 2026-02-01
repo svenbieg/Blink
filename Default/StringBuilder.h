@@ -36,7 +36,7 @@ public:
 
 private:
 	// Settings
-	static constexpr UINT STRING_BLOCK=64;
+	static const UINT STRING_BLOCK=64;
 
 	// String-Block
 	struct StringBlock

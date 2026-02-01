@@ -9,7 +9,14 @@
 // Using
 //=======
 
-#include "Platform.h"
+#include "Exception.h"
+#include <bit>
+#include <cassert>
+#include <climits>
+#include <cmath>
+#include <concepts>
+#include <cstdint>
+#include <limits>
 
 
 //=======
@@ -17,50 +24,27 @@
 //=======
 
 typedef void VOID;
-
 typedef decltype(nullptr) nullptr_t;
 
 typedef unsigned char BYTE;
-constexpr BYTE BYTE_MAX=0xFF;
-
 typedef unsigned short int WORD;
-constexpr WORD WORD_MAX=0xFFFF;
-
 typedef unsigned __LONG int DWORD;
-constexpr DWORD DWORD_MAX=0xFFFFFFFF;
-
 typedef unsigned __LONG_LONG int QWORD;
-
 typedef __ADDR_T SIZE_T;
-constexpr SIZE_T SIZE_MAX=~0;
 
 typedef int BOOL;
-
 typedef short int SHORT;
-constexpr SHORT SHORT_MAX=0x7FFF;
-constexpr SHORT SHORT_MIN=-0x7FFF;
-
 typedef int INT;
-constexpr INT INT_MAX=0x7FFFFFFF;
-constexpr INT INT_MIN=-0x7FFFFFFF;
-
 typedef unsigned int UINT;
-constexpr UINT UINT_MAX=(UINT)-1;
 typedef UINT UINT32;
-
 typedef __LONG_LONG int INT64;
-
 typedef unsigned __LONG_LONG int UINT64;
-constexpr UINT64 UINT64_MAX=(UINT64)-1;
 
 typedef float FLOAT;
 typedef double DOUBLE;
 
 typedef char CHAR;
-constexpr CHAR CHAR_MAX=0xFF;
-
 typedef wchar_t WCHAR;
-constexpr WCHAR WCHAR_MAX=0xFFFF;
 
 typedef char* LPSTR;
 typedef wchar_t* LPWSTR;
@@ -88,18 +72,6 @@ typedef LPCSTR LPCTSTR;
 
 #define _STR(s) #s
 #define STR(s) _STR(s)
-
-
-//=========================
-// Additional Dependencies
-//=========================
-
-#include "Exception.h"
-#include <assert.h>
-#include <bit>
-#include <cmath>
-#include <concepts>
-#include <limits>
 
 
 //==========

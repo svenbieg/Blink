@@ -57,7 +57,7 @@ while(addr<end)
 
 VOID Cpu::PowerOn(UINT core)
 {
-constexpr UINT64 PSCI_CPU_ON=0xC4000003;
+const UINT64 PSCI_CPU_ON=0xC4000003;
 UINT64 mpidr=(core<<8);
 INT status=0;
 __asm volatile("\

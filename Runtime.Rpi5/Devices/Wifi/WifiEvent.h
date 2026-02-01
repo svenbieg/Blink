@@ -25,19 +25,19 @@ namespace Devices {
 // Wifi-Events
 //=============
 
-constexpr UINT WIFI_EVENT_TX_FAIL			=20;
-constexpr UINT WIFI_EVENT_RADIO				=40;
-constexpr UINT WIFI_EVENT_PROBREQ_MSG		=44;
-constexpr UINT WIFI_EVENT_IF				=54;
-constexpr UINT WIFI_EVENT_PROBRESP_MSG		=71;
-constexpr UINT WIFI_EVENT_CCA_CHAN_QUAL		=124;
+const UINT WIFI_EVENT_TX_FAIL			=20;
+const UINT WIFI_EVENT_RADIO				=40;
+const UINT WIFI_EVENT_PROBREQ_MSG		=44;
+const UINT WIFI_EVENT_IF				=54;
+const UINT WIFI_EVENT_PROBRESP_MSG		=71;
+const UINT WIFI_EVENT_CCA_CHAN_QUAL		=124;
 
 
 //============
 // Event-Mask
 //============
 
-constexpr UINT WIFI_DISABLED_EVENTS[]=
+const UINT WIFI_DISABLED_EVENTS[]=
 {
 WIFI_EVENT_TX_FAIL,
 WIFI_EVENT_RADIO,
@@ -47,7 +47,7 @@ WIFI_EVENT_PROBRESP_MSG,
 WIFI_EVENT_CCA_CHAN_QUAL
 };
 
-constexpr auto WIFI_EVENT_MASK=[]()
+const auto WIFI_EVENT_MASK=[]()
 {
 std::array<BYTE, 16> flags;
 flags.fill(0xFF);

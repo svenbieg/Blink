@@ -50,7 +50,7 @@ public:
 
 private:
 	// Using
-	static constexpr UINT CPU_COUNT=Devices::System::Cpu::CPU_COUNT;
+	static const UINT CPU_COUNT=Devices::System::Cpu::CPU_COUNT;
 	using CreateList=Collections::LinkedList<LNK_LIST(Task, m_Create)>;
 	using OwnerList=Collections::ForwardList<FWD_LIST(Task, m_Owners)>;
 	using ReleaseList=Collections::LinkedList<LNK_LIST(Task, m_Release)>;

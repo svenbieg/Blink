@@ -28,7 +28,7 @@ namespace Devices {
 // Registers
 //===========
 
-constexpr UINT BANK_PIN_COUNT=32;
+const UINT BANK_PIN_COUNT=32;
 
 typedef struct
 {
@@ -36,21 +36,21 @@ RW32 STATUS;
 RW32 CTRL;
 }RP1_PIN_REGS;
 
-constexpr UINT CTRL_IRQRESET=(1<<28);
-constexpr UINT CTRL_IRQMASK=(0xF<<20);
-constexpr UINT CTRL_IRQMASK_EDGE_HIGH=(1<<21);
-constexpr UINT CTRL_IRQMASK_EDGE_LOW=(1<<20);
-constexpr BITS CTRL_INOVER={ 3, 16 };
-constexpr BITS CTRL_OEOVER={ 3, 14 };
-constexpr UINT CTRL_OEOVER_DISABLE=2;
-constexpr UINT CTRL_OEOVER_ENABLE=3;
-constexpr BITS CTRL_OUTOVER={ 3, 12 };
-constexpr UINT CTRL_OUTOVER_LOW=2;
-constexpr UINT CTRL_OUTOVER_HIGH=3;
-constexpr BITS CTRL_FUNCSEL={ 0x1F, 0 };
-constexpr UINT CTRL_FUNCSEL_DEFAULT=0x1F;
+const UINT CTRL_IRQRESET=(1<<28);
+const UINT CTRL_IRQMASK=(0xF<<20);
+const UINT CTRL_IRQMASK_EDGE_HIGH=(1<<21);
+const UINT CTRL_IRQMASK_EDGE_LOW=(1<<20);
+const BITS CTRL_INOVER={ 3, 16 };
+const BITS CTRL_OEOVER={ 3, 14 };
+const UINT CTRL_OEOVER_DISABLE=2;
+const UINT CTRL_OEOVER_ENABLE=3;
+const BITS CTRL_OUTOVER={ 3, 12 };
+const UINT CTRL_OUTOVER_LOW=2;
+const UINT CTRL_OUTOVER_HIGH=3;
+const BITS CTRL_FUNCSEL={ 0x1F, 0 };
+const UINT CTRL_FUNCSEL_DEFAULT=0x1F;
 
-constexpr UINT STATUS_INFILTERED=(1<<18);
+const UINT STATUS_INFILTERED=(1<<18);
 
 typedef struct
 {
@@ -73,19 +73,19 @@ RW32 VSEL;
 RW32 PIN[BANK_PIN_COUNT];
 }RP1_PADS_REGS;
 
-constexpr UINT PADS_VSEL_3V3=0;
-constexpr UINT PADS_VSEL_1V8=1;
+const UINT PADS_VSEL_3V3=0;
+const UINT PADS_VSEL_1V8=1;
 
-constexpr UINT PADS_OUTPUT_DISABLE=(1<<7);
-constexpr UINT PADS_INPUT_ENABLE=(1<<6);
-constexpr BITS PADS_DRIVE={ 0x3, 3 };
-constexpr UINT PADS_DRIVE_2MA=0;
-constexpr UINT PADS_DRIVE_4MA=1;
-constexpr UINT PADS_DRIVE_8MA=2;
-constexpr UINT PADS_DRIVE_12MA=3;
-constexpr BITS PADS_PULL={ 0x3, 2 };
-constexpr UINT PADS_SCHMITT=(1<<1);
-constexpr UINT PADS_SLEWFAST=(1<<0);
+const UINT PADS_OUTPUT_DISABLE=(1<<7);
+const UINT PADS_INPUT_ENABLE=(1<<6);
+const BITS PADS_DRIVE={ 0x3, 3 };
+const UINT PADS_DRIVE_2MA=0;
+const UINT PADS_DRIVE_4MA=1;
+const UINT PADS_DRIVE_8MA=2;
+const UINT PADS_DRIVE_12MA=3;
+const BITS PADS_PULL={ 0x3, 2 };
+const UINT PADS_SCHMITT=(1<<1);
+const UINT PADS_SLEWFAST=(1<<0);
 
 typedef struct
 {

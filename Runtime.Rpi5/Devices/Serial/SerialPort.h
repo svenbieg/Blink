@@ -30,7 +30,7 @@ namespace Devices {
 // Devices
 //=========
 
-constexpr UINT UART_COUNT=5;
+const UINT UART_COUNT=5;
 
 enum class SerialDevice
 {

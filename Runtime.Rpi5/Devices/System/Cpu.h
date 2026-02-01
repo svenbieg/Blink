@@ -38,8 +38,8 @@ public:
 	friend Interrupts;
 
 	// Settings
-	static constexpr UINT CACHE_LINE_SIZE=64;
-	static constexpr UINT CPU_COUNT=4;
+	static const UINT CACHE_LINE_SIZE=64;
+	static const UINT CPU_COUNT=4;
 
 	// Common
 	static VOID CleanDataCache(SIZE_T Address, SIZE_T Size)noexcept;
