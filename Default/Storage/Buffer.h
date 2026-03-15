@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Storage/Streams/Stream.h"
+#include "Storage/Streams/Seekable.h"
 #include "Handle.h"
 
 

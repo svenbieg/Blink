@@ -1,6 +1,6 @@
-//============
-// unwind.cpp
-//============
+//=====================
+// UnwindException.cpp
+//=====================
 
 #include "UnwindException.h"
 
@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Concurrency/Task.h"
+#include "Concurrency/Scheduler.h"
 #include "Devices/System/System.h"
 #include "Storage/Encoding/Dwarf.h"
 #include <assert.h>

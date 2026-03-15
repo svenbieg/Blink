@@ -103,6 +103,18 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\ForwardList.h">
       <Filter>Collections</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\InputStream.h">
+      <Filter>Storage\Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\OutputStream.h">
+      <Filter>Storage\Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\RandomAccessStream.h">
+      <Filter>Storage\Streams</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\Seekable.h">
+      <Filter>Storage\Streams</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)StringHelper.cpp" />

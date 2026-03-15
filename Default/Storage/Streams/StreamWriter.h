@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Storage/Streams/Stream.h"
+#include "Storage/Streams/OutputStream.h"
 #include "FlagHelper.h"
 #include "StringHelper.h"
 

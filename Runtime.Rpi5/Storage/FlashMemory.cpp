@@ -28,19 +28,19 @@ namespace Storage {
 // Settings
 //==========
 
-constexpr UINT BLOCK_SIZE=512;
-constexpr SIZE_T EMMC_BASE=AXI_EMMC0_BASE;
-constexpr UINT EMMC_BASE_CLOCK=200'000'000;
-constexpr UINT EMMC_CLOCK_RATE=50'000'000;
+const UINT BLOCK_SIZE=512;
+const SIZE_T EMMC_BASE=AXI_EMMC0_BASE;
+const UINT EMMC_BASE_CLOCK=200'000'000;
+const UINT EMMC_CLOCK_RATE=50'000'000;
 
 
 //====================
 // Master-Boot-Record
 //====================
 
-constexpr UINT MBR_ENTRIES=4;
-constexpr WORD MBR_MAGIC=0xAA55;
-constexpr UINT MBR_SIZE=66;
+const UINT MBR_ENTRIES=4;
+const WORD MBR_MAGIC=0xAA55;
+const UINT MBR_SIZE=66;
 
 enum
 {

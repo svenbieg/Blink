@@ -9,7 +9,8 @@
 // Using
 //=======
 
-#include "Storage/Streams/Stream.h"
+#include "Storage/Streams/InputStream.h"
+#include "Storage/Streams/OutputStream.h"
 
 
 //===========

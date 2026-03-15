@@ -15,9 +15,11 @@
 #include "Concurrency/CriticalMutex.h"
 #include "Concurrency/DispatchedQueue.h"
 #include "Concurrency/ReadLock.h"
+#include "Concurrency/ServiceTask.h"
 #include "Concurrency/Signal.h"
 #include "Concurrency/SpinLock.h"
 #include "Concurrency/Task.h"
+#include "Concurrency/TaskHelper.h"
 #include "Concurrency/WriteLock.h"
 #include "Devices/System/Cpu.h"
 
