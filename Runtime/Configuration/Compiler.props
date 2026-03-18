@@ -18,13 +18,13 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
-    <CompilerFlags>$(CompilerFlags) -g -O0</CompilerFlags>
+    <CompilerFlags>$(CompilerFlags) -g</CompilerFlags>
     <NMakePreprocessorDefinitions>$(NMakePreprocessorDefinitions);_DEBUG</NMakePreprocessorDefinitions>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
-    <CompilerFlags>$(CompilerFlags) -Os</CompilerFlags>
     <LinkerFlags>$(LinkerFlags) -flto=full</LinkerFlags>
+    <NMakePreprocessorDefinitions>$(NMakePreprocessorDefinitions);NDEBUG</NMakePreprocessorDefinitions>
   </PropertyGroup>
 
   <Import Project="$(SolutionDir)Runtime.$(Platform)\Configuration\Compiler.props" Condition="Exists('$(SolutionDir)Runtime.$(Platform)\Configuration\Compiler.props')" />
