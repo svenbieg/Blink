@@ -11,7 +11,6 @@
 
 #include "Storage/Streams/InputStream.h"
 #include "Storage/Streams/OutputStream.h"
-#include "Object.h"
 
 
 //===========
@@ -26,7 +25,7 @@ namespace Storage {
 // Random-Access-Stream
 //======================
 
-class RandomAccessStream: public Object, public InputStream, public OutputStream
+class RandomAccessStream: public InputStream, public OutputStream
 {
 public:
 	// Common

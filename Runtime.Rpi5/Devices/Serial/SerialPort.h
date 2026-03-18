@@ -61,7 +61,7 @@ Baud921600=921600
 // Serial-Port
 //=============
 
-class SerialPort: public Storage::Streams::RandomAccessStream
+class SerialPort: public Object, public Storage::Streams::RandomAccessStream
 {
 public:
 	// Friends

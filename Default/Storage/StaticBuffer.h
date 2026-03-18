@@ -24,7 +24,7 @@ namespace Storage {
 // Static-Buffer
 //===============
 
-class StaticBuffer: public Streams::Seekable
+class StaticBuffer: public Object, public Streams::Seekable
 {
 public:
 	// Con-/Destructors

@@ -60,7 +60,7 @@ ShareWrite
 // File
 //======
 
-class File: public Streams::Seekable
+class File: public Object, public Streams::Seekable
 {
 public:
 	// Common

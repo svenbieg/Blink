@@ -24,7 +24,7 @@ namespace Storage {
 // Buffer
 //========
 
-class Buffer: public Streams::Seekable
+class Buffer: public Object, public Streams::Seekable
 {
 public:
 	// Friends
