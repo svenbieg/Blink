@@ -17,7 +17,7 @@
 // Macros
 //========
 
-#define LNK_LIST(item_t, member) item_t, offsetof(item_t, member)
+#define LINKED_LIST(item_t, member) Collections::LinkedList<item_t, offsetof(item_t, member)>
 
 
 //===========
@@ -83,8 +83,8 @@ public:
 		}
 
 	// Modification
-	inline VOID Append(_item_t* Item) { Append(&m_First, &m_Last, Item); }
-	static VOID Append(_item_t** First, _item_t** Last, _item_t* Item)
+	inline VOID Append(_item_t* Item)noexcept { Append(&m_First, &m_Last, Item); }
+	static VOID Append(_item_t** First, _item_t** Last, _item_t* Item)noexcept
 		{
 		assert(First!=nullptr);
 		assert(Last!=nullptr);
@@ -102,8 +102,8 @@ public:
 		*prev_ptr=last;
 		*Last=Item;
 		}
-	inline VOID Insert(_item_t* Item, COMPARE_FN Compare) { Insert(&m_First, &m_Last, Item, Compare); }
-	static VOID Insert(_item_t** First, _item_t** Last, _item_t* Item, COMPARE_FN Compare)
+	inline VOID Insert(_item_t* Item, COMPARE_FN Compare)noexcept { Insert(&m_First, &m_Last, Item, Compare); }
+	static VOID Insert(_item_t** First, _item_t** Last, _item_t* Item, COMPARE_FN Compare)noexcept
 		{
 		assert(First!=nullptr);
 		assert(Last!=nullptr);
@@ -138,8 +138,8 @@ public:
 		*First=Item;
 		*Last=Item;
 		}
-	inline _item_t* Remove(_item_t* Item) { return Remove(&m_First, &m_Last, Item); }
-	static _item_t* Remove(_item_t** First, _item_t** Last, _item_t* Item)
+	inline _item_t* Remove(_item_t* Item)noexcept { return Remove(&m_First, &m_Last, Item); }
+	static _item_t* Remove(_item_t** First, _item_t** Last, _item_t* Item)noexcept
 		{
 		assert(First!=nullptr);
 		assert(Last!=nullptr);
@@ -170,8 +170,8 @@ public:
 		*item_next=nullptr;
 		return next;
 		}
-	inline _item_t* RemoveFirst() { return RemoveFirst(&m_First, &m_Last); }
-	static _item_t* RemoveFirst(_item_t** First, _item_t** Last)
+	inline _item_t* RemoveFirst()noexcept { return RemoveFirst(&m_First, &m_Last); }
+	static _item_t* RemoveFirst(_item_t** First, _item_t** Last)noexcept
 		{
 		assert(First!=nullptr);
 		assert(Last!=nullptr);

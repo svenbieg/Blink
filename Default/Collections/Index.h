@@ -52,7 +52,7 @@ public:
 
 	// Access
 	inline Handle<Iterator> Begin(_size_t Position=0) { return new Iterator(this, Position); }
-	inline BOOL Contains(_id_t const& Id) { return m_Index.contains(Id); }
+	inline BOOL Contains(_id_t const& Id)const noexcept { return m_Index.contains(Id); }
 	inline Handle<Iterator> End()
 		{
 		auto it=new Iterator(this, -2);
@@ -65,8 +65,8 @@ public:
 		it->Find(Id, Function);
 		return it;
 		}
-	inline _id_t GetAt(_size_t Position) { return m_Index.get_at(Position); }
-	inline _size_t GetCount() { return m_Index.get_count(); }
+	inline _id_t GetAt(_size_t Position)const { return m_Index.get_at(Position); }
+	inline _size_t GetCount()const noexcept { return m_Index.get_count(); }
 
 	// Modification
 	BOOL Add(_id_t const& Id, BOOL Notify=true)
@@ -124,7 +124,7 @@ public:
 
 private:
 	// Con-/Destructors
-	Index() {}
+	Index()=default;
 	Index(_index_t const* Copy)
 		{
 		if(Copy)
@@ -160,6 +160,7 @@ public:
 
 	// Navigation
 	inline BOOL Find(_id_t const& Id, FindFunction Function=FindFunction::equal) { return m_It.find(Id, Function); }
+	inline _size_t GetPosition()const noexcept { return m_It.get_position(); }
 	inline BOOL MoveNext() { return m_It.move_next(); }
 	inline BOOL MovePrevious() { return m_It.move_previous(); }
 

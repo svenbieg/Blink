@@ -19,13 +19,13 @@ namespace Concurrency {
 // Con-/Destructors
 //==================
 
-SpinLock::SpinLock(CriticalSection& critical):
+SpinLock::SpinLock(CriticalSection& critical)noexcept:
 m_CriticalSection(&critical)
 {
 m_CriticalSection->Lock();
 }
 
-SpinLock::~SpinLock()
+SpinLock::~SpinLock()noexcept
 {
 if(m_CriticalSection)
 	{
@@ -39,22 +39,22 @@ if(m_CriticalSection)
 // Common
 //========
 
-VOID SpinLock::Lock()
+VOID SpinLock::Lock()noexcept
 {
 m_CriticalSection->Lock();
 }
 
-BOOL SpinLock::TryLock()
+BOOL SpinLock::TryLock()noexcept
 {
 return m_CriticalSection->TryLock();
 }
 
-VOID SpinLock::Unlock()
+VOID SpinLock::Unlock()noexcept
 {
 m_CriticalSection->Unlock();
 }
 
-VOID SpinLock::Yield()
+VOID SpinLock::Yield()noexcept
 {
 m_CriticalSection->Yield();
 }
@@ -64,12 +64,12 @@ m_CriticalSection->Yield();
 // Common Private
 //================
 
-VOID SpinLock::Lock(UINT core, Task* current)
+VOID SpinLock::Lock(UINT core, Task* current)noexcept
 {
 m_CriticalSection->Lock();
 }
 
-VOID SpinLock::Unlock(UINT core, Task* current)
+VOID SpinLock::Unlock(UINT core, Task* current)noexcept
 {
 m_CriticalSection->Unlock();
 }

@@ -32,19 +32,19 @@ class ReadLock: public ScopedLock
 public:
 	// Con-/Destructors
 	ReadLock(ReadLock const&)=delete;
-	ReadLock(Mutex& Mutex);
-	~ReadLock();
+	ReadLock(Mutex& Mutex)noexcept;
+	~ReadLock()noexcept;
 
 	// Common
-	VOID Lock()override;
-	VOID Release();
-	BOOL TryLock()override;
-	VOID Unlock()override;
+	VOID Lock()noexcept override;
+	VOID Release()noexcept;
+	BOOL TryLock()noexcept override;
+	VOID Unlock()noexcept override;
 
 private:
 	// Common
-	VOID Lock(UINT Core, Task* Current)override;
-	VOID Unlock(UINT Core, Task* Current)override;
+	VOID Lock(UINT Core, Task* Current)noexcept override;
+	VOID Unlock(UINT Core, Task* Current)noexcept override;
 	Mutex* m_Mutex;
 };
 

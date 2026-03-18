@@ -64,7 +64,7 @@ Cpu::SetContext(&Task::TaskProc, task, task->m_StackPointer);
 // Common Private
 //================
 
-VOID Scheduler::AddTask(Task* task)
+VOID Scheduler::AddTask(Task* task)noexcept
 {
 SpinLock lock(s_CriticalSection);
 UINT core=Cpu::GetId();
@@ -74,7 +74,7 @@ task->m_Creator=current;
 s_Create.Append(task);
 }
 
-VOID Scheduler::CancelTask(Task* task)
+VOID Scheduler::CancelTask(Task* task)noexcept
 {
 SpinLock lock(s_CriticalSection);
 BOOL resume=false;
@@ -99,7 +99,7 @@ if(resume)
 	}
 }
 
-UINT Scheduler::CreateTasks()
+UINT Scheduler::CreateTasks()noexcept
 {
 UINT count=0;
 auto create=s_Create.First();
@@ -120,7 +120,7 @@ while(create)
 return count;
 }
 
-VOID Scheduler::ExitTask()
+VOID Scheduler::ExitTask()noexcept
 {
 SpinLock lock(s_CriticalSection);
 UINT core=Cpu::GetId();
@@ -132,14 +132,14 @@ while(1)
 	Cpu::WaitForInterrupt();
 }
 
-Task* Scheduler::GetCurrentTask()
+Task* Scheduler::GetCurrentTask()noexcept
 {
 SpinLock lock(s_CriticalSection);
 UINT core=Cpu::GetId();
 return s_CurrentTask[core];
 }
 
-UINT Scheduler::GetNextCore(BOOL suspend)
+UINT Scheduler::GetNextCore(BOOL suspend)noexcept
 {
 for(UINT u=0; u<CPU_COUNT; u++)
 	{
@@ -158,7 +158,7 @@ for(UINT u=0; u<CPU_COUNT; u++)
 return CPU_COUNT;
 }
 
-VOID Scheduler::HandleTaskSwitch(VOID* param)
+VOID Scheduler::HandleTaskSwitch(VOID* param)noexcept
 {
 SpinLock lock(s_CriticalSection);
 UINT core=Cpu::GetId();
@@ -205,7 +205,7 @@ catch(...)
 System::Restart();
 }
 
-VOID Scheduler::ResumeWaitingTasks(UINT count, BOOL suspend)
+VOID Scheduler::ResumeWaitingTasks(UINT count, BOOL suspend)noexcept
 {
 for(UINT u=0; u<count; u++)
 	{
@@ -218,7 +218,7 @@ for(UINT u=0; u<count; u++)
 	}
 }
 
-VOID Scheduler::Schedule()
+VOID Scheduler::Schedule()noexcept
 {
 SpinLock lock(s_CriticalSection);
 auto release=s_Release.RemoveFirst();
@@ -261,7 +261,7 @@ lock.Unlock();
 StatusHelper::ThrowIfFailed(current->m_Status);
 }
 
-VOID Scheduler::SuspendCurrentTask(UINT core, Task* current, UINT64 resume_time)
+VOID Scheduler::SuspendCurrentTask(UINT core, Task* current, UINT64 resume_time)noexcept
 {
 FlagHelper::Set(current->m_Flags, TaskFlags::Suspended);
 UINT resume_count=0;

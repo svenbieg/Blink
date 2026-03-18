@@ -50,10 +50,10 @@ public:
 	~Signal()=default;
 
 	// Common
-	inline VOID Cancel() { Trigger(Status::Aborted); }
+	inline VOID Cancel()noexcept { Trigger(Status::Aborted); }
 	VOID Count(UINT Times, UINT Timeout=0);
 	VOID Count(ScopedLock& Lock, UINT Times, UINT Timeout=0);
-	VOID Trigger(Status Status=Status::Success);
+	VOID Trigger(Status Status=Status::Success)noexcept;
 	inline VOID Wait(UINT Timeout=0) { Count(1, Timeout); }
 	inline VOID Wait(ScopedLock& Lock, UINT Timeout=0) { Count(Lock, 1, Timeout); }
 

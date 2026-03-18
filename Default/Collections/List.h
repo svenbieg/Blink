@@ -51,22 +51,22 @@ public:
 
 	// Access
 	inline Handle<Iterator> Begin(_size_t Position=0) { return new Iterator(this, Position); }
-	inline BOOL Contains(_item_t const& Item) { return m_List.contains(Item); }
+	inline BOOL Contains(_item_t const& Item)const noexcept { return m_List.contains(Item); }
 	inline Handle<Iterator> End()
 		{
 		auto it=new Iterator(this, -2);
 		it->End();
 		return it;
 		}
-	inline _item_t GetAt(_size_t Position)
+	inline _item_t GetAt(_size_t Position)const
 		{
 		_size_t count=m_List.get_count();
 		if(Position>=count)
 			return _item_t();
 		return m_List.get_at(Position);
 		}
-	inline _size_t GetCount() { return m_List.get_count(); }
-	inline BOOL IndexOf(_item_t const& Item, _size_t* Position) { return m_List.index_of(Item, Position); }
+	inline _size_t GetCount()const noexcept { return m_List.get_count(); }
+	inline BOOL IndexOf(_item_t const& Item, _size_t* Position)const { return m_List.index_of(Item, Position); }
 
 	// Modification
 	BOOL Add(_item_t const& Item, BOOL Notify=true)
@@ -192,7 +192,7 @@ public:
 
 protected:
 	// Con-/Destructors
-	List() {}
+	List()=default;
 	List(_list_t const* Copy)
 		{
 		if(Copy)
@@ -226,7 +226,7 @@ public:
 	// Navigation
 	inline BOOL Begin() { return m_It.begin(); }
 	inline BOOL End() { return m_It.rbegin(); }
-	inline _size_t GetPosition() { return m_It.get_position(); }
+	inline _size_t GetPosition()const noexcept { return m_It.get_position(); }
 	BOOL Move(BOOL Forward, BOOL Repeat)
 		{
 		if(Forward)

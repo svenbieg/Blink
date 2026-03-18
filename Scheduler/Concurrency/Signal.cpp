@@ -75,7 +75,7 @@ lock.Lock();
 scoped_lock.Lock(core, current);
 }
 
-VOID Signal::Trigger(Status status)
+VOID Signal::Trigger(Status status)noexcept
 {
 SpinLock lock(Scheduler::s_CriticalSection);
 auto waiting=Scheduler::WaitingList::RemoveFirst(&m_Waiting);

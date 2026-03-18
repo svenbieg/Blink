@@ -53,26 +53,26 @@ public:
 private:
 	// Using
 	static const UINT CPU_COUNT=Devices::System::Cpu::CPU_COUNT;
-	using CreateList=Collections::LinkedList<LNK_LIST(Task, m_Create)>;
-	using OwnerList=Collections::ForwardList<FWD_LIST(Task, m_Owners)>;
-	using ReleaseList=Collections::LinkedList<LNK_LIST(Task, m_Release)>;
-	using SleepingList=Collections::ForwardList<FWD_LIST(Task, m_Sleeping)>;
-	using WaitingList=Collections::ForwardList<FWD_LIST(Task, m_Waiting)>;
+	using CreateList=LINKED_LIST(Task, m_Create);
+	using OwnerList=FORWARD_LIST(Task, m_Owners);
+	using ReleaseList=LINKED_LIST(Task, m_Release);
+	using SleepingList=FORWARD_LIST(Task, m_Sleeping);
+	using WaitingList=FORWARD_LIST(Task, m_Waiting);
 
 	// Common
-	static VOID AddTask(Task* Task);
-	static VOID CancelTask(Task* Task);
-	static UINT CreateTasks();
-	static VOID ExitTask();
-	static Task* GetCurrentTask();
-	static UINT GetNextCore(BOOL Suspend);
-	static VOID HandleTaskSwitch(VOID* Parameter);
+	static VOID AddTask(Task* Task)noexcept;
+	static VOID CancelTask(Task* Task)noexcept;
+	static UINT CreateTasks()noexcept;
+	static VOID ExitTask()noexcept;
+	static Task* GetCurrentTask()noexcept;
+	static UINT GetNextCore(BOOL Suspend)noexcept;
+	static VOID HandleTaskSwitch(VOID* Parameter)noexcept;
 	static VOID IdleTask();
 	static VOID MainTask();
-	static VOID ResumeWaitingTasks(UINT Count, BOOL Suspend);
-	static VOID Schedule();
+	static VOID ResumeWaitingTasks(UINT Count, BOOL Suspend)noexcept;
+	static VOID Schedule()noexcept;
 	static VOID SuspendCurrentTask(UINT MilliSeconds);
-	static VOID SuspendCurrentTask(UINT Core, Task* Current, UINT64 ResumeTime=0);
+	static VOID SuspendCurrentTask(UINT Core, Task* Current, UINT64 ResumeTime=0)noexcept;
 	static CreateList s_Create;
 	static CriticalSection s_CriticalSection;
 	static UINT s_CurrentCore;

@@ -15,6 +15,7 @@
 #include "Concurrency/DispatchedQueue.h"
 #include "Concurrency/Scheduler.h"
 #include "Concurrency/TaskHelper.h"
+#include <new>
 
 using namespace Concurrency;
 
@@ -30,7 +31,7 @@ namespace Concurrency {
 // Con-/Destructors
 //==================
 
-Task::~Task()
+Task::~Task()noexcept
 {
 if(m_Exception)
 	{
@@ -54,7 +55,7 @@ return task;
 // Common
 //========
 
-VOID Task::Cancel()
+VOID Task::Cancel()noexcept
 {
 WriteLock lock(m_Mutex);
 if(FlagHelper::Get(m_Flags, TaskFlags::Done))
@@ -64,12 +65,12 @@ m_Status=Status::Aborted;
 Scheduler::CancelTask(this);
 }
 
-Handle<Task> Task::Get()
+Handle<Task> Task::Get()noexcept
 {
 return Scheduler::GetCurrentTask();
 }
 
-BOOL Task::IsMainTask()
+BOOL Task::IsMainTask()noexcept
 {
 auto current=Scheduler::GetCurrentTask();
 return current==Scheduler::s_MainTask;
@@ -86,7 +87,7 @@ Scheduler::SuspendCurrentTask(ms);
 // Con-/Destructors Protected
 //============================
 
-Task::Task(BYTE* stack, SIZE_T stack_size, Handle<String> name):
+Task::Task(BYTE* stack, SIZE_T stack_size, Handle<String> name)noexcept:
 Cancelled(false),
 Name(name->Begin()),
 m_Creator(nullptr),
@@ -113,14 +114,14 @@ TaskHelper::Initialize(&m_StackPointer, TaskProc, this);
 // Common Protected
 //==================
 
-bool Task::Priority(Task* first, Task* second)
+bool Task::Priority(Task* first, Task* second)noexcept
 {
 if(FlagHelper::Get(second->m_Flags, TaskFlags::Priority))
 	return false;
 return true;
 }
 
-VOID Task::Schedule(Task* task)
+VOID Task::Schedule(Task* task)noexcept
 {
 Scheduler::AddTask(task);
 }

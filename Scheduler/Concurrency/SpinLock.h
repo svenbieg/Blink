@@ -31,20 +31,20 @@ class SpinLock: public ScopedLock
 {
 public:
 	// Con-/Destructors
-	SpinLock(CriticalSection& CriticalSection);
+	SpinLock(CriticalSection& CriticalSection)noexcept;
 	SpinLock(SpinLock const&)=delete;
-	~SpinLock();
+	~SpinLock()noexcept;
 
 	// Common
-	VOID Lock()override;
-	BOOL TryLock()override;
-	VOID Unlock()override;
-	VOID Yield();
+	VOID Lock()noexcept override;
+	BOOL TryLock()noexcept override;
+	VOID Unlock()noexcept override;
+	VOID Yield()noexcept;
 
 private:
 	// Common
-	VOID Lock(UINT Core, Task* Current)override;
-	VOID Unlock(UINT Core, Task* Current)override;
+	VOID Lock(UINT Core, Task* Current)noexcept override;
+	VOID Unlock(UINT Core, Task* Current)noexcept override;
 	CriticalSection* m_CriticalSection;
 };
 

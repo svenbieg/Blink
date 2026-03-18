@@ -34,10 +34,10 @@ public:
 	CriticalSection(CriticalSection const&)=delete;
 
 	// Common
-	VOID Lock();
-	BOOL TryLock();
-	VOID Unlock();
-	VOID Yield();
+	VOID Lock()noexcept;
+	BOOL TryLock()noexcept;
+	VOID Unlock()noexcept;
+	VOID Yield()noexcept;
 
 private:
 	// Common

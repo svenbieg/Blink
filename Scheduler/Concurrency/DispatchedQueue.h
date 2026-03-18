@@ -35,7 +35,7 @@ public:
 	DispatchedQueue()=delete;
 
 	// Common
-	static VOID Append(DispatchedHandler* Handler);
+	static VOID Append(DispatchedHandler* Handler)noexcept;
 	static inline VOID Append(VOID (*Procedure)())
 		{
 		Append(new DispatchedProcedure(Procedure));
@@ -57,7 +57,7 @@ public:
 		Append(new DispatchedLambda<nullptr_t, _lambda_t>(std::forward<_lambda_t>(Lambda)));
 		}
 	static VOID Enter();
-	static VOID Exit();
+	static VOID Exit()noexcept;
 
 private:
 	// Common

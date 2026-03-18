@@ -56,23 +56,23 @@ public:
 	// Con-/Destructors
 	Mutex()=default;
 	Mutex(Mutex const&)=delete;
-	~Mutex();
+	~Mutex()noexcept;
 
 	// Common
-	virtual VOID Lock();
-	virtual VOID Lock(AccessMode);
-	virtual BOOL TryLock();
-	virtual BOOL TryLock(AccessMode);
-	virtual VOID Unlock();
-	virtual VOID Unlock(AccessMode);
+	virtual VOID Lock()noexcept;
+	virtual VOID Lock(AccessMode)noexcept;
+	virtual BOOL TryLock()noexcept;
+	virtual BOOL TryLock(AccessMode)noexcept;
+	virtual VOID Unlock()noexcept;
+	virtual VOID Unlock(AccessMode)noexcept;
 
 protected:
 	// Common
-	BOOL Lock(UINT Core, Task* Current);
-	BOOL Lock(UINT Core, Task* Current, AccessMode);
-	UINT Unlock(Task* Current);
-	UINT Unlock(Task* Current, AccessMode);
-	UINT WakeupWaitingTasks();
+	BOOL Lock(UINT Core, Task* Current)noexcept;
+	BOOL Lock(UINT Core, Task* Current, AccessMode)noexcept;
+	UINT Unlock(Task* Current)noexcept;
+	UINT Unlock(Task* Current, AccessMode)noexcept;
+	UINT WakeupWaitingTasks()noexcept;
 	Task* m_Owner=nullptr;
 	Task* m_Waiting=nullptr;
 };

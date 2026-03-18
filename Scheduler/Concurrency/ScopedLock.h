@@ -44,9 +44,9 @@ public:
 	virtual ~ScopedLock()=default;
 
 	// Common
-	virtual VOID Lock()=0;
-	virtual BOOL TryLock()=0;
-	virtual VOID Unlock()=0;
+	virtual VOID Lock()noexcept=0;
+	virtual BOOL TryLock()noexcept=0;
+	virtual VOID Unlock()noexcept=0;
 
 protected:
 	// Con-/Destructors
@@ -54,8 +54,8 @@ protected:
 
 private:
 	// Common
-	virtual VOID Lock(UINT Core, Task* Current)=0;
-	virtual VOID Unlock(UINT Core, Task* Current)=0;
+	virtual VOID Lock(UINT Core, Task* Current)noexcept=0;
+	virtual VOID Unlock(UINT Core, Task* Current)noexcept=0;
 };
 
 }

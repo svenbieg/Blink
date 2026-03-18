@@ -66,7 +66,7 @@ public:
 	typedef VOID (*proc_t)();
 
 	// Con-/Destructors
-	DispatchedProcedure(proc_t Procedure): m_Procedure(Procedure) {}
+	DispatchedProcedure(proc_t Procedure)noexcept: m_Procedure(Procedure) {}
 
 	// Common
 	inline VOID Run()override { (*m_Procedure)(); }
@@ -89,7 +89,7 @@ public:
 	typedef VOID (_owner_t::*_proc_t)();
 
 	// Con-/Destructors
-	DispatchedMemberProcedure(_owner_t* Owner, _proc_t Procedure):
+	DispatchedMemberProcedure(_owner_t* Owner, _proc_t Procedure)noexcept:
 		m_Owner(Owner),
 		m_Procedure(Procedure)
 		{}
@@ -113,7 +113,7 @@ class DispatchedLambda: public DispatchedHandler
 {
 public:
 	// Con-/Destructors
-	DispatchedLambda(_owner_t* Owner, _lambda_t&& Lambda):
+	DispatchedLambda(_owner_t* Owner, _lambda_t&& Lambda)noexcept:
 		m_Lambda(std::move(Lambda)),
 		m_Owner(Owner) {}
 
@@ -131,7 +131,7 @@ class DispatchedLambda<nullptr_t, _lambda_t>: public DispatchedHandler
 {
 public:
 	// Con-/Destructors
-	DispatchedLambda(_lambda_t&& Lambda):
+	DispatchedLambda(_lambda_t&& Lambda)noexcept:
 		m_Lambda(std::move(Lambda)) {}
 
 	// Common

@@ -52,7 +52,7 @@ public:
 
 	// Access
 	inline Handle<Iterator> Begin(_size_t Position=0) { return new Iterator(this, Position); }
-	inline BOOL Contains(_key_t const& Key) { return m_Map.contains(Key); }
+	inline BOOL Contains(_key_t const& Key)const { return m_Map.contains(Key); }
 	inline Handle<Iterator> End()
 		{
 		auto it=new Iterator(this, -2);
@@ -66,7 +66,7 @@ public:
 		return it;
 		}
 	inline _value_t Get(_key_t const& Key)const { return m_Map.get(Key); }
-	inline _size_t GetCount()const { return m_Map.get_count(); }
+	inline _size_t GetCount()const noexcept { return m_Map.get_count(); }
 	inline BOOL TryGet(_key_t const& Key, _value_t* Value)const { return m_Map.try_get(Key, Value); }
 
 	// Modification
@@ -136,7 +136,7 @@ public:
 
 protected:
 	// Con-/Destructors
-	Map() {}
+	Map()=default;
 	Map(_map_t const* Copy)
 		{
 		if(Copy)
@@ -175,7 +175,7 @@ public:
 	inline BOOL Begin() { return m_It.begin(); }
 	inline BOOL End() { return m_It.rbegin(); }
 	inline BOOL Find(_key_t const& Key, FindFunction Function=FindFunction::equal) { return m_It.find(Key, Function); }
-	inline _size_t GetPosition() { return m_It.get_position(); }
+	inline _size_t GetPosition()const noexcept { return m_It.get_position(); }
 	inline BOOL MoveNext() { return m_It.move_next(); }
 	inline BOOL MovePrevious() { return m_It.move_previous(); }
 	

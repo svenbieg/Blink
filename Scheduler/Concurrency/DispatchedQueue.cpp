@@ -26,7 +26,7 @@ namespace Concurrency {
 // Common
 //========
 
-VOID DispatchedQueue::Append(DispatchedHandler* handler)
+VOID DispatchedQueue::Append(DispatchedHandler* handler)noexcept
 {
 SpinLock lock(s_CriticalSection);
 if(!s_First)
@@ -63,7 +63,7 @@ while(s_Waiting)
 	}
 }
 
-VOID DispatchedQueue::Exit()
+VOID DispatchedQueue::Exit()noexcept
 {
 SpinLock lock(s_CriticalSection);
 s_Waiting=false;

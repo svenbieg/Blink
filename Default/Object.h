@@ -41,17 +41,17 @@ public:
 	virtual ~Object() {}
 
 	// Common
-	UINT GetReferenceCount()const { return m_ReferenceCount; }
+	UINT GetReferenceCount()const noexcept { return m_ReferenceCount; }
 	virtual Handle<String> ToString(LanguageCode Language=LanguageCode::None);
 
 protected:
 	// Con-/Destructors
-	Object(): m_ReferenceCount(0) {}
+	Object()noexcept: m_ReferenceCount(0) {}
 	template <class _obj_t, class... _args_t> static _obj_t* Create(_args_t... Arguments);
 	template <class _obj_t, class... _args_t> static _obj_t* CreateEx(SIZE_T Extra, SIZE_T Align=sizeof(SIZE_T), _args_t... Arguments);
 
 	// Common
-	inline VOID AddReference()
+	inline VOID AddReference()noexcept
 		{
 		Cpu::InterlockedIncrement(&m_ReferenceCount);
 		}

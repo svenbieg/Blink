@@ -38,7 +38,7 @@ const UINT LOCKED=0x80000000;
 // Common
 //========
 
-VOID CriticalSection::Lock()
+VOID CriticalSection::Lock()noexcept
 {
 Interrupts::Disable();
 UINT core=Cpu::GetId()|LOCKED;
@@ -50,7 +50,7 @@ while(!Cpu::CompareAndSet(&m_Core, 0, core))
 	}
 }
 
-BOOL CriticalSection::TryLock()
+BOOL CriticalSection::TryLock()noexcept
 {
 Interrupts::Disable();
 UINT core=Cpu::GetId()|LOCKED;
@@ -61,7 +61,7 @@ Interrupts::Enable();
 return false;
 }
 
-VOID CriticalSection::Unlock()
+VOID CriticalSection::Unlock()noexcept
 {
 UINT core=Cpu::GetId()|LOCKED;
 if(m_Core!=core)
@@ -70,7 +70,7 @@ Cpu::StoreAndRelease(&m_Core, 0);
 Interrupts::Enable();
 }
 
-VOID CriticalSection::Yield()
+VOID CriticalSection::Yield()noexcept
 {
 UINT core=Cpu::GetId()|LOCKED;
 assert(m_Core==core);

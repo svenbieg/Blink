@@ -19,13 +19,13 @@ namespace Concurrency {
 // Con-/Destructors
 //==================
 
-ReadLock::ReadLock(Mutex& mutex):
+ReadLock::ReadLock(Mutex& mutex)noexcept:
 m_Mutex(&mutex)
 {
 m_Mutex->Lock(AccessMode::ReadOnly);
 }
 
-ReadLock::~ReadLock()
+ReadLock::~ReadLock()noexcept
 {
 if(m_Mutex)
 	{
@@ -39,22 +39,22 @@ if(m_Mutex)
 // Common
 //========
 
-VOID ReadLock::Lock()
+VOID ReadLock::Lock()noexcept
 {
 m_Mutex->Lock(AccessMode::ReadOnly);
 }
 
-VOID ReadLock::Release()
+VOID ReadLock::Release()noexcept
 {
 m_Mutex=nullptr;
 }
 
-BOOL ReadLock::TryLock()
+BOOL ReadLock::TryLock()noexcept
 {
 return m_Mutex->TryLock(AccessMode::ReadOnly);
 }
 
-VOID ReadLock::Unlock()
+VOID ReadLock::Unlock()noexcept
 {
 m_Mutex->Unlock(AccessMode::ReadOnly);
 }
@@ -64,12 +64,12 @@ m_Mutex->Unlock(AccessMode::ReadOnly);
 // Common Private
 //================
 
-VOID ReadLock::Lock(UINT core, Task* current)
+VOID ReadLock::Lock(UINT core, Task* current)noexcept
 {
 m_Mutex->Lock(core, current, AccessMode::ReadOnly);
 }
 
-VOID ReadLock::Unlock(UINT core, Task* current)
+VOID ReadLock::Unlock(UINT core, Task* current)noexcept
 {
 m_Mutex->Unlock(current, AccessMode::ReadOnly);
 }

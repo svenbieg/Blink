@@ -78,7 +78,7 @@ public:
 	friend UnwindException;
 
 	// Con-/Destructors
-	~Task();
+	~Task()noexcept;
 	static Handle<Task> Create(VOID (*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE);
 	template <class _owner_t> static Handle<Task> Create(_owner_t* Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE);
 	template <class _owner_t> static inline Handle<Task> Create(Handle<_owner_t> const& Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE)
@@ -93,11 +93,11 @@ public:
 	template <class _lambda_t> static inline Handle<Task> Create(nullptr_t Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE);
 
 	// Common
-	VOID Cancel();
+	VOID Cancel()noexcept;
 	volatile BOOL Cancelled;
-	static Handle<Task> Get();
-	inline Status GetStatus()const { return m_Status; }
-	static BOOL IsMainTask();
+	static Handle<Task> Get()noexcept;
+	inline Status GetStatus()const noexcept { return m_Status; }
+	static BOOL IsMainTask()noexcept;
 	const LPCTSTR Name;
 	Handle<Object> Result;
 	static VOID Sleep(UINT Milliseconds);
@@ -138,13 +138,13 @@ protected:
 	template <class _item_t> using Link=Collections::Link<_item_t>;
 
 	// Con-/Destructors
-	Task(BYTE* Stack, SIZE_T StackSize, Handle<String> Name);
+	Task(BYTE* Stack, SIZE_T StackSize, Handle<String> Name)noexcept;
 	static Task* CreateInternal(VOID (*Procedure)(), Handle<String> Name, SIZE_T StackSize=MemoryHelper::PAGE_SIZE);
 
 	// Common
-	static bool Priority(Task* First, Task* Second);
+	static bool Priority(Task* First, Task* Second)noexcept;
 	virtual VOID Run()=0;
-	static VOID Schedule(Task* Task);
+	static VOID Schedule(Task* Task)noexcept;
 	static VOID TaskProc(VOID* Parameter);
 	Link<Task> m_Create;
 	Task* m_Creator;

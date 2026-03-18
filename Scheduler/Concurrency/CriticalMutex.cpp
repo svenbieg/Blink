@@ -30,7 +30,7 @@ namespace Concurrency {
 // Common
 //========
 
-VOID CriticalMutex::Lock()
+VOID CriticalMutex::Lock()noexcept
 {
 // You can not use a Mutex in an ISR, You have to use a CriticalSection instead.
 assert(!Interrupts::Active());
@@ -47,7 +47,7 @@ FlagHelper::Set(current->m_Flags, TaskFlags::Priority);
 current->m_PriorityCount++;
 }
 
-VOID CriticalMutex::Lock(AccessMode)
+VOID CriticalMutex::Lock(AccessMode)noexcept
 {
 // You can not use a Mutex in an ISR, You have to use a CriticalSection instead.
 assert(!Interrupts::Active());
@@ -62,7 +62,7 @@ FlagHelper::Set(current->m_Flags, TaskFlags::Priority);
 current->m_PriorityCount++;
 }
 
-BOOL CriticalMutex::TryLock()
+BOOL CriticalMutex::TryLock()noexcept
 {
 // You can not use a Mutex in an ISR, You have to use a CriticalSection instead.
 assert(!Interrupts::Active());
@@ -79,7 +79,7 @@ current->m_PriorityCount++;
 return true;
 }
 
-BOOL CriticalMutex::TryLock(AccessMode)
+BOOL CriticalMutex::TryLock(AccessMode)noexcept
 {
 // You can not use a Mutex in an ISR, You have to use a CriticalSection instead.
 assert(!Interrupts::Active());
@@ -99,7 +99,7 @@ Scheduler::OwnerList::Append(&m_Owner, current);
 return true;
 }
 
-VOID CriticalMutex::Unlock()
+VOID CriticalMutex::Unlock()noexcept
 {
 SpinLock lock(Scheduler::s_CriticalSection);
 if(!m_Owner) // Accessing heap early
@@ -122,7 +122,7 @@ if(resume_count)
 	Scheduler::ResumeWaitingTasks(resume_count, true);
 }
 
-VOID CriticalMutex::Unlock(AccessMode)
+VOID CriticalMutex::Unlock(AccessMode)noexcept
 {
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();

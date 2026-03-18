@@ -17,7 +17,7 @@
 // Macros
 //========
 
-#define FWD_LIST(item_t, member) item_t, offsetof(item_t, member)
+#define FORWARD_LIST(item_t, member) Collections::ForwardList<item_t, offsetof(item_t, member)>
 
 
 //===========
@@ -53,8 +53,8 @@ public:
 
 	// Access
 	inline operator bool()const noexcept { return m_First!=nullptr; }
-	inline UINT Count(UINT Max=0)const { return Count(m_First, Max); }
-	static UINT Count(_item_t const* First, UINT Max=0)
+	inline UINT Count(UINT Max=0)const noexcept { return Count(m_First, Max); }
+	static UINT Count(_item_t const* First, UINT Max=0)noexcept
 		{
 		UINT count=0;
 		auto current=First;
@@ -75,8 +75,8 @@ public:
 		}
 
 	// Modification
-	inline VOID Append(_item_t* Item) { Append(&m_First, Item); }
-	static VOID Append(_item_t** First, _item_t* Item)
+	inline VOID Append(_item_t* Item)noexcept { Append(&m_First, Item); }
+	static VOID Append(_item_t** First, _item_t* Item)noexcept
 		{
 		assert(First!=nullptr);
 		assert(Item!=nullptr);
@@ -90,8 +90,8 @@ public:
 			}
 		*current_ptr=Item;
 		}
-	inline VOID Insert(_item_t* Item, COMPARE_FN Compare) { Insert(&m_First, Item, Compare); }
-	static VOID Insert(_item_t** First, _item_t* Item, COMPARE_FN Compare)
+	inline VOID Insert(_item_t* Item, COMPARE_FN Compare)noexcept { Insert(&m_First, Item, Compare); }
+	static VOID Insert(_item_t** First, _item_t* Item, COMPARE_FN Compare)noexcept
 		{
 		assert(First!=nullptr);
 		assert(Item!=nullptr);
@@ -111,8 +111,8 @@ public:
 			}
 		*current_ptr=Item;
 		}
-	inline _item_t* Remove(_item_t* Item) { return Remove(&m_First, Item); }
-	static _item_t* Remove(_item_t** First, _item_t* Item)
+	inline _item_t* Remove(_item_t* Item)noexcept { return Remove(&m_First, Item); }
+	static _item_t* Remove(_item_t** First, _item_t* Item)noexcept
 		{
 		assert(First!=nullptr);
 		assert(Item!=nullptr);
@@ -131,8 +131,8 @@ public:
 			}
 		return nullptr;
 		}
-	inline _item_t* RemoveFirst() { return RemoveFirst(&m_First); }
-	static _item_t* RemoveFirst(_item_t** First)
+	inline _item_t* RemoveFirst()noexcept { return RemoveFirst(&m_First); }
+	static _item_t* RemoveFirst(_item_t** First)noexcept
 		{
 		assert(First!=nullptr);
 		auto first=*First;
@@ -143,8 +143,8 @@ public:
 		*first_next=nullptr;
 		return first;
 		}
-	inline BOOL TryRemove(_item_t* Item) { return TryRemove(&m_First, Item); }
-	static BOOL TryRemove(_item_t** First, _item_t* Item)
+	inline BOOL TryRemove(_item_t* Item)noexcept { return TryRemove(&m_First, Item); }
+	static BOOL TryRemove(_item_t** First, _item_t* Item)noexcept
 		{
 		assert(First!=nullptr);
 		assert(Item!=nullptr);
