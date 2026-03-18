@@ -37,6 +37,9 @@ template <class _item_t, class _size_t=UINT>
 class Array: public Object
 {
 public:
+	// Friends
+	friend Object;
+
 	// Using
 	using InputStream=Storage::Streams::InputStream;
 	using OutputStream=Storage::Streams::OutputStream;
@@ -50,11 +53,11 @@ public:
 	// Con-/Destructors
 	~Array()
 		{
-		if(m_Items)
-			delete [] m_Items;
+		for(UINT u=0; u<m_Count; u++)
+			m_Items[u].~_item_t();
 		}
-	static inline Handle<Array> Create(_size_t Count) { return new Array(Count); }
-	static inline Handle<Array> Create(Handle<Array> const& Copy) { return new Array(Copy); }
+	static inline Handle<Array> Create(_size_t Count) { return Object::CreateEx<Array>(Count*sizeof(_item_t), alignof(_item_t)); }
+	static inline Handle<Array> Create(Handle<Array> const& Copy) { return Object::CreateEx<Array, Array const*>(Copy.m_Count*sizeof(_item_t), alignof(_item_t), Copy); }
 
 	// Access
 	inline _item_t* Begin() { return m_Items; }
@@ -110,15 +113,14 @@ protected:
 
 private:
 	// Con-/Destructors
-	Array(_size_t Count): m_Count(Count), m_Items(nullptr)
+	Array(VOID* Buffer, SIZE_T Size): m_Count(Size/sizeof(_item_t)), m_Items((_item_t*)Buffer)
 		{
-		if(m_Count>0)
-			m_Items=new _item_t[m_Count];
+		for(UINT u=0; u<m_Count; u++)
+			new (&m_Items[u]) _item_t();
 		}
-	Array(Handle<Array> const& Copy): m_Count(Copy->GetCount())
+	Array(VOID* Buffer, SIZE_T Size, Array const* Copy): m_Count(Size/sizeof(_item_t)), m_Items((_item_t*)Buffer)
 		{
-		m_Items=operator new(m_Count*sizeof(_item_t));
-		for(_size_t u=0; u<m_Count; u++)
+		for(UINT u=0; u<m_Count; u++)
 			new (&m_Items[u]) _item_t(Copy->GetAt(u));
 		}
 };
