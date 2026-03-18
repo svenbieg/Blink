@@ -27,11 +27,11 @@ m_Value(reinterpret_cast<UINT64>(handle? handle->Begin(): nullptr))
 // Access
 //========
 
-BOOL VariableArgument::Get(Handle<String>*& Pointer)const
+BOOL VariableArgument::Get(Handle<String>*& ptr)const
 {
 if(!FlagHelper::Get(m_Flags, VAF_STRING))
 	return false;
-Pointer=reinterpret_cast<Handle<String>*>(m_Value);
+ptr=reinterpret_cast<Handle<String>*>(m_Value);
 return true;
 }
 
