@@ -10,6 +10,7 @@
 //=======
 
 #include "Storage/Streams/RandomAccessStream.h"
+#include "Handle.h"
 
 
 //===========
@@ -23,7 +24,7 @@ namespace Storage {
 // Packet-Buffer
 //===============
 
-class PacketBuffer: public Storage::Streams::RandomAccessStream
+class PacketBuffer: public Object, public Storage::Streams::RandomAccessStream
 {
 public:
 	// Con-/Destructors
