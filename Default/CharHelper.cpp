@@ -372,6 +372,7 @@ switch(c)
 	{
 	case Ansi::ae:
 	case Ansi::oe:
+	case Ansi::sz:
 	case Ansi::ue:
 		return true;
 	}

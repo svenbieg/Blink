@@ -39,6 +39,7 @@ const CHAR Degree='\xB0';
 const CHAR Enumeration='\x95';
 const CHAR OE='\xD6';
 const CHAR oe='\xF6';
+const CHAR sz='\xDF';
 const CHAR UE='\xDC';
 const CHAR ue='\xFC';
 }
