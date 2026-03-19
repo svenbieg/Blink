@@ -39,7 +39,7 @@ public:
 	static UINT Copy(LPWSTR Destination, UINT Size, LPCSTR Source, UINT Length=0)noexcept;
 	static UINT Copy(LPWSTR Destination, UINT Size, LPCWSTR Source, UINT Length=0)noexcept;
 	static UINT Decrypt(LPSTR Destination, UINT Size, BYTE const* Source, LPCSTR Key)noexcept;
-	static UINT Encrypt(BYTE* Destination, SIZE_T Size, LPCSTR Source, LPCSTR Key)noexcept;
+	static UINT Encrypt(BYTE* Destination, SIZE_T Size, LPCSTR Source, LPCSTR Key);
 	static BOOL FindChar(LPCSTR String, CHAR Char, UINT* Position=nullptr, BOOL CaseSensitive=true)noexcept;
 	static BOOL FindChar(LPCSTR String, WCHAR Char, UINT* Position=nullptr, BOOL CaseSensitive=true)noexcept;
 	static BOOL FindChar(LPCWSTR String, CHAR Char, UINT* Position=nullptr, BOOL CaseSensitive=true)noexcept;

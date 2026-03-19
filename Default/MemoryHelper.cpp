@@ -9,7 +9,7 @@
 // Common
 //========
 
-INT MemoryHelper::Compare(VOID const* buf1_ptr, VOID const* buf2_ptr, SIZE_T size)
+INT MemoryHelper::Compare(VOID const* buf1_ptr, VOID const* buf2_ptr, SIZE_T size)noexcept
 {
 auto buf1=(BYTE const*)buf1_ptr;
 auto buf2=(BYTE const*)buf2_ptr;
@@ -23,7 +23,7 @@ for(SIZE_T u=0; u<size; u++)
 return 0;
 }
 
-VOID MemoryHelper::Copy(VOID* dst_ptr, VOID const* src_ptr, SIZE_T size)
+VOID MemoryHelper::Copy(VOID* dst_ptr, VOID const* src_ptr, SIZE_T size)noexcept
 {
 auto dst=(LPSTR)dst_ptr;
 auto src=(LPCSTR)src_ptr;
@@ -32,7 +32,7 @@ while(dst<end)
 	*dst++=*src++;
 }
 
-VOID MemoryHelper::Fill(VOID* dst_ptr, SIZE_T size, BYTE value)
+VOID MemoryHelper::Fill(VOID* dst_ptr, SIZE_T size, BYTE value)noexcept
 {
 auto dst=(BYTE*)dst_ptr;
 auto end=dst+size;
@@ -40,7 +40,7 @@ while(dst<end)
 	*dst++=value;
 }
 
-VOID MemoryHelper::Move(VOID* dst_ptr, VOID const* src_ptr, SIZE_T size)
+VOID MemoryHelper::Move(VOID* dst_ptr, VOID const* src_ptr, SIZE_T size)noexcept
 {
 auto dst=(LPSTR)dst_ptr;
 auto src=(LPCSTR)src_ptr;

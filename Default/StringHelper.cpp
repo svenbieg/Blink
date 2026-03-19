@@ -1672,7 +1672,7 @@ while(1)
 return len;
 }
 
-UINT StringHelper::Encrypt(BYTE* dst, SIZE_T size, LPCSTR src, LPCSTR key_str)noexcept
+UINT StringHelper::Encrypt(BYTE* dst, SIZE_T size, LPCSTR src, LPCSTR key_str)
 {
 if(!src||!src[0]||!key_str||!key_str[0])
 	return 0;
