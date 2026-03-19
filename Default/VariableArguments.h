@@ -31,35 +31,35 @@ class VariableArgument
 public:
 	// Con-/Destructors
 	VariableArgument(VariableArgument const&)=delete;
-	VariableArgument(Handle<String> Handle);
-	inline VariableArgument(BYTE Value): m_Flags(VAF_UNSIGNED|VAF_INT), m_Size(sizeof(BYTE)), m_Value(Value) {}
-	inline VariableArgument(WORD Value): m_Flags(VAF_UNSIGNED|VAF_INT), m_Size(sizeof(WORD)), m_Value(Value) {}
-	inline VariableArgument(UINT Value): m_Flags(VAF_UNSIGNED|VAF_INT), m_Size(sizeof(UINT)), m_Value(Value) {}
-	inline VariableArgument(UINT64 Value): m_Flags(VAF_UNSIGNED|VAF_INT), m_Size(sizeof(UINT64)), m_Value(Value) {}
-	inline VariableArgument(SHORT Value): m_Flags(VAF_INT), m_Size(sizeof(SHORT)), m_Value(Value) {}
-	inline VariableArgument(INT Value): m_Flags(VAF_INT), m_Size(sizeof(INT)), m_Value(Value) {}
-	inline VariableArgument(INT64 Value): m_Flags(VAF_INT), m_Size(sizeof(INT64)), m_Value(Value) {}
-	inline VariableArgument(FLOAT Value): m_Flags(VAF_FLOAT), m_Size(sizeof(FLOAT)), m_Value(std::bit_cast<UINT64, DOUBLE>(Value)) {}
-	inline VariableArgument(DOUBLE Value): m_Flags(VAF_FLOAT), m_Size(sizeof(DOUBLE)), m_Value(std::bit_cast<UINT64, DOUBLE>(Value)) {}
-	inline VariableArgument(CHAR Value): m_Flags(VAF_UNSIGNED|VAF_INT), m_Size(sizeof(CHAR)), m_Value(Value) {}
-	inline VariableArgument(WCHAR Value): m_Flags(VAF_UNSIGNED|VAF_INT), m_Size(sizeof(WCHAR)), m_Value(Value) {}
-	inline VariableArgument(LPSTR Pointer): m_Flags(VAF_CHAR|VAF_PTR), m_Size(sizeof(CHAR)), m_Value(reinterpret_cast<UINT64>(Pointer)) {}
-	inline VariableArgument(LPCSTR Pointer): m_Flags(VAF_CHAR|VAF_PTR|VAF_CONST), m_Size(sizeof(CHAR)), m_Value(reinterpret_cast<UINT64>(Pointer)) {}
-	inline VariableArgument(LPWSTR Pointer): m_Flags(VAF_CHAR|VAF_PTR), m_Size(sizeof(WCHAR)), m_Value(reinterpret_cast<UINT64>(Pointer)) {}
-	inline VariableArgument(LPCWSTR Pointer): m_Flags(VAF_CHAR|VAF_PTR|VAF_CONST), m_Size(sizeof(WCHAR)), m_Value(reinterpret_cast<UINT64>(Pointer)) {}
-	inline VariableArgument(BYTE* Pointer): m_Flags(VAF_UNSIGNED|VAF_INT|VAF_PTR), m_Size(sizeof(BYTE)), m_Value(reinterpret_cast<UINT64>(Pointer)) {}
-	inline VariableArgument(WORD* Pointer): m_Flags(VAF_UNSIGNED|VAF_INT|VAF_PTR), m_Size(sizeof(WORD)), m_Value(reinterpret_cast<UINT64>(Pointer)) {}
-	inline VariableArgument(UINT* Pointer): m_Flags(VAF_UNSIGNED|VAF_INT|VAF_PTR), m_Size(sizeof(UINT)), m_Value(reinterpret_cast<UINT64>(Pointer)) {}
-	inline VariableArgument(UINT64* Pointer): m_Flags(VAF_UNSIGNED|VAF_INT|VAF_PTR), m_Size(sizeof(UINT64)), m_Value(reinterpret_cast<UINT64>(Pointer)) {}
-	inline VariableArgument(SHORT* Pointer): m_Flags(VAF_INT|VAF_PTR), m_Size(sizeof(SHORT)), m_Value(reinterpret_cast<UINT64>(Pointer)) {}
-	inline VariableArgument(INT* Pointer): m_Flags(VAF_INT|VAF_PTR), m_Size(sizeof(INT)), m_Value(reinterpret_cast<UINT64>(Pointer)) {}
-	inline VariableArgument(INT64* Pointer): m_Flags(VAF_INT|VAF_PTR), m_Size(sizeof(INT64)), m_Value(reinterpret_cast<UINT64>(Pointer)) {}
-	inline VariableArgument(FLOAT* Pointer): m_Flags(VAF_FLOAT|VAF_PTR), m_Size(sizeof(FLOAT)), m_Value(reinterpret_cast<UINT64>(Pointer)) {}
-	inline VariableArgument(DOUBLE* Pointer): m_Flags(VAF_FLOAT|VAF_PTR), m_Size(sizeof(DOUBLE)), m_Value(reinterpret_cast<UINT64>(Pointer)) {}
-	inline VariableArgument(Handle<String>* Handle): m_Flags(VAF_CHAR|VAF_PTR|VAF_STRING), m_Size(sizeof(TCHAR)), m_Value(reinterpret_cast<UINT64>(Handle)) {}
+	VariableArgument(Handle<String> Handle)noexcept;
+	inline VariableArgument(BYTE Value)noexcept: m_Flags(VAF_UNSIGNED|VAF_INT), m_Size(sizeof(BYTE)), m_Value(Value) {}
+	inline VariableArgument(WORD Value)noexcept: m_Flags(VAF_UNSIGNED|VAF_INT), m_Size(sizeof(WORD)), m_Value(Value) {}
+	inline VariableArgument(UINT Value)noexcept: m_Flags(VAF_UNSIGNED|VAF_INT), m_Size(sizeof(UINT)), m_Value(Value) {}
+	inline VariableArgument(UINT64 Value)noexcept: m_Flags(VAF_UNSIGNED|VAF_INT), m_Size(sizeof(UINT64)), m_Value(Value) {}
+	inline VariableArgument(SHORT Value)noexcept: m_Flags(VAF_INT), m_Size(sizeof(SHORT)), m_Value(Value) {}
+	inline VariableArgument(INT Value)noexcept: m_Flags(VAF_INT), m_Size(sizeof(INT)), m_Value(Value) {}
+	inline VariableArgument(INT64 Value)noexcept: m_Flags(VAF_INT), m_Size(sizeof(INT64)), m_Value(Value) {}
+	inline VariableArgument(FLOAT Value)noexcept: m_Flags(VAF_FLOAT), m_Size(sizeof(FLOAT)), m_Value(std::bit_cast<UINT64, DOUBLE>(Value)) {}
+	inline VariableArgument(DOUBLE Value)noexcept: m_Flags(VAF_FLOAT), m_Size(sizeof(DOUBLE)), m_Value(std::bit_cast<UINT64, DOUBLE>(Value)) {}
+	inline VariableArgument(CHAR Value)noexcept: m_Flags(VAF_UNSIGNED|VAF_INT), m_Size(sizeof(CHAR)), m_Value(Value) {}
+	inline VariableArgument(WCHAR Value)noexcept: m_Flags(VAF_UNSIGNED|VAF_INT), m_Size(sizeof(WCHAR)), m_Value(Value) {}
+	inline VariableArgument(LPSTR Pointer)noexcept: m_Flags(VAF_CHAR|VAF_PTR), m_Size(sizeof(CHAR)), m_Value(reinterpret_cast<UINT64>(Pointer)) {}
+	inline VariableArgument(LPCSTR Pointer)noexcept: m_Flags(VAF_CHAR|VAF_PTR|VAF_CONST), m_Size(sizeof(CHAR)), m_Value(reinterpret_cast<UINT64>(Pointer)) {}
+	inline VariableArgument(LPWSTR Pointer)noexcept: m_Flags(VAF_CHAR|VAF_PTR), m_Size(sizeof(WCHAR)), m_Value(reinterpret_cast<UINT64>(Pointer)) {}
+	inline VariableArgument(LPCWSTR Pointer)noexcept: m_Flags(VAF_CHAR|VAF_PTR|VAF_CONST), m_Size(sizeof(WCHAR)), m_Value(reinterpret_cast<UINT64>(Pointer)) {}
+	inline VariableArgument(BYTE* Pointer)noexcept: m_Flags(VAF_UNSIGNED|VAF_INT|VAF_PTR), m_Size(sizeof(BYTE)), m_Value(reinterpret_cast<UINT64>(Pointer)) {}
+	inline VariableArgument(WORD* Pointer)noexcept: m_Flags(VAF_UNSIGNED|VAF_INT|VAF_PTR), m_Size(sizeof(WORD)), m_Value(reinterpret_cast<UINT64>(Pointer)) {}
+	inline VariableArgument(UINT* Pointer)noexcept: m_Flags(VAF_UNSIGNED|VAF_INT|VAF_PTR), m_Size(sizeof(UINT)), m_Value(reinterpret_cast<UINT64>(Pointer)) {}
+	inline VariableArgument(UINT64* Pointer)noexcept: m_Flags(VAF_UNSIGNED|VAF_INT|VAF_PTR), m_Size(sizeof(UINT64)), m_Value(reinterpret_cast<UINT64>(Pointer)) {}
+	inline VariableArgument(SHORT* Pointer)noexcept: m_Flags(VAF_INT|VAF_PTR), m_Size(sizeof(SHORT)), m_Value(reinterpret_cast<UINT64>(Pointer)) {}
+	inline VariableArgument(INT* Pointer)noexcept: m_Flags(VAF_INT|VAF_PTR), m_Size(sizeof(INT)), m_Value(reinterpret_cast<UINT64>(Pointer)) {}
+	inline VariableArgument(INT64* Pointer)noexcept: m_Flags(VAF_INT|VAF_PTR), m_Size(sizeof(INT64)), m_Value(reinterpret_cast<UINT64>(Pointer)) {}
+	inline VariableArgument(FLOAT* Pointer)noexcept: m_Flags(VAF_FLOAT|VAF_PTR), m_Size(sizeof(FLOAT)), m_Value(reinterpret_cast<UINT64>(Pointer)) {}
+	inline VariableArgument(DOUBLE* Pointer)noexcept: m_Flags(VAF_FLOAT|VAF_PTR), m_Size(sizeof(DOUBLE)), m_Value(reinterpret_cast<UINT64>(Pointer)) {}
+	inline VariableArgument(Handle<String>* Handle)noexcept: m_Flags(VAF_CHAR|VAF_PTR|VAF_STRING), m_Size(sizeof(TCHAR)), m_Value(reinterpret_cast<UINT64>(Handle)) {}
 
 	// Access
-	template <std::integral _int_t> BOOL Get(_int_t& Value)const
+	template <std::integral _int_t> BOOL Get(_int_t& Value)const noexcept
 		{
 		if(BitHelper::Get(m_Flags, VAF_PTR))
 			return false;
@@ -70,7 +70,7 @@ public:
 			}
 		return TypeHelper::Integral<_int_t, UINT64>(m_Value, &Value);
 		}
-	template <std::floating_point _float_t> BOOL Get(_float_t& Value)const
+	template <std::floating_point _float_t> BOOL Get(_float_t& Value)const noexcept
 		{
 		if(BitHelper::Get(m_Flags, VAF_PTR))
 			return false;
@@ -81,14 +81,14 @@ public:
 			}
 		return TypeHelper::Float<_float_t, UINT64>(m_Value, &Value);
 		}
-	inline BOOL Get(LPSTR& Pointer)const { return GetStringPointer(VAF_PTR, sizeof(CHAR), (VOID**)&Pointer); }
-	inline BOOL Get(LPCSTR& Pointer)const { return GetStringPointer(VAF_PTR|VAF_CONST, sizeof(CHAR), (VOID**)&Pointer); }
-	inline BOOL Get(LPWSTR& Pointer)const { return GetStringPointer(VAF_PTR, sizeof(WCHAR), (VOID**)&Pointer); }
-	inline BOOL Get(LPCWSTR& Pointer)const { return GetStringPointer(VAF_PTR|VAF_CONST, sizeof(WCHAR), (VOID**)&Pointer); }
-	BOOL Get(Handle<String>*& Pointer)const;
+	inline BOOL Get(LPSTR& Pointer)const noexcept { return GetStringPointer(VAF_PTR, sizeof(CHAR), (VOID**)&Pointer); }
+	inline BOOL Get(LPCSTR& Pointer)const noexcept { return GetStringPointer(VAF_PTR|VAF_CONST, sizeof(CHAR), (VOID**)&Pointer); }
+	inline BOOL Get(LPWSTR& Pointer)const noexcept { return GetStringPointer(VAF_PTR, sizeof(WCHAR), (VOID**)&Pointer); }
+	inline BOOL Get(LPCWSTR& Pointer)const noexcept { return GetStringPointer(VAF_PTR|VAF_CONST, sizeof(WCHAR), (VOID**)&Pointer); }
+	BOOL Get(Handle<String>*& Pointer)const noexcept;
 
 	// Modification
-	template <std::numeric _num_t> BOOL Set(_num_t Value)
+	template <std::numeric _num_t> BOOL Set(_num_t Value)noexcept
 		{
 		if(!BitHelper::Get(m_Flags, VAF_PTR))
 			return false;
@@ -112,10 +112,10 @@ private:
 	static const BYTE VAF_STRING=(1<<6);
 
 	// Access
-	BOOL GetStringPointer(BYTE Flags, BYTE Size, VOID** Pointer)const;
+	BOOL GetStringPointer(BYTE Flags, BYTE Size, VOID** Pointer)const noexcept;
 
 	// Modification
-	template <std::numeric _value_t> BOOL SetFloat(_value_t value)
+	template <std::numeric _value_t> BOOL SetFloat(_value_t value)noexcept
 		{
 		switch(m_Size)
 			{
@@ -132,7 +132,7 @@ private:
 			}
 		return false;
 		}
-	template <std::numeric _value_t> BOOL SetSigned(_value_t value)
+	template <std::numeric _value_t> BOOL SetSigned(_value_t value)noexcept
 		{
 		switch(m_Size)
 			{
@@ -159,7 +159,7 @@ private:
 			}
 		return false;
 		}
-	template <std::numeric _value_t> BOOL SetUnsigned(_value_t value)
+	template <std::numeric _value_t> BOOL SetUnsigned(_value_t value)noexcept
 		{
 		switch(m_Size)
 			{
@@ -203,10 +203,10 @@ class VariableArguments
 public:
 	// Con-/Destructors
 	VariableArguments(VariableArguments const&)=delete;
-	VariableArguments(VariableArgument* Arguments, UINT Count): m_Arguments(Arguments), m_Count(Count), m_Position(0) {}
+	VariableArguments(VariableArgument* Arguments, UINT Count)noexcept: m_Arguments(Arguments), m_Count(Count), m_Position(0) {}
 
 	// Access
-	template <class _item_t> BOOL Get(_item_t& Item)
+	template <class _item_t> BOOL Get(_item_t& Item)noexcept
 		{
 		if(m_Position>=m_Count)
 			return false;
@@ -217,8 +217,8 @@ public:
 			}
 		return false;
 		}
-	inline VOID Reset() { m_Position=0; }
-	template <class _item_t> BOOL Set(_item_t Item)
+	inline VOID Reset()noexcept { m_Position=0; }
+	template <class _item_t> BOOL Set(_item_t Item)noexcept
 		{
 		if(m_Position>=m_Count)
 			return false;
@@ -229,8 +229,8 @@ public:
 			}
 		return false;
 		}
-	BOOL Set(LPCSTR Buffer, UINT Length);
-	BOOL Set(LPCWSTR Buffer, UINT Length);
+	BOOL Set(LPCSTR Buffer, UINT Length)noexcept;
+	BOOL Set(LPCWSTR Buffer, UINT Length)noexcept;
 
 private:
 	// Common

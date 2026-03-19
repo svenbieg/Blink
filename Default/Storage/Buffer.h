@@ -46,14 +46,14 @@ public:
 	BOOL Seek(SIZE_T Position)override;
 
 	// Access
-	inline BYTE* Begin()const { return m_Buffer; }
+	inline BYTE* Begin()const noexcept { return m_Buffer; }
 
 	// Modification
-	SIZE_T Fill(UINT Value, SIZE_T Size=0);
+	SIZE_T Fill(UINT Value, SIZE_T Size=0)noexcept;
 
 private:
 	// Con-/Destructors
-	Buffer(VOID* Buffer, SIZE_T Size);
+	Buffer(VOID* Buffer, SIZE_T Size)noexcept;
 
 	// Common
 	BYTE* m_Buffer;

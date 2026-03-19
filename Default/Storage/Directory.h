@@ -42,7 +42,7 @@ public:
 
 protected:
 	// Con-/Destructors
-	Directory() {}
+	Directory()=default;
 };
 
 
@@ -60,7 +60,7 @@ public:
 
 protected:
 	// Con-/Destructors
-	DirectoryIterator() {}
+	DirectoryIterator()=default;
 };
 
 }

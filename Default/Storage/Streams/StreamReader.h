@@ -30,7 +30,7 @@ class StreamReader
 {
 public:
 	// Con-/Destructors
-	StreamReader(InputStream* Stream);
+	StreamReader(InputStream* Stream)noexcept;
 
 	// Common
 	UINT FindChar(LPCSTR Chars);
@@ -45,7 +45,7 @@ public:
 	UINT ReadString(LPSTR Buffer, UINT Size, LPCSTR Escape, LPCSTR Truncate=nullptr);
 	UINT ReadString(LPWSTR Buffer, UINT Size, LPCSTR Escape, LPCSTR Truncate=nullptr);
 	Handle<String> ReadString(SIZE_T* Size=nullptr, LPCSTR Escape=nullptr, LPCSTR Truncate=nullptr);
-	VOID SetStream(InputStream* Stream);
+	VOID SetStream(InputStream* Stream)noexcept;
 	UINT Skip(UINT Count=1);
 	UINT Skip(LPCSTR Chars);
 

@@ -22,7 +22,7 @@ if(len)
 	Initialize(len);
 }
 
-StringBuilder::~StringBuilder()
+StringBuilder::~StringBuilder()noexcept
 {
 Clear();
 }
@@ -82,7 +82,7 @@ for(; String[pos]; pos++)
 return pos;
 }
 
-VOID StringBuilder::Clear()
+VOID StringBuilder::Clear()noexcept
 {
 auto block=m_First;
 while(block)

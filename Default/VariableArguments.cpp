@@ -16,7 +16,7 @@
 // Con-/Destructors
 //==================
 
-VariableArgument::VariableArgument(Handle<String> handle):
+VariableArgument::VariableArgument(Handle<String> handle)noexcept:
 m_Flags(VAF_CHAR|VAF_PTR|VAF_CONST),
 m_Size(sizeof(TCHAR)),
 m_Value(reinterpret_cast<UINT64>(handle? handle->Begin(): nullptr))
@@ -27,7 +27,7 @@ m_Value(reinterpret_cast<UINT64>(handle? handle->Begin(): nullptr))
 // Access
 //========
 
-BOOL VariableArgument::Get(Handle<String>*& ptr)const
+BOOL VariableArgument::Get(Handle<String>*& ptr)const noexcept
 {
 if(!FlagHelper::Get(m_Flags, VAF_STRING))
 	return false;
@@ -40,7 +40,7 @@ return true;
 // Access Private
 //================
 
-BOOL VariableArgument::GetStringPointer(BYTE flags, BYTE size, VOID** ptr)const
+BOOL VariableArgument::GetStringPointer(BYTE flags, BYTE size, VOID** ptr)const noexcept
 {
 if(!BitHelper::Get(m_Flags, VAF_CHAR))
 	return false;
@@ -66,7 +66,7 @@ return true;
 // Variable Arguments
 //====================
 
-template <class _char_t> BOOL SetString(VariableArgument const* args, UINT count, UINT* pos_ptr, _char_t const* str, UINT len)
+template <class _char_t> BOOL SetString(VariableArgument const* args, UINT count, UINT* pos_ptr, _char_t const* str, UINT len)noexcept
 {
 auto pos=*pos_ptr;
 if(pos>=count)
@@ -96,12 +96,12 @@ StringHelper::Copy(pw, size, str, len);
 return true;
 }
 
-BOOL VariableArguments::Set(LPCSTR str, UINT len)
+BOOL VariableArguments::Set(LPCSTR str, UINT len)noexcept
 {
 return SetString(m_Arguments, m_Count, &m_Position, str, len);
 }
 
-BOOL VariableArguments::Set(LPCWSTR str, UINT len)
+BOOL VariableArguments::Set(LPCWSTR str, UINT len)noexcept
 {
 return SetString(m_Arguments, m_Count, &m_Position, str, len);
 }

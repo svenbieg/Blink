@@ -26,7 +26,7 @@ return nullptr;
 // Common Private
 //================
 
-UINT Object::Release()
+UINT Object::Release()noexcept
 {
 UINT ref_count=Cpu::InterlockedDecrement(&m_ReferenceCount);
 if(ref_count==0)

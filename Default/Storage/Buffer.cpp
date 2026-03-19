@@ -85,7 +85,7 @@ return true;
 // Modification
 //==============
 
-SIZE_T Buffer::Fill(UINT value, SIZE_T size)
+SIZE_T Buffer::Fill(UINT value, SIZE_T size)noexcept
 {
 if(m_Size==0)
 	return 0;
@@ -103,7 +103,7 @@ return copy;
 // Con-/Destructors Private
 //==========================
 
-Buffer::Buffer(VOID* buf_ptr, SIZE_T size):
+Buffer::Buffer(VOID* buf_ptr, SIZE_T size)noexcept:
 m_Buffer((BYTE*)buf_ptr),
 m_Position(0),
 m_Size(size)

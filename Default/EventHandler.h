@@ -41,8 +41,8 @@ public:
 	virtual ~EventHandler()=default;
 
 	// Common
-	virtual VOID* GetOwner()const=0;
-	virtual VOID Invalidate()=0;
+	virtual VOID* GetOwner()const noexcept=0;
+	virtual VOID Invalidate()noexcept=0;
 	virtual VOID Run(_sender_t* Sender, _args_t... Arguments)=0;
 
 protected:
@@ -66,11 +66,11 @@ public:
 	typedef VOID (*_func_t)();
 
 	// Con-/Destructors
-	EventProcedure(_func_t Procedure): m_Procedure(Procedure) {}
+	EventProcedure(_func_t Procedure)noexcept: m_Procedure(Procedure) {}
 
 	// Common
-	inline VOID* GetOwner()const override { return (VOID*)m_Procedure; }
-	inline VOID Invalidate()override { m_Procedure=nullptr; }
+	inline VOID* GetOwner()const noexcept override { return (VOID*)m_Procedure; }
+	inline VOID Invalidate()noexcept override { m_Procedure=nullptr; }
 	inline VOID Run(_sender_t* Sender, _args_t... Arguments)override
 		{
 		if(m_Procedure)
@@ -95,11 +95,11 @@ public:
 	typedef VOID (*_func_t)(_args_t...);
 
 	// Con-/Destructors
-	EventProcedureWithArgs(_func_t Procedure): m_Procedure(Procedure) {}
+	EventProcedureWithArgs(_func_t Procedure)noexcept: m_Procedure(Procedure) {}
 
 	// Common
-	inline VOID* GetOwner()const override { return m_Procedure; }
-	inline VOID Invalidate()override { m_Procedure=nullptr; }
+	inline VOID* GetOwner()const noexcept override { return m_Procedure; }
+	inline VOID Invalidate()noexcept override { m_Procedure=nullptr; }
 	inline VOID Run(_sender_t* Sender, _args_t... Arguments)override
 		{
 		if(m_Procedure)
@@ -124,11 +124,11 @@ public:
 	typedef VOID (*_func_t)(_sender_t*, _args_t...);
 
 	// Con-/Destructors
-	EventProcedureWithSender(_func_t Procedure): m_Procedure(Procedure) {}
+	EventProcedureWithSender(_func_t Procedure)noexcept: m_Procedure(Procedure) {}
 
 	// Common
-	inline VOID* GetOwner()const override { return m_Procedure; }
-	inline VOID Invalidate()override { m_Procedure=nullptr; }
+	inline VOID* GetOwner()const noexcept override { return m_Procedure; }
+	inline VOID Invalidate()noexcept override { m_Procedure=nullptr; }
 	inline VOID Run(_sender_t* Sender, _args_t... Arguments)override
 		{
 		if(m_Procedure)
@@ -153,11 +153,11 @@ public:
 	typedef VOID (_owner_t::*_func_t)();
 
 	// Con-/Destructors
-	EventMemberFunction(_owner_t* Owner, _func_t Procedure): m_Owner(Owner), m_Procedure(Procedure) {}
+	EventMemberFunction(_owner_t* Owner, _func_t Procedure)noexcept: m_Owner(Owner), m_Procedure(Procedure) {}
 
 	// Common
-	inline VOID* GetOwner()const override { return m_Owner; }
-	inline VOID Invalidate()override { m_Owner=nullptr; }
+	inline VOID* GetOwner()const noexcept override { return m_Owner; }
+	inline VOID Invalidate()noexcept override { m_Owner=nullptr; }
 	inline VOID Run(_sender_t* Sender, _args_t... Arguments)override
 		{
 		if(m_Owner)
@@ -183,11 +183,11 @@ public:
 	typedef VOID (_owner_t::*_func_t)(_args_t...);
 
 	// Con-/Destructors
-	EventMemberFunctionWithArgs(_owner_t* Owner, _func_t Procedure): m_Owner(Owner), m_Procedure(Procedure) {}
+	EventMemberFunctionWithArgs(_owner_t* Owner, _func_t Procedure)noexcept: m_Owner(Owner), m_Procedure(Procedure) {}
 
 	// Common
-	inline VOID* GetOwner()const override { return m_Owner; }
-	inline VOID Invalidate()override { m_Owner=nullptr; }
+	inline VOID* GetOwner()const noexcept override { return m_Owner; }
+	inline VOID Invalidate()noexcept override { m_Owner=nullptr; }
 	inline VOID Run(_sender_t* Sender, _args_t... Arguments)override
 		{
 		if(m_Owner)
@@ -213,11 +213,11 @@ public:
 	typedef VOID (_owner_t::*_func_t)(_sender_t*, _args_t...);
 
 	// Con-/Destructors
-	EventMemberFunctionWithSender(_owner_t* Owner, _func_t Procedure): m_Owner(Owner), m_Procedure(Procedure) {}
+	EventMemberFunctionWithSender(_owner_t* Owner, _func_t Procedure)noexcept: m_Owner(Owner), m_Procedure(Procedure) {}
 
 	// Common
-	inline VOID* GetOwner()const override { return m_Owner; }
-	inline VOID Invalidate()override { m_Owner=nullptr; }
+	inline VOID* GetOwner()const noexcept override { return m_Owner; }
+	inline VOID Invalidate()noexcept override { m_Owner=nullptr; }
 	inline VOID Run(_sender_t* Sender, _args_t... Arguments)override
 		{
 		if(m_Owner)

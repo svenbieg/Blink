@@ -20,20 +20,20 @@ class PathHelper
 {
 public:
 	// Common
-	static UINT GetComponentLength(LPCSTR Path);
-	static UINT GetComponentLength(LPCWSTR Path);
-	static Handle<String> GetDirectory(LPCSTR Path);
-	static Handle<String> GetDirectory(LPCWSTR Path);
-	static UINT GetDirectoryLength(LPCSTR Path);
-	static UINT GetDirectoryLength(LPCWSTR Path);
-	static LPCSTR GetExtension(LPCSTR Path);
-	static LPCWSTR GetExtension(LPCWSTR Path);
-	static Handle<String> GetHostName(LPCSTR Path);
-	static Handle<String> GetHostName(LPCWSTR Path);
-	static Handle<String> GetHostName(Handle<String> const& Path);
-	static LPCSTR GetLastComponent(LPCSTR Path);
-	static LPCWSTR GetLastComponent(LPCWSTR Path);
-	static Handle<String> GetName(LPCSTR Path);
-	static Handle<String> GetName(LPCWSTR Path);
-	static Handle<String> GetName(Handle<String> const& Path);
+	static UINT GetComponentLength(LPCSTR Path)noexcept;
+	static UINT GetComponentLength(LPCWSTR Path)noexcept;
+	static Handle<String> GetDirectory(LPCSTR Path)noexcept;
+	static Handle<String> GetDirectory(LPCWSTR Path)noexcept;
+	static UINT GetDirectoryLength(LPCSTR Path)noexcept;
+	static UINT GetDirectoryLength(LPCWSTR Path)noexcept;
+	static LPCSTR GetExtension(LPCSTR Path)noexcept;
+	static LPCWSTR GetExtension(LPCWSTR Path)noexcept;
+	static Handle<String> GetHostName(LPCSTR Path)noexcept;
+	static Handle<String> GetHostName(LPCWSTR Path)noexcept;
+	static Handle<String> GetHostName(Handle<String> const& Path)noexcept;
+	static LPCSTR GetLastComponent(LPCSTR Path)noexcept;
+	static LPCWSTR GetLastComponent(LPCWSTR Path)noexcept;
+	static Handle<String> GetName(LPCSTR Path)noexcept;
+	static Handle<String> GetName(LPCWSTR Path)noexcept;
+	static Handle<String> GetName(Handle<String> const& Path)noexcept;
 };

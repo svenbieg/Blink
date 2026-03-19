@@ -12,6 +12,7 @@
 // Using
 //=======
 
+#include <cassert>
 #include "Storage/Streams/InputStream.h"
 #include "Storage/Streams/OutputStream.h"
 #include "Exception.h"
@@ -66,23 +67,22 @@ public:
 	Dwarf(Dwarf const& Dwarf): m_Buffer(Dwarf.m_Buffer) {}
 
 	// Common
-	inline LPCSTR Begin()const { return (LPCSTR)m_Buffer; }
-	static UINT GetEncodedSize(BYTE Encoding);
-	inline SIZE_T GetPosition()const { return (SIZE_T)m_Buffer; }
-	inline UINT64 Read() { return Read((BYTE const*&)m_Buffer); }
-	static UINT64 Read(BYTE const*& Dwarf);
-	inline BYTE ReadByte() { return *m_Buffer++; }
-	static inline BYTE ReadByte(BYTE const*& Dwarf) { return *Dwarf++; }
-	inline UINT64 ReadEncoded(BYTE Encoding, SIZE_T DataRelative=0) { return ReadEncoded((BYTE const*&)m_Buffer, Encoding, DataRelative); }
-	static UINT64 ReadEncoded(BYTE const*& Dwarf, BYTE Encoding, UINT64 DataRelative=0);
-	inline INT64 ReadSigned() { return ReadSigned((BYTE const*&)m_Buffer); }
-	static INT64 ReadSigned(BYTE const*& Dwarf);
-	inline UINT64 ReadUnsigned() { return ReadUnsigned((BYTE const*&)m_Buffer); }
-	static UINT64 ReadUnsigned(BYTE const*& Dwarf);
+	inline LPCSTR Begin()const noexcept { return (LPCSTR)m_Buffer; }
+	static UINT GetEncodedSize(BYTE Encoding)noexcept;
+	inline SIZE_T GetPosition()const noexcept { return (SIZE_T)m_Buffer; }
+	inline UINT64 Read()noexcept { return Read((BYTE const*&)m_Buffer); }
+	static UINT64 Read(BYTE const*& Dwarf)noexcept;
+	inline BYTE ReadByte()noexcept { return *m_Buffer++; }
+	static inline BYTE ReadByte(BYTE const*& Dwarf)noexcept { return *Dwarf++; }
+	inline UINT64 ReadEncoded(BYTE Encoding, SIZE_T DataRelative=0)noexcept { return ReadEncoded((BYTE const*&)m_Buffer, Encoding, DataRelative); }
+	static UINT64 ReadEncoded(BYTE const*& Dwarf, BYTE Encoding, UINT64 DataRelative=0)noexcept;
+	inline INT64 ReadSigned()noexcept { return ReadSigned((BYTE const*&)m_Buffer); }
+	static INT64 ReadSigned(BYTE const*& Dwarf)noexcept;
+	inline UINT64 ReadUnsigned()noexcept { return ReadUnsigned((BYTE const*&)m_Buffer); }
+	static UINT64 ReadUnsigned(BYTE const*& Dwarf)noexcept;
 	template <typename _value_t> static UINT ReadUnsigned(InputStream* Dwarf, _value_t* Value)
 		{
-		if(!Dwarf)
-			throw InvalidArgumentException();
+		assert(Dwarf);
 		_value_t value=0;
 		UINT size=0;
 		UINT shift=0;
@@ -103,13 +103,13 @@ public:
 			*Value=value;
 		return size;
 		}
-	template <typename _value_t> inline _value_t ReadValue()
+	template <typename _value_t> inline _value_t ReadValue()noexcept
 		{
 		_value_t value=*(_value_t const*)m_Buffer;
 		m_Buffer+=sizeof(_value_t);
 		return value;
 		}
-	template <typename _value_t> static inline _value_t ReadValue(BYTE const*& Dwarf)
+	template <typename _value_t> static inline _value_t ReadValue(BYTE const*& Dwarf)noexcept
 		{
 		_value_t value=*(_value_t const*)Dwarf;
 		Dwarf+=sizeof(_value_t);
@@ -117,13 +117,14 @@ public:
 		}
 	template <typename _value_t> static inline _value_t ReadValue(InputStream* Dwarf)
 		{
+		assert(Dwarf);
 		_value_t value;
 		SIZE_T read=Dwarf->Read(&value, sizeof(_value_t));
 		if(read!=sizeof(_value_t))
 			throw DeviceNotReadyException();
 		return value;
 		}
-	VOID SetPosition(SIZE_T Position) { m_Buffer=(BYTE*)Position; }
+	VOID SetPosition(SIZE_T Position)noexcept { m_Buffer=(BYTE*)Position; }
 	static UINT WriteSigned(OutputStream* Dwarf, INT64 Value);
 	template <typename _value_t> static UINT WriteUnsigned(OutputStream* Dwarf, _value_t Value)
 		{

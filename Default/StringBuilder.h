@@ -21,7 +21,7 @@ class StringBuilder
 public:
 	// Con-/Destructors
 	StringBuilder(UINT Length=0);
-	~StringBuilder();
+	~StringBuilder()noexcept;
 
 	// Common
 	UINT Append(CHAR Char);
@@ -30,7 +30,7 @@ public:
 	UINT Append(LPCWSTR String);
 	UINT Append(UINT Length, LPCSTR String);
 	UINT Append(UINT Length, LPCWSTR String);
-	VOID Clear();
+	VOID Clear()noexcept;
 	VOID Initialize(UINT Length);
 	Handle<String> ToString();
 

@@ -37,22 +37,22 @@ WCHAR UnicodeMap[128]=
 	0x00F0, 0x00F1, 0x00F2, 0x00F3, 0x00F4, 0x00F5, 0x00F6, 0x00F7, 0x00F8, 0x00F9, 0x00FA, 0x00FB, 0x00FC, 0x00FD, 0x00FE, 0x00FF, // 0xF0
 };
 
-template <std::character _dst_t, std::character _src_t> inline _dst_t CharToChar(_src_t c)
+template <std::character _dst_t, std::character _src_t> inline _dst_t CharToChar(_src_t c)noexcept
 {
 return c;
 }
 
-template <> inline CHAR CharToChar(WCHAR c)
+template <> inline CHAR CharToChar(WCHAR c)noexcept
 {
 return CharHelper::ToAnsi(c);
 }
 
-template <> inline WCHAR CharToChar(CHAR c)
+template <> inline WCHAR CharToChar(CHAR c)noexcept
 {
 return CharHelper::ToUnicode(c);
 }
 
-template <std::character _dst_t, std::character _src_t> inline _dst_t CharToCapital(_src_t tc)
+template <std::character _dst_t, std::character _src_t> inline _dst_t CharToCapital(_src_t tc)noexcept
 {
 CHAR c=CharToChar<CHAR, _src_t>(tc);
 if(c>='a'&&c<='z')
@@ -69,7 +69,7 @@ switch(c)
 return CharToChar<_dst_t, _src_t>(tc);
 }
 
-template <std::character _char_t> inline BOOL CharToDigit(_char_t tc, UINT* digit_ptr, UINT base)
+template <std::character _char_t> inline BOOL CharToDigit(_char_t tc, UINT* digit_ptr, UINT base)noexcept
 {
 CHAR c=CharToChar<CHAR, _char_t>(tc);
 if(c<'0')
@@ -93,7 +93,7 @@ if(digit<base)
 return false;
 }
 
-template <std::character _dst_t, std::character _src_t> inline _dst_t CharToSmall(_src_t tc)
+template <std::character _dst_t, std::character _src_t> inline _dst_t CharToSmall(_src_t tc)noexcept
 {
 CHAR c=CharToChar<_dst_t, _src_t>(tc);
 if(c>='A'&&c<='Z')
@@ -260,7 +260,7 @@ const BYTE CharCompareNotCaseSensitive[]=
 	 22,  41,  43,  44,  45,  46,  47, 255, 255,  55,  56,  57,  58,  63, 255, 255, // 0xF0
 	};
 
-template <std::character _char1_t, std::character _char2_t> inline INT CharCompare(_char1_t tc1, _char2_t tc2, BOOL cs)
+template <std::character _char1_t, std::character _char2_t> inline INT CharCompare(_char1_t tc1, _char2_t tc2, BOOL cs)noexcept
 {
 CHAR c1=CharToChar<CHAR, _char1_t>(tc1);
 CHAR c2=CharToChar<CHAR, _char2_t>(tc2);
@@ -280,7 +280,7 @@ if(c1<c2)
 return 0;
 }
 
-template <std::character _char1_t, std::character _char2_t> inline BOOL CharEqual(_char1_t tc1, _char2_t tc2, BOOL cs)
+template <std::character _char1_t, std::character _char2_t> inline BOOL CharEqual(_char1_t tc1, _char2_t tc2, BOOL cs)noexcept
 {
 CHAR c1=CharToChar<CHAR, _char1_t>(tc1);
 CHAR c2=CharToChar<CHAR, _char2_t>(tc2);
@@ -292,7 +292,7 @@ if(!cs)
 return c1==c2;
 }
 
-template <std::character _char_t> inline BOOL CharIsAlpha(_char_t tc)
+template <std::character _char_t> inline BOOL CharIsAlpha(_char_t tc)noexcept
 {
 CHAR c=CharToChar<CHAR, _char_t>(tc);
 if(c>='A'&&c<='Z')
@@ -305,6 +305,7 @@ switch(c)
 	case Ansi::ae:
 	case Ansi::OE:
 	case Ansi::oe:
+	case Ansi::sz:
 	case Ansi::UE:
 	case Ansi::ue:
 		return true;
@@ -312,7 +313,7 @@ switch(c)
 return false;
 }
 
-template <std::character _char_t> inline BOOL CharIsBreak(_char_t tc)
+template <std::character _char_t> inline BOOL CharIsBreak(_char_t tc)noexcept
 {
 if(tc==0)
 	return true;
@@ -326,7 +327,7 @@ for(UINT u=0; u<TypeHelper::ArraySize(str); u++)
 return false;
 }
 
-template <std::character _char_t> inline BOOL CharIsCapital(_char_t tc)
+template <std::character _char_t> inline BOOL CharIsCapital(_char_t tc)noexcept
 {
 CHAR c=CharToChar<CHAR, _char_t>(tc);
 if(c>='A'&&c<='Z')
@@ -341,7 +342,7 @@ switch(c)
 return false;
 }
 
-template <std::character _char_t> inline BOOL CharIsLineBreak(_char_t tc)
+template <std::character _char_t> inline BOOL CharIsLineBreak(_char_t tc)noexcept
 {
 if(tc==0)
 	return true;
@@ -355,7 +356,7 @@ for(UINT u=0; u<TypeHelper::ArraySize(str); u++)
 return false;
 }
 
-template <std::character _char_t> inline BOOL CharIsPrintable(_char_t tc)
+template <std::character _char_t> inline BOOL CharIsPrintable(_char_t tc)noexcept
 {
 CHAR c=CharToChar<CHAR, _char_t>(tc);
 if(c>=' '&&c<='~')
@@ -363,7 +364,7 @@ if(c>=' '&&c<='~')
 return false;
 }
 
-template <std::character _char_t> inline BOOL CharIsSmall(_char_t tc)
+template <std::character _char_t> inline BOOL CharIsSmall(_char_t tc)noexcept
 {
 CHAR c=CharToChar<CHAR, _char_t>(tc);
 if(c>='a'&&c<='z')
@@ -379,7 +380,7 @@ switch(c)
 return false;
 }
 
-template <std::character _char_t> inline BOOL CharIsSpecial(_char_t tc)
+template <std::character _char_t> inline BOOL CharIsSpecial(_char_t tc)noexcept
 {
 CHAR c=CharToChar<CHAR, _char_t>(tc);
 CHAR str[]="\"*/:<>?\\|";
@@ -396,47 +397,47 @@ return false;
 // Char-Helper
 //=============
 
-INT CharHelper::Compare(CHAR c1, CHAR c2, BOOL cs)
+INT CharHelper::Compare(CHAR c1, CHAR c2, BOOL cs)noexcept
 {
 return CharCompare(c1, c2, cs);
 }
 
-INT CharHelper::Compare(CHAR c1, WCHAR c2, BOOL cs)
+INT CharHelper::Compare(CHAR c1, WCHAR c2, BOOL cs)noexcept
 {
 return CharCompare(c1, c2, cs);
 }
 
-INT CharHelper::Compare(WCHAR c1, CHAR c2, BOOL cs)
+INT CharHelper::Compare(WCHAR c1, CHAR c2, BOOL cs)noexcept
 {
 return CharCompare(c1, c2, cs);
 }
 
-INT CharHelper::Compare(WCHAR c1, WCHAR c2, BOOL cs)
+INT CharHelper::Compare(WCHAR c1, WCHAR c2, BOOL cs)noexcept
 {
 return CharCompare(c1, c2, cs);
 }
 
-BOOL CharHelper::Equal(CHAR c1, CHAR c2, BOOL cs)
+BOOL CharHelper::Equal(CHAR c1, CHAR c2, BOOL cs)noexcept
 {
 return CharEqual(c1, c2, cs);
 }
 
-BOOL CharHelper::Equal(CHAR c1, WCHAR c2, BOOL cs)
+BOOL CharHelper::Equal(CHAR c1, WCHAR c2, BOOL cs)noexcept
 {
 return CharEqual(c1, c2, cs);
 }
 
-BOOL CharHelper::Equal(WCHAR c1, CHAR c2, BOOL cs)
+BOOL CharHelper::Equal(WCHAR c1, CHAR c2, BOOL cs)noexcept
 {
 return CharEqual(c1, c2, cs);
 }
 
-BOOL CharHelper::Equal(WCHAR c1, WCHAR c2, BOOL cs)
+BOOL CharHelper::Equal(WCHAR c1, WCHAR c2, BOOL cs)noexcept
 {
 return CharEqual(c1, c2, cs);
 }
 
-BOOL CharHelper::Equal(CHAR c, LPCSTR chars, BOOL cs)
+BOOL CharHelper::Equal(CHAR c, LPCSTR chars, BOOL cs)noexcept
 {
 if(!chars)
 	return false;
@@ -448,7 +449,7 @@ for(UINT u=0; chars[u]; u++)
 return false;
 }
 
-BOOL CharHelper::Equal(WCHAR c, LPCSTR chars, BOOL cs)
+BOOL CharHelper::Equal(WCHAR c, LPCSTR chars, BOOL cs)noexcept
 {
 if(!chars)
 	return false;
@@ -460,7 +461,7 @@ for(UINT u=0; chars[u]; u++)
 return false;
 }
 
-BOOL CharHelper::Equal(WCHAR c, LPCWSTR chars, BOOL cs)
+BOOL CharHelper::Equal(WCHAR c, LPCWSTR chars, BOOL cs)noexcept
 {
 if(!chars)
 	return false;
@@ -472,72 +473,72 @@ for(UINT u=0; chars[u]; u++)
 return false;
 }
 
-BOOL CharHelper::IsAlpha(CHAR c)
+BOOL CharHelper::IsAlpha(CHAR c)noexcept
 {
 return CharIsAlpha(c);
 }
 
-BOOL CharHelper::IsAlpha(WCHAR c)
+BOOL CharHelper::IsAlpha(WCHAR c)noexcept
 {
 return CharIsAlpha(c);
 }
 
-BOOL CharHelper::IsBreak(CHAR c)
+BOOL CharHelper::IsBreak(CHAR c)noexcept
 {
 return CharIsBreak(c);
 }
 
-BOOL CharHelper::IsBreak(WCHAR c)
+BOOL CharHelper::IsBreak(WCHAR c)noexcept
 {
 return CharIsBreak(c);
 }
 
-BOOL CharHelper::IsCapital(CHAR c)
+BOOL CharHelper::IsCapital(CHAR c)noexcept
 {
 return CharIsCapital(c);
 }
 
-BOOL CharHelper::IsCapital(WCHAR c)
+BOOL CharHelper::IsCapital(WCHAR c)noexcept
 {
 return CharIsCapital(c);
 }
 
-BOOL CharHelper::IsLineBreak(CHAR c)
+BOOL CharHelper::IsLineBreak(CHAR c)noexcept
 {
 return CharIsLineBreak(c);
 }
 
-BOOL CharHelper::IsLineBreak(WCHAR c)
+BOOL CharHelper::IsLineBreak(WCHAR c)noexcept
 {
 return CharIsLineBreak(c);
 }
 
-BOOL CharHelper::IsPrintable(CHAR c)
+BOOL CharHelper::IsPrintable(CHAR c)noexcept
 {
 return CharIsPrintable(c);
 }
 
-BOOL CharHelper::IsPrintable(WCHAR c)
+BOOL CharHelper::IsPrintable(WCHAR c)noexcept
 {
 return CharIsPrintable(c);
 }
 
-BOOL CharHelper::IsSmall(CHAR c)
+BOOL CharHelper::IsSmall(CHAR c)noexcept
 {
 return CharIsSmall(c);
 }
 
-BOOL CharHelper::IsSmall(WCHAR c)
+BOOL CharHelper::IsSmall(WCHAR c)noexcept
 {
 return CharIsSmall(c);
 }
 
-BOOL CharHelper::IsSpecial(CHAR c)
+BOOL CharHelper::IsSpecial(CHAR c)noexcept
 {
 return CharIsSpecial(c);
 }
 
-BOOL CharHelper::IsSpecial(WCHAR c)
+BOOL CharHelper::IsSpecial(WCHAR c)noexcept
 {
 return CharIsSpecial(c);
 }
@@ -592,7 +593,7 @@ if(!stream)
 return CharReadUtf8(stream, c_ptr);
 }
 
-CHAR CharHelper::ToAnsi(WCHAR wc)
+CHAR CharHelper::ToAnsi(WCHAR wc)noexcept
 {
 if(wc<0x80)
 	return (CHAR)wc;
@@ -604,57 +605,57 @@ for(UINT u=0; u<128; u++)
 return '_';
 }
 
-CHAR CharHelper::ToCapitalAnsi(CHAR c)
+CHAR CharHelper::ToCapitalAnsi(CHAR c)noexcept
 {
 return CharToCapital<CHAR, CHAR>(c);
 }
 
-CHAR CharHelper::ToCapitalAnsi(WCHAR c)
+CHAR CharHelper::ToCapitalAnsi(WCHAR c)noexcept
 {
 return CharToCapital<CHAR, WCHAR>(c);
 }
 
-WCHAR CharHelper::ToCapitalUnicode(CHAR c)
+WCHAR CharHelper::ToCapitalUnicode(CHAR c)noexcept
 {
 return CharToCapital<WCHAR, CHAR>(c);
 }
 
-WCHAR CharHelper::ToCapitalUnicode(WCHAR c)
+WCHAR CharHelper::ToCapitalUnicode(WCHAR c)noexcept
 {
 return CharToCapital<WCHAR, WCHAR>(c);
 }
 
-BOOL CharHelper::ToDigit(CHAR c, UINT* digit_ptr, UINT base)
+BOOL CharHelper::ToDigit(CHAR c, UINT* digit_ptr, UINT base)noexcept
 {
 return CharToDigit(c, digit_ptr, base);
 }
 
-BOOL CharHelper::ToDigit(WCHAR c, UINT* digit_ptr, UINT base)
+BOOL CharHelper::ToDigit(WCHAR c, UINT* digit_ptr, UINT base)noexcept
 {
 return CharToDigit(c, digit_ptr, base);
 }
 
-CHAR CharHelper::ToSmallAnsi(CHAR c)
+CHAR CharHelper::ToSmallAnsi(CHAR c)noexcept
 {
 return CharToSmall<CHAR, CHAR>(c);
 }
 
-CHAR CharHelper::ToSmallAnsi(WCHAR c)
+CHAR CharHelper::ToSmallAnsi(WCHAR c)noexcept
 {
 return CharToSmall<CHAR, WCHAR>(c);
 }
 
-WCHAR CharHelper::ToSmallUnicode(CHAR c)
+WCHAR CharHelper::ToSmallUnicode(CHAR c)noexcept
 {
 return CharToSmall<WCHAR, CHAR>(c);
 }
 
-WCHAR CharHelper::ToSmallUnicode(WCHAR c)
+WCHAR CharHelper::ToSmallUnicode(WCHAR c)noexcept
 {
 return CharToSmall<WCHAR, WCHAR>(c);
 }
 
-WCHAR CharHelper::ToUnicode(CHAR c)
+WCHAR CharHelper::ToUnicode(CHAR c)noexcept
 {
 BYTE b=(BYTE)c;
 if(b<0x80)

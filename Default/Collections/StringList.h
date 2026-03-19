@@ -33,7 +33,7 @@ public:
 
 private:
 	// Con-/Destructors
-	StringList() {}
+	StringList()=default;
 	StringList(Handle<String> String, CHAR Separator);
 };
 

@@ -22,7 +22,8 @@ using namespace Storage::Streams;
 // Common
 //========
 
-template <std::character _dst_t, std::character _src_t> UINT StringCopy(_dst_t* dst, UINT size, _src_t const* src, UINT len=0)
+template <std::character _dst_t, std::character _src_t>
+UINT StringCopy(_dst_t* dst, UINT size, _src_t const* src, UINT len=0)noexcept
 {
 if(!dst)
 	return 0;
@@ -50,7 +51,8 @@ if(dst)
 return pos;
 }
 
-template <std::character _str_t> UINT StringLength(_str_t const* value)
+template <std::character _str_t>
+UINT StringLength(_str_t const* value)noexcept
 {
 if(!value)
 	return 0;
@@ -59,7 +61,8 @@ for(; value[len]; len++);
 return len;
 }
 
-template <std::character _str_t> UINT StringLength(_str_t const* value, UINT max)
+template <std::character _str_t>
+UINT StringLength(_str_t const* value, UINT max)noexcept
 {
 if(!value)
 	return 0;
@@ -79,7 +82,8 @@ return len;
 // Conversion
 //============
 
-template <std::character _str_t> UINT StringLowercase(_str_t* str)
+template <std::character _str_t>
+UINT StringLowercase(_str_t* str)noexcept
 {
 if(!str)
 	return 0;
@@ -89,7 +93,8 @@ for(; str[pos]; pos++)
 return pos;
 }
 
-template <std::character _dst_t, std::character _src_t> UINT StringLowercase(_dst_t* dst, UINT size, _src_t const* src)
+template <std::character _dst_t, std::character _src_t>
+UINT StringLowercase(_dst_t* dst, UINT size, _src_t const* src)noexcept
 {
 if(!dst)
 	return 0;
@@ -106,7 +111,8 @@ if(dst)
 return pos;
 }
 
-template <std::character _str_t> UINT StringUppercase(_str_t* str)
+template <std::character _str_t>
+UINT StringUppercase(_str_t* str)noexcept
 {
 if(!str)
 	return 0;
@@ -116,7 +122,8 @@ for(; str[pos]; pos++)
 return pos;
 }
 
-template <std::character _dst_t, std::character _src_t> UINT StringUppercase(_dst_t* dst, UINT size, _src_t const* str)
+template <std::character _dst_t, std::character _src_t>
+UINT StringUppercase(_dst_t* dst, UINT size, _src_t const* str)noexcept
 {
 if(!str)
 	return 0;
@@ -165,9 +172,10 @@ Width=128,
 Zero=64
 };
 
-template <std::character _str_t, std::unsigned_integral _uint_t> UINT StringScanUInt(_str_t const* String, _uint_t* Value, UINT Base=10, UINT Length=0);
+template <std::character _str_t, std::unsigned_integral _uint_t>
+UINT StringScanUInt(_str_t const* String, _uint_t* Value, UINT Base=10, UINT Length=0)noexcept;
 
-UINT StringGetFormat(LPCSTR str, Format& format, FormatFlags& flags, UINT& width, UINT& precision)
+UINT StringGetFormat(LPCSTR str, Format& format, FormatFlags& flags, UINT& width, UINT& precision)noexcept
 {
 if(!str)
 	return 0;
@@ -322,7 +330,8 @@ return pos+1;
 // Floats
 //========
 
-template <std::floating_point _float_t> INT FloatNormalize(_float_t& f, _float_t max, _float_t min)
+template <std::floating_point _float_t>
+INT FloatNormalize(_float_t& f, _float_t max, _float_t min)noexcept
 {
 if(f==0)
 	return 0;
@@ -358,7 +367,7 @@ if(f<min)
 return ex;
 }
 
-template <> INT FloatNormalize<DOUBLE>(DOUBLE& f, DOUBLE max, DOUBLE min)
+template <> INT FloatNormalize<DOUBLE>(DOUBLE& f, DOUBLE max, DOUBLE min)noexcept
 {
 if(f==0)
 	return 0;
@@ -394,7 +403,8 @@ if(f<min)
 return ex;
 }
 
-template <std::floating_point _float_t> VOID FloatSplit(_float_t f, UINT& integral, UINT& decimal, INT& exponent, UINT& width, UINT& precision)
+template <std::floating_point _float_t>
+VOID FloatSplit(_float_t f, UINT& integral, UINT& decimal, INT& exponent, UINT& width, UINT& precision)noexcept
 {
 _float_t mul[]={ 1e0f, 1e1f, 1e2f, 1e3f, 1e4f, 1e5f, 1e6f, 1e7f, 1e8f, 1e9f };
 _float_t div[]={ 1e0f, 1e-1f, 1e-2f, 1e-3f, 1e-4f, 1e-5f };
@@ -427,7 +437,8 @@ if(remainder>=0.5)
 // Printing
 //==========
 
-template <std::character _dst_t, std::character _char_t> UINT StringPrintChar(_dst_t* dst, UINT size, _char_t c, UINT pos)
+template <std::character _dst_t, std::character _char_t>
+UINT StringPrintChar(_dst_t* dst, UINT size, _char_t c, UINT pos)noexcept
 {
 if(!dst)
 	return 1;
@@ -437,7 +448,8 @@ dst[pos]=CharHelper::ToChar<_dst_t, _char_t>(c);
 return 1;
 }
 
-template <std::character _dst_t, std::character _char_t> UINT StringPrintChar(_dst_t* dst, UINT size, _char_t c, FormatFlags flags, UINT pos)
+template <std::character _dst_t, std::character _char_t>
+UINT StringPrintChar(_dst_t* dst, UINT size, _char_t c, FormatFlags flags, UINT pos)noexcept
 {
 if(!dst)
 	return 1;
@@ -458,7 +470,8 @@ else
 return 1;
 }
 
-template <std::character _dst_t, std::character _char_t> UINT StringPrintChars(_dst_t* dst, UINT size, _char_t c, UINT count, UINT pos)
+template <std::character _dst_t, std::character _char_t>
+UINT StringPrintChars(_dst_t* dst, UINT size, _char_t c, UINT count, UINT pos)noexcept
 {
 if(!dst)
 	return count;
@@ -470,7 +483,8 @@ for(UINT u=0; u<print; u++)
 return print;
 }
 
-template <std::character _dst_t, std::character _src_t> UINT StringPrintCapital(_dst_t* dst, UINT size, _src_t const* src, UINT pos)
+template <std::character _dst_t, std::character _src_t>
+UINT StringPrintCapital(_dst_t* dst, UINT size, _src_t const* src, UINT pos)noexcept
 {
 if(!src)
 	return 0;
@@ -485,7 +499,8 @@ for(; src[src_pos]; src_pos++)
 return src_pos;
 }
 
-template <std::character _dst_t, std::character _src_t> UINT StringPrintSmall(_dst_t* dst, UINT size, _src_t const* src, UINT pos)
+template <std::character _dst_t, std::character _src_t>
+UINT StringPrintSmall(_dst_t* dst, UINT size, _src_t const* src, UINT pos)noexcept
 {
 if(!src)
 	return 0;
@@ -500,7 +515,8 @@ for(; src[src_pos]; src_pos++)
 return src_pos;
 }
 
-template <std::character _dst_t, std::character _src_t> UINT StringPrintString(_dst_t* dst, UINT size, _src_t const* src, UINT pos)
+template <std::character _dst_t, std::character _src_t>
+UINT StringPrintString(_dst_t* dst, UINT size, _src_t const* src, UINT pos)noexcept
 {
 if(!src)
 	return 0;
@@ -515,7 +531,8 @@ for(; src[src_pos]; src_pos++)
 return src_pos;
 }
 
-template <std::character _dst_t, std::character _src_t> UINT StringPrintString(_dst_t* dst, UINT size, _src_t const* src, FormatFlags flags, UINT width, UINT pos)
+template <std::character _dst_t, std::character _src_t>
+UINT StringPrintString(_dst_t* dst, UINT size, _src_t const* src, FormatFlags flags, UINT width, UINT pos)noexcept
 {
 if(!src)
 	return 0;
@@ -550,7 +567,8 @@ if(pos<size)
 return pos-start;
 }
 
-template <std::character _dst_t, std::unsigned_integral _uint_t> UINT StringPrintUInt(_dst_t* dst, UINT size, _uint_t value, UINT pos)
+template <std::character _dst_t, std::unsigned_integral _uint_t>
+UINT StringPrintUInt(_dst_t* dst, UINT size, _uint_t value, UINT pos)noexcept
 {
 CHAR chars[22];
 LPSTR buf=&chars[21];
@@ -564,7 +582,8 @@ while(value);
 return StringPrintString(dst, size, buf, pos);
 }
 
-template <std::character _dst_t, std::unsigned_integral _uint_t> UINT StringPrintUInt(_dst_t* dst, UINT size, _uint_t value, FormatFlags flags, UINT width, UINT pos)
+template <std::character _dst_t, std::unsigned_integral _uint_t>
+UINT StringPrintUInt(_dst_t* dst, UINT size, _uint_t value, FormatFlags flags, UINT width, UINT pos)noexcept
 {
 UINT len=0;
 if(width>0)
@@ -593,7 +612,8 @@ if(pos<size)
 return pos-start;
 }
 
-template <std::character _dst_t, std::unsigned_integral _uint_t> UINT StringPrintHex(_dst_t* dst, UINT size, _uint_t value, UINT pos)
+template <std::character _dst_t, std::unsigned_integral _uint_t>
+UINT StringPrintHex(_dst_t* dst, UINT size, _uint_t value, UINT pos)noexcept
 {
 CHAR chars[20];
 LPSTR buf=&chars[19];
@@ -610,7 +630,8 @@ while(value);
 return StringPrintString(dst, size, buf, pos);
 }
 
-template <std::character _dst_t, std::unsigned_integral _uint_t> UINT StringPrintHex(_dst_t* dst, UINT size, _uint_t value, FormatFlags flags, UINT width, UINT pos)
+template <std::character _dst_t, std::unsigned_integral _uint_t>
+UINT StringPrintHex(_dst_t* dst, UINT size, _uint_t value, FormatFlags flags, UINT width, UINT pos)noexcept
 {
 UINT len=0;
 if(width>0)
@@ -639,7 +660,8 @@ if(pos<size)
 return pos-start;
 }
 
-template <std::character _dst_t, std::signed_integral _int_t> UINT StringPrintInt(_dst_t* dst, UINT size, _int_t value, FormatFlags flags, UINT width, UINT pos)
+template <std::character _dst_t, std::signed_integral _int_t>
+UINT StringPrintInt(_dst_t* dst, UINT size, _int_t value, FormatFlags flags, UINT width, UINT pos)noexcept
 {
 UINT len=0;
 if(width>0)
@@ -676,7 +698,8 @@ if(pos<size)
 return pos-start;
 }
 
-template <std::character _dst_t, std::floating_point _float_t> UINT StringPrintFloat(_dst_t* dst, UINT size, _float_t f, FormatFlags flags, UINT width, UINT precision, UINT pos)
+template <std::character _dst_t, std::floating_point _float_t>
+UINT StringPrintFloat(_dst_t* dst, UINT size, _float_t f, FormatFlags flags, UINT width, UINT precision, UINT pos)noexcept
 {
 UINT start=pos;
 if(std::isnan(f))
@@ -736,7 +759,8 @@ if(pos<size)
 return pos-start;
 }
 
-template <std::character _str_t> UINT StringPrint(_str_t* str, UINT size, LPCSTR format, VariableArguments& args)
+template <std::character _str_t>
+UINT StringPrint(_str_t* str, UINT size, LPCSTR format, VariableArguments& args)noexcept
 {
 if(!format)
 	return 0;
@@ -852,7 +876,8 @@ return pos;
 // Scanning
 //==========
 
-template <std::character _str_t, std::character _buf_t> UINT StringScanString(_str_t const* str, _buf_t* buf, UINT size, CHAR esc)
+template <std::character _str_t, std::character _buf_t>
+UINT StringScanString(_str_t const* str, _buf_t* buf, UINT size, CHAR esc)noexcept
 {
 if(!str)
 	return 0;
@@ -869,7 +894,8 @@ if(pos<size)
 return pos;
 }
 
-template <std::character _str_t, std::unsigned_integral _uint_t> UINT StringScanUInt(_str_t const* str, _uint_t* value_ptr, UINT base, UINT len)
+template <std::character _str_t, std::unsigned_integral _uint_t>
+UINT StringScanUInt(_str_t const* str, _uint_t* value_ptr, UINT base, UINT len)noexcept
 {
 if(!str)
 	return 0;
@@ -913,7 +939,8 @@ if(value_ptr)
 return pos;
 }
 
-template <std::character _str_t, std::signed_integral _int_t> UINT StringScanInt(_str_t const* str, _int_t* value_ptr)
+template <std::character _str_t, std::signed_integral _int_t>
+UINT StringScanInt(_str_t const* str, _int_t* value_ptr)noexcept
 {
 if(value_ptr)
 	*value_ptr=0;
@@ -943,7 +970,8 @@ if(value_ptr)
 return pos;
 }
 
-template <std::character _str_t, std::floating_point _float_t> UINT StringScanFloat(_str_t const* str, _float_t* value_ptr)
+template <std::character _str_t, std::floating_point _float_t>
+UINT StringScanFloat(_str_t const* str, _float_t* value_ptr)noexcept
 {
 if(!str)
 	return 0;
@@ -1005,7 +1033,8 @@ if(value_ptr)
 return pos;
 }
 
-template <std::character _str_t> UINT StringScan(_str_t const* str, LPCSTR format, VariableArguments& args)
+template <std::character _str_t>
+UINT StringScan(_str_t const* str, LPCSTR format, VariableArguments& args)noexcept
 {
 if(!str||!format)
 	return 0;
@@ -1129,7 +1158,8 @@ return count;
 // Comparison
 //============
 
-template <std::character _str1_t, std::character _str2_t> INT StringCompare(_str1_t const* str1, _str2_t const* str2, UINT count, BOOL cs)
+template <std::character _str1_t, std::character _str2_t>
+INT StringCompare(_str1_t const* str1, _str2_t const* str2, UINT count, BOOL cs)noexcept
 {
 if(!str1)
 	{
@@ -1188,19 +1218,20 @@ if(str1[pos1]==0)
 return 1;
 }
 
-template <std::character _str_t> INT StringCompare(String const* str, _str_t const* value2, UINT len, BOOL cs)
+template <std::character _str_t> INT StringCompare(String const* str, _str_t const* value2, UINT len, BOOL cs)noexcept
 {
 auto value1=str? str->Begin(): nullptr;
 return StringCompare(value1, value2, len, cs);
 }
 
-template <std::character _str_t> INT StringCompare(_str_t const* value1, String const* str, UINT len, BOOL cs)
+template <std::character _str_t> INT StringCompare(_str_t const* value1, String const* str, UINT len, BOOL cs)noexcept
 {
 auto value2=str? str->Begin(): nullptr;
 return StringCompare(value1, value2, len, cs);
 }
 
-template <std::character _str_t, std::character _find_t> BOOL StringFindChar(_str_t const* str, _find_t c, UINT* pos_ptr, BOOL cs)
+template <std::character _str_t, std::character _find_t>
+BOOL StringFindChar(_str_t const* str, _find_t c, UINT* pos_ptr, BOOL cs)noexcept
 {
 if(!str||!c)
 	return false;
@@ -1219,7 +1250,8 @@ if(pos_ptr)
 return found;
 }
 
-template <std::character _str_t, std::character _find_t> BOOL StringFindChars(_str_t const* str, _find_t const* find, UINT* pos_ptr, BOOL cs)
+template <std::character _str_t, std::character _find_t>
+BOOL StringFindChars(_str_t const* str, _find_t const* find, UINT* pos_ptr, BOOL cs)noexcept
 {
 if(!str||!find)
 	return false;
@@ -1241,7 +1273,8 @@ if(pos_ptr)
 return false;
 }
 
-template <std::character _str_t, std::character _find_t> BOOL StringFindString(_str_t const* str, _find_t const* find, UINT* pos_ptr, BOOL cs)
+template <std::character _str_t, std::character _find_t>
+BOOL StringFindString(_str_t const* str, _find_t const* find, UINT* pos_ptr, BOOL cs)noexcept
 {
 if(!str||!find)
 	return false;
@@ -1265,7 +1298,8 @@ return false;
 // Modification
 //==============
 
-template <std::character _dst_t, std::character _src_t, std::character _append_t> UINT StringAppend(_dst_t* dst, UINT size, _src_t const* str, _append_t const* append)
+template <std::character _dst_t, std::character _src_t, std::character _append_t>
+UINT StringAppend(_dst_t* dst, UINT size, _src_t const* str, _append_t const* append)noexcept
 {
 UINT len=StringLength(str);
 if(!len)
@@ -1283,7 +1317,8 @@ StringCopy(&dst[len], size, append);
 return new_len;
 }
 
-template <std::character _dst_t, std::character _src_t, std::character _insert_t> UINT StringInsert(_dst_t* dst, UINT size, _src_t const* str, UINT pos, _insert_t const* insert)
+template <std::character _dst_t, std::character _src_t, std::character _insert_t>
+UINT StringInsert(_dst_t* dst, UINT size, _src_t const* str, UINT pos, _insert_t const* insert)noexcept
 {
 UINT len=StringLength(str);
 if(pos>len)
@@ -1302,7 +1337,8 @@ StringCopy(&dst[pos+insert_len], size, &str[pos]);
 return new_len;
 }
 
-template <std::character _dst_t, std::character _src_t, std::character _find_t, std::character _insert_t> UINT StringReplace(_dst_t* dst, UINT size, _src_t const* str, _find_t const* find, _insert_t const* insert, BOOL cs, BOOL repeat)
+template <std::character _dst_t, std::character _src_t, std::character _find_t, std::character _insert_t>
+UINT StringReplace(_dst_t* dst, UINT size, _src_t const* str, _find_t const* find, _insert_t const* insert, BOOL cs, BOOL repeat)noexcept
 {
 if(!str)
 	return 0;
@@ -1348,7 +1384,8 @@ if(dst)
 return pos;
 }
 
-template <std::character _str_t> _str_t const* StringTruncate(_str_t const* str, LPCSTR chars)
+template <std::character _str_t>
+_str_t const* StringTruncate(_str_t const* str, LPCSTR chars)noexcept
 {
 UINT len=StringLength(chars);
 while(*str)
@@ -1411,7 +1448,8 @@ const BYTE HASH_CODE[]=
 	0x05, 0x0F, 0x10, 0x10, 0x10, 0x10, 0x10, 0x01, 0x01, 0x16, 0x16, 0x16, 0x16, 0x1A, 0x01, 0x1A, // 0xF0
 };
 
-template <std::character _str_t> UINT64 StringHash(_str_t const* str)
+template <std::character _str_t>
+UINT64 StringHash(_str_t const* str)noexcept
 {
 if(!str)
 	return 0;
@@ -1478,10 +1516,8 @@ const BYTE ENCRYPT_BACK[256]=
 	0x25, 0x39, 0xF5, 0x97, 0x28, 0x7A, 0xF4, 0x1C, 0x8B, 0x30, 0xDB, 0x95, 0x19, 0x7E, 0x38, 0x91
 	};
 
-VOID EncryptGenerateKey(BYTE* key, LPCSTR str)
+VOID EncryptGenerateKey(BYTE* key, LPCSTR str)noexcept
 {
-if(!str)
-	throw InvalidArgumentException();
 UINT pos=0;
 UINT len=0;
 while(str[len])
@@ -1490,7 +1526,7 @@ while(pos<ENCRYPT_BLOCK)
 	key[pos++]=ENCRYPT_FWD[key[pos-len]];
 }
 
-VOID EncryptShiftLeft(BYTE* buf)
+VOID EncryptShiftLeft(BYTE* buf)noexcept
 {
 BYTE b0=buf[0];
 for(UINT u=1; u<ENCRYPT_BLOCK; u++)
@@ -1498,7 +1534,7 @@ for(UINT u=1; u<ENCRYPT_BLOCK; u++)
 buf[ENCRYPT_BLOCK-1]=b0;
 }
 
-VOID EncryptShiftRight(BYTE* buf)
+VOID EncryptShiftRight(BYTE* buf)noexcept
 {
 BYTE bn=buf[ENCRYPT_BLOCK-1];
 for(UINT u=1; u<ENCRYPT_BLOCK; u++)
@@ -1511,57 +1547,57 @@ buf[0]=bn;
 // String-Helper
 //===============
 
-UINT StringHelper::Append(LPSTR dst, UINT size, LPCSTR src, LPCSTR value)
+UINT StringHelper::Append(LPSTR dst, UINT size, LPCSTR src, LPCSTR value)noexcept
 {
 return StringAppend<CHAR, CHAR, CHAR>(dst, size, src, value);
 }
 
-UINT StringHelper::Append(LPWSTR dst, UINT size, LPCSTR src, LPCSTR value)
+UINT StringHelper::Append(LPWSTR dst, UINT size, LPCSTR src, LPCSTR value)noexcept
 {
 return StringAppend<WCHAR, CHAR, CHAR>(dst, size, src, value);
 }
 
-INT StringHelper::Compare(LPCSTR str1, LPCSTR str2, UINT len, BOOL cs)
+INT StringHelper::Compare(LPCSTR str1, LPCSTR str2, UINT len, BOOL cs)noexcept
 {
 return StringCompare<CHAR, CHAR>(str1, str2, len, cs);
 }
 
-INT StringHelper::Compare(LPCSTR str1, LPCWSTR str2, UINT len, BOOL cs)
+INT StringHelper::Compare(LPCSTR str1, LPCWSTR str2, UINT len, BOOL cs)noexcept
 {
 return StringCompare<CHAR, WCHAR>(str1, str2, len, cs);
 }
 
-INT StringHelper::Compare(LPCWSTR str1, LPCSTR str2, UINT len, BOOL cs)
+INT StringHelper::Compare(LPCWSTR str1, LPCSTR str2, UINT len, BOOL cs)noexcept
 {
 return StringCompare<WCHAR, CHAR>(str1, str2, len, cs);
 }
 
-INT StringHelper::Compare(LPCWSTR str1, LPCWSTR str2, UINT len, BOOL cs)
+INT StringHelper::Compare(LPCWSTR str1, LPCWSTR str2, UINT len, BOOL cs)noexcept
 {
 return StringCompare<WCHAR, WCHAR>(str1, str2, len, cs);
 }
 
-INT StringHelper::Compare(LPCSTR str1, String const* str2, UINT len, BOOL cs)
+INT StringHelper::Compare(LPCSTR str1, String const* str2, UINT len, BOOL cs)noexcept
 {
 return StringCompare<CHAR>(str1, str2, len, cs);
 }
 
-INT StringHelper::Compare(LPCWSTR str1, String const* str2, UINT len, BOOL cs)
+INT StringHelper::Compare(LPCWSTR str1, String const* str2, UINT len, BOOL cs)noexcept
 {
 return StringCompare<WCHAR>(str1, str2, len, cs);
 }
 
-INT StringHelper::Compare(String const* str1, LPCSTR str2, UINT len, BOOL cs)
+INT StringHelper::Compare(String const* str1, LPCSTR str2, UINT len, BOOL cs)noexcept
 {
 return StringCompare<CHAR>(str1, str2, len, cs);
 }
 
-INT StringHelper::Compare(String const* str1, LPCWSTR str2, UINT len, BOOL cs)
+INT StringHelper::Compare(String const* str1, LPCWSTR str2, UINT len, BOOL cs)noexcept
 {
 return StringCompare<WCHAR>(str1, str2, len, cs);
 }
 
-INT StringHelper::Compare(String const* str1, String const* str2)
+INT StringHelper::Compare(String const* str1, String const* str2)noexcept
 {
 if(!str1)
 	{
@@ -1580,34 +1616,34 @@ if(hash1>hash2)
 return StringCompare(str1->Begin(), str2->Begin(), 0, false);
 }
 
-INT StringHelper::Compare(String const* str1, String const* str2, UINT len, BOOL cs)
+INT StringHelper::Compare(String const* str1, String const* str2, UINT len, BOOL cs)noexcept
 {
 return StringCompare(str1? str1->Begin(): nullptr, str2? str2->Begin(): nullptr, len, cs);
 }
 
-UINT StringHelper::Copy(LPSTR dst, UINT size, LPCSTR src, UINT len)
+UINT StringHelper::Copy(LPSTR dst, UINT size, LPCSTR src, UINT len)noexcept
 {
 return StringCopy<CHAR, CHAR>(dst, size, src, len);
 }
 
-UINT StringHelper::Copy(LPSTR dst, UINT size, LPCWSTR src, UINT len)
+UINT StringHelper::Copy(LPSTR dst, UINT size, LPCWSTR src, UINT len)noexcept
 {
 return StringCopy<CHAR, WCHAR>(dst, size, src, len);
 }
 
-UINT StringHelper::Copy(LPWSTR dst, UINT size, LPCSTR src, UINT len)
+UINT StringHelper::Copy(LPWSTR dst, UINT size, LPCSTR src, UINT len)noexcept
 {
 return StringCopy<WCHAR, CHAR>(dst, size, src, len);
 }
 
-UINT StringHelper::Copy(LPWSTR dst, UINT size, LPCWSTR src, UINT len)
+UINT StringHelper::Copy(LPWSTR dst, UINT size, LPCWSTR src, UINT len)noexcept
 {
 return StringCopy<WCHAR, WCHAR>(dst, size, src, len);
 }
 
-UINT StringHelper::Decrypt(LPSTR dst, UINT size, BYTE const* src, LPCSTR key_str)
+UINT StringHelper::Decrypt(LPSTR dst, UINT size, BYTE const* src, LPCSTR key_str)noexcept
 {
-if(!src)
+if(!src||!key_str||!key_str[0])
 	return 0;
 BYTE key[ENCRYPT_BLOCK]={ 0 };
 EncryptGenerateKey(key, key_str);
@@ -1636,9 +1672,9 @@ while(1)
 return len;
 }
 
-UINT StringHelper::Encrypt(BYTE* dst, SIZE_T size, LPCSTR src, LPCSTR key_str)
+UINT StringHelper::Encrypt(BYTE* dst, SIZE_T size, LPCSTR src, LPCSTR key_str)noexcept
 {
-if(!src||!src[0])
+if(!src||!src[0]||!key_str||!key_str[0])
 	return 0;
 if(!dst)
 	{
@@ -1672,187 +1708,187 @@ while(src[src_pos])
 return dst_pos;
 }
 
-BOOL StringHelper::FindChar(LPCSTR str, CHAR c, UINT* pos, BOOL cs)
+BOOL StringHelper::FindChar(LPCSTR str, CHAR c, UINT* pos, BOOL cs)noexcept
 {
 return StringFindChar<CHAR, CHAR>(str, c, pos, cs);
 }
 
-BOOL StringHelper::FindChar(LPCSTR str, WCHAR c, UINT* pos, BOOL cs)
+BOOL StringHelper::FindChar(LPCSTR str, WCHAR c, UINT* pos, BOOL cs)noexcept
 {
 return StringFindChar<CHAR, WCHAR>(str, c, pos, cs);
 }
 
-BOOL StringHelper::FindChar(LPCWSTR str, CHAR c, UINT* pos, BOOL cs)
+BOOL StringHelper::FindChar(LPCWSTR str, CHAR c, UINT* pos, BOOL cs)noexcept
 {
 return StringFindChar<WCHAR, CHAR>(str, c, pos, cs);
 }
 
-BOOL StringHelper::FindChar(LPCWSTR str, WCHAR c, UINT* pos, BOOL cs)
+BOOL StringHelper::FindChar(LPCWSTR str, WCHAR c, UINT* pos, BOOL cs)noexcept
 {
 return StringFindChar<WCHAR, WCHAR>(str, c, pos, cs);
 }
 
-BOOL StringHelper::FindChars(LPCSTR str, LPCSTR find, UINT* pos, BOOL cs)
+BOOL StringHelper::FindChars(LPCSTR str, LPCSTR find, UINT* pos, BOOL cs)noexcept
 {
 return StringFindChars<CHAR, CHAR>(str, find, pos, cs);
 }
 
-BOOL StringHelper::FindChars(LPCSTR str, LPCWSTR find, UINT* pos, BOOL cs)
+BOOL StringHelper::FindChars(LPCSTR str, LPCWSTR find, UINT* pos, BOOL cs)noexcept
 {
 return StringFindChars<CHAR, WCHAR>(str, find, pos, cs);
 }
 
-BOOL StringHelper::FindChars(LPCWSTR str, LPCSTR find, UINT* pos, BOOL cs)
+BOOL StringHelper::FindChars(LPCWSTR str, LPCSTR find, UINT* pos, BOOL cs)noexcept
 {
 return StringFindChars<WCHAR, CHAR>(str, find, pos, cs);
 }
 
-BOOL StringHelper::FindChars(LPCWSTR str, LPCWSTR find, UINT* pos, BOOL cs)
+BOOL StringHelper::FindChars(LPCWSTR str, LPCWSTR find, UINT* pos, BOOL cs)noexcept
 {
 return StringFindChars<WCHAR, WCHAR>(str, find, pos, cs);
 }
 
-BOOL StringHelper::FindString(LPCSTR str, LPCSTR find, UINT* pos, BOOL cs)
+BOOL StringHelper::FindString(LPCSTR str, LPCSTR find, UINT* pos, BOOL cs)noexcept
 {
 return StringFindString<CHAR, CHAR>(str, find, pos, cs);
 }
 
-BOOL StringHelper::FindString(LPCSTR str, LPCWSTR find, UINT* pos, BOOL cs)
+BOOL StringHelper::FindString(LPCSTR str, LPCWSTR find, UINT* pos, BOOL cs)noexcept
 {
 return StringFindString<CHAR, WCHAR>(str, find, pos, cs);
 }
 
-BOOL StringHelper::FindString(LPCWSTR str, LPCSTR find, UINT* pos, BOOL cs)
+BOOL StringHelper::FindString(LPCWSTR str, LPCSTR find, UINT* pos, BOOL cs)noexcept
 {
 return StringFindString<WCHAR, CHAR>(str, find, pos, cs);
 }
 
-BOOL StringHelper::FindString(LPCWSTR str, LPCWSTR find, UINT* pos, BOOL cs)
+BOOL StringHelper::FindString(LPCWSTR str, LPCWSTR find, UINT* pos, BOOL cs)noexcept
 {
 return StringFindString<WCHAR, WCHAR>(str, find, pos, cs);
 }
 
-UINT64 StringHelper::Hash(LPCSTR str)
+UINT64 StringHelper::Hash(LPCSTR str)noexcept
 {
 return StringHash<CHAR>(str);
 }
 
-UINT64 StringHelper::Hash(LPCWSTR str)
+UINT64 StringHelper::Hash(LPCWSTR str)noexcept
 {
 return StringHash<WCHAR>(str);
 }
 
-UINT StringHelper::Insert(LPSTR dst, UINT size, LPCSTR src, UINT pos, LPCSTR value)
+UINT StringHelper::Insert(LPSTR dst, UINT size, LPCSTR src, UINT pos, LPCSTR value)noexcept
 {
 return StringInsert<CHAR, CHAR, CHAR>(dst, size, src, pos, value);
 }
 
-UINT StringHelper::Insert(LPWSTR dst, UINT size, LPCWSTR src, UINT pos, LPCSTR value)
+UINT StringHelper::Insert(LPWSTR dst, UINT size, LPCWSTR src, UINT pos, LPCSTR value)noexcept
 {
 return StringInsert<WCHAR, WCHAR, CHAR>(dst, size, src, pos, value);
 }
 
-UINT StringHelper::Length(LPCSTR str)
+UINT StringHelper::Length(LPCSTR str)noexcept
 {
 return StringLength(str);
 }
 
-UINT StringHelper::Length(LPCWSTR str)
+UINT StringHelper::Length(LPCWSTR str)noexcept
 {
 return StringLength(str);
 }
 
-UINT StringHelper::Length(LPCSTR str, UINT max)
+UINT StringHelper::Length(LPCSTR str, UINT max)noexcept
 {
 return StringLength(str, max);
 }
 
-UINT StringHelper::Length(LPCWSTR str, UINT max)
+UINT StringHelper::Length(LPCWSTR str, UINT max)noexcept
 {
 return StringLength(str, max);
 }
 
-UINT StringHelper::Length(LPCSTR format, VariableArguments& args)
+UINT StringHelper::Length(LPCSTR format, VariableArguments& args)noexcept
 {
 return StringPrint((LPSTR)nullptr, 0, format, args);
 }
 
-UINT StringHelper::Lowercase(LPSTR str)
+UINT StringHelper::Lowercase(LPSTR str)noexcept
 {
 return StringLowercase<CHAR>(str);
 }
 
-UINT StringHelper::Lowercase(LPWSTR str)
+UINT StringHelper::Lowercase(LPWSTR str)noexcept
 {
 return StringLowercase<WCHAR>(str);
 }
 
-UINT StringHelper::Lowercase(LPSTR dst, UINT size, LPCSTR src)
+UINT StringHelper::Lowercase(LPSTR dst, UINT size, LPCSTR src)noexcept
 {
 return StringLowercase<CHAR, CHAR>(dst, size, src);
 }
 
-UINT StringHelper::Lowercase(LPWSTR dst, UINT size, LPCWSTR src)
+UINT StringHelper::Lowercase(LPWSTR dst, UINT size, LPCWSTR src)noexcept
 {
 return StringLowercase<WCHAR, WCHAR>(dst, size, src);
 }
 
-UINT StringHelper::Print(LPSTR dst, UINT size, LPCSTR format, VariableArguments& args)
+UINT StringHelper::Print(LPSTR dst, UINT size, LPCSTR format, VariableArguments& args)noexcept
 {
 return StringPrint<CHAR>(dst, size, format, args);
 }
 
-UINT StringHelper::Print(LPWSTR dst, UINT size, LPCSTR format, VariableArguments& args)
+UINT StringHelper::Print(LPWSTR dst, UINT size, LPCSTR format, VariableArguments& args)noexcept
 {
 return StringPrint<WCHAR>(dst, size, format, args);
 }
 
-UINT StringHelper::Replace(LPSTR dst, UINT size, LPCSTR src, LPCSTR find, LPCSTR insert, BOOL cs, BOOL repeat)
+UINT StringHelper::Replace(LPSTR dst, UINT size, LPCSTR src, LPCSTR find, LPCSTR insert, BOOL cs, BOOL repeat)noexcept
 {
 return StringReplace<CHAR, CHAR, CHAR>(dst, size, src, find, insert, cs, repeat);
 }
 
-UINT StringHelper::Replace(LPWSTR dst, UINT size, LPCWSTR src, LPCSTR find, LPCSTR insert, BOOL cs, BOOL repeat)
+UINT StringHelper::Replace(LPWSTR dst, UINT size, LPCWSTR src, LPCSTR find, LPCSTR insert, BOOL cs, BOOL repeat)noexcept
 {
 return StringReplace<WCHAR, WCHAR, CHAR>(dst, size, src, find, insert, cs, repeat);
 }
 
-UINT StringHelper::Scan(LPCSTR str, LPCSTR format, VariableArguments& args)
+UINT StringHelper::Scan(LPCSTR str, LPCSTR format, VariableArguments& args)noexcept
 {
 return StringScan<CHAR>(str, format, args);
 }
 
-UINT StringHelper::Scan(LPCWSTR str, LPCSTR format, VariableArguments& args)
+UINT StringHelper::Scan(LPCWSTR str, LPCSTR format, VariableArguments& args)noexcept
 {
 return StringScan<WCHAR>(str, format, args);
 }
 
-LPCSTR StringHelper::Truncate(LPCSTR str, LPCSTR chars)
+LPCSTR StringHelper::Truncate(LPCSTR str, LPCSTR chars)noexcept
 {
 return StringTruncate<CHAR>(str, chars);
 }
 
-LPCWSTR StringHelper::Truncate(LPCWSTR str, LPCSTR chars)
+LPCWSTR StringHelper::Truncate(LPCWSTR str, LPCSTR chars)noexcept
 {
 return StringTruncate<WCHAR>(str, chars);
 }
 
-UINT StringHelper::Uppercase(LPSTR str)
+UINT StringHelper::Uppercase(LPSTR str)noexcept
 {
 return StringUppercase<CHAR>(str);
 }
 
-UINT StringHelper::Uppercase(LPWSTR str)
+UINT StringHelper::Uppercase(LPWSTR str)noexcept
 {
 return StringUppercase<WCHAR>(str);
 }
 
-UINT StringHelper::Uppercase(LPSTR dst, UINT size, LPCSTR src)
+UINT StringHelper::Uppercase(LPSTR dst, UINT size, LPCSTR src)noexcept
 {
 return StringUppercase<CHAR, CHAR>(dst, size, src);
 }
 
-UINT StringHelper::Uppercase(LPWSTR dst, UINT size, LPCWSTR src)
+UINT StringHelper::Uppercase(LPWSTR dst, UINT size, LPCWSTR src)noexcept
 {
 return StringUppercase<WCHAR, WCHAR>(dst, size, src);
 }

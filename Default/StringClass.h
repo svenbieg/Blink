@@ -55,21 +55,21 @@ public:
 	template <class... _args_t> static inline Handle<String> Create(LPCSTR Format, _args_t... Arguments);
 
 	// Access
-	inline LPCTSTR Begin()const { return m_Buffer; }
-	inline BOOL Contains(LPCSTR Value, BOOL CaseSensitive=true)
+	inline LPCTSTR Begin()const noexcept { return m_Buffer; }
+	inline BOOL Contains(LPCSTR Value, BOOL CaseSensitive=true)noexcept
 		{
 		return StringHelper::FindString(m_Buffer, Value, nullptr, CaseSensitive);
 		}
-	inline BOOL Contains(LPCWSTR Value, BOOL CaseSensitive=true)
+	inline BOOL Contains(LPCWSTR Value, BOOL CaseSensitive=true)noexcept
 		{
 		return StringHelper::FindString(m_Buffer, Value, nullptr, CaseSensitive);
 		}
-	inline UINT Copy(LPSTR Buffer, UINT Size) { return StringHelper::Copy(Buffer, Size, m_Buffer); }
-	inline UINT Copy(LPWSTR Buffer, UINT Size) { return StringHelper::Copy(Buffer, Size, m_Buffer); }
-	inline UINT GetLength()const { return m_Length; }
-	inline BOOL HasValue()const { return m_Buffer[0]!=0; }
-	inline BOOL IsEmpty()const { return m_Buffer[0]==0; }
-	template <class... _args_t> inline UINT Scan(LPCSTR Format, _args_t... Arguments)
+	inline UINT Copy(LPSTR Buffer, UINT Size)noexcept { return StringHelper::Copy(Buffer, Size, m_Buffer); }
+	inline UINT Copy(LPWSTR Buffer, UINT Size)noexcept { return StringHelper::Copy(Buffer, Size, m_Buffer); }
+	inline UINT GetLength()const noexcept { return m_Length; }
+	inline BOOL HasValue()const noexcept { return m_Buffer[0]!=0; }
+	inline BOOL IsEmpty()const noexcept { return m_Buffer[0]==0; }
+	template <class... _args_t> inline UINT Scan(LPCSTR Format, _args_t... Arguments)noexcept
 		{
 		VariableArgument args[]={ Arguments... };
 		VariableArguments vargs(args, TypeHelper::ArraySize(args));
@@ -78,14 +78,14 @@ public:
 	Handle<String> ToString(LanguageCode Language=LanguageCode::None)override;
 
 	// Operators
-	Handle<String> Replace(LPCSTR Find, LPCSTR Replace, BOOL CaseSensitive=true, BOOL Repeat=false);
+	Handle<String> Replace(LPCSTR Find, LPCSTR Replace, BOOL CaseSensitive=true, BOOL Repeat=false)noexcept;
 
 private:
 	// Con-/Destructors
-	String(LPTSTR Buffer);
-	String(LPTSTR Buffer, UINT Size, LPCSTR Value);
-	String(LPTSTR Buffer, UINT Size, LPCWSTR Value);
-	String(LPTSTR Buffer, UINT Size, LPCSTR Format, VariableArguments& Arguments);
+	String(LPTSTR Buffer)noexcept;
+	String(LPTSTR Buffer, UINT Size, LPCSTR Value)noexcept;
+	String(LPTSTR Buffer, UINT Size, LPCWSTR Value)noexcept;
+	String(LPTSTR Buffer, UINT Size, LPCSTR Format, VariableArguments& Arguments)noexcept;
 	static Handle<String> Create(UINT Length, nullptr_t);
 
 	// Common
@@ -114,19 +114,19 @@ public:
 	template <class _friend_t> friend class Handle;
 
 	// Con-/Destructors
-	inline Handle(): m_Object(nullptr) {}
-	inline Handle(nullptr_t): m_Object(nullptr) {}
-	inline Handle(String* Copy) { Handle<Object>::Create(&m_Object, Copy); }
-	inline Handle(Handle const& Copy) { Handle<Object>::Create(&m_Object, Copy.m_Object); }
+	inline Handle()noexcept: m_Object(nullptr) {}
+	inline Handle(nullptr_t)noexcept: m_Object(nullptr) {}
+	inline Handle(String* Copy)noexcept { Handle<Object>::Create(&m_Object, Copy); }
+	inline Handle(Handle const& Copy)noexcept { Handle<Object>::Create(&m_Object, Copy.m_Object); }
 	inline Handle(Handle&& Move)noexcept: m_Object(Move.m_Object) { Move.m_Object=nullptr; }
 	inline Handle(LPCSTR Value): m_Object(nullptr) { operator=(Value); }
 	inline Handle(LPCWSTR Value): m_Object(nullptr) { operator=(Value); }
-	inline ~Handle() { Handle<Object>::Clear(&m_Object); }
+	inline ~Handle()noexcept { Handle<Object>::Clear(&m_Object); }
 
 	// Access
-	inline operator bool()const { return m_Object&&m_Object->HasValue(); }
-	inline operator String*()const { return m_Object; }
-	inline String* operator->()const { return m_Object; }
+	inline operator bool()const noexcept { return m_Object&&m_Object->HasValue(); }
+	inline operator String*()const noexcept { return m_Object; }
+	inline String* operator->()const noexcept { return m_Object; }
 	SIZE_T WriteToStream(OutputStream* Stream)
 		{
 		if(!m_Object)
@@ -140,35 +140,35 @@ public:
 		}
 
 	// Comparison
-	inline bool operator==(nullptr_t)const { return !operator bool(); }
-	inline bool operator==(Handle<String> const& Value)const { return StringHelper::Compare(m_Object, Value)==0; }
-	inline bool operator==(LPCSTR Value)const { return StringHelper::Compare(m_Object, Value)==0; }
-	inline bool operator==(LPCWSTR Value)const { return StringHelper::Compare(m_Object, Value)==0; }
-	inline bool operator!=(nullptr_t)const { return operator bool(); }
-	inline bool operator!=(Handle<String> const& Value)const { return StringHelper::Compare(m_Object, Value)!=0; }
-	inline bool operator!=(LPCSTR Value)const { return StringHelper::Compare(m_Object, Value)!=0; }
-	inline bool operator!=(LPCWSTR Value)const { return StringHelper::Compare(m_Object, Value)!=0; }
-	inline bool operator>(nullptr_t)const { return operator bool(); }
-	inline bool operator>(Handle<String> const& Value)const { return StringHelper::Compare(m_Object, Value)>0; }
-	inline bool operator>(LPCSTR Value)const { return StringHelper::Compare(m_Object, Value)>0; }
-	inline bool operator>(LPCWSTR Value)const { return StringHelper::Compare(m_Object, Value)>0; }
-	inline bool operator>=(nullptr_t)const { return true; }
-	inline bool operator>=(Handle<String> const& Value)const { return StringHelper::Compare(m_Object, Value)>=0; }
-	inline bool operator>=(LPCSTR Value)const { return StringHelper::Compare(m_Object, Value)>=0; }
-	inline bool operator>=(LPCWSTR Value)const { return StringHelper::Compare(m_Object, Value)>=0; }
-	inline bool operator<(nullptr_t)const { return false; }
-	inline bool operator<(Handle<String> const& Value)const { return StringHelper::Compare(m_Object, Value)<0; }
-	inline bool operator<(LPCSTR Value)const { return StringHelper::Compare(m_Object, Value)<0; }
-	inline bool operator<(LPCWSTR Value)const { return StringHelper::Compare(m_Object, Value)<0; }
-	inline bool operator<=(nullptr_t)const { return !operator bool(); }
-	inline bool operator<=(Handle<String> const& Value)const { return StringHelper::Compare(m_Object, Value)<=0; }
-	inline bool operator<=(LPCSTR Value)const { return StringHelper::Compare(m_Object, Value)<=0; }
-	inline bool operator<=(LPCWSTR Value)const { return StringHelper::Compare(m_Object, Value)<=0; }
+	inline bool operator==(nullptr_t)const noexcept { return !operator bool(); }
+	inline bool operator==(Handle<String> const& Value)const noexcept { return StringHelper::Compare(m_Object, Value)==0; }
+	inline bool operator==(LPCSTR Value)const noexcept { return StringHelper::Compare(m_Object, Value)==0; }
+	inline bool operator==(LPCWSTR Value)const noexcept { return StringHelper::Compare(m_Object, Value)==0; }
+	inline bool operator!=(nullptr_t)const noexcept { return operator bool(); }
+	inline bool operator!=(Handle<String> const& Value)const noexcept { return StringHelper::Compare(m_Object, Value)!=0; }
+	inline bool operator!=(LPCSTR Value)const noexcept { return StringHelper::Compare(m_Object, Value)!=0; }
+	inline bool operator!=(LPCWSTR Value)const noexcept { return StringHelper::Compare(m_Object, Value)!=0; }
+	inline bool operator>(nullptr_t)const noexcept { return operator bool(); }
+	inline bool operator>(Handle<String> const& Value)const noexcept { return StringHelper::Compare(m_Object, Value)>0; }
+	inline bool operator>(LPCSTR Value)const noexcept { return StringHelper::Compare(m_Object, Value)>0; }
+	inline bool operator>(LPCWSTR Value)const noexcept { return StringHelper::Compare(m_Object, Value)>0; }
+	inline bool operator>=(nullptr_t)const noexcept { return true; }
+	inline bool operator>=(Handle<String> const& Value)const noexcept { return StringHelper::Compare(m_Object, Value)>=0; }
+	inline bool operator>=(LPCSTR Value)const noexcept { return StringHelper::Compare(m_Object, Value)>=0; }
+	inline bool operator>=(LPCWSTR Value)const noexcept { return StringHelper::Compare(m_Object, Value)>=0; }
+	inline bool operator<(nullptr_t)const noexcept { return false; }
+	inline bool operator<(Handle<String> const& Value)const noexcept { return StringHelper::Compare(m_Object, Value)<0; }
+	inline bool operator<(LPCSTR Value)const noexcept { return StringHelper::Compare(m_Object, Value)<0; }
+	inline bool operator<(LPCWSTR Value)const noexcept { return StringHelper::Compare(m_Object, Value)<0; }
+	inline bool operator<=(nullptr_t)const noexcept { return !operator bool(); }
+	inline bool operator<=(Handle<String> const& Value)const noexcept { return StringHelper::Compare(m_Object, Value)<=0; }
+	inline bool operator<=(LPCSTR Value)const noexcept { return StringHelper::Compare(m_Object, Value)<=0; }
+	inline bool operator<=(LPCWSTR Value)const noexcept { return StringHelper::Compare(m_Object, Value)<=0; }
 
 	// Assignment
-	inline Handle& operator=(nullptr_t) { Handle<Object>::Clear(&m_Object); return *this; }
-	inline Handle& operator=(String* Value) { Handle<Object>::Set(&m_Object, Value); return *this; }
-	inline Handle& operator=(Handle<String> const& Value) { return operator=(Value.m_Object); }
+	inline Handle& operator=(nullptr_t)noexcept { Handle<Object>::Clear(&m_Object); return *this; }
+	inline Handle& operator=(String* Value)noexcept { Handle<Object>::Set(&m_Object, Value); return *this; }
+	inline Handle& operator=(Handle<String> const& Value)noexcept { return operator=(Value.m_Object); }
 	inline Handle& operator=(LPCSTR Value) { return operator=(String::Create(Value)); }
 	inline Handle& operator=(LPCWSTR Value) { return operator=(String::Create(Value)); }
 	SIZE_T ReadFromStream(InputStream* Stream)

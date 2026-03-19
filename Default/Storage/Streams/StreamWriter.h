@@ -30,7 +30,7 @@ class StreamWriter
 {
 public:
 	// Con-/Destructors
-	StreamWriter(OutputStream* Stream=nullptr);
+	StreamWriter(OutputStream* Stream=nullptr)noexcept;
 
 	// Common
 	VOID Flush();
@@ -48,7 +48,7 @@ public:
 		}
 	UINT PrintChar(CHAR Char, UINT Count=1);
 	UINT PrintChar(WCHAR Char, UINT Count=1);
-	VOID SetStream(OutputStream* Stream);
+	VOID SetStream(OutputStream* Stream)noexcept;
 	SIZE_T Write(VOID const* Buffer, SIZE_T Size);
 
 private:
@@ -59,7 +59,6 @@ private:
 	// Common
 	template <class _func_t, class _char_t> UINT DoPrint(_func_t WriteChar, UINT Length, _char_t const* Value);
 	template <class _func_t, class _char_t> UINT DoPrintChar(_func_t WriteChar, _char_t Char, UINT Count);
-	VOID SetStreamFormat(StreamFormat Format);
 
 	OutputStream* m_Stream;
 	ANSI_PROC m_WriteAnsi;

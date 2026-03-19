@@ -25,7 +25,7 @@ namespace Storage {
 // Con-/Destructors
 //==================
 
-StreamWriter::StreamWriter(OutputStream* stream):
+StreamWriter::StreamWriter(OutputStream* stream)noexcept:
 m_Stream(nullptr),
 m_WriteAnsi(nullptr),
 m_WriteUnicode(nullptr)
@@ -87,13 +87,36 @@ UINT StreamWriter::PrintChar(WCHAR c, UINT count)
 return DoPrintChar(m_WriteUnicode, c, count);
 }
 
-VOID StreamWriter::SetStream(OutputStream* stream)
+VOID StreamWriter::SetStream(OutputStream* stream)noexcept
 {
-if(!stream)
-	throw InvalidArgumentException();
+if(m_Stream==stream)
+	return;
 m_Stream=stream;
+if(!m_Stream)
+	return;
 auto format=m_Stream->GetStreamFormat();
-SetStreamFormat(format);
+switch(format)
+	{
+	case StreamFormat::Ansi:
+		{
+		m_WriteAnsi=CharHelper::WriteAnsi;
+		m_WriteUnicode=CharHelper::WriteAnsi;
+		break;
+		}
+	case StreamFormat::Unicode:
+		{
+		m_WriteAnsi=CharHelper::WriteUnicode;
+		m_WriteUnicode=CharHelper::WriteUnicode;
+		break;
+		}
+	default:
+	case StreamFormat::UTF8:
+		{
+		m_WriteAnsi=CharHelper::WriteUtf8;
+		m_WriteUnicode=CharHelper::WriteUtf8;
+		break;
+		}
+	}
 }
 
 SIZE_T StreamWriter::Write(VOID const* buf, SIZE_T size)
@@ -130,32 +153,6 @@ UINT size=0;
 for(UINT u=0; u<count; u++)
 	size+=write_fn(m_Stream, c);
 return size;
-}
-
-VOID StreamWriter::SetStreamFormat(StreamFormat format)
-{
-switch(format)
-	{
-	case StreamFormat::Ansi:
-		{
-		m_WriteAnsi=CharHelper::WriteAnsi;
-		m_WriteUnicode=CharHelper::WriteAnsi;
-		break;
-		}
-	case StreamFormat::Unicode:
-		{
-		m_WriteAnsi=CharHelper::WriteUnicode;
-		m_WriteUnicode=CharHelper::WriteUnicode;
-		break;
-		}
-	default:
-	case StreamFormat::UTF8:
-		{
-		m_WriteAnsi=CharHelper::WriteUtf8;
-		m_WriteUnicode=CharHelper::WriteUtf8;
-		break;
-		}
-	}
 }
 
 }}

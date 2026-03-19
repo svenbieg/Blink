@@ -22,11 +22,11 @@ class StatusHelper
 {
 public:
 	// Common
-	static inline bool Failed(Status Status)
+	static inline bool Failed(Status Status)noexcept
 		{
 		return FlagHelper::Get(Status, Status::Error);
 		}
-	static inline bool Succeeded(Status Status)
+	static inline bool Succeeded(Status Status)noexcept
 		{
 		return !FlagHelper::Get(Status, Status::Error);
 		}

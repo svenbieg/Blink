@@ -76,7 +76,7 @@ return true;
 // Con-/Destructors Private
 //==========================
 
-StaticBuffer::StaticBuffer(VOID* buf, SIZE_T size):
+StaticBuffer::StaticBuffer(VOID* buf, SIZE_T size)noexcept:
 m_Buffer((BYTE*)buf),
 m_Position(0),
 m_Size(size)

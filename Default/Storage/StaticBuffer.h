@@ -31,7 +31,7 @@ public:
 	static inline Handle<StaticBuffer> Create(VOID* Buffer, SIZE_T Size) { return new StaticBuffer(Buffer, Size); }
 
 	// Common
-	inline VOID Reset() { m_Position=0; }
+	inline VOID Reset()noexcept { m_Position=0; }
 
 	// Input-Stream
 	SIZE_T Available()override;
@@ -47,7 +47,7 @@ public:
 
 private:
 	// Con-/Destructors
-	StaticBuffer(VOID* Buffer, SIZE_T Size);
+	StaticBuffer(VOID* Buffer, SIZE_T Size)noexcept;
 
 	// Common
 	BYTE* m_Buffer;

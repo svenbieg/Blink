@@ -24,7 +24,7 @@ namespace Storage {
 // Con-/Destructors
 //==================
 
-StreamReader::StreamReader(InputStream* stream):
+StreamReader::StreamReader(InputStream* stream)noexcept:
 LastChar(0),
 m_ReadAnsi(nullptr),
 m_ReadUnicode(nullptr),
@@ -124,11 +124,13 @@ return DoReadString(m_ReadAnsi, size_ptr, esc, truncate);
 #endif
 }
 
-VOID StreamReader::SetStream(InputStream* stream)
+VOID StreamReader::SetStream(InputStream* stream)noexcept
 {
 if(m_Stream==stream)
 	return;
 m_Stream=stream;
+if(!m_Stream)
+	return;
 auto format=m_Stream->GetStreamFormat();
 switch(format)
 	{

@@ -38,7 +38,7 @@ class CallableTyped: public Callable<_ret_t, _args_t...>
 {
 public:
 	// Con-/Destructors
-	CallableTyped(_lambda_t&& lambda): m_Lambda(std::move(lambda)) {}
+	CallableTyped(_lambda_t&& lambda)noexcept: m_Lambda(std::move(lambda)) {}
 
 	// Common
 	_ret_t Call(_args_t... Arguments)override
@@ -61,23 +61,23 @@ class Function
 {
 public:
 	// Con-/Destructors
-	Function() {}
-	Function(Function const& Copy): m_Callable(Copy.m_Callable) {}
-	Function(Function&& Move): m_Callable(Move.m_Callable) { Move.m_Callable=nullptr; }
+	Function()=default;
+	Function(Function const& Copy)noexcept: m_Callable(Copy.m_Callable) {}
+	Function(Function&& Move)noexcept: m_Callable(Move.m_Callable) { Move.m_Callable=nullptr; }
 	template<class _lambda_t> Function(_lambda_t&& Lambda)
 		{
 		m_Callable=new CallableTyped<_lambda_t, _ret_t, _args_t...>(std::forward<_lambda_t>(Lambda));
 		}
 
 	// Common
-	inline operator bool()const { return m_Callable!=nullptr; }
+	inline operator bool()const noexcept { return m_Callable!=nullptr; }
 	inline _ret_t operator()(_args_t... Arguments)const
 		{
 		if(!m_Callable)
 			throw NullPointerException();
 		return m_Callable->Call(Arguments...);
 		}
-	inline Function& operator=(Function const& Copy)
+	inline Function& operator=(Function const& Copy)noexcept
 		{
 		m_Callable=Copy.m_Callable;
 		return *this;

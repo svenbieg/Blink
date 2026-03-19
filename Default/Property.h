@@ -21,13 +21,13 @@ class Property
 {
 public:
 	// Con-/Destructors
-	Property(_owner_t* Owner, _item_t Value=_item_t()): m_Owner(Owner), m_Value(Value) {}
+	Property(_owner_t* Owner, _item_t Value=_item_t())noexcept: m_Owner(Owner), m_Value(Value) {}
 	Property(Property const&)=delete;
 	Property(Property&&)=delete;
 
 	// Access
-	inline operator _item_t const&()const { return m_Value; }
-	inline _item_t const& Get()const { return m_Value; }
+	inline operator _item_t const&()const noexcept { return m_Value; }
+	inline _item_t const& Get()const noexcept { return m_Value; }
 
 	// Modification
 	inline Property& operator=(_item_t Value)

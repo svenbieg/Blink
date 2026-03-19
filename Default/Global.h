@@ -38,7 +38,7 @@ protected:
 		s_Global=Object::Create<_obj_t>(Arguments...);
 		return s_Global;
 		}
-	virtual UINT Release()override
+	virtual UINT Release()noexcept override
 		{
 		WriteLock lock(s_Mutex);
 		UINT ref_count=Cpu::InterlockedDecrement(&m_ReferenceCount);

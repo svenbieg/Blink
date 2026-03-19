@@ -26,7 +26,7 @@ public:
 	using _handler_t=EventHandler<_sender_t, _args_t...>;
 
 	// Common
-	VOID Remove(VOID* Owner)
+	VOID Remove(VOID* Owner)noexcept
 		{
 		_handler_t* prev=nullptr;
 		auto handler=m_Handler;
@@ -57,7 +57,7 @@ protected:
 	EventBase()=default;
 
 	// Common
-	VOID AddHandler(_handler_t* Handler)
+	VOID AddHandler(_handler_t* Handler)noexcept
 		{
 		if(!m_Handler)
 			{

@@ -84,7 +84,7 @@ return this;
 // Operators
 //===========
 
-Handle<String> String::Replace(LPCSTR find, LPCSTR replace, BOOL cs, BOOL repeat)
+Handle<String> String::Replace(LPCSTR find, LPCSTR replace, BOOL cs, BOOL repeat)noexcept
 {
 UINT len=StringHelper::Replace((LPTSTR)nullptr, 0, m_Buffer, find, replace, cs, repeat);
 if(!len)
@@ -100,7 +100,7 @@ return str;
 // Con-/Destructors Private
 //==========================
 
-String::String(LPTSTR Buffer):
+String::String(LPTSTR Buffer)noexcept:
 m_Buffer(Buffer),
 m_Hash(0),
 m_Length(0)
@@ -108,21 +108,21 @@ m_Length(0)
 m_Buffer[0]=0;
 }
 
-String::String(LPTSTR Buffer, UINT Size, LPCSTR Value):
+String::String(LPTSTR Buffer, UINT Size, LPCSTR Value)noexcept:
 m_Buffer(Buffer)
 {
 m_Length=StringHelper::Copy(m_Buffer, Size, Value);
 m_Hash=StringHelper::Hash(m_Buffer);
 }
 
-String::String(LPTSTR Buffer, UINT Size, LPCWSTR Value):
+String::String(LPTSTR Buffer, UINT Size, LPCWSTR Value)noexcept:
 m_Buffer(Buffer)
 {
 m_Length=StringHelper::Copy(m_Buffer, Size, Value);
 m_Hash=StringHelper::Hash(m_Buffer);
 }
 
-String::String(LPTSTR Buffer, UINT Size, LPCSTR Format, VariableArguments& Arguments):
+String::String(LPTSTR Buffer, UINT Size, LPCSTR Format, VariableArguments& Arguments)noexcept:
 m_Buffer(Buffer)
 {
 m_Length=StringHelper::Print(m_Buffer, Size, Format, Arguments);
