@@ -12,11 +12,13 @@
 #include "Concurrency/CriticalMutex.h"
 #include "Concurrency/WriteLock.h"
 #include "Devices/System/Cpu.h"
+#include "Devices/System/System.h"
 #include "UI/Console.h"
 #include "Exception.h"
 #include "heap.h"
 
 using namespace Concurrency;
+using namespace Devices::System;
 using namespace UI;
 
 
@@ -37,7 +39,7 @@ CriticalMutex g_heap_mutex;
 extern "C" VOID __assert_func(LPCSTR file, INT line, LPCSTR func, LPCSTR expr)
 {
 Console::Print("%s (%i) - func: assert(%s)\n", file, line, func, expr);
-throw AbortException();
+System::Restart();
 }
 
 extern "C" VOID abort()
@@ -51,7 +53,7 @@ WriteLock lock(g_heap_mutex);
 return heap_alloc(g_heap, size);
 }
 
-VOID Free(VOID* buf)
+VOID Free(VOID* buf)noexcept
 {
 WriteLock lock(g_heap_mutex);
 heap_free(g_heap, buf);

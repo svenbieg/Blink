@@ -30,14 +30,14 @@ class OutputBuffer: public Object
 {
 public:
 	// Con-/Destructors
-	~OutputBuffer();
+	~OutputBuffer()noexcept;
 	static inline Handle<OutputBuffer> Create(SIZE_T BlockSize=MemoryHelper::PAGE_SIZE) { return new OutputBuffer(BlockSize); }
 
 	// Common
-	inline SIZE_T Available()const { return m_Written-m_Read; }
-	VOID Clear();
-	SIZE_T Read(VOID* Buffer, SIZE_T Size);
-	VOID Flush();
+	inline SIZE_T Available()const noexcept { return m_Written-m_Read; }
+	VOID Clear()noexcept;
+	SIZE_T Read(VOID* Buffer, SIZE_T Size)noexcept;
+	VOID Flush()noexcept;
 	SIZE_T Write(VOID const* Buffer, SIZE_T Size);
 
 private:
@@ -54,8 +54,8 @@ private:
 
 	// Common
 	OutputBufferBlock* CreateBlock();
-	VOID FreeBlock(OutputBufferBlock* Block);
-	VOID FreeBlocks(OutputBufferBlock* First);
+	VOID FreeBlock(OutputBufferBlock* Block)noexcept;
+	VOID FreeBlocks(OutputBufferBlock* First)noexcept;
 	SIZE_T m_BlockSize;
 	Concurrency::CriticalSection m_CriticalSection;
 	OutputBufferBlock* m_First;

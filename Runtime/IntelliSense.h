@@ -25,7 +25,7 @@
 #define __builtin_isnan(f) false
 #define __builtin_isinf(f) false
 #define __builtin_offsetof(type, member) 0
-#define __has_builtin(b) false
+#define __has_builtin(b) true
 #define __extension__
 #define __typeof__(x) decltype(x)
 
@@ -43,5 +43,3 @@
 #define __UINT8_TYPE__ unsigned char
 #define __UINT16_TYPE__ short unsigned int
 #define __UINT64_TYPE__ long long unsigned int
-#define __SIZE_TYPE__ long long unsigned int
-#define __PTRDIFF_TYPE__ long long int

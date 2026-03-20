@@ -21,7 +21,7 @@
 #include "Concurrency/Task.h"
 #include "Concurrency/TaskHelper.h"
 #include "Concurrency/WriteLock.h"
-#include "Devices/System/Cpu.h"
+#include "Devices/System/Interrupts.h"
 
 
 //===========
@@ -39,6 +39,7 @@ class Scheduler
 {
 public:
 	// Friends
+	friend Devices::System::Interrupts;
 	friend CriticalMutex;
 	friend Mutex;
 	friend Signal;
@@ -66,7 +67,7 @@ private:
 	static VOID ExitTask()noexcept;
 	static Task* GetCurrentTask()noexcept;
 	static UINT GetNextCore(BOOL Suspend)noexcept;
-	static VOID HandleTaskSwitch(VOID* Parameter)noexcept;
+	static VOID HandleTaskSwitch()noexcept;
 	static VOID IdleTask();
 	static VOID MainTask();
 	static VOID ResumeWaitingTasks(UINT Count, BOOL Suspend)noexcept;

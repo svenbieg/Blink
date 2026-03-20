@@ -20,6 +20,7 @@
 
 #ifdef __ASSEMBLER__
 
+#define CONST(Type, Name, Value) Name = Value;
 #define CONST_EXPR(Type, Name, Value) Name = Value;
 
 #define ENUM_CLASS(Name)
@@ -30,19 +31,30 @@
 #define NAMESPACE_END
 
 #ifndef __LINKER__
+
 #define STRUCT_BEGIN .pushsection .data; .struct 0
 #define STRUCT_FIELD(Type, Size, Prefix, Name) Prefix##Name: .space Size
 #define STRUCT_ARRAY(Type, Size, Prefix, Name, Count) Prefix##Name: .space (Size)*(Count)
 #define STRUCT_END(Name) Name##_SIZE:; .popsection
+
+.macro globl_func name
+.globl \name
+.type \name,%function
+\name:
+.endm
+
 #else
+
 #define STRUCT_BEGIN
 #define STRUCT_FIELD(Type, Size, Prefix, Name)
 #define STRUCT_ARRAY(Type, Size, Prefix, Name, Count)
 #define STRUCT_END(Name)
+
 #endif
 
 #else
 
+#define CONST(Type, Name, Value) const Type Name=Value;
 #define CONST_EXPR(Type, Name, Value) constexpr Type Name=Value;
 
 #define ENUM_CLASS(Name) enum class Name {

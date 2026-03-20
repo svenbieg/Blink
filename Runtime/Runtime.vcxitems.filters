@@ -27,12 +27,13 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\IoHelper.h">
       <Filter>Devices</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\PacketBuffer.h">
-      <Filter>Storage</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Network\Ethernet\MacAddress.h">
       <Filter>Network\Ethernet</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\PacketBuffer.h">
+      <Filter>Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)new" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props">
@@ -88,11 +89,11 @@
       <Filter>Concurrency</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)string.c" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\PacketBuffer.cpp">
-      <Filter>Storage</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Network\Ethernet\MacAddress.cpp">
       <Filter>Network\Ethernet</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\PacketBuffer.cpp">
+      <Filter>Storage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -115,10 +116,10 @@
       <UniqueIdentifier>{7409c0a8-a473-40b4-8a2d-85d77a29c54c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Network">
-      <UniqueIdentifier>{58bb5132-6d38-4a64-83cc-616873da9ea3}</UniqueIdentifier>
+      <UniqueIdentifier>{e245800e-cf6d-4216-acba-e936a74dc604}</UniqueIdentifier>
     </Filter>
     <Filter Include="Network\Ethernet">
-      <UniqueIdentifier>{2b2dc9e9-835d-48df-9fd1-ad6feacb3b33}</UniqueIdentifier>
+      <UniqueIdentifier>{748bc5b3-e0fc-4911-9c99-2a912ba00ff2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

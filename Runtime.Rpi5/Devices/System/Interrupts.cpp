@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Concurrency/SpinLock.h"
+#include "Concurrency/Scheduler.h"
 #include "Devices/System/Cpu.h"
 #include "Devices/IoHelper.h"
 #include <assert.h>
@@ -110,6 +110,8 @@ s_DisableCount[core]++;
 VOID Interrupts::Enable()
 {
 UINT core=Cpu::GetId();
+if(s_DisableCount[core]==0)
+	return;
 if(--s_DisableCount[core]==0)
 	Cpu::EnableInterrupts();
 }
@@ -156,6 +158,8 @@ IoHelper::Write(gicd->CTRL, GICD_CTRL_ENABLE_GROUP0);
 for(UINT core=0; core<CPU_COUNT; core++)
 	s_DisableCount[core]=1;
 InitializeSecondary();
+Interrupts::Route(Irq::TaskSwitch, IrqTarget::All);
+Interrupts::SetHandler(Irq::TaskSwitch, HandleTaskSwitch);
 }
 
 VOID Interrupts::InitializeSecondary()
@@ -163,7 +167,6 @@ VOID Interrupts::InitializeSecondary()
 auto gicc=(GICC_REGS*)ARM_GICC_BASE;
 IoHelper::Write(gicc->PMR, GICC_PMR_PRIORITY);
 IoHelper::Write(gicc->CTRL, GICC_CTRL_ENABLE);
-Enable();
 }
 
 VOID Interrupts::Route(Irq irq, IrqTarget target)
@@ -222,6 +225,11 @@ auto gicd=(GICD_REGS*)ARM_GICD_BASE;
 UINT reg=irq/32;
 UINT mask=1UL<<(irq%32);
 IoHelper::Write(gicd->SET_ENABLED[reg], mask);
+}
+
+VOID Interrupts::HandleTaskSwitch(VOID* param)noexcept
+{
+Scheduler::HandleTaskSwitch();
 }
 
 BOOL Interrupts::s_Active[CPU_COUNT]={ false };

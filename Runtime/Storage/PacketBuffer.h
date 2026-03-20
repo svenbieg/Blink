@@ -31,18 +31,18 @@ public:
 	static Handle<PacketBuffer> Create(UINT Size) { return Object::CreateEx<PacketBuffer>(Size); }
 
 	// Common
-	inline UINT AvailableForWrite()const { return m_Size-m_Written; }
-	inline BYTE* Begin()const { return m_Buffer; }
-	inline UINT GetSize()const { return m_Size; }
+	inline UINT AvailableForWrite()const noexcept { return m_Size-m_Written; }
+	inline BYTE* Begin()const noexcept { return m_Buffer; }
+	inline UINT GetSize()const noexcept { return m_Size; }
 	Handle<PacketBuffer> Next;
-	template <class _item_t> _item_t* Read(UINT Count=1)
+	template <class _item_t> _item_t* Read(UINT Count=1)noexcept
 		{
 		auto p=(_item_t*)&m_Buffer[m_Read];
 		m_Read+=Count*sizeof(_item_t);
 		assert(m_Read<=m_Size);
 		return p;
 		}
-	template <class _item_t> _item_t* Write(UINT Count=1)
+	template <class _item_t> _item_t* Write(UINT Count=1)noexcept
 		{
 		auto p=(_item_t*)&m_Buffer[m_Written];
 		m_Written+=Count*sizeof(_item_t);
@@ -61,7 +61,7 @@ public:
 protected:
 	// Con-/Destructors
 	friend Object;
-	PacketBuffer(BYTE* Buffer, SIZE_T Size);
+	PacketBuffer(BYTE* Buffer, SIZE_T Size)noexcept;
 
 	// Common
 	BYTE* m_Buffer;

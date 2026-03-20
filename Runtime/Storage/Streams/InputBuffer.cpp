@@ -24,7 +24,7 @@ namespace Storage {
 // Con-/Destructors
 //==================
 
-InputBuffer::~InputBuffer()
+InputBuffer::~InputBuffer()noexcept
 {
 FreeBlocks(m_First);
 }
@@ -34,13 +34,13 @@ FreeBlocks(m_First);
 // Common
 //========
 
-SIZE_T InputBuffer::Available()
+SIZE_T InputBuffer::Available()noexcept
 {
 ReadLock lock(m_Mutex);
 return m_Written-m_Read;
 }
 
-VOID InputBuffer::Clear()
+VOID InputBuffer::Clear()noexcept
 {
 WriteLock lock(m_Mutex);
 FreeBlocks(m_First->Next);
@@ -51,14 +51,14 @@ m_Size=0;
 m_Written=0;
 }
 
-VOID InputBuffer::Flush()
+VOID InputBuffer::Flush()noexcept
 {
 WriteLock lock(m_Mutex);
 m_Written=m_Size;
 m_Signal.Trigger();
 }
 
-SIZE_T InputBuffer::Read(VOID* buf, SIZE_T size)
+SIZE_T InputBuffer::Read(VOID* buf, SIZE_T size)noexcept
 {
 WriteLock lock(m_Mutex);
 auto dst=(BYTE*)buf;
@@ -85,7 +85,7 @@ while(pos<size)
 			{
 			auto first=m_First;
 			m_First=next;
-			operator delete(first);
+			MemoryHelper::Free(first);
 			m_Read=0;
 			m_Size-=buf_size;
 			m_Written-=buf_size;
@@ -162,19 +162,19 @@ m_Last=m_First;
 
 InputBuffer::ReadBufferBlock* InputBuffer::CreateBlock()
 {
-ReadBufferBlock* block=(ReadBufferBlock*)operator new(sizeof(ReadBufferBlock)+m_BlockSize);
+ReadBufferBlock* block=(ReadBufferBlock*)MemoryHelper::Allocate(sizeof(ReadBufferBlock)+m_BlockSize);
 block->Next=nullptr;
 block->Size=0;
 return block;
 }
 
-VOID InputBuffer::FreeBlocks(ReadBufferBlock* first)
+VOID InputBuffer::FreeBlocks(ReadBufferBlock* first)noexcept
 {
 auto buf=first;
 while(buf)
 	{
 	auto next=buf->Next;
-	operator delete(buf);
+	MemoryHelper::Free(buf);
 	buf=next;
 	}
 }

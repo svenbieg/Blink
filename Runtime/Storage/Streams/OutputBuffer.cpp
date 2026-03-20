@@ -26,7 +26,7 @@ namespace Storage {
 // Con-/Destructors
 //==================
 
-OutputBuffer::~OutputBuffer()
+OutputBuffer::~OutputBuffer()noexcept
 {
 FreeBlocks(m_First);
 FreeBlocks(m_Free);
@@ -37,7 +37,7 @@ FreeBlocks(m_Free);
 // Common
 //========
 
-VOID OutputBuffer::Clear()
+VOID OutputBuffer::Clear()noexcept
 {
 SpinLock lock(m_CriticalSection);
 auto first_next=m_First->Next;
@@ -53,13 +53,13 @@ FreeBlocks(first_next);
 FreeBlocks(free);
 }
 
-VOID OutputBuffer::Flush()
+VOID OutputBuffer::Flush()noexcept
 {
 SpinLock lock(m_CriticalSection);
 m_Written=m_Size;
 }
 
-SIZE_T OutputBuffer::Read(VOID* buf, SIZE_T size)
+SIZE_T OutputBuffer::Read(VOID* buf, SIZE_T size)noexcept
 {
 auto dst=(BYTE*)buf;
 SIZE_T pos=0;
@@ -174,26 +174,26 @@ if(m_Free)
 	}
 else
 	{
-	block=(OutputBufferBlock*)operator new(sizeof(OutputBufferBlock)+m_BlockSize);
+	block=(OutputBufferBlock*)MemoryHelper::Allocate(sizeof(OutputBufferBlock)+m_BlockSize);
 	}
 block->Next=nullptr;
 block->Size=0;
 return block;
 }
 
-VOID OutputBuffer::FreeBlock(OutputBufferBlock* block)
+VOID OutputBuffer::FreeBlock(OutputBufferBlock* block)noexcept
 {
 block->Next=m_Free;
 m_Free=block;
 }
 
-VOID OutputBuffer::FreeBlocks(OutputBufferBlock* first)
+VOID OutputBuffer::FreeBlocks(OutputBufferBlock* first)noexcept
 {
 auto buf=first;
 while(buf)
 	{
 	auto next=buf->Next;
-	operator delete(buf);
+	MemoryHelper::Free(buf);
 	buf=next;
 	}
 }

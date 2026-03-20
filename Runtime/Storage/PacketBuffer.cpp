@@ -52,7 +52,7 @@ return copy;
 // Con-/Destructors Protected
 //============================
 
-PacketBuffer::PacketBuffer(BYTE* buf, SIZE_T size):
+PacketBuffer::PacketBuffer(BYTE* buf, SIZE_T size)noexcept:
 m_Buffer(buf),
 m_Read(0),
 m_Size(size),

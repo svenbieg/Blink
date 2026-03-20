@@ -44,8 +44,6 @@ auto idle=Task::CreateInternal(IdleTask, String::Create("idle%u", core));
 FlagHelper::Set(idle->m_Flags, TaskFlags::Idle);
 if(core==0)
 	{
-	Interrupts::Route(Irq::TaskSwitch, IrqTarget::All);
-	Interrupts::SetHandler(Irq::TaskSwitch, HandleTaskSwitch);
 	auto main=Task::CreateInternal(MainTask, "main");
 	s_MainTask=main;
 	}
@@ -158,7 +156,7 @@ for(UINT u=0; u<CPU_COUNT; u++)
 return CPU_COUNT;
 }
 
-VOID Scheduler::HandleTaskSwitch(VOID* param)noexcept
+VOID Scheduler::HandleTaskSwitch()noexcept
 {
 SpinLock lock(s_CriticalSection);
 UINT core=Cpu::GetId();
@@ -183,6 +181,7 @@ lock.Unlock();
 
 VOID Scheduler::IdleTask()
 {
+Interrupts::Enable();
 while(1)
 	{
 	Cpu::WaitForInterrupt();
@@ -191,6 +190,7 @@ while(1)
 
 VOID Scheduler::MainTask()
 {
+Interrupts::Enable();
 auto timer=SystemTimer::Get();
 timer->Triggered.Add(Scheduler::Schedule);
 auto status=Status::Success;
@@ -214,7 +214,7 @@ for(UINT u=0; u<count; u++)
 		break;
 	auto current=s_CurrentTask[core];
 	current->m_Next=s_Waiting.RemoveFirst();
-	Interrupts::Send(Irq::TaskSwitch, core);
+	Interrupts::TaskSwitch(core);
 	}
 }
 
@@ -283,7 +283,7 @@ if(!current->m_Next)
 	if(!resume)
 		resume=s_IdleTask[core];
 	current->m_Next=resume;
-	Interrupts::Send(Irq::TaskSwitch, core);
+	Interrupts::TaskSwitch(core);
 	}
 }
 

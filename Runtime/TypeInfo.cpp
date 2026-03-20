@@ -29,11 +29,11 @@ class BaseType
 {
 public:
 	// Common
-	inline BOOL IsPublic()const { return FlagHelper::Get(m_Offset, OffsetFlags::Public); }
-	inline BOOL IsVirtual()const { return FlagHelper::Get(m_Offset, OffsetFlags::Virtual); }
-	inline TypeInfo const* GetInfo()const { return m_Info; }
-	inline UINT GetOffset()const { return m_Offset>>8; }
-	static VOID* Upcast(BaseType const& Type, VOID* Object)
+	inline BOOL IsPublic()const noexcept { return FlagHelper::Get(m_Offset, OffsetFlags::Public); }
+	inline BOOL IsVirtual()const noexcept { return FlagHelper::Get(m_Offset, OffsetFlags::Virtual); }
+	inline TypeInfo const* GetInfo()const noexcept { return m_Info; }
+	inline UINT GetOffset()const noexcept { return m_Offset>>8; }
+	static VOID* Upcast(BaseType const& Type, VOID* Object)noexcept
 		{
 		INT offset=Type.GetOffset();
 		if(!Type.IsVirtual())
@@ -176,7 +176,7 @@ class VTable
 {
 public:
 	// Common
-	static inline VOID* GetWholeObject(VOID const* Object, __class_type_info const** Type)
+	static inline VOID* GetWholeObject(VOID const* Object, __class_type_info const** Type)noexcept
 		{
 		SIZE_T obj_pos=(SIZE_T)Object;
 		auto vtable=Open(Object);
@@ -190,7 +190,7 @@ public:
 
 private:
 	// Common
-	static inline VTable const* Open(VOID const* Object)
+	static inline VTable const* Open(VOID const* Object)noexcept
 		{
 		SIZE_T vtable_pos=*(SIZE_T*)Object;
 		vtable_pos-=offsetof(VTable, m_Origin);
@@ -213,7 +213,7 @@ HINT_NO_PUBLIC_BASE=-2,
 HINT_NO_VIRTUAL_BASE=-3
 };
 
-extern "C" VOID* __dynamic_cast(VOID const* obj, __class_type_info const* src_type, __class_type_info const* dst_type, SIZE_T offset)
+extern "C" VOID* __dynamic_cast(VOID const* obj, __class_type_info const* src_type, __class_type_info const* dst_type, SIZE_T offset)noexcept
 {
 if(!obj)
 	return nullptr;

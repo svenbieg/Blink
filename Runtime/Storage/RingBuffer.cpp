@@ -26,17 +26,17 @@ namespace Storage {
 // Common
 //========
 
-SIZE_T RingBuffer::Available()
+SIZE_T RingBuffer::Available()noexcept
 {
 return m_Head-m_Tail;
 }
 
-SIZE_T RingBuffer::AvailableForWrite()
+SIZE_T RingBuffer::AvailableForWrite()noexcept
 {
 return m_Size-(m_Head-m_Tail);
 }
 
-SIZE_T RingBuffer::BeginRead(BYTE** buf_ptr)
+SIZE_T RingBuffer::BeginRead(BYTE** buf_ptr)noexcept
 {
 SIZE_T available=m_Head-m_Tail;
 SIZE_T tail=m_Tail%m_Size;
@@ -45,7 +45,7 @@ SIZE_T copy=TypeHelper::Min(available, m_Size-tail);
 return copy;
 }
 
-SIZE_T RingBuffer::BeginWrite(BYTE** buf_ptr)
+SIZE_T RingBuffer::BeginWrite(BYTE** buf_ptr)noexcept
 {
 SIZE_T available=m_Size-(m_Head-m_Tail);
 SIZE_T head=m_Head%m_Size;
@@ -54,7 +54,7 @@ SIZE_T copy=TypeHelper::Min(available, m_Size-head);
 return copy;
 }
 
-VOID RingBuffer::Consumed(SIZE_T size)
+VOID RingBuffer::Consumed(SIZE_T size)noexcept
 {
 m_Tail+=size;
 if(m_Head==m_Tail)
@@ -64,7 +64,7 @@ if(m_Head==m_Tail)
 	}
 }
 
-SIZE_T RingBuffer::Read(VOID* buf, SIZE_T size)
+SIZE_T RingBuffer::Read(VOID* buf, SIZE_T size)noexcept
 {
 auto dst=(BYTE*)buf;
 SIZE_T available=m_Head-m_Tail;
@@ -87,7 +87,7 @@ while(pos<size)
 return pos;
 }
 
-SIZE_T RingBuffer::Write(VOID const* buf, SIZE_T size)
+SIZE_T RingBuffer::Write(VOID const* buf, SIZE_T size)noexcept
 {
 auto src=(BYTE const*)buf;
 SIZE_T available=m_Size-(m_Head-m_Tail);
@@ -109,7 +109,7 @@ return size;
 // Con-/Destructors Private
 //==========================
 
-RingBuffer::RingBuffer(VOID* buf, SIZE_T size):
+RingBuffer::RingBuffer(VOID* buf, SIZE_T size)noexcept:
 m_Buffer((BYTE*)buf),
 m_Head(0),
 m_Size(size),

@@ -31,14 +31,14 @@ class InputBuffer: public Object
 {
 public:
 	// Con-/Destructors
-	~InputBuffer();
+	~InputBuffer()noexcept;
 	static inline Handle<InputBuffer> Create(SIZE_T BlockSize=MemoryHelper::PAGE_SIZE) { return new InputBuffer(BlockSize); }
 
 	// Common
-	SIZE_T Available();
-	VOID Clear();
-	VOID Flush();
-	SIZE_T Read(VOID* Buffer, SIZE_T Size);
+	SIZE_T Available()noexcept;
+	VOID Clear()noexcept;
+	VOID Flush()noexcept;
+	SIZE_T Read(VOID* Buffer, SIZE_T Size)noexcept;
 	SIZE_T Write(RingBuffer* Buffer, SIZE_T Size);
 
 private:
@@ -55,7 +55,7 @@ private:
 
 	// Common
 	ReadBufferBlock* CreateBlock();
-	VOID FreeBlocks(ReadBufferBlock* First);
+	VOID FreeBlocks(ReadBufferBlock* First)noexcept;
 	SIZE_T m_BlockSize;
 	ReadBufferBlock* m_First;
 	ReadBufferBlock* m_Last;

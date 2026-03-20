@@ -29,22 +29,22 @@ namespace Concurrency {
 // Common
 //========
 
-VOID TaskHelper::Initialize(SIZE_T* StackPointer, VOID (*TaskProc)(VOID*), VOID* Parameter)
+VOID TaskHelper::Initialize(SIZE_T* StackPointer, VOID (*TaskProc)(VOID*), VOID* Parameter)noexcept
 {
 task_init(StackPointer, TaskProc, Parameter);
 }
 
-SIZE_T TaskHelper::RestoreContext(SIZE_T StackPointer)
+SIZE_T TaskHelper::RestoreContext(SIZE_T StackPointer)noexcept
 {
 return task_restore_context(StackPointer);
 }
 
-SIZE_T TaskHelper::SaveContext(SIZE_T StackPointer)
+SIZE_T TaskHelper::SaveContext(SIZE_T StackPointer)noexcept
 {
 return task_save_context(StackPointer);
 }
 
-VOID TaskHelper::Switch(UINT core, Task* current, Task* next)
+VOID TaskHelper::Switch(UINT core, Task* current, Task* next)noexcept
 {
 SIZE_T stack_end=(SIZE_T)&__stack_end;
 auto irq_stack=(IRQ_STACK*)(stack_end-core*CONFIG_STACK_SIZE-sizeof(IRQ_STACK));

@@ -36,12 +36,12 @@ class MacAddress
 {
 public:
 	// Con-/Destrucotrs
-	static MAC_ADDR From(BYTE A0, BYTE A1, BYTE A2, BYTE A3, BYTE A4, BYTE A5);
-	static MAC_ADDR FromString(LPCSTR String);
+	static MAC_ADDR From(BYTE A0, BYTE A1, BYTE A2, BYTE A3, BYTE A4, BYTE A5)noexcept;
+	static MAC_ADDR FromString(LPCSTR String)noexcept;
 
 	// Common
-	static BOOL IsBroadcast(MAC_ADDR Address);
-	static BOOL IsMulticast(MAC_ADDR Address);
+	static BOOL IsBroadcast(MAC_ADDR Address)noexcept;
+	static BOOL IsMulticast(MAC_ADDR Address)noexcept;
 	static Handle<String> ToString(MAC_ADDR Address);
 };
 
