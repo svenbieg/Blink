@@ -92,7 +92,6 @@ public:
 	static inline VOID Send(Irq Irq, UINT Core) { Send(Irq, (IrqTarget)(1<<Core)); }
 	static VOID Send(Irq Irq, IrqTarget Target);
 	static VOID SetHandler(Irq Irq, IRQ_HANDLER Handler, VOID* Parameter=nullptr);
-	static inline VOID TaskSwitch(UINT Core) { Send(Irq::TaskSwitch, Core); }
 
 private:
 	// Using

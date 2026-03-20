@@ -214,7 +214,7 @@ for(UINT u=0; u<count; u++)
 		break;
 	auto current=s_CurrentTask[core];
 	current->m_Next=s_Waiting.RemoveFirst();
-	Interrupts::TaskSwitch(core);
+	Interrupts::Send(Irq::TaskSwitch, core);
 	}
 }
 
@@ -283,7 +283,7 @@ if(!current->m_Next)
 	if(!resume)
 		resume=s_IdleTask[core];
 	current->m_Next=resume;
-	Interrupts::TaskSwitch(core);
+	Interrupts::Send(Irq::TaskSwitch, core);
 	}
 }
 
