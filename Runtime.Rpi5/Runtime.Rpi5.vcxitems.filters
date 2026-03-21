@@ -48,6 +48,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiPacket.cpp">
       <Filter>Devices\Wifi</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.cpp">
+      <Filter>Concurrency</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
@@ -125,6 +128,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiScan.h">
       <Filter>Devices\Wifi</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">
@@ -159,6 +165,9 @@
     </Filter>
     <Filter Include="Devices\Dma">
       <UniqueIdentifier>{4f720f33-21b1-4486-850a-3473b832aa3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Concurrency">
+      <UniqueIdentifier>{9dbcf12f-5cc9-4a86-9ebd-ae8e9b63160a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

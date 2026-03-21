@@ -21,9 +21,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)UI\Console.h">
       <Filter>UI</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.h">
-      <Filter>Concurrency</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\IoHelper.h">
       <Filter>Devices</Filter>
     </ClInclude>
@@ -85,9 +82,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)UI\Console.cpp">
       <Filter>UI</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.cpp">
-      <Filter>Concurrency</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)string.c" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Network\Ethernet\MacAddress.cpp">
       <Filter>Network\Ethernet</Filter>
@@ -108,9 +102,6 @@
     </Filter>
     <Filter Include="UI">
       <UniqueIdentifier>{86cab7a1-3892-4f4d-b65b-dcc822557fc6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Concurrency">
-      <UniqueIdentifier>{81ce712a-769d-4095-9e02-4b7d1167e805}</UniqueIdentifier>
     </Filter>
     <Filter Include="Devices">
       <UniqueIdentifier>{7409c0a8-a473-40b4-8a2d-85d77a29c54c}</UniqueIdentifier>
