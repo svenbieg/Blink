@@ -53,6 +53,7 @@ auto task=idle;
 if(core==0)
 	task=s_MainTask;
 s_CurrentTask[core]=task;
+task->m_StackPointer=task->m_StackBottom+task->m_StackSize;
 lock.Unlock();
 Cpu::SetContext(&Task::TaskProc, task, task->m_StackPointer);
 }
