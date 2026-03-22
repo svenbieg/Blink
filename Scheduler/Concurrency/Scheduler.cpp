@@ -192,11 +192,11 @@ while(1)
 VOID Scheduler::MainTask()
 {
 Interrupts::Enable();
-auto timer=SystemTimer::Get();
-timer->Triggered.Add(Scheduler::Schedule);
 auto status=Status::Success;
 try
 	{
+	auto timer=SystemTimer::Get();
+	timer->Triggered.Add(Scheduler::Schedule);
 	Main();
 	}
 catch(...)
@@ -248,7 +248,7 @@ if(sleeping)
 	}
 UINT waiting_count=s_Waiting.Count(CPU_COUNT);
 if(waiting_count)
-	ResumeWaitingTasks(waiting_count, true);
+	ResumeWaitingTasks(waiting_count, CPU_COUNT);
 }
 
 VOID Scheduler::SuspendCurrentTask(UINT ms)
