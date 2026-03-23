@@ -27,7 +27,7 @@ namespace Storage {
 // Common
 //========
 
-UINT Dwarf::GetEncodedSize(BYTE encoding)noexcept
+UINT Dwarf::GetEncodedSize(BYTE encoding)
 {
 UINT size=0;
 BYTE type=encoding&0x0F;
@@ -57,20 +57,19 @@ switch(type)
 		}
 	default:
 		{
-		assert(false);
-		return 0;
+		throw InvalidArgumentException();
 		}
 	}
 return size;
 }
 
-UINT64 Dwarf::Read(BYTE const*& dwarf)noexcept
+UINT64 Dwarf::Read(BYTE const*& dwarf)
 {
 BYTE encoding=*dwarf++;
 return ReadEncoded(dwarf, encoding);
 }
 
-UINT64 Dwarf::ReadEncoded(BYTE const*& dwarf, BYTE encoding, UINT64 data_rel)noexcept
+UINT64 Dwarf::ReadEncoded(BYTE const*& dwarf, BYTE encoding, UINT64 data_rel)
 {
 SIZE_T ptr_rel=(SIZE_T)dwarf;
 SIZE_T value=0;
@@ -126,8 +125,7 @@ switch(type)
 		}
 	default:
 		{
-		assert(false);
-		return 0;
+		throw InvalidArgumentException();
 		}
 	}
 UINT mode=encoding&0x70;
@@ -147,8 +145,7 @@ switch(mode)
 		}
 	default:
 		{
-		assert(false);
-		return 0;
+		throw InvalidArgumentException();
 		}
 	}
 if(FlagHelper::Get(encoding, DW_INDIRECT))

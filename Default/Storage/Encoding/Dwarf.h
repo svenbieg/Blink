@@ -68,14 +68,14 @@ public:
 
 	// Common
 	inline LPCSTR Begin()const noexcept { return (LPCSTR)m_Buffer; }
-	static UINT GetEncodedSize(BYTE Encoding)noexcept;
+	static UINT GetEncodedSize(BYTE Encoding);
 	inline SIZE_T GetPosition()const noexcept { return (SIZE_T)m_Buffer; }
-	inline UINT64 Read()noexcept { return Read((BYTE const*&)m_Buffer); }
-	static UINT64 Read(BYTE const*& Dwarf)noexcept;
+	inline UINT64 Read() { return Read((BYTE const*&)m_Buffer); }
+	static UINT64 Read(BYTE const*& Dwarf);
 	inline BYTE ReadByte()noexcept { return *m_Buffer++; }
 	static inline BYTE ReadByte(BYTE const*& Dwarf)noexcept { return *Dwarf++; }
-	inline UINT64 ReadEncoded(BYTE Encoding, SIZE_T DataRelative=0)noexcept { return ReadEncoded((BYTE const*&)m_Buffer, Encoding, DataRelative); }
-	static UINT64 ReadEncoded(BYTE const*& Dwarf, BYTE Encoding, UINT64 DataRelative=0)noexcept;
+	inline UINT64 ReadEncoded(BYTE Encoding, SIZE_T DataRelative=0) { return ReadEncoded((BYTE const*&)m_Buffer, Encoding, DataRelative); }
+	static UINT64 ReadEncoded(BYTE const*& Dwarf, BYTE Encoding, UINT64 DataRelative=0);
 	inline INT64 ReadSigned()noexcept { return ReadSigned((BYTE const*&)m_Buffer); }
 	static INT64 ReadSigned(BYTE const*& Dwarf)noexcept;
 	inline UINT64 ReadUnsigned()noexcept { return ReadUnsigned((BYTE const*&)m_Buffer); }
