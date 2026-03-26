@@ -2,19 +2,18 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|Rpi5">
+    <ProjectConfiguration Include="Debug|RPi5">
       <Configuration>Debug</Configuration>
-      <Platform>Rpi5</Platform>
+      <Platform>RPi5</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Rpi5">
+    <ProjectConfiguration Include="Release|RPi5">
       <Configuration>Release</Configuration>
-      <Platform>Rpi5</Platform>
+      <Platform>RPi5</Platform>
     </ProjectConfiguration>
   </ItemGroup>
 
-  <PropertyGroup Condition="'$(Platform)'=='Rpi5'">
+  <PropertyGroup Condition="'$(Platform)'=='RPi5'">
     <NMakePreprocessorDefinitions>_RPI5</NMakePreprocessorDefinitions>
-    <Vendor>Raspberry</Vendor>
   </PropertyGroup>
 
 </Project>

@@ -89,6 +89,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\PacketBuffer.cpp">
       <Filter>Storage</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\IoHelper.cpp">
+      <Filter>Devices</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">

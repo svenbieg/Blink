@@ -17,16 +17,6 @@
 // Task-Context
 //==============
 
-.globl task_init
-task_init:
-ldr x3, [x0]
-sub x3, x3, IRQ_FRAME_SIZE
-str x2, [x3, IRQ_FRAME_X0]
-sub x3, x3, TASK_FRAME_SIZE
-str x1, [x3, TASK_FRAME_ELR]
-str x3, [x0]
-ret
-
 .globl task_restore_context
 task_restore_context:
 ldr x1, [x0, TASK_FRAME_ELR]

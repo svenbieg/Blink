@@ -54,7 +54,7 @@ GpioRp1PinMode RX_ALT;
 Rp1Irq IRQ;
 }UART_INFO;
 
-const UART_INFO UART_DEVICES[UART_COUNT]=
+const UART_INFO UART_DEVICES[]=
 	{
 	{ RP1_UART0_BASE, GpioRp1Pin::Gpio14, GpioRp1Pin::Gpio15, GpioRp1PinMode::Alt4, GpioRp1PinMode::Alt4, Rp1Irq::UArt0 },
 	{ RP1_UART1_BASE, GpioRp1Pin::Gpio0, GpioRp1Pin::Gpio1, GpioRp1PinMode::Alt2, GpioRp1PinMode::Alt2, Rp1Irq::UArt1 },
@@ -127,9 +127,8 @@ return clock/(baud<<4);
 inline UINT BAUD_FRAC(UINT clock, UINT baud)
 {
 UINT baud16=baud<<4;
-UINT baud_int=clock/baud16;
-UINT baud_frac=(clock%baud16)*8/baud;
-return baud_frac/2+baud_frac%2;
+UINT rem=clock%baud16;
+return (rem*64+baud16/2)/baud16;
 }
 
 

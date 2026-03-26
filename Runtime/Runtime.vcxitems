@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)cxxabi.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\IoHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)heap.c" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Network\Ethernet\MacAddress.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)new.cpp" />

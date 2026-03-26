@@ -5,7 +5,7 @@
     <AdditionalLinkerFlags>$(AdditionalLinkerFlags) -lm</AdditionalLinkerFlags>
     <CompilerFlags>$(CompilerFlags) -mcpu=cortex-a76 -mlittle-endian</CompilerFlags>
     <LinkerFlags>$(LinkerFlags) --no-warn-rwx-segments</LinkerFlags>
-    <NMakeForcedIncludes>$(NMakeForcedIncludes);$(SolutionDir)Runtime.Rpi5\IntelliSense.h</NMakeForcedIncludes>
+    <NMakeForcedIncludes>$(NMakeForcedIncludes);$(SolutionDir)Runtime.RPi5\IntelliSense.h</NMakeForcedIncludes>
   </PropertyGroup>
 
 </Project>

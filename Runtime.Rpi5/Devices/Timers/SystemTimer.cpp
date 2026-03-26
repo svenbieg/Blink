@@ -79,9 +79,6 @@ return cnt_pct*MHZ/FREQ_HZ;
 SystemTimer::SystemTimer()
 {
 m_Task=ServiceTask::Create(this, &SystemTimer::ServiceTask, "systimer");
-Interrupts::SetHandler(Irq::SystemTimer, HandleInterrupt, this);
-__asm inline volatile("msr CNTP_TVAL_EL0, %0":: "r" (PERIOD));
-__asm inline volatile("msr CNTP_CTL_EL0, %0":: "r" (1UL));
 }
 
 SystemTimer* SystemTimer::s_Current=nullptr;
@@ -100,6 +97,9 @@ __asm inline volatile("msr CNTP_TVAL_EL0, %0":: "r" (PERIOD));
 
 VOID SystemTimer::ServiceTask()
 {
+Interrupts::SetHandler(Irq::SystemTimer, HandleInterrupt, this);
+__asm inline volatile("msr CNTP_TVAL_EL0, %0":: "r" (PERIOD));
+__asm inline volatile("msr CNTP_CTL_EL0, %0":: "r" (1UL));
 auto task=Task::Get();
 while(!task->Cancelled)
 	{

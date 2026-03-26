@@ -63,6 +63,7 @@ public:
 	static inline UINT64 Read(RO64& Register)noexcept { return Register; }
 	static inline UINT64 Read(RO64& Register, UINT64 Mask)noexcept { return Register&Mask; }
 	static inline UINT64 Read(RO64& Register, BITS64 const& Bits)noexcept { return (Register>>Bits.Shift)&Bits.Mask; }
+	static VOID Retry(RO32& Register, UINT Mask, UINT Value, UINT Retry=10);
 	static inline VOID Set(RW08& Register, BYTE Mask)noexcept { Register|=Mask; }
 	static inline VOID Set(RW08& Register, BYTE Mask, BYTE Value)noexcept
 		{
@@ -123,6 +124,7 @@ public:
 		tmp|=(Value<<Bits.Shift);
 		Register=tmp;
 		}
+	static VOID Wait(RO32& Register, UINT Mask, UINT Value, UINT Timeout=100);
 	static inline VOID Write(RW08& Register, BYTE Value)noexcept { Register=Value; }
 	static inline VOID Write(RW16& Register, WORD Value)noexcept { Register=Value; }
 	static inline VOID Write(RW32& Register, UINT Value)noexcept { Register=Value; }

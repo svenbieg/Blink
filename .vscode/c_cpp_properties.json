@@ -1,12 +1,12 @@
 {
 "configurations": [
 	{
-	"name": "Rpi5",
-	"includePath": [ "${workspaceFolder}/Runtime/", "${workspaceFolder}/Runtime.Rpi5/", "${workspaceFolder}/Scheduler/", "${workspaceFolder}/Default/", "${workspaceFolder}/", "${workspaceFolder}/Blink/" ],
+	"name": "RPi5",
+	"includePath": [ "${workspaceFolder}/Runtime/", "${workspaceFolder}/Runtime.RPi5/", "${workspaceFolder}/Scheduler/", "${workspaceFolder}/Default/", "${workspaceFolder}/", "${workspaceFolder}/Blink/" ],
 	"defines": [ "_DEBUG" ],
 	"cStandard": "c17",
 	"cppStandard": "c++17",
-	"forcedInclude": [ "${workspaceFolder}/Runtime.Rpi5/IntelliSense.h" ],
+	"forcedInclude": [ "${workspaceFolder}/Runtime.RPi5/IntelliSense.h" ],
 	"configurationProvider": "ms-vscode.cmake-tools",
 	"intelliSenseMode": "gcc-arm64"
 	}]

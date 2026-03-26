@@ -30,8 +30,6 @@ namespace Devices {
 // Devices
 //=========
 
-const UINT UART_COUNT=5;
-
 enum class SerialDevice
 {
 Serial0,
@@ -64,9 +62,6 @@ Baud921600=921600
 class SerialPort: public Object, public Storage::Streams::RandomAccessStream
 {
 public:
-	// Friends
-	friend Object;
-
 	// Using
 	using CriticalSection=Concurrency::CriticalSection;
 	using GpioHost=Devices::Gpio::GpioHost;
@@ -93,6 +88,12 @@ public:
 	SIZE_T Write(VOID const* Buffer, SIZE_T Size)override;
 
 private:
+	// Friends
+	friend Object;
+
+	// Settings
+	static const UINT UART_COUNT=5;
+
 	// Con-/Destructors
 	SerialPort(SerialDevice Device, BaudRate Baud);
 	static SerialPort* s_Current[UART_COUNT];

@@ -42,6 +42,10 @@ public:
 	static const UINT CPU_COUNT=4;
 
 	// Common
+	static inline VOID Breakpoint()
+		{
+		__asm inline volatile("brk #0");
+		}
 	static VOID CleanDataCache(SIZE_T Address, SIZE_T Size)noexcept;
 	static inline BOOL CompareAndSet(volatile UINT* Value, UINT Compare, UINT Set)noexcept
 		{

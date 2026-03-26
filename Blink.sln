@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.0.11109.219 d18.0-oob
+VisualStudioVersion = 18.0.11109.219
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Default", "Default\Default.vcxitems", "{E356BD3B-D09B-4FDA-ACD2-403372FCEAC1}"
 EndProject
@@ -9,20 +9,20 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Blink", "Blink\Blink.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Runtime", "Runtime\Runtime.vcxitems", "{9C2293C3-7566-4D7C-B287-8760ED2E059E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Runtime.Rpi5", "Runtime.Rpi5\Runtime.Rpi5.vcxitems", "{E31DF348-0424-4DEB-B143-B720C57D828C}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Scheduler", "Scheduler\Scheduler.vcxitems", "{0E85C039-C7CD-4EC1-847B-F775F0345DFD}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Runtime.RPi5", "Runtime.RPi5\Runtime.RPi5.vcxitems", "{E31DF348-0424-4DEB-B143-B720C57D828C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Rpi5 = Debug|Rpi5
-		Release|Rpi5 = Release|Rpi5
+		Debug|RPi5 = Debug|RPi5
+		Release|RPi5 = Release|RPi5
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0A8C397A-DB1A-41FA-966B-358CE4352EB4}.Debug|Rpi5.ActiveCfg = Debug|Rpi5
-		{0A8C397A-DB1A-41FA-966B-358CE4352EB4}.Debug|Rpi5.Build.0 = Debug|Rpi5
-		{0A8C397A-DB1A-41FA-966B-358CE4352EB4}.Release|Rpi5.ActiveCfg = Release|Rpi5
-		{0A8C397A-DB1A-41FA-966B-358CE4352EB4}.Release|Rpi5.Build.0 = Release|Rpi5
+		{0A8C397A-DB1A-41FA-966B-358CE4352EB4}.Debug|RPi5.ActiveCfg = Debug|RPi5
+		{0A8C397A-DB1A-41FA-966B-358CE4352EB4}.Debug|RPi5.Build.0 = Debug|RPi5
+		{0A8C397A-DB1A-41FA-966B-358CE4352EB4}.Release|RPi5.ActiveCfg = Release|RPi5
+		{0A8C397A-DB1A-41FA-966B-358CE4352EB4}.Release|RPi5.Build.0 = Release|RPi5
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -32,12 +32,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Default\Default.vcxitems*{0a8c397a-db1a-41fa-966b-358ce4352eb4}*SharedItemsImports = 4
-		Runtime.Rpi5\Runtime.Rpi5.vcxitems*{0a8c397a-db1a-41fa-966b-358ce4352eb4}*SharedItemsImports = 4
+		Runtime.RPi5\Runtime.RPi5.vcxitems*{0a8c397a-db1a-41fa-966b-358ce4352eb4}*SharedItemsImports = 4
 		Runtime\Runtime.vcxitems*{0a8c397a-db1a-41fa-966b-358ce4352eb4}*SharedItemsImports = 4
 		Scheduler\Scheduler.vcxitems*{0a8c397a-db1a-41fa-966b-358ce4352eb4}*SharedItemsImports = 4
 		Scheduler\Scheduler.vcxitems*{0e85c039-c7cd-4ec1-847b-f775f0345dfd}*SharedItemsImports = 9
 		Runtime\Runtime.vcxitems*{9c2293c3-7566-4d7c-b287-8760ed2e059e}*SharedItemsImports = 9
-		Runtime.Rpi5\Runtime.Rpi5.vcxitems*{e31df348-0424-4deb-b143-b720c57d828c}*SharedItemsImports = 9
+		Runtime.RPi5\Runtime.RPi5.vcxitems*{e31df348-0424-4deb-b143-b720c57d828c}*SharedItemsImports = 9
 		Default\Default.vcxitems*{e356bd3b-d09b-4fda-acd2-403372fceac1}*SharedItemsImports = 9
 	EndGlobalSection
 EndGlobal
