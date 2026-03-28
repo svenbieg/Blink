@@ -33,6 +33,11 @@ UINT size=0;
 BYTE type=encoding&0x0F;
 switch(type)
 	{
+	case DW_POINTER_ABS:
+		{
+		size=sizeof(SIZE_T);
+		break;
+		}
 	case DW_UNSIGNED:
 	case DW_SIGNED:
 		break;
@@ -48,7 +53,6 @@ switch(type)
 		size=4;
 		break;
 		}
-	case DW_POINTER_ABS:
 	case DW_QWORD:
 	case DW_LONG:
 		{
