@@ -43,7 +43,9 @@ SECTIONS
 	__init_array_start = .;
 	KEEP(*(.init_array .init_array.*))
 	__init_array_end = .;
+	__rodata_start = .;
 	*(.rodata .rodata.*)
+	__rodata_end = .;
 	*(.data .data.*)
 	}
 

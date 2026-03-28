@@ -4,6 +4,7 @@
   <PropertyGroup>
     <AdditionalLinkerFlags>$(AdditionalLinkerFlags) -lm</AdditionalLinkerFlags>
     <CompilerFlags>$(CompilerFlags) -mcpu=cortex-a76 -mlittle-endian</CompilerFlags>
+    <LinkerFlags>$(LinkerFlags) --eh-frame-hdr</LinkerFlags>
     <LinkerFlags>$(LinkerFlags) --no-warn-rwx-segments</LinkerFlags>
     <NMakeForcedIncludes>$(NMakeForcedIncludes);$(SolutionDir)Runtime.RPi5\IntelliSense.h</NMakeForcedIncludes>
   </PropertyGroup>

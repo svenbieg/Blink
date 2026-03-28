@@ -12,9 +12,7 @@
 #include "Concurrency/Scheduler.h"
 #include "Devices/System/System.h"
 #include "Storage/Encoding/Dwarf.h"
-#include "BitHelper.h"
 #include <assert.h>
-#include <cxxabi.h>
 
 using namespace Concurrency;
 using namespace Devices::System;
@@ -64,77 +62,6 @@ OP_RESTORE=192,
 //==========
 // Compiler
 //==========
-
-const UINT64 CATCH_ANY=0xFFFFFF0000000000ULL;
-
-extern "C" VOID __gxx_personality_v0(INT version, UINT flags, UINT64 exc_class, UnwindException* exc, UnwindContext* context)noexcept
-{
-Dwarf lsda(context->LanguageData);
-SIZE_T frame_start=context->FrameStart;
-SIZE_T frame_end=context->FrameEnd;
-SIZE_T lp_start=lsda.Read();
-if(lp_start==0)
-	lp_start=frame_start;
-BYTE types_enc=lsda.ReadByte();
-UINT type_info_len=0;
-SIZE_T types_pos=0;
-if(types_enc!=DW_OMIT)
-	{
-	type_info_len=Dwarf::GetEncodedSize(types_enc);
-	types_pos=lsda.ReadUnsigned();
-	types_pos+=lsda.GetPosition();
-	}
-BYTE callsite_enc=lsda.ReadByte();
-SIZE_T callsite_len=lsda.ReadUnsigned();
-SIZE_T callsite_pos=lsda.GetPosition();
-SIZE_T callsite_end=callsite_pos+callsite_len;
-SIZE_T actions_pos=callsite_end;
-SIZE_T instr_offset=context->InstructionPointer-frame_start;
-while(lsda.GetPosition()<callsite_end)
-	{
-	SIZE_T cs_start=lsda.ReadEncoded(callsite_enc);
-	SIZE_T cs_len=lsda.ReadEncoded(callsite_enc);
-	SIZE_T cs_end=cs_start+cs_len;
-	SIZE_T lp_offset=lsda.ReadEncoded(callsite_enc);
-	SIZE_T action_id=lsda.ReadUnsigned();
-	if(instr_offset<cs_start)
-		continue;
-	if(instr_offset>=cs_end)
-		continue;
-	if(lp_offset==0)
-		break;
-	if(action_id==0)
-		{
-		exc->Cleanup(lp_start+lp_offset);
-		System::Restart();
-		}
-	auto action_pos=actions_pos+(action_id-1);
-	while(action_id)
-		{
-		Dwarf action(action_pos);
-		INT64 type_id=action.ReadSigned();
-		assert(type_id>=0);
-		if(type_id==0)
-			return;
-		TypeInfo const* thrown_type;
-		VOID* thrown=exc->GetThrownException(&thrown_type);
-		Dwarf catch_type_entry(types_pos-type_id*type_info_len);
-		auto catch_id=catch_type_entry.ReadEncoded(types_enc);
-		TypeInfo const* catch_type=thrown_type;
-		if(!BitHelper::Get(catch_id, CATCH_ANY))
-			catch_type=(TypeInfo const*)catch_id;
-		if(thrown_type->TryUpcast(catch_type, &thrown))
-			{
-			exc->Catch(lp_start+lp_offset, type_id, catch_type, thrown);
-			System::Restart();
-			}
-		auto next_action_offset=action.ReadSigned();
-		if(next_action_offset==0)
-			break;
-		action_pos+=next_action_offset+1;
-		}
-	}
-}
 
 extern "C" [[noreturn]] VOID _Unwind_Raise(UnwindException* exc)
 {
@@ -200,20 +127,20 @@ return m_Thrown;
 
 [[noreturn]] VOID UnwindException::Raise()noexcept
 {
-SIZE_T instr_ptr=Registers[EXC_REG_RETURN]-EXC_INSTR_SIZE;
-GetContext(instr_ptr, &m_Context);
-SIZE_T code_offset=m_Context.InstructionPointer-m_Context.FrameStart;
-ParseInstructions(m_Context.CommonInstructions, m_Context.CommonInstructionsLength, -1, &m_Context);
-ParseInstructions(m_Context.FrameInstructions, m_Context.FrameInstructionsLength, code_offset, &m_Context);
-if(m_Context.Personality)
+while(1)
 	{
-	auto personality=(Personality)m_Context.Personality;
-	m_Context.Personality=0;
-	personality(0, 0, 0, this, &m_Context);
+	SIZE_T pc=Registers[EXC_REG_RETURN];
+	GetContext(pc-1, &m_Context);
+	SIZE_T code_offset=m_Context.ProgramCounter-m_Context.FrameStart;
+	ParseInstructions(m_Context.CommonInstructions, m_Context.CommonInstructionsLength, -1, &m_Context);
+	ParseInstructions(m_Context.FrameInstructions, m_Context.FrameInstructionsLength, code_offset, &m_Context);
+	if(m_Context.Personality)
+		{
+		auto personality=(Personality)m_Context.Personality;
+		personality(0, this, &m_Context);
+		}
+	Registers[EXC_REG_STACK]+=m_Context.StackOffset;
 	}
-Registers[EXC_REG_STACK]+=m_Context.StackOffset;
-exc_resume(&Frame, (SIZE_T)_Unwind_Raise, this);
-System::Restart();
 }
 
 [[noreturn]] VOID UnwindException::Resume()noexcept
@@ -230,7 +157,8 @@ System::Restart();
 
 VOID UnwindException::GetContext(SIZE_T instr_ptr, UnwindContext* context)
 {
-context->InstructionPointer=instr_ptr;
+context->Personality=0;
+context->ProgramCounter=instr_ptr;
 SIZE_T eh_frame_hdr=(SIZE_T)&__eh_frame_hdr_start;
 Dwarf header(eh_frame_hdr);
 BYTE version=header.ReadByte();

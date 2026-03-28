@@ -3,12 +3,13 @@
 
   <PropertyGroup>
     <CompilerFlags>$(CompilerFlags) -fdata-sections -ffunction-sections</CompilerFlags>
-    <CompilerFlags>$(CompilerFlags) -fno-builtin -funwind-tables -nostartfiles</CompilerFlags>
+    <CompilerFlags>$(CompilerFlags) -fno-builtin -nostartfiles</CompilerFlags>
+    <CompilerFlags>$(CompilerFlags) -fexceptions -funwind-tables</CompilerFlags>
     <CompilerFlags>$(CompilerFlags) -O0</CompilerFlags>
     <CompilerFlagsC>$(CompilerFlagsCpp) -std=c23</CompilerFlagsC>
     <CompilerFlagsCpp>$(CompilerFlagsCpp) -std=c++26</CompilerFlagsCpp>
     <CompilerFlagsCpp>$(CompilerFlagsCpp) -Wno-invalid-offsetof -Wno-multichar</CompilerFlagsCpp>
-    <LinkerFlags>$(LinkerFlags) --gc-sections --nostdlib --eh-frame-hdr</LinkerFlags>
+    <LinkerFlags>$(LinkerFlags) --gc-sections --nostdlib</LinkerFlags>
     <LinkerFlags>$(LinkerFlags) -L$(CompilerPath)$(CompilerName)\lib\</LinkerFlags>
     <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(SolutionDir);$(ProjectDir)</NMakeIncludeSearchPath>
     <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(CompilerPath)$(CompilerName)\include\</NMakeIncludeSearchPath>

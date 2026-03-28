@@ -28,12 +28,12 @@ SIZE_T FrameInstructions;
 SIZE_T FrameInstructionsLength;
 SIZE_T FrameStart;
 BOOL HasAugmentation;
-SIZE_T InstructionPointer;
 BOOL IsSignalFrame;
 SIZE_T LanguageData;
 BYTE LanguageEncoding;
 SIZE_T Personality;
 BYTE PointerEncoding;
+SIZE_T ProgramCounter;
 SIZE_T Registers[EXC_REG_COUNT];
 INT StackOffset;
 }UnwindContext;
@@ -48,7 +48,7 @@ class UnwindException
 public:
 	// Using
 	typedef VOID(*Destructor)(VOID*);
-	typedef VOID (*Personality)(INT Version, UINT Flags, UINT64 Class, UnwindException* Exception, UnwindContext* Context);
+	typedef VOID (*Personality)(UINT Flags, UnwindException* Exception, UnwindContext* Context);
 
 	// Con-/Destructors
 	UnwindException(TypeInfo const* Type, Destructor Destructor);
