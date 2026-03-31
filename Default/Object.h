@@ -83,11 +83,11 @@ return obj;
 
 template <class _obj_t, class... _args_t> _obj_t* Object::CreateEx(SIZE_T Extra, SIZE_T Align, _args_t... Arguments)
 {
-SIZE_T align=TypeHelper::Min(Align, sizeof(SIZE_T));
-SIZE_T extra=TypeHelper::AlignUp(Extra, align);
-auto obj=(_obj_t*)MemoryHelper::Allocate(sizeof(_obj_t)+extra+align);
+assert(Extra!=0);
+assert(Align%sizeof(SIZE_T)==0);
+auto obj=(_obj_t*)MemoryHelper::Allocate(sizeof(_obj_t)+Align+Extra);
 auto buf=(SIZE_T)obj+sizeof(_obj_t);
-buf=TypeHelper::AlignUp(buf, align);
+buf=TypeHelper::AlignUp(buf, Align);
 try
 	{
 	new (obj) _obj_t((BYTE*)buf, Extra, Arguments...);
