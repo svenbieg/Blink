@@ -30,13 +30,14 @@ protected:
 	Global()=default;
 
 	// Common
-	template <class... _args_t> static _obj_t* Create(_args_t... Arguments)
+	template <class... _args_t> static Handle<_obj_t> Create(_args_t... Arguments)
 		{
 		WriteLock lock(s_Mutex);
 		if(s_Global)
 			return s_Global;
-		s_Global=Object::Create<_obj_t>(Arguments...);
-		return s_Global;
+		auto global=Object::Create<_obj_t>(Arguments...);
+		s_Global=global;
+		return global;
 		}
 	virtual UINT Release()noexcept override
 		{
