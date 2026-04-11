@@ -106,8 +106,9 @@ if(!m_Owner) // Accessing heap early
 	return;
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
-assert(m_Owner==current);
-UINT resume_count=Mutex::Unlock(current);
+INT resume_count=Mutex::Unlock(current);
+if(resume_count<0) // Mutex was already unlocked
+	return;
 if(--current->m_PriorityCount==0)
 	{
 	FlagHelper::Clear(current->m_Flags, TaskFlags::Priority);
@@ -127,7 +128,9 @@ VOID CriticalMutex::Unlock(AccessMode)noexcept
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
-UINT resume_count=Mutex::Unlock(current, AccessMode::ReadOnly);
+INT resume_count=Mutex::Unlock(current, AccessMode::ReadOnly);
+if(resume_count<0) // Mutex was already unlocked
+	return;
 if(--current->m_PriorityCount==0)
 	{
 	FlagHelper::Clear(current->m_Flags, TaskFlags::Priority);

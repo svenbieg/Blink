@@ -106,9 +106,8 @@ VOID Mutex::Unlock()noexcept
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
-assert(m_Owner==current);
-UINT resume_count=Unlock(current);
-if(resume_count)
+INT resume_count=Unlock(current);
+if(resume_count>0)
 	Scheduler::ResumeWaitingTasks(resume_count, false);
 }
 
@@ -117,8 +116,8 @@ VOID Mutex::Unlock(AccessMode)noexcept
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
-UINT resume_count=Unlock(current, AccessMode::ReadOnly);
-if(resume_count)
+INT resume_count=Unlock(current, AccessMode::ReadOnly);
+if(resume_count>0)
 	Scheduler::ResumeWaitingTasks(resume_count, false);
 }
 
@@ -161,19 +160,19 @@ Scheduler::WaitingList::Append(&m_Waiting, current);
 return false;
 }
 
-UINT Mutex::Unlock(Task* current)noexcept
+INT Mutex::Unlock(Task* current)noexcept
 {
-if(m_Owner!=current) // Maybe unlocked in lock-destructor
-	return 0;
+if(m_Owner!=current) // Mutex was already unlocked
+	return -1;
 Scheduler::OwnerList::RemoveFirst(&m_Owner);
 return WakeupWaitingTasks();
 }
 
-UINT Mutex::Unlock(Task* current, AccessMode)noexcept
+INT Mutex::Unlock(Task* current, AccessMode)noexcept
 {
 BOOL removed=Scheduler::OwnerList::TryRemove(&m_Owner, current);
-if(!removed) // Maybe unlocked in lock-destructor
-	return 0;
+if(!removed) // Mutex was already unlocked
+	return -1;
 FlagHelper::Clear(current->m_Flags, TaskFlags::Sharing);
 if(m_Owner)
 	return 0;
