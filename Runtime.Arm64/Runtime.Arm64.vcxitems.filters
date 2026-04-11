@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)cpu.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)except.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)irq.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)task.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)UnwindException.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)except.S" />
+    <None Include="$(MSBuildThisFileDirectory)init.S" />
+    <None Include="$(MSBuildThisFileDirectory)irq.S" />
+    <None Include="$(MSBuildThisFileDirectory)linker.ld.in" />
+    <None Include="$(MSBuildThisFileDirectory)mmu.S" />
+    <None Include="$(MSBuildThisFileDirectory)task.S" />
+    <None Include="$(MSBuildThisFileDirectory)vectors.S" />
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props">
+      <Filter>Configuration</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.props">
+      <Filter>Configuration</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.targets">
+      <Filter>Configuration</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)UnwindException.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.cpp">
+      <Filter>Concurrency</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Configuration">
+      <UniqueIdentifier>{c9709915-1d0d-40d6-a90d-e34e1b20854e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Concurrency">
+      <UniqueIdentifier>{ea73ca4f-83a5-4da6-8183-fec49eb39129}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

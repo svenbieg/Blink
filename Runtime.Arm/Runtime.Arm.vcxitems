@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{D02B9E2E-72CC-4764-BFFC-8AA0889B0162}</ItemsProjectGuid>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(MSBuildThisFileDirectory)</NMakeIncludeSearchPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props" />
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.props" />
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.targets" />
+    <None Include="$(MSBuildThisFileDirectory)except.S" />
+    <None Include="$(MSBuildThisFileDirectory)irq.S" />
+    <None Include="$(MSBuildThisFileDirectory)long.S" />
+    <None Include="$(MSBuildThisFileDirectory)vectors.S" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)math.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)UnwindException.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)except.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)task.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)UnwindException.h" />
+  </ItemGroup>
+</Project>

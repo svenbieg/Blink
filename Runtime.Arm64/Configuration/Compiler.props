@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <AdditionalLinkerFlags>$(AdditionalLinkerFlags) -lm</AdditionalLinkerFlags>
+    <LinkerFlags>$(LinkerFlags) --eh-frame-hdr</LinkerFlags>
+    <LinkerFlags>$(LinkerFlags) --no-warn-rwx-segments</LinkerFlags>
+    <NMakeForcedIncludes>$(NMakeForcedIncludes);$(SolutionDir)Runtime.Arm64\IntelliSense.h</NMakeForcedIncludes>
+  </PropertyGroup>
+
+</Project>

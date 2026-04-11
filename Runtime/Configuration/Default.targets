@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Import Project="$(MSBuildThisFileDirectory)NinjaBuild.targets" Condition="'$(Platform)'!='Win32'" />
+  <Import Project="$(MSBuildThisFileDirectory)NinjaBuild.targets" />
 
-  <Import Project="$(SolutionDir)Runtime.$(Platform)\Configuration\Default.targets" Condition="Exists('$(SolutionDir)Runtime.$(Platform)\Configuration\Default.targets')" />
-
+  <Import Project="$(SolutionDir)Runtime.$(Architecture)\Configuration\Default.targets" Condition="Exists('$(SolutionDir)Runtime.$(Architecture)\Configuration\Default.targets')" />
+  <Import Project="$(SolutionDir)$(Vendor)\Configuration\Default.targets" Condition="Exists('$(SolutionDir)$(Vendor)\Configuration\Default.targets')" />
+  <Import Project="$(SolutionDir)$(Vendor).$(Board)\Configuration\Default.targets" Condition="Exists('$(SolutionDir)$(Vendor).$(Board)\Configuration\Default.targets')" />
   <Import Project="$(ProjectDir)Configuration\Default.targets" Condition="Exists('$(ProjectDir)Configuration\Default.targets')" />
+
+  <Import Project="$(MSBuildThisFileDirectory)Tools.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)Compiler.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)Debug.targets" />
 
 </Project>

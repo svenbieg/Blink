@@ -50,21 +50,21 @@ if(m_BlinkingTask)
 	return;
 	}
 Console::Print("Starting to blink...\n");
-m_BlinkingTask=Task::Create(nullptr, []()
+m_BlinkingTask=Task::Create(this, [this]()
 	{
 	auto task=Task::Get();
 	while(!task->Cancelled)
 		{
-		System::Led(false);
+		m_StatusLed->Set(false);
 		Task::Sleep(500);
-		System::Led(true);
+		m_StatusLed->Set(true);
 		Task::Sleep(500);
 		}
 	}, "blink");
 m_BlinkingTask->Then(this, [this]()
 	{
 	Console::Print("Stopped blinking\n");
-	System::Led(false);
+	m_StatusLed->Set(false);
 	m_BlinkingTask=nullptr;
 	});
 }
@@ -86,30 +86,25 @@ m_BlinkingTask->Cancel();
 
 Application::Application()
 {
+m_StatusLed=StatusLed::Create();
 auto console=Console::Get();
-console->AddCommand("off", []()
+console->AddCommand("off", this, [this]()
 	{
 	Console::Print("Led off\n");
-	System::Led(false);
+	m_StatusLed->Set(false);
 	});
-console->AddCommand("on", []()
+console->AddCommand("on", this, [this]()
 	{
 	Console::Print("Led on\n");
-	System::Led(true);
+	m_StatusLed->Set(true);
 	});
-console->AddCommand("restart", []()
+console->AddCommand("restart", nullptr, []()
 	{
 	Console::Print("Restarting...\n");
 	System::Restart();
 	});
-console->AddCommand("start", [this]()
-	{
-	StartBlinking();
-	});
-console->AddCommand("stop", [this]()
-	{
-	StopBlinking();
-	});
+console->AddCommand("start", this, &Application::StartBlinking);
+console->AddCommand("stop", this, &Application::StopBlinking);
 }
 
 }

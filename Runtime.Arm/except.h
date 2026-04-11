@@ -1,0 +1,56 @@
+//==========
+// except.h
+//==========
+
+#pragma once
+
+
+//=======
+// Using
+//=======
+
+#include <asm.h>
+
+
+//=======
+// Frame
+//=======
+
+CONST(UINT, EXC_REG_COUNT, 15)
+CONST(UINT, EXC_REG_RETURN, 14)
+CONST(UINT, EXC_REG_STACK, 13)
+
+STRUCT_BEGIN
+STRUCT_FIELD(SIZE_T, 4, EXC_FRAME_, R0)
+STRUCT_FIELD(SIZE_T, 4, EXC_FRAME_, R1)
+STRUCT_FIELD(SIZE_T, 4, EXC_FRAME_, R2)
+STRUCT_FIELD(SIZE_T, 4, EXC_FRAME_, R3)
+STRUCT_FIELD(SIZE_T, 4, EXC_FRAME_, R4)
+STRUCT_FIELD(SIZE_T, 4, EXC_FRAME_, R5)
+STRUCT_FIELD(SIZE_T, 4, EXC_FRAME_, R6)
+STRUCT_FIELD(SIZE_T, 4, EXC_FRAME_, R7)
+STRUCT_FIELD(SIZE_T, 4, EXC_FRAME_, R8)
+STRUCT_FIELD(SIZE_T, 4, EXC_FRAME_, R9)
+STRUCT_FIELD(SIZE_T, 4, EXC_FRAME_, R10)
+STRUCT_FIELD(SIZE_T, 4, EXC_FRAME_, R11)
+STRUCT_FIELD(SIZE_T, 4, EXC_FRAME_, R12)
+STRUCT_FIELD(SIZE_T, 4, EXC_FRAME_, SP)
+STRUCT_FIELD(SIZE_T, 4, EXC_FRAME_, LR)
+STRUCT_FIELD(SIZE_T, 4, EXC_FRAME_, PC)
+STRUCT_END(EXC_FRAME)
+
+
+//========
+// Common
+//========
+
+#ifndef __ASSEMBLER__
+
+extern "C"
+{
+VOID exc_restore_context(EXC_FRAME* Context);
+VOID exc_resume(VOID* Resume, VOID* Argument);
+VOID exc_save_context(EXC_FRAME* Context);
+}
+
+#endif

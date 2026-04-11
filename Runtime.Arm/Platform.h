@@ -1,0 +1,34 @@
+//============
+// Platform.h
+//============
+
+#pragma once
+
+
+//======================
+// Forward-Declarations
+//======================
+
+#ifndef __ADDR_T
+#define __ADDR_T unsigned int
+#endif
+
+#ifndef __COPY_MAX
+#define __COPY_MAX 2
+#endif
+
+#ifndef __FILE_SIZE_T
+#define __FILE_SIZE_T unsigned int
+#endif
+
+#ifndef __ISENSE_T
+#define __ISENSE_T unsigned int
+#endif
+
+#ifndef __LONG
+#define __LONG long
+#endif
+
+#ifndef __LONG_LONG
+#define __LONG_LONG long long
+#endif

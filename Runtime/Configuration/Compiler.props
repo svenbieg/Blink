@@ -28,8 +28,9 @@
     <NMakePreprocessorDefinitions>$(NMakePreprocessorDefinitions);NDEBUG</NMakePreprocessorDefinitions>
   </PropertyGroup>
 
-  <Import Project="$(SolutionDir)Runtime.$(Platform)\Configuration\Compiler.props" Condition="Exists('$(SolutionDir)Runtime.$(Platform)\Configuration\Compiler.props')" />
-
+  <Import Project="$(SolutionDir)Runtime.$(Architecture)\Configuration\Compiler.props" Condition="Exists('$(SolutionDir)Runtime.$(Architecture)\Configuration\Compiler.props')" />
+  <Import Project="$(SolutionDir)$(Vendor)\Configuration\Compiler.props" Condition="Exists('$(SolutionDir)$(Vendor)\Configuration\Compiler.props')" />
+  <Import Project="$(SolutionDir)$(Vendor).$(Board)\Configuration\Compiler.props" Condition="Exists('$(SolutionDir)$(Vendor).$(Board)\Configuration\Compiler.props')" />
   <Import Project="$(ProjectDir)Configuration\Compiler.props" Condition="Exists('$(ProjectDir)Configuration\Compiler.props')" />
 
 </Project>

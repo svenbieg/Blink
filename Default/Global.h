@@ -17,7 +17,7 @@
 // Global
 //========
 
-template <class _obj_t> class Global: public Object
+template <class _obj_t> class Global: public virtual Object
 {
 public:
 	// Using

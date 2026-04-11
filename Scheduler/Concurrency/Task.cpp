@@ -104,7 +104,8 @@ m_StackPointer((SIZE_T)stack+stack_size),
 m_StackSize(stack_size),
 m_Status(Status::Success),
 m_Then(nullptr),
-m_This(this)
+m_This(this),
+z_StackHeader(STACK_HEADER)
 {
 TaskHelper::Initialize(&m_StackPointer, TaskProc, this);
 }

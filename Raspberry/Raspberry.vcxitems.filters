@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Network">
+      <UniqueIdentifier>{afdadd1b-9121-4fc9-9752-31ea0916158c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\Wifi">
+      <UniqueIdentifier>{53f3f335-1200-4c44-8d38-fdd19d9c4d00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices">
+      <UniqueIdentifier>{a8d7bfb4-7c71-4872-83b6-30ba776bd027}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Wifi">
+      <UniqueIdentifier>{594a59fa-84d3-46f7-abab-121bc1a6dcda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Serial">
+      <UniqueIdentifier>{3728c071-7386-40b1-9bcc-96edde9450bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Sdio">
+      <UniqueIdentifier>{2ddd884a-edd9-47ed-a1da-b739e2337ce6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiAdapter.cpp">
+      <Filter>Devices\Wifi</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialPort.cpp">
+      <Filter>Devices\Serial</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiPacket.cpp">
+      <Filter>Devices\Wifi</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiAdapter.h">
+      <Filter>Devices\Wifi</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialPort.h">
+      <Filter>Devices\Serial</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\Wifi.h">
+      <Filter>Devices\Wifi</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiPacket.h">
+      <Filter>Devices\Wifi</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Sdio\Sdio.h">
+      <Filter>Devices\Sdio</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

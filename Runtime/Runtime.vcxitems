@@ -17,14 +17,13 @@
     <None Include="$(MSBuildThisFileDirectory)Configuration\Default.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Default.targets" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\NinjaBuild.targets" />
-    <None Include="$(MSBuildThisFileDirectory)Configuration\Platform.targets" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.targets" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)asm.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)cxxabi.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\IoHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\InterruptHandler.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)heap.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mutex" />
@@ -32,7 +31,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)new" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mutex" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stdexcept" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\PacketBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\RingBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\InputBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\OutputBuffer.h" />
@@ -46,7 +44,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Network\Ethernet\MacAddress.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)new.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)stdlib.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\PacketBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\RingBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\InputBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\OutputBuffer.cpp" />

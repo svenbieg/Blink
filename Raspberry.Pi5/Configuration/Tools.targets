@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="DownloadFirmware" Condition="!Exists('$(DownloadPath)')" BeforeTargets="Build">
+    <Message Text="Downloading Firmware..." Importance="High" />
+    <DownloadFile SourceUrl="https://github.com/raspberrypi/firmware/raw/refs/heads/master/boot/COPYING.linux" DestinationFolder="$(DownloadPath)firmware" />
+    <DownloadFile SourceUrl="https://github.com/raspberrypi/firmware/raw/refs/heads/master/boot/LICENCE.broadcom" DestinationFolder="$(DownloadPath)firmware" />
+    <DownloadFile SourceUrl="https://github.com/raspberrypi/firmware/raw/refs/heads/master/boot/bcm2712-rpi-5-b.dtb" DestinationFolder="$(DownloadPath)firmware" />
+    <DownloadFile SourceUrl="https://github.com/Infineon/ifx-linux-firmware/raw/refs/heads/master/firmware/LICENCE" DestinationFolder="$(DownloadPath)wifi-firmware" />
+    <DownloadFile SourceUrl="https://github.com/Infineon/ifx-linux-firmware/raw/refs/heads/master/firmware/README" DestinationFolder="$(DownloadPath)wifi-firmware" />
+    <DownloadFile SourceUrl="https://github.com/Infineon/ifx-linux-firmware/raw/refs/heads/master/firmware/cyfmac43455-sdio.bin" DestinationFolder="$(DownloadPath)wifi-firmware" />
+    <DownloadFile SourceUrl="https://github.com/Infineon/ifx-linux-firmware/raw/refs/heads/master/firmware/cyfmac43455-sdio.clm_blob" DestinationFolder="$(DownloadPath)wifi-firmware" />
+  </Target>
+
+  <Target Name="CreateConfig" AfterTargets="Build">
+    <ItemGroup>
+      <ConfigLines Include="enable_jtag_gpio=1" />
+      <ConfigLines Include="kernel=$(TargetName)$(TargetExt)" />
+    </ItemGroup>
+    <WriteLinesToFile File="$(DownloadPath)firmware/config.txt" Lines="@(ConfigLines)" Overwrite="true" />
+  </Target>
+
+</Project>

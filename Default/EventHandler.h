@@ -12,17 +12,11 @@
 #include "Handle.h"
 
 
-//===========
-// Namespace
-//===========
-
-namespace Details {
-
-
 //======================
 // Forward-Declarations
 //======================
 
+template <class _sender_t, class... _args_t> class Event;
 template <class _sender_t, class... _args_t> class EventBase;
 
 
@@ -35,7 +29,7 @@ class EventHandler: public Object
 {
 public:
 	// Friends
-	friend class EventBase<_sender_t, _args_t...>;
+	friend EventBase<_sender_t, _args_t...>;
 
 	// Con-/Destructors
 	virtual ~EventHandler()=default;
@@ -62,11 +56,11 @@ template <class _sender_t, class... _args_t>
 class EventProcedure: public EventHandler<_sender_t, _args_t...>
 {
 public:
-	// Definitions
-	typedef VOID (*_func_t)();
+	// Friends
+	friend Event<_sender_t, _args_t...>;
 
-	// Con-/Destructors
-	EventProcedure(_func_t Procedure)noexcept: m_Procedure(Procedure) {}
+	// Definitions
+	typedef VOID (*_proc_t)();
 
 	// Common
 	inline VOID* GetOwner()const noexcept override { return (VOID*)m_Procedure; }
@@ -78,8 +72,11 @@ public:
 		}
 
 private:
+	// Con-/Destructors
+	EventProcedure(_proc_t Procedure)noexcept: m_Procedure(Procedure) {}
+
 	// Common
-	_func_t m_Procedure;
+	_proc_t m_Procedure;
 };
 
 
@@ -91,11 +88,11 @@ template <class _sender_t, class... _args_t>
 class EventProcedureWithArgs: public EventHandler<_sender_t, _args_t...>
 {
 public:
-	// Definitions
-	typedef VOID (*_func_t)(_args_t...);
+	// Friends
+	friend Event<_sender_t, _args_t...>;
 
-	// Con-/Destructors
-	EventProcedureWithArgs(_func_t Procedure)noexcept: m_Procedure(Procedure) {}
+	// Definitions
+	typedef VOID (*_proc_t)(_args_t...);
 
 	// Common
 	inline VOID* GetOwner()const noexcept override { return m_Procedure; }
@@ -107,8 +104,11 @@ public:
 		}
 
 private:
+	// Con-/Destructors
+	EventProcedureWithArgs(_proc_t Procedure)noexcept: m_Procedure(Procedure) {}
+
 	// Common
-	_func_t m_Procedure;
+	_proc_t m_Procedure;
 };
 
 
@@ -120,11 +120,11 @@ template <class _sender_t, class... _args_t>
 class EventProcedureWithSender: public EventHandler<_sender_t, _args_t...>
 {
 public:
-	// Definitions
-	typedef VOID (*_func_t)(_sender_t*, _args_t...);
+	// Friends
+	friend Event<_sender_t, _args_t...>;
 
-	// Con-/Destructors
-	EventProcedureWithSender(_func_t Procedure)noexcept: m_Procedure(Procedure) {}
+	// Definitions
+	typedef VOID (*_proc_t)(_sender_t*, _args_t...);
 
 	// Common
 	inline VOID* GetOwner()const noexcept override { return m_Procedure; }
@@ -136,8 +136,11 @@ public:
 		}
 
 private:
+	// Con-/Destructors
+	EventProcedureWithSender(_proc_t Procedure)noexcept: m_Procedure(Procedure) {}
+
 	// Common
-	_func_t m_Procedure;
+	_proc_t m_Procedure;
 };
 
 
@@ -149,11 +152,11 @@ template <class _sender_t, class _owner_t, class... _args_t>
 class EventMemberFunction: public EventHandler<_sender_t, _args_t...>
 {
 public:
-	// Definitions
-	typedef VOID (_owner_t::*_func_t)();
+	// Friends
+	friend Event<_sender_t, _args_t...>;
 
-	// Con-/Destructors
-	EventMemberFunction(_owner_t* Owner, _func_t Procedure)noexcept: m_Owner(Owner), m_Procedure(Procedure) {}
+	// Definitions
+	typedef VOID (_owner_t::*_proc_t)();
 
 	// Common
 	inline VOID* GetOwner()const noexcept override { return m_Owner; }
@@ -165,9 +168,12 @@ public:
 		}
 
 private:
+	// Con-/Destructors
+	EventMemberFunction(_owner_t* Owner, _proc_t Procedure)noexcept: m_Owner(Owner), m_Procedure(Procedure) {}
+
 	// Common
 	_owner_t* m_Owner;
-	_func_t m_Procedure;
+	_proc_t m_Procedure;
 };
 
 
@@ -179,11 +185,11 @@ template <class _sender_t, class _owner_t, class... _args_t>
 class EventMemberFunctionWithArgs: public EventHandler<_sender_t, _args_t...>
 {
 public:
-	// Definitions
-	typedef VOID (_owner_t::*_func_t)(_args_t...);
+	// Friends
+	friend Event<_sender_t, _args_t...>;
 
-	// Con-/Destructors
-	EventMemberFunctionWithArgs(_owner_t* Owner, _func_t Procedure)noexcept: m_Owner(Owner), m_Procedure(Procedure) {}
+	// Definitions
+	typedef VOID (_owner_t::*_proc_t)(_args_t...);
 
 	// Common
 	inline VOID* GetOwner()const noexcept override { return m_Owner; }
@@ -195,9 +201,12 @@ public:
 		}
 
 private:
+	// Con-/Destructors
+	EventMemberFunctionWithArgs(_owner_t* Owner, _proc_t Procedure)noexcept: m_Owner(Owner), m_Procedure(Procedure) {}
+
 	// Common
 	_owner_t* m_Owner;
-	_func_t m_Procedure;
+	_proc_t m_Procedure;
 };
 
 
@@ -209,11 +218,11 @@ template <class _sender_t, class _owner_t, class... _args_t>
 class EventMemberFunctionWithSender: public EventHandler<_sender_t, _args_t...>
 {
 public:
-	// Definitions
-	typedef VOID (_owner_t::*_func_t)(_sender_t*, _args_t...);
+	// Friends
+	friend Event<_sender_t, _args_t...>;
 
-	// Con-/Destructors
-	EventMemberFunctionWithSender(_owner_t* Owner, _func_t Procedure)noexcept: m_Owner(Owner), m_Procedure(Procedure) {}
+	// Definitions
+	typedef VOID (_owner_t::*_proc_t)(_sender_t*, _args_t...);
 
 	// Common
 	inline VOID* GetOwner()const noexcept override { return m_Owner; }
@@ -225,9 +234,10 @@ public:
 		}
 
 private:
+	// Con-/Destructors
+	EventMemberFunctionWithSender(_owner_t* Owner, _proc_t Procedure)noexcept: m_Owner(Owner), m_Procedure(Procedure) {}
+
 	// Common
 	_owner_t* m_Owner;
-	_func_t m_Procedure;
+	_proc_t m_Procedure;
 };
-
-}

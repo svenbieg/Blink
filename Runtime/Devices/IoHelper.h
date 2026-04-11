@@ -23,7 +23,7 @@ namespace Devices {
 // Registers
 //===========
 
-typedef volatile const BYTE RO8;
+typedef volatile const BYTE RO08;
 typedef volatile const WORD RO16;
 typedef volatile const UINT RO32;
 typedef volatile const UINT64 RO64;
@@ -51,9 +51,10 @@ public:
 	static inline VOID Clear(RW16& Register, WORD Mask)noexcept { Register&=~Mask; }
 	static inline VOID Clear(RW32& Register, UINT Mask)noexcept { Register&=~Mask; }
 	static inline VOID Clear(RW64& Register, UINT64 Mask)noexcept { Register&=~Mask; }
-	static inline BYTE Read(RO8& Register)noexcept { return Register; }
-	static inline UINT Read(RO8& Register, BYTE Mask)noexcept { return Register&Mask; }
-	static inline UINT Read(RO8& Register, BITS8 const& Bits)noexcept { return (Register>>Bits.Shift)&Bits.Mask; }
+	static inline VOID Flip(RW32& Register, UINT Mask)noexcept { Register^=Mask; }
+	static inline BYTE Read(RO08& Register)noexcept { return Register; }
+	static inline UINT Read(RO08& Register, BYTE Mask)noexcept { return Register&Mask; }
+	static inline UINT Read(RO08& Register, BITS8 const& Bits)noexcept { return (Register>>Bits.Shift)&Bits.Mask; }
 	static inline WORD Read(RO16& Register)noexcept { return Register; }
 	static inline UINT Read(RO16& Register, WORD Mask)noexcept { return Register&Mask; }
 	static inline UINT Read(RO16& Register, BITS16 const& Bits)noexcept { return (Register>>Bits.Shift)&Bits.Mask; }

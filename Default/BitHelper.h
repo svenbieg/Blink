@@ -52,16 +52,6 @@ class BitHelper
 {
 public:
 	// Common
-	template <class _value_t> static UINT BitCount(_value_t Value)noexcept
-		{
-		UINT bits=0;
-		while(Value)
-			{
-			Value>>=1;
-			bits++;
-			}
-		return bits;
-		}
 	static constexpr VOID Clear(BYTE& Operand, BYTE Mask)noexcept { Operand&=~Mask; }
 	static constexpr VOID Clear(BYTE& Operand, BITS8 const& Bits)noexcept { Operand&=~(Bits.Mask<<Bits.Shift); }
 	static constexpr VOID Clear(WORD& Operand, WORD Mask)noexcept { Operand&=~Mask; }

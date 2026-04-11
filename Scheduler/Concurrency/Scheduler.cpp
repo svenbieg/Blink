@@ -162,6 +162,7 @@ VOID Scheduler::HandleTaskSwitch()noexcept
 SpinLock lock(s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
+assert(current->z_StackHeader==Task::STACK_HEADER); // Stack-overflow
 auto next=current->m_Next;
 assert(next);
 current->m_Next=nullptr;

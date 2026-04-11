@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="DownloadFirmware" Condition="!Exists('$(DownloadPath)')" BeforeTargets="Build">
+    <Message Text="Downloading Firmware..." Importance="High" />
+    <DownloadFile SourceUrl="https://github.com/Infineon/ifx-linux-firmware/raw/refs/heads/master/firmware/LICENCE" DestinationFolder="$(DownloadPath)wifi-firmware" />
+    <DownloadFile SourceUrl="https://github.com/Infineon/ifx-linux-firmware/raw/refs/heads/master/firmware/README" DestinationFolder="$(DownloadPath)wifi-firmware" />
+    <DownloadFile SourceUrl="https://github.com/Infineon/ifx-linux-firmware/raw/refs/heads/master/firmware/cyfmac43439-sdio.bin" DestinationFolder="$(DownloadPath)wifi-firmware" />
+    <DownloadFile SourceUrl="https://github.com/Infineon/ifx-linux-firmware/raw/refs/heads/master/firmware/cyfmac43439-sdio.clm_blob" DestinationFolder="$(DownloadPath)wifi-firmware" />
+  </Target>
+
+</Project>

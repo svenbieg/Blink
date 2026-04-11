@@ -1,0 +1,89 @@
+//==============
+// linker.ld.in
+//==============
+
+#include <base.h>
+#include <config.h>
+
+ENTRY(isr_reset)
+
+MEMORY
+{
+FLASH (RX) : ORIGIN = XIP_BASE, LENGTH = XIP_SIZE
+SRAM (RWX) : ORIGIN = SRAM_BASE, LENGTH = SRAM_SIZE
+}
+
+SECTIONS
+{
+.text :
+	{
+	KEEP(*(.vectors))
+	KEEP(*(.picobin))
+	KEEP(*(.reset))
+	*(.text .text.*)
+	} > FLASH
+
+.ARM.extab :
+	{
+	__extab_start = .;
+	*(.ARM.extab*)
+	__extab_end = .;
+	} > FLASH
+
+.ARM.exidx :
+	{
+	__exidx_start = .;
+	*(.ARM.exidx*)
+	__exidx_end = .;
+	} > FLASH
+
+.rodata :
+	{
+	__init_array_start = .;
+	KEEP(*(.init_array .init_array.*))
+	__init_array_end = .;
+	__rodata_start = .;
+	*(.rodata .rodata.*)
+	__rodata_end = .;
+	. = ALIGN(8);
+	__flash_data_start = .;
+	} > FLASH
+
+.data :
+	{
+	. = ALIGN(8);
+	__data_start = .;
+	*(.data .data.*)
+	. = ALIGN(8);
+	__data_end = .;
+	} > SRAM AT> FLASH
+
+.bss (NOLOAD) :
+	{
+	. = ALIGN(8);
+	__bss_start = .;
+	*(.bss .bss.*)
+	. = ALIGN(8);
+	__bss_end = .;
+	} > SRAM
+
+.nodata (NOLOAD) :
+	{
+	*(.nodata .nodata.*)
+	. = ALIGN(CONFIG_STACK_SIZE);
+	__stack_start = .;
+	. += CONFIG_CPU_COUNT * CONFIG_STACK_SIZE;
+	__stack_end = .;
+	__heap_start = .;
+	} > SRAM
+
+/DISCARD/ :
+	{
+	*(.ARM.attributes)
+	*(.comment)
+	*(.dtors)
+	#ifndef _DEBUG
+	*(.debug_*)
+	#endif
+	}
+}

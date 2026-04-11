@@ -29,10 +29,11 @@ namespace UI {
 // Common
 //========
 
-VOID Console::AddCommand(Handle<String> cmd, Function<VOID()> func)
+VOID Console::AddCommand(Handle<String> cmd, VOID (*proc)())
 {
+auto handler=CallableFunction<VOID>::Create(proc);
 WriteLock lock(m_Mutex);
-m_Commands.add(cmd, func);
+m_Commands.add(cmd, handler);
 }
 
 VOID Console::Print(LPCSTR text)
@@ -78,12 +79,12 @@ m_SerialPort->DataReceived.Add(this, &Console::OnSerialPortDataReceived);
 VOID Console::HandleCommand(Handle<String> cmd)
 {
 ReadLock lock(m_Mutex);
-Function<VOID()> func;
-BOOL found=m_Commands.try_get(cmd, &func);
+Handle<ConsoleHandler> handler;
+BOOL found=m_Commands.try_get(cmd, &handler);
 lock.Unlock();
 if(found)
 	{
-	func();
+	handler->Call();
 	}
 else
 	{

@@ -10,6 +10,7 @@
 //=======
 
 #include "Concurrency/Scheduler.h"
+#include "Devices/System/StatusLed.h"
 
 
 //===========
@@ -27,6 +28,7 @@ class Application: public Object
 {
 public:
 	// Using
+	using StatusLed=Devices::System::StatusLed;
 	using Task=Concurrency::Task;
 
 	// Con-/Destructors
@@ -42,6 +44,7 @@ private:
 
 	// Common
 	Handle<Task> m_BlinkingTask;
+	Handle<StatusLed> m_StatusLed;
 };
 
 }

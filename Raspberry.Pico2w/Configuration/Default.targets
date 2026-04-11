@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="Uf2ConvSetup" DependsOnTargets="InstallPython;NinjaSetup">
+    <ItemGroup>
+      <NinjaRules Include=".uf2">
+        <Command>$(PythonExe) $(SolutionDir)$(Vendor).$(Board)\Scripts\uf2conv.py --b 0x10000000 -c -f RP2350_ARM_S -o $out $in</Command>
+      </NinjaRules>
+      <NinjaCommands Include="build $(TargetName).uf2: .uf2 $(TargetName)$(TargetExt)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="NinjaBuild" DependsOnTargets="Uf2ConvSetup;VsCodeSetup;NinjaCompile" />
+
+</Project>

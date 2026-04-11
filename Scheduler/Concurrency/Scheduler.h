@@ -41,6 +41,7 @@ public:
 	// Friends
 	friend Devices::System::Interrupts;
 	friend CriticalMutex;
+	friend DispatchedQueue;
 	friend Mutex;
 	friend Signal;
 	friend Task;

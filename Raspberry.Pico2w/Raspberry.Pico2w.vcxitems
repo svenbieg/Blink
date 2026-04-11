@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{B47ADF70-FA81-477B-9303-07A562D01DCE}</ItemsProjectGuid>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(MSBuildThisFileDirectory)</NMakeIncludeSearchPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)base.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)config.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)cpu.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Dma\DmaChannel.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHost.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pio\Pio.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pio\StateMachine.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialConfig.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Interrupts.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\MailBox.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Memory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Sio.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\StatusLed.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\System.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Timers\Clocks.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiSpi.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiConfig.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiSdio.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)irq.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props" />
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Debug.cfg" />
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Default.targets" />
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Platform.props" />
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.targets" />
+    <None Include="$(MSBuildThisFileDirectory)dcp_canned.inc.S" />
+    <None Include="$(MSBuildThisFileDirectory)dcp_instr.inc.S" />
+    <None Include="$(MSBuildThisFileDirectory)Devices\Wifi\firmware.S" />
+    <None Include="$(MSBuildThisFileDirectory)float.S" />
+    <None Include="$(MSBuildThisFileDirectory)init.S" />
+    <None Include="$(MSBuildThisFileDirectory)linker.ld.in" />
+    <None Include="$(MSBuildThisFileDirectory)picobin.S" />
+    <None Include="$(MSBuildThisFileDirectory)Scripts\uf2conv.py" />
+    <None Include="$(MSBuildThisFileDirectory)Scripts\uf2families.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Dma\DmaChannel.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHost.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Pio\StateMachine.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Interrupts.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\MailBox.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Memory.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\StatusLed.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\System.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Timers\Clocks.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiSpi.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiSdio.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)start.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="$(MSBuildThisFileDirectory)Devices\Wifi\cyfmac43439-sdio.txt" />
+  </ItemGroup>
+</Project>

@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\Runtime.RPi5\Configuration\Platform.props" />
+  <Import Project="..\Raspberry.Pi5\Configuration\Platform.props" />
+  <Import Project="..\Raspberry.Pico2w\Configuration\Platform.props" />
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0A8C397A-DB1A-41FA-966B-358CE4352EB4}</ProjectGuid>
   </PropertyGroup>
@@ -11,7 +12,9 @@
   <ImportGroup Label="ExtensionSettings" />
   <ImportGroup Label="Shared">
     <Import Project="..\Runtime\Runtime.vcxitems" Label="Shared" />
-    <Import Project="..\Runtime.RPi5\Runtime.RPi5.vcxitems" Label="Shared" Condition="'$(Platform)'=='RPi5'" />
+    <Import Project="..\Runtime.$(Architecture)\Runtime.$(Architecture).vcxitems" Label="Shared" />
+    <Import Project="..\$(Vendor)\$(Vendor).vcxitems" Label="Shared" />
+    <Import Project="..\$(Vendor).$(Board)\$(Vendor).$(Board).vcxitems" Label="Shared" />
     <Import Project="..\Default\Default.vcxitems" Label="Shared" />
     <Import Project="..\Scheduler\Scheduler.vcxitems" Label="Shared" />
   </ImportGroup>
@@ -26,6 +29,6 @@
     <ClInclude Include="Application.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <Import Project="..\Runtime\Configuration\Platform.targets" />
+  <Import Project="..\Runtime\Configuration\Default.targets" />
   <ImportGroup Label="ExtensionTargets" />
 </Project>

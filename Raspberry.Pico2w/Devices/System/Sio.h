@@ -1,0 +1,89 @@
+//=======
+// Sio.h
+//=======
+
+#pragma once
+
+
+//=======
+// Using
+//=======
+
+#include "Devices/IoHelper.h"
+#include <base.h>
+
+
+//===========
+// Namespace
+//===========
+
+namespace Devices {
+	namespace System {
+
+
+//=====
+// IPC
+//=====
+
+typedef struct
+{
+RW32 ACCUM[2];
+RW32 BASE[3];
+RO32 POP[3];
+RO32 PEEK[3];
+RW32 CTRL[2];
+RW32 ADD_RAW[2];
+WO32 BASE01;
+}IPC_REGS;
+
+
+//===============
+// SIO-Registers
+//===============
+
+typedef struct
+{
+RO32 CPUID;
+RO32 GPIO_IN[2];
+UINT RES0;
+RW32 GPIO_OUT[2];
+WO32 GPIO_SET[2];
+WO32 GPIO_CLR[2];
+WO32 GPIO_XOR[2];
+RW32 GPIO_OE[2];
+WO32 GPIO_OE_SET[2];
+WO32 GPIO_OE_CLR[2];
+WO32 GPIO_OE_XOR[2];
+RW32 FIFO_ST;
+WO32 FIFO_WR;
+RO32 FIFO_RD;
+RO32 SPINLOCK_ST;
+UINT RES1[8];
+IPC_REGS IPC[2];
+RW32 SPINLOCK[32];
+RW32 DOORBELL_OUT_SET;
+RW32 DOORBELL_OUT_CLR;
+RW32 DOORBELL_IN_SET;
+RW32 DOORBELL_IN_CLR;
+RW32 PERI_NS;
+UINT RES2[3];
+RW32 RISCV_SOFTIRQ;
+RW32 MTIME_CTRL;
+UINT RES3[2];
+RW32 MTIME[2];
+RW32 MTIME_CMP[2];
+RW32 TMDS_CTRL;
+WO32 TMDS_WDATA;
+RO32 TMDS_PEEK_SINGLE;
+RO32 TMDS_POP_SINGLE;
+RO32 TMDS_PEEK_DOUBLE_L0;
+RO32 TMDS_POP_DOUBLE_L0;
+RO32 TMDS_PEEK_DOUBLE_L1;
+RO32 TMDS_POP_DOUBLE_L1;
+RO32 TMDS_PEEK_DOUBLE_L2;
+RO32 TMDS_POP_DOUBLE_L2;
+}SIO_REGS;
+
+const UINT FIFO_ST_RDY=(1<<1);
+
+}}

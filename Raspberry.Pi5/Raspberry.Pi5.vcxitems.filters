@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)base.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)config.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\FlashMemory.h">
+      <Filter>Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Dma\DmaChannel.h">
+      <Filter>Devices\Dma</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Emmc\Emmc.h">
+      <Filter>Devices\Emmc</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Emmc\EmmcHost.h">
+      <Filter>Devices\Emmc</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHelper.h">
+      <Filter>Devices\Gpio</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHost.h">
+      <Filter>Devices\Gpio</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pcie\Pcie.h">
+      <Filter>Devices\Pcie</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pcie\PcieHost.h">
+      <Filter>Devices\Pcie</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.h">
+      <Filter>Devices\System</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Interrupts.h">
+      <Filter>Devices\System</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\MailBox.h">
+      <Filter>Devices\System</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Memory.h">
+      <Filter>Devices\System</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Soc.h">
+      <Filter>Devices\System</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\StatusLed.h">
+      <Filter>Devices\System</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\System.h">
+      <Filter>Devices\System</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Usb\UsbDevice.h">
+      <Filter>Devices\Usb</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Usb\UsbHost.h">
+      <Filter>Devices\Usb</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Usb\Xhci.h">
+      <Filter>Devices\Usb</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Usb\XhciDevice.h">
+      <Filter>Devices\Usb</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiConfig.h">
+      <Filter>Devices\Wifi</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialConfig.h">
+      <Filter>Devices\Serial</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.h">
+      <Filter>Devices\Timers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Timers\Clocks.h">
+      <Filter>Devices\Timers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiSdio.h">
+      <Filter>Devices\Wifi</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)start.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\FlashMemory.cpp">
+      <Filter>Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Dma\DmaChannel.cpp">
+      <Filter>Devices\Dma</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Emmc\EmmcHost.cpp">
+      <Filter>Devices\Emmc</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHelper.cpp">
+      <Filter>Devices\Gpio</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHost.cpp">
+      <Filter>Devices\Gpio</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Pcie\PcieHost.cpp">
+      <Filter>Devices\Pcie</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.cpp">
+      <Filter>Devices\System</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Interrupts.cpp">
+      <Filter>Devices\System</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\MailBox.cpp">
+      <Filter>Devices\System</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Memory.cpp">
+      <Filter>Devices\System</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\StatusLed.cpp">
+      <Filter>Devices\System</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\System.cpp">
+      <Filter>Devices\System</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Usb\UsbDevice.cpp">
+      <Filter>Devices\Usb</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Usb\UsbHost.cpp">
+      <Filter>Devices\Usb</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Usb\XhciDevice.cpp">
+      <Filter>Devices\Usb</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.cpp">
+      <Filter>Devices\Timers</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiSdio.cpp">
+      <Filter>Devices\Wifi</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Configuration">
+      <UniqueIdentifier>{1eaa4953-be9b-461c-b626-558d4b5885da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Storage">
+      <UniqueIdentifier>{3f02ab51-ad91-4c77-81ba-f483c49dc26b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices">
+      <UniqueIdentifier>{22bc1492-e06c-46dd-9fd9-0ee8a668c23b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Dma">
+      <UniqueIdentifier>{b57b2c58-fec8-424e-8637-a344b285e726}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Emmc">
+      <UniqueIdentifier>{53a3810b-ee8b-41da-9b9f-0ad3189a59a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Gpio">
+      <UniqueIdentifier>{7c9d7b8f-6dbb-4a89-9c6e-304caa2995a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Pcie">
+      <UniqueIdentifier>{bb7bf851-fc0d-4bf6-8392-cf25e89e2a6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Serial">
+      <UniqueIdentifier>{b36ebb4c-299e-4799-b27d-f4d786015b87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\System">
+      <UniqueIdentifier>{e2df8a72-7477-425d-b3d9-49f1aeb70283}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Usb">
+      <UniqueIdentifier>{7e7573a2-3cd6-49ea-b9ff-22fa036fb0d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Wifi">
+      <UniqueIdentifier>{3b62556f-bb7d-4ccc-986c-8be4fc28a00e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Timers">
+      <UniqueIdentifier>{1d7d1180-6e26-4082-86ed-60a5b0cf0c85}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Debug.cfg">
+      <Filter>Configuration</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Platform.props">
+      <Filter>Configuration</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.targets">
+      <Filter>Configuration</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Devices\Wifi\firmware.S">
+      <Filter>Devices\Wifi</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props">
+      <Filter>Configuration</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="$(MSBuildThisFileDirectory)Devices\Wifi\cyfmac43455-sdio.txt">
+      <Filter>Devices\Wifi</Filter>
+    </Text>
+  </ItemGroup>
+</Project>

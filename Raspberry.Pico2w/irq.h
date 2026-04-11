@@ -1,0 +1,38 @@
+//=======
+// irq.h
+//=======
+
+#pragma once
+
+
+//=======
+// Using
+//=======
+
+#include <asm.h>
+
+
+//=======
+// Stack
+//=======
+
+STRUCT_BEGIN
+STRUCT_FIELD(SIZE_T, 4, IRQ_STACK_, SP)
+STRUCT_FIELD(SIZE_T, 4, IRQ_STACK_, LR)
+STRUCT_END(IRQ_STACK)
+
+
+//=======
+// Frame
+//=======
+
+STRUCT_BEGIN
+STRUCT_FIELD(SIZE_T, 4, IRQ_FRAME_, R0)
+STRUCT_FIELD(SIZE_T, 4, IRQ_FRAME_, R1)
+STRUCT_FIELD(SIZE_T, 4, IRQ_FRAME_, R2)
+STRUCT_FIELD(SIZE_T, 4, IRQ_FRAME_, R3)
+STRUCT_FIELD(SIZE_T, 4, IRQ_FRAME_, R12)
+STRUCT_FIELD(SIZE_T, 4, IRQ_FRAME_, LR)
+STRUCT_FIELD(SIZE_T, 4, IRQ_FRAME_, PC)
+STRUCT_FIELD(SIZE_T, 4, IRQ_FRAME_, XPSR)
+STRUCT_END(IRQ_FRAME)

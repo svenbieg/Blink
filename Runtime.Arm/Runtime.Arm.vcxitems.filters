@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)irq.S" />
+    <None Include="$(MSBuildThisFileDirectory)long.S" />
+    <None Include="$(MSBuildThisFileDirectory)vectors.S" />
+    <None Include="$(MSBuildThisFileDirectory)except.S" />
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props">
+      <Filter>Configuration</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.props">
+      <Filter>Configuration</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.targets">
+      <Filter>Configuration</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)math.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)UnwindException.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.cpp">
+      <Filter>Concurrency</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)task.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)UnwindException.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)except.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Concurrency">
+      <UniqueIdentifier>{cbeb4407-ad51-49eb-a17e-37b1f81ca5e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Configuration">
+      <UniqueIdentifier>{455d2a98-f7a5-4869-a39b-efb65a2790ca}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

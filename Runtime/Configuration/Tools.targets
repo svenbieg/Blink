@@ -31,8 +31,9 @@
     <Exec Command="winget install --id Python.Python.3.8 -e --source winget" />
   </Target>
 
-  <Import Project="$(SolutionDir)Runtime.$(Platform)\Configuration\Tools.targets" Condition="Exists('$(SolutionDir)Runtime.$(Platform)\Configuration\Tools.targets')" />
-
+  <Import Project="$(SolutionDir)Runtime.$(Architecture)\Configuration\Tools.targets" Condition="Exists('$(SolutionDir)Runtime.$(Architecture)\Configuration\Tools.targets')" />
+  <Import Project="$(SolutionDir)$(Vendor)\Configuration\Tools.targets" Condition="Exists('$(SolutionDir)$(Vendor)\Configuration\Tools.targets')" />
+  <Import Project="$(SolutionDir)$(Vendor).$(Board)\Configuration\Tools.targets" Condition="Exists('$(SolutionDir)$(Vendor).$(Board)\Configuration\Tools.targets')" />
   <Import Project="$(ProjectDir)Configuration\Tools.targets" Condition="Exists('$(ProjectDir)Configuration\Tools.targets')" />
 
 </Project>

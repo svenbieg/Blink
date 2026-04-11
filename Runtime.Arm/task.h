@@ -1,0 +1,28 @@
+//========
+// task.h
+//========
+
+#pragma once
+
+
+//=======
+// Using
+//=======
+
+#include <asm.h>
+
+
+//=======
+// Frame
+//=======
+
+STRUCT_BEGIN
+STRUCT_FIELD(SIZE_T, 4, TASK_FRAME_, R4)
+STRUCT_FIELD(SIZE_T, 4, TASK_FRAME_, R5)
+STRUCT_FIELD(SIZE_T, 4, TASK_FRAME_, R6)
+STRUCT_FIELD(SIZE_T, 4, TASK_FRAME_, R7)
+STRUCT_FIELD(SIZE_T, 4, TASK_FRAME_, R8)
+STRUCT_FIELD(SIZE_T, 4, TASK_FRAME_, R9)
+STRUCT_FIELD(SIZE_T, 4, TASK_FRAME_, R10)
+STRUCT_FIELD(SIZE_T, 4, TASK_FRAME_, R11)
+STRUCT_END(TASK_FRAME)

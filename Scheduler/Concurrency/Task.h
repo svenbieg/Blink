@@ -134,6 +134,7 @@ public:
 
 protected:
 	// Using
+	static const UINT STACK_HEADER=0xABCDEF;
 	template <class _item_t> using FwdLink=Collections::FwdLink<_item_t>;
 	template <class _item_t> using Link=Collections::Link<_item_t>;
 
@@ -167,6 +168,7 @@ protected:
 	DispatchedHandler* m_Then;
 	Handle<Task> m_This;
 	FwdLink<Task> m_Waiting;
+	SIZE_T z_StackHeader;
 };
 
 

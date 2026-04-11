@@ -1,0 +1,15 @@
+<Solution>
+  <Configurations>
+    <Platform Name="RPi5" />
+    <Platform Name="RPico2w" />
+  </Configurations>
+  <Project Path="Blink/Blink.vcxproj" Id="0a8c397a-db1a-41fa-966b-358ce4352eb4" />
+  <Project Path="Default/Default.vcxitems" Id="e356bd3b-d09b-4fda-acd2-403372fceac1" />
+  <Project Path="Raspberry.Pi5/Raspberry.Pi5.vcxitems" Id="a75b3799-bbc8-4e06-bf95-5f1baa951249" />
+  <Project Path="Raspberry.Pico2w/Raspberry.Pico2w.vcxitems" Id="b47adf70-fa81-477b-9303-07a562d01dce" />
+  <Project Path="Raspberry/Raspberry.vcxitems" Id="16f1b63b-8bbc-4d53-99d7-24b4fbb298f4" />
+  <Project Path="Runtime.Arm/Runtime.Arm.vcxitems" Id="d02b9e2e-72cc-4764-bffc-8aa0889b0162" />
+  <Project Path="Runtime.Arm64/Runtime.Arm64.vcxitems" Id="15445518-117e-4f92-bcfb-29ba5a9eb82d" />
+  <Project Path="Runtime/Runtime.vcxitems" Id="9c2293c3-7566-4d7c-b287-8760ed2e059e" />
+  <Project Path="Scheduler/Scheduler.vcxitems" Id="0e85c039-c7cd-4ec1-847b-f775f0345dfd" />
+</Solution>

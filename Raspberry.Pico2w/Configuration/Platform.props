@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|RPico2w">
+      <Configuration>Debug</Configuration>
+      <Platform>RPico2w</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|RPico2w">
+      <Configuration>Release</Configuration>
+      <Platform>RPico2w</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(Platform)'=='RPico2w'">
+    <Architecture>Arm</Architecture>
+    <Board>Pico2w</Board>
+    <NMakePreprocessorDefinitions>_PICO2W</NMakePreprocessorDefinitions>
+    <Vendor>Raspberry</Vendor>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)base.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)config.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)cpu.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)irq.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Dma\DmaChannel.h">
+      <Filter>Devices\Dma</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHelper.h">
+      <Filter>Devices\Gpio</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHost.h">
+      <Filter>Devices\Gpio</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pio\Pio.h">
+      <Filter>Devices\Pio</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pio\StateMachine.h">
+      <Filter>Devices\Pio</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.h">
+      <Filter>Devices\System</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Interrupts.h">
+      <Filter>Devices\System</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\MailBox.h">
+      <Filter>Devices\System</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Memory.h">
+      <Filter>Devices\System</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Sio.h">
+      <Filter>Devices\System</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\StatusLed.h">
+      <Filter>Devices\System</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\System.h">
+      <Filter>Devices\System</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Timers\Clocks.h">
+      <Filter>Devices\Timers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.h">
+      <Filter>Devices\Timers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiSpi.h">
+      <Filter>Devices\Wifi</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialConfig.h">
+      <Filter>Devices\Serial</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiSdio.h">
+      <Filter>Devices\Wifi</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiConfig.h">
+      <Filter>Devices\Wifi</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)dcp_canned.inc.S" />
+    <None Include="$(MSBuildThisFileDirectory)dcp_instr.inc.S" />
+    <None Include="$(MSBuildThisFileDirectory)float.S" />
+    <None Include="$(MSBuildThisFileDirectory)init.S" />
+    <None Include="$(MSBuildThisFileDirectory)linker.ld.in" />
+    <None Include="$(MSBuildThisFileDirectory)picobin.S" />
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props">
+      <Filter>Configuration</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Debug.cfg">
+      <Filter>Configuration</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Default.targets">
+      <Filter>Configuration</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Scripts\uf2conv.py">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Scripts\uf2families.json">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Platform.props">
+      <Filter>Configuration</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.targets">
+      <Filter>Configuration</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)Devices\Wifi\firmware.S">
+      <Filter>Devices\Wifi</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)start.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Dma\DmaChannel.cpp">
+      <Filter>Devices\Dma</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHost.cpp">
+      <Filter>Devices\Gpio</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Pio\StateMachine.cpp">
+      <Filter>Devices\Pio</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Interrupts.cpp">
+      <Filter>Devices\System</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\MailBox.cpp">
+      <Filter>Devices\System</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Memory.cpp">
+      <Filter>Devices\System</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\StatusLed.cpp">
+      <Filter>Devices\System</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\System.cpp">
+      <Filter>Devices\System</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Timers\Clocks.cpp">
+      <Filter>Devices\Timers</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.cpp">
+      <Filter>Devices\Timers</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiSpi.cpp">
+      <Filter>Devices\Wifi</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiSdio.cpp">
+      <Filter>Devices\Wifi</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Configuration">
+      <UniqueIdentifier>{6a4aa57e-f4b0-4477-9540-d1e4f3fad4b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts">
+      <UniqueIdentifier>{2c47896a-27ed-45fa-9f89-b7607d24740d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices">
+      <UniqueIdentifier>{d25b10af-c68f-4f16-af55-4cd81a46dce7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Dma">
+      <UniqueIdentifier>{e29d12d3-87b9-48ff-af04-54f6e53549e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Gpio">
+      <UniqueIdentifier>{199f4dc7-b4c5-4e5c-8367-561ebc908607}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Pio">
+      <UniqueIdentifier>{dacd0816-3673-4daf-a583-4e92aa199689}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Serial">
+      <UniqueIdentifier>{216e8c8f-d3b4-4472-b945-db01a23467a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\System">
+      <UniqueIdentifier>{d51f0ed3-ec5e-4e38-82c4-3159d196248e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Timers">
+      <UniqueIdentifier>{0ddc0608-9e11-44fc-b98e-3aab3e022ad5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Wifi">
+      <UniqueIdentifier>{25dcd83a-d16e-4f3d-8415-16ebf1e11c2e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="$(MSBuildThisFileDirectory)Devices\Wifi\cyfmac43439-sdio.txt">
+      <Filter>Devices\Wifi</Filter>
+    </Text>
+  </ItemGroup>
+</Project>

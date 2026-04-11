@@ -24,8 +24,9 @@
     <PythonExe>$(PythonPath)python.exe</PythonExe>
   </PropertyGroup>
 
-  <Import Project="$(SolutionDir)Runtime.$(Platform)\Configuration\Tools.props" Condition="Exists('$(SolutionDir)Runtime.$(Platform)\Configuration\Tools.props')"/>
-
+  <Import Project="$(SolutionDir)Runtime.$(Architecture)\Configuration\Tools.props" Condition="Exists('$(SolutionDir)Runtime.$(Architecture)\Configuration\Tools.props')" />
+  <Import Project="$(SolutionDir)$(Vendor)\Configuration\Tools.props" Condition="Exists('$(SolutionDir)$(Vendor)\Configuration\Tools.props')" />
+  <Import Project="$(SolutionDir)$(Vendor).$(Board)\Configuration\Tools.props" Condition="Exists('$(SolutionDir)$(Vendor).$(Board)\Configuration\Tools.props')" />
   <Import Project="$(ProjectDir)Configuration\Tools.props" Condition="Exists('$(ProjectDir)Configuration\Tools.props')" />
 
 </Project>

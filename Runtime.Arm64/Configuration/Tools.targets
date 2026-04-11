@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="InstallCompiler" Condition="!Exists('$(CompilerPath)')">
+    <Message Text="Installing Compiler..." Importance="High" />
+    <DownloadFile SourceUrl="https://developer.arm.com/-/media/Files/downloads/gnu/$(CompilerTag)/binrel/arm-gnu-toolchain-$(CompilerTag)-mingw-w64-i686-aarch64-none-elf.zip" DestinationFolder="$(TEMP)" Condition="!Exists('$(TEMP)\arm-gnu-toolchain-$(UrlCompilerVersion)-mingw-w64-i686-aarch64-none-elf.zip')" />
+    <Unzip SourceFiles="$(TEMP)\arm-gnu-toolchain-$(CompilerTag)-mingw-w64-i686-aarch64-none-elf.zip" DestinationFolder="$(HomePath)gcc\arm-gnu-toolchain-$(CompilerTag)-mingw-w64-i686-aarch64-none-elf" />
+  </Target>
+
+</Project>

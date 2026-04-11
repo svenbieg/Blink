@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{16F1B63B-8BBC-4D53-99D7-24B4FBB298F4}</ItemsProjectGuid>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(MSBuildThisFileDirectory)</NMakeIncludeSearchPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialPort.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiAdapter.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiPacket.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Sdio\Sdio.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialPort.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiAdapter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\Wifi.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiPacket.h" />
+  </ItemGroup>
+</Project>

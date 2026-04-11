@@ -110,8 +110,9 @@
     <Exec Condition="'$(NinjaLink)'!=''" Command="@(BuildLines->'%(Identity)&amp;')" WorkingDirectory="$(OutDir)" />
   </Target>
 
-  <Import Project="$(SolutionDir)Runtime.$(Platform)\Configuration\Compiler.targets" Condition="Exists('$(SolutionDir)Runtime.$(Platform)\Configuration\Compiler.targets')" />
-
+  <Import Project="$(SolutionDir)Runtime.$(Architecture)\Configuration\Compiler.targets" Condition="Exists('$(SolutionDir)Runtime.$(Architecture)\Configuration\Compiler.targets')" />
+  <Import Project="$(SolutionDir)$(Vendor)\Configuration\Compiler.targets" Condition="Exists('$(SolutionDir)$(Vendor)\Configuration\Compiler.targets')" />
+  <Import Project="$(SolutionDir)$(Vendor).$(Board)\Configuration\Compiler.targets" Condition="Exists('$(SolutionDir)$(Vendor).$(Board)\Configuration\Compiler.targets')" />
   <Import Project="$(ProjectDir)Configuration\Compiler.targets" Condition="Exists('$(ProjectDir)Configuration\Compiler.targets')" />
 
 </Project>

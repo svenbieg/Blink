@@ -3,7 +3,7 @@
 
   <Target Name="OpenOcdSetup" DependsOnTargets="InstallOpenOcd">
     <MakeDir Directories="$(SolutionDir)\.vscode" />
-    <Copy SourceFiles="$(SolutionDir)Runtime.$(Platform)\Configuration\Debug.cfg" DestinationFiles="$(SolutionDir)\.vscode\openocd.cfg" />
+    <Copy SourceFiles="$(SolutionDir)$(Vendor).$(Board)\Configuration\Debug.cfg" DestinationFiles="$(SolutionDir)\.vscode\openocd.cfg" />
   </Target>
 
   <Target Name="VsCodeSetup" DependsOnTargets="OpenOcdSetup;NinjaSetup">
@@ -73,7 +73,6 @@
       <LaunchLines Include="%09%22serverArgs%22: [ %22-s%22, %22$(OpenOcdSearchPath)%22 ]," />
       <LaunchLines Include="%09%22configFiles%22: [ %22${workspaceRoot}/.vscode/openocd.cfg%22 ]," />
       <LaunchLines Include="%09%22runToEntryPoint%22: %22start%22," />
-      <LaunchLines Include="%09%22svdFile%22: %22$(SvdFilePath)%22," Condition="'$(SvdFilePath)'!=''"/>
       <LaunchLines Include="%09%22showDevDebugOutput%22: %22none%22" />
       <LaunchLines Include="%09}]" />
       <LaunchLines Include="}" />
@@ -89,8 +88,9 @@
     <WriteLinesToFile File="$(SolutionDir)\.vscode\settings.json" Lines="@(SettingsLines)" Overwrite="true" />
   </Target>
 
-  <Import Project="$(SolutionDir)Runtime.$(Platform)\Configuration\Debug.targets" Condition="Exists('$(SolutionDir)Runtime.$(Platform)\Configuration\Debug.targets')" />
-
+  <Import Project="$(SolutionDir)Runtime.$(Architecture)\Configuration\Debug.targets" Condition="Exists('$(SolutionDir)Runtime.$(Architecture)\Configuration\Debug.targets')" />
+  <Import Project="$(SolutionDir)$(Vendor)\Configuration\Debug.targets" Condition="Exists('$(SolutionDir)$(Vendor)\Configuration\Debug.targets')" />
+  <Import Project="$(SolutionDir)$(Vendor).$(Board)\Configuration\Debug.targets" Condition="Exists('$(SolutionDir)$(Vendor).$(Board)\Configuration\Debug.targets')" />
   <Import Project="$(ProjectDir)Configuration\Debug.targets" Condition="Exists('$(ProjectDir)Configuration\Debug.targets')" />
 
 </Project>

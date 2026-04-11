@@ -115,6 +115,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\Seekable.h">
       <Filter>Storage\Streams</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Callable.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)StringHelper.cpp" />
