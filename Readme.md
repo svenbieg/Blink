@@ -1,9 +1,9 @@
 <h1>Blink</h1>
 
 <p>
-This is a Blink-example for Raspberry Pi 5 using my <a href="https://github.com/svenbieg/Default">standard-libray</a>.<br />
-The <a href="https://github.com/svenbieg/Scheduler">scheduler</a> is working with dynamic prioritization,<br />
-while the <a href="https://github.com/svenbieg/Heap">memory-manager</a> supports constant low time allocation.<br />
+This is a Blink-example for Raspberry Pi 5 and Pico 2W using my <a href="https://github.com/svenbieg/Default">Default</a> standard-libray.<br />
+My <a href="https://github.com/svenbieg/Scheduler">Scheduler</a> is working with dynamic prioritization, while my memory-manager <a href="https://github.com/svenbieg/Heap">Heap</a><br />
+provides allocation in constant low time.
 </p>
 <br />
 
