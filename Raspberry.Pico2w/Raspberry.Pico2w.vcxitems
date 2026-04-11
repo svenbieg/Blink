@@ -36,7 +36,6 @@
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Debug.cfg" />
-    <None Include="$(MSBuildThisFileDirectory)Configuration\Default.targets" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Platform.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.targets" />
     <None Include="$(MSBuildThisFileDirectory)dcp_canned.inc.S" />
@@ -46,8 +45,6 @@
     <None Include="$(MSBuildThisFileDirectory)init.S" />
     <None Include="$(MSBuildThisFileDirectory)linker.ld.in" />
     <None Include="$(MSBuildThisFileDirectory)picobin.S" />
-    <None Include="$(MSBuildThisFileDirectory)Scripts\uf2conv.py" />
-    <None Include="$(MSBuildThisFileDirectory)Scripts\uf2families.json" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Dma\DmaChannel.cpp" />

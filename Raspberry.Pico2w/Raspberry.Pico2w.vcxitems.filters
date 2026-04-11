@@ -73,15 +73,6 @@
     <None Include="$(MSBuildThisFileDirectory)Configuration\Debug.cfg">
       <Filter>Configuration</Filter>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)Configuration\Default.targets">
-      <Filter>Configuration</Filter>
-    </None>
-    <None Include="$(MSBuildThisFileDirectory)Scripts\uf2conv.py">
-      <Filter>Scripts</Filter>
-    </None>
-    <None Include="$(MSBuildThisFileDirectory)Scripts\uf2families.json">
-      <Filter>Scripts</Filter>
-    </None>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Platform.props">
       <Filter>Configuration</Filter>
     </None>
@@ -134,9 +125,6 @@
   <ItemGroup>
     <Filter Include="Configuration">
       <UniqueIdentifier>{6a4aa57e-f4b0-4477-9540-d1e4f3fad4b9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scripts">
-      <UniqueIdentifier>{2c47896a-27ed-45fa-9f89-b7607d24740d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Devices">
       <UniqueIdentifier>{d25b10af-c68f-4f16-af55-4cd81a46dce7}</UniqueIdentifier>
