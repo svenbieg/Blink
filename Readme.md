@@ -9,6 +9,4 @@ provides allocation in constant low time.
 
 <img src="https://github.com/user-attachments/assets/6e8497e0-aa7a-462b-8ed1-5bd8b602ec92" width="500" /><br />
 
-<br />
-
 You can find detailed information in the <a href="https://github.com/svenbieg/Blink/wiki">Wiki</a>.
