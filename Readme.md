@@ -7,7 +7,7 @@ provides allocation in constant low time.
 </p>
 <br />
 
-<img src="https://github.com/user-attachments/assets/af333d78-455d-4a6d-a564-1868a7e33f12" width="500" /><br />
+<img src="https://github.com/user-attachments/assets/6e8497e0-aa7a-462b-8ed1-5bd8b602ec92" width="500" /><br />
 
 <br />
 
