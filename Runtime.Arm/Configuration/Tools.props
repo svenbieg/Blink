@@ -3,9 +3,10 @@
 
   <PropertyGroup>
     <CompilerName>arm-none-eabi</CompilerName>
-    <CompilerPath>$(HomePath)gcc\arm-gnu-toolchain-15.2.rel1-mingw-w64-i686-arm-none-eabi\</CompilerPath>
     <CompilerPrefix>arm-none-eabi-</CompilerPrefix>
+    <CompilerTag>15.2.rel1</CompilerTag>
     <CompilerVersion>15.2.1</CompilerVersion>
+    <CompilerPath>$(HomePath)GCC\arm-gnu-toolchain-15.2.rel1-mingw-w64-i686-arm-none-eabi\</CompilerPath>
   </PropertyGroup>
 
 </Project>
