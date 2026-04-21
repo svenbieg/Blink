@@ -9,13 +9,14 @@
     <CompilerFlagsC>$(CompilerFlagsCpp) -std=c23</CompilerFlagsC>
     <CompilerFlagsCpp>$(CompilerFlagsCpp) -std=c++26</CompilerFlagsCpp>
     <CompilerFlagsCpp>$(CompilerFlagsCpp) -Wno-invalid-offsetof -Wno-multichar</CompilerFlagsCpp>
+    <IncludePath>$(IncludePath);$(SolutionDir)Runtime</IncludePath>
+    <IncludePath>$(IncludePath);$(CompilerPath)$(CompilerName)\include\</IncludePath>
+    <IncludePath>$(IncludePath);$(CompilerPath)$(CompilerName)\include\c++\$(CompilerVersion)\</IncludePath>
+    <IncludePath>$(IncludePath);$(CompilerPath)$(CompilerName)\include\c++\$(CompilerVersion)\$(CompilerName)\</IncludePath>
+    <IncludePath>$(IncludePath);$(CompilerPath)lib\gcc\$(CompilerName)\$(CompilerVersion)\include\</IncludePath>
     <LinkerFlags>$(LinkerFlags) --gc-sections --nostdlib</LinkerFlags>
     <LinkerFlags>$(LinkerFlags) -L$(CompilerPath)$(CompilerName)\lib\</LinkerFlags>
     <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(SolutionDir);$(ProjectDir)</NMakeIncludeSearchPath>
-    <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(CompilerPath)$(CompilerName)\include\</NMakeIncludeSearchPath>
-    <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(CompilerPath)$(CompilerName)\include\c++\$(CompilerVersion)\</NMakeIncludeSearchPath>
-    <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(CompilerPath)$(CompilerName)\include\c++\$(CompilerVersion)\$(CompilerName)\</NMakeIncludeSearchPath>
-    <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(CompilerPath)lib\gcc\$(CompilerName)\$(CompilerVersion)\include\</NMakeIncludeSearchPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
