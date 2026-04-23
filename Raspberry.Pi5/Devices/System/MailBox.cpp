@@ -11,9 +11,9 @@
 
 #include "Devices/System/Memory.h"
 #include "Devices/IoHelper.h"
+#include "Devices/Peripherals.h"
 #include "MemoryHelper.h"
 #include <assert.h>
-#include <base.h>
 
 using namespace Devices::System;
 

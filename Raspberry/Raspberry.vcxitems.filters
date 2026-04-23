@@ -1,12 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Network">
-      <UniqueIdentifier>{afdadd1b-9121-4fc9-9752-31ea0916158c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Network\Wifi">
-      <UniqueIdentifier>{53f3f335-1200-4c44-8d38-fdd19d9c4d00}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Devices">
       <UniqueIdentifier>{a8d7bfb4-7c71-4872-83b6-30ba776bd027}</UniqueIdentifier>
     </Filter>

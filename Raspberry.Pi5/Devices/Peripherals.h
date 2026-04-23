@@ -1,6 +1,6 @@
-//========
-// base.h
-//========
+//===============
+// Peripherals.h
+//===============
 
 #pragma once
 
@@ -9,11 +9,14 @@
 // Using
 //=======
 
-#include <asm.h>
+#include "AsmHelper.h"
 
-#ifndef __ASSEMBLER__
-#include "TypeHelper.h"
-#endif
+
+//===========
+// Namespace
+//===========
+
+NAMESPACE(Devices)
 
 
 //=================
@@ -80,7 +83,7 @@ CONST(SIZE_T, ARM_IO_BASE,					0x107C000000) // 0x107C000000
 //CONST(SIZE_T, ARM_VCHIQ_BASE,				ARM_IO_BASE+0x0000B840) // VC4
 CONST(SIZE_T, ARM_MAILBOX_BASE,				ARM_IO_BASE+0x00013880)
 //CONST(SIZE_T, ARM_CM_BASE,				ARM_IO_BASE+0x00101000) // Clock Manager
-CONST(SIZE_T, ARM_HW_RNG_BASE,				ARM_IO_BASE+0x00104000) // Random Nuber Generator
+CONST(SIZE_T, ARM_RNG_BASE,					ARM_IO_BASE+0x00104000) // Random Nuber Generator
 //CONST(SIZE_T, ARM_GPIO_BASE,				ARM_IO_BASE+0x00200000)
 //CONST(SIZE_T, ARM_BSC0_BASE,				ARM_IO_BASE+0x00202000)
 //CONST(SIZE_T, ARM_PCM_BASE,				ARM_IO_BASE+0x00203000)
@@ -205,3 +208,5 @@ CONST(SIZE_T, RP1_DMA_BASE,					RP1_IO_BASE+0x00188000)
 CONST(SIZE_T, RP1_XHCI0_BASE,				RP1_IO_BASE+0x00200000)
 CONST(SIZE_T, RP1_XHCI1_BASE,				RP1_IO_BASE+0x00300000)
 CONST(SIZE_T, RP1_EXAC_BASE,				RP1_IO_BASE+0x00400000)
+
+NAMESPACE_END

@@ -1,6 +1,6 @@
-//========
-// task.h
-//========
+//=============
+// TaskFrame.h
+//=============
 
 #pragma once
 
@@ -9,12 +9,19 @@
 // Using
 //=======
 
-#include <asm.h>
+#include "AsmHelper.h"
 
 
-//=======
-// Frame
-//=======
+//===========
+// Namespace
+//===========
+
+NAMESPACE(Runtime)
+
+
+//============
+// Task-Frame
+//============
 
 STRUCT_BEGIN
 STRUCT_FIELD(SIZE_T, 8, TASK_FRAME_, ELR)
@@ -40,22 +47,4 @@ STRUCT_FIELD(SIZE_T, 8, TASK_FRAME_, D14)
 STRUCT_FIELD(SIZE_T, 8, TASK_FRAME_, D15)
 STRUCT_END(TASK_FRAME)
 
-
-//========
-// Common
-//========
-
-#ifndef __ASSEMBLER__
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-SIZE_T task_restore_context(SIZE_T StackPointer);
-SIZE_T task_save_context(SIZE_T StackPointer);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif
+NAMESPACE_END

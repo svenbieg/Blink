@@ -12,7 +12,7 @@
 #include "Devices/Gpio/GpioHelper.h"
 #include "Devices/Timers/SystemTimer.h"
 #include "Devices/Wifi/WifiAdapter.h"
-#include <base.h>
+#include "Devices/Peripherals.h"
 
 using namespace Concurrency;
 using namespace Devices::Gpio;

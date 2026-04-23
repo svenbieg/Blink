@@ -16,9 +16,9 @@
 #include "Collections/LinkedList.h"
 #include "Concurrency/DispatchedHandler.h"
 #include "Concurrency/Mutex.h"
+#include "Runtime/UnwindException.h"
 #include "MemoryHelper.h"
 #include "StringClass.h"
-#include "UnwindException.h"
 #include <assert.h>
 #include <new>
 #include <utility>
@@ -68,6 +68,9 @@ Timeout=(1<<8)
 class Task: public Object
 {
 public:
+	// Using
+	using UnwindException=Runtime::UnwindException;
+
 	// Friends
 	friend CriticalMutex;
 	friend Mutex;

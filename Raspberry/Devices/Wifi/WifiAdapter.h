@@ -66,7 +66,6 @@ private:
 	VOID OnPacketReceived(WifiPacket* Packet);
 	VOID ServiceTask();
 	VOID UploadRegulatory();
-	MAC_ADDR m_MacAddress;
 	Mutex m_Mutex;
 	WifiPacket* m_Request;
 	WORD m_RequestId;

@@ -13,7 +13,7 @@
 #include "Concurrency/WriteLock.h"
 #include "Devices/System/Cpu.h"
 #include "Devices/System/System.h"
-#include <heap.h>
+#include "heap.h"
 
 using namespace Concurrency;
 using namespace Devices::System;

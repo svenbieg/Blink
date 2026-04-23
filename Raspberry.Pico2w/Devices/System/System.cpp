@@ -10,7 +10,7 @@
 //=======
 
 #include "Devices/System/Cpu.h"
-#include <base.h>
+#include "Devices/Peripherals.h"
 
 
 //===========
@@ -39,8 +39,8 @@ RO32 RESET_DONE;
 
 VOID System::Enable(ResetDevice device, UINT timeout)
 {
-UINT mask=(UINT)device;
 auto resets=(RESETS_REGS*)RESETS_BASE;
+UINT mask=(UINT)device;
 if(IoHelper::Read(resets->RESET, mask)==0)
 	return;
 IoHelper::Clear(resets->RESET, mask);
@@ -52,6 +52,13 @@ else
 	{
 	IoHelper::Retry(resets->RESET_DONE, mask, mask, 100);
 	}
+}
+
+VOID System::Disable(ResetDevice device)
+{
+auto resets=(RESETS_REGS*)RESETS_BASE;
+UINT mask=(UINT)device;
+IoHelper::Set(resets->RESET, mask);
 }
 
 [[noreturn]] VOID System::PowerOff()

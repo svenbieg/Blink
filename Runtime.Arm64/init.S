@@ -9,8 +9,8 @@
 // Using
 //=======
 
-#include <config.h>
-#include <cpu.h>
+#include "Runtime/Configuration.h"
+#include "cpu.inc.S"
 
 
 //=============

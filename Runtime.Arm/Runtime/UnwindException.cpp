@@ -17,10 +17,24 @@
 
 using namespace Concurrency;
 using namespace Devices::System;
+using namespace Runtime;
 using namespace Storage::Encoding;
 
-extern BYTE __exidx_start;
-extern BYTE __exidx_end;
+extern "C"
+{
+BYTE __exidx_start;
+BYTE __exidx_end;
+VOID exc_restore_context(EXC_FRAME* Context);
+VOID exc_resume(VOID* Resume, VOID* Argument);
+VOID exc_save_context(EXC_FRAME* Context);
+}
+
+
+//===========
+// Namespace
+//===========
+
+namespace Runtime {
 
 
 //========
@@ -366,4 +380,6 @@ for(UINT pos=0; pos<instr_count; pos++)
 	}
 m_Context.StackPointer=Frame.SP;
 Frame.SP=stack;
+}
+
 }

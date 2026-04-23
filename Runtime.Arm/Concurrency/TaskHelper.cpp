@@ -9,11 +9,13 @@
 // Using
 //=======
 
-#include <assert.h>
-#include <config.h>
-#include <irq.h>
-#include <task.h>
 #include "Concurrency/Task.h"
+#include "Runtime/Configuration.h"
+#include "Runtime/IrqFrame.h"
+#include "Runtime/TaskFrame.h"
+#include <assert.h>
+
+using namespace Runtime;
 
 extern BYTE __stack_end;
 

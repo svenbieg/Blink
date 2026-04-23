@@ -1,6 +1,6 @@
-//==========
-// except.h
-//==========
+//==================
+// ExceptionFrame.h
+//==================
 
 #pragma once
 
@@ -9,7 +9,14 @@
 // Using
 //=======
 
-#include <asm.h>
+#include "AsmHelper.h"
+
+
+//===========
+// Namespace
+//===========
+
+NAMESPACE(Runtime)
 
 
 //=======
@@ -39,18 +46,4 @@ STRUCT_FIELD(SIZE_T, 4, EXC_FRAME_, LR)
 STRUCT_FIELD(SIZE_T, 4, EXC_FRAME_, PC)
 STRUCT_END(EXC_FRAME)
 
-
-//========
-// Common
-//========
-
-#ifndef __ASSEMBLER__
-
-extern "C"
-{
-VOID exc_restore_context(EXC_FRAME* Context);
-VOID exc_resume(VOID* Resume, VOID* Argument);
-VOID exc_save_context(EXC_FRAME* Context);
-}
-
-#endif
+NAMESPACE_END

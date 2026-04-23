@@ -9,8 +9,15 @@
 // Using
 //=======
 
-#include <except.h>
+#include "Runtime/ExceptionFrame.h"
 #include "TypeInfo.h"
+
+
+//===========
+// Namespace
+//===========
+
+namespace Runtime {
 
 
 //=========
@@ -68,3 +75,5 @@ private:
 	VOID* m_Thrown;
 	TypeInfo const* m_Type;
 };
+
+}

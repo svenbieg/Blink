@@ -12,7 +12,7 @@
 #include "Concurrency/CriticalMutex.h"
 #include "Concurrency/WriteLock.h"
 #include "Exception.h"
-#include <heap.h>
+#include "heap.h"
 
 using namespace Concurrency;
 

@@ -12,7 +12,6 @@
 #include "Devices/Sdio/Sdio.h"
 #include "Devices/Wifi/WifiConfig.h"
 #include "Devices/Wifi/WifiPacket.h"
-#include "Network/Ethernet/MacAddress.h"
 #include <array>
 
 
@@ -35,9 +34,6 @@ using FN0_08=Devices::Sdio::FN0_08;
 using FN0_16=Devices::Sdio::FN0_16;
 using FN0_32=Devices::Sdio::FN0_32;
 using FN1_08=Devices::Sdio::FN1_08;
-
-using MAC_ADDR=Network::Ethernet::MAC_ADDR;
-const UINT MAC_ADDR_SIZE=Network::Ethernet::MAC_ADDR_SIZE;
 
 
 //===========

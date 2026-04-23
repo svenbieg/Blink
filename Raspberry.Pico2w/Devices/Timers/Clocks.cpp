@@ -11,7 +11,7 @@
 
 #include "Devices/System/System.h"
 #include "Devices/IoHelper.h"
-#include <base.h>
+#include "Devices/Peripherals.h"
 
 using namespace Devices::System;
 

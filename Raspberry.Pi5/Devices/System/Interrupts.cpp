@@ -12,8 +12,8 @@
 #include "Concurrency/Scheduler.h"
 #include "Devices/System/Cpu.h"
 #include "Devices/IoHelper.h"
+#include "Devices/Peripherals.h"
 #include <assert.h>
-#include <base.h>
 
 using namespace Concurrency;
 

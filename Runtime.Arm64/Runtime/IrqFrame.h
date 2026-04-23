@@ -1,6 +1,6 @@
-//=======
-// irq.h
-//=======
+//============
+// IrqFrame.h
+//============
 
 #pragma once
 
@@ -9,7 +9,14 @@
 // Using
 //=======
 
-#include <asm.h>
+#include "AsmHelper.h"
+
+
+//===========
+// Namespace
+//===========
+
+NAMESPACE(Runtime)
 
 
 //=======
@@ -58,3 +65,5 @@ STRUCT_FIELD(SIZE_T, 8, IRQ_FRAME_, X28)
 STRUCT_FIELD(SIZE_T, 8, IRQ_FRAME_, X29)
 STRUCT_FIELD(SIZE_T, 8, IRQ_FRAME_, X30)
 STRUCT_END(IRQ_FRAME)
+
+NAMESPACE_END

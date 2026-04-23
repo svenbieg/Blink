@@ -2,7 +2,7 @@
 // linker.ld.in
 //==============
 
-#include <config.h>
+#include "Runtime/Configuration.h"
 
 ENTRY(init)
 

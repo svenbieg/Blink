@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include <config.h>
+#include "Runtime/Configuration.h"
 
 
 //==============

@@ -1,6 +1,6 @@
-//=======
-// cpu.h
-//=======
+//===========
+// cpu.inc.S
+//===========
 
 #pragma once
 
@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include <config.h>
+#include "Runtime/Configuration.h"
 
 
 //========

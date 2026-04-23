@@ -1,8 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)base.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)config.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\FlashMemory.h">
       <Filter>Storage</Filter>
     </ClInclude>
@@ -48,18 +46,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\System.h">
       <Filter>Devices\System</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Usb\UsbDevice.h">
-      <Filter>Devices\Usb</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Usb\UsbHost.h">
-      <Filter>Devices\Usb</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Usb\Xhci.h">
-      <Filter>Devices\Usb</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Usb\XhciDevice.h">
-      <Filter>Devices\Usb</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiConfig.h">
       <Filter>Devices\Wifi</Filter>
     </ClInclude>
@@ -74,6 +60,9 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiSdio.h">
       <Filter>Devices\Wifi</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Peripherals.h">
+      <Filter>Devices</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -114,15 +103,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\System.cpp">
       <Filter>Devices\System</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Usb\UsbDevice.cpp">
-      <Filter>Devices\Usb</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Usb\UsbHost.cpp">
-      <Filter>Devices\Usb</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Usb\XhciDevice.cpp">
-      <Filter>Devices\Usb</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.cpp">
       <Filter>Devices\Timers</Filter>
     </ClCompile>
@@ -157,9 +137,6 @@
     </Filter>
     <Filter Include="Devices\System">
       <UniqueIdentifier>{e2df8a72-7477-425d-b3d9-49f1aeb70283}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Devices\Usb">
-      <UniqueIdentifier>{7e7573a2-3cd6-49ea-b9ff-22fa036fb0d6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Devices\Wifi">
       <UniqueIdentifier>{3b62556f-bb7d-4ccc-986c-8be4fc28a00e}</UniqueIdentifier>

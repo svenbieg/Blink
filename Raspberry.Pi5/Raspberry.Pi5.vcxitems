@@ -10,8 +10,6 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)base.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)config.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Dma\DmaChannel.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Emmc\Emmc.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Emmc\EmmcHost.h" />
@@ -19,6 +17,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHost.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pcie\Pcie.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pcie\PcieHost.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Peripherals.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialConfig.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\Interrupts.h" />
@@ -29,10 +28,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\System.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Timers\Clocks.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Usb\UsbDevice.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Usb\UsbHost.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Usb\Xhci.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Usb\XhciDevice.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiConfig.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiSdio.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\FlashMemory.h" />
@@ -50,9 +45,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\StatusLed.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\System.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Usb\UsbDevice.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Usb\UsbHost.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Usb\XhciDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiSdio.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)start.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\FlashMemory.cpp" />

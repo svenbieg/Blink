@@ -12,8 +12,8 @@
 #include "Concurrency/WriteLock.h"
 #include "Devices/System/Interrupts.h"
 #include "Devices/IoHelper.h"
+#include "Devices/Peripherals.h"
 #include "BitHelper.h"
-#include <base.h>
 
 using namespace Concurrency;
 using namespace Devices::System;

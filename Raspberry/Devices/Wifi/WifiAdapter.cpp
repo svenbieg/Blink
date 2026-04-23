@@ -147,7 +147,6 @@ if(FlagHelper::Get(cmd->Flags, WifiCmdFlags::Error))
 //============================
 
 WifiAdapter::WifiAdapter():
-m_MacAddress(0),
 m_Request(nullptr),
 m_RequestId(0)
 {

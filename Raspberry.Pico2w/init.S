@@ -4,9 +4,9 @@
 
 .section ".reset"
 
-#include <base.h>
-#include <config.h>
-#include <cpu.h>
+#include "Devices/Peripherals.h"
+#include "Runtime/Configuration.h"
+#include "cpu.inc.S"
 
 
 //===============

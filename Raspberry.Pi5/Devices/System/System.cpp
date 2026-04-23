@@ -12,7 +12,7 @@
 #include "Devices/Gpio/GpioHelper.h"
 #include "Devices/System/Cpu.h"
 #include "Devices/IoHelper.h"
-#include <base.h>
+#include "Devices/Peripherals.h"
 
 using namespace Devices::Gpio;
 

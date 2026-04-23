@@ -10,16 +10,21 @@
 //=======
 
 #include "Devices/System/System.h"
+#include "Runtime/UnwindException.h"
 #include "Storage/Encoding/Dwarf.h"
 #include "BitHelper.h"
 #include "MemoryHelper.h"
-#include "UnwindException.h"
 
 using namespace Devices::System;
+using namespace Runtime;
 using namespace Storage::Encoding;
 
-extern BYTE __rodata_start;
-extern BYTE __rodata_end;
+extern "C"
+{
+BYTE __rodata_start;
+BYTE __rodata_end;
+VOID exc_save_context(EXC_FRAME* Context);
+}
 
 
 //===========

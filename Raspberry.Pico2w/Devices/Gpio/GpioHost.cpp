@@ -12,7 +12,7 @@
 #include "Concurrency/SpinLock.h"
 #include "Devices/System/Interrupts.h"
 #include "Devices/IoHelper.h"
-#include <base.h>
+#include "Devices/Peripherals.h"
 
 using namespace Concurrency;
 using namespace Devices::System;

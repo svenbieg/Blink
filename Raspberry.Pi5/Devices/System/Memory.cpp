@@ -10,12 +10,13 @@
 //=======
 
 #include "Devices/System/Cpu.h"
+#include "Devices/Peripherals.h"
+#include "Runtime/Configuration.h"
 #include "MemoryHelper.h"
-#include <base.h>
-#include <config.h>
-#include <heap.h>
+#include "heap.h"
 
 using namespace Devices::System;
+using namespace Runtime;
 
 extern COPY_T __bss_start;
 extern COPY_T __bss_end;

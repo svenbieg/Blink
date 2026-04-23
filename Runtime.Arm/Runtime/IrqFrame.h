@@ -9,7 +9,14 @@
 // Using
 //=======
 
-#include <asm.h>
+#include "AsmHelper.h"
+
+
+//===========
+// Namespace
+//===========
+
+NAMESPACE(Runtime)
 
 
 //=======
@@ -36,3 +43,5 @@ STRUCT_FIELD(SIZE_T, 4, IRQ_FRAME_, LR)
 STRUCT_FIELD(SIZE_T, 4, IRQ_FRAME_, PC)
 STRUCT_FIELD(SIZE_T, 4, IRQ_FRAME_, XPSR)
 STRUCT_END(IRQ_FRAME)
+
+NAMESPACE_END

@@ -70,6 +70,7 @@ class System
 public:
 	// Common
 	static VOID Enable(ResetDevice Device, UINT Timeout=100);
+	static VOID Disable(ResetDevice Device);
 	[[noreturn]] static VOID PowerOff();
 	[[noreturn]] static VOID Restart();
 };

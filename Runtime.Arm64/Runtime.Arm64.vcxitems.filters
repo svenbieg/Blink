@@ -1,15 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)cpu.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)except.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)cpu.inc.S" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)irq.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)task.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)UnwindException.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.h">
       <Filter>Concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\IrqFrame.h">
+      <Filter>Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\Configuration.h">
+      <Filter>Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\ExceptionFrame.h">
+      <Filter>Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\TaskFrame.h">
+      <Filter>Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\UnwindException.h">
+      <Filter>Runtime</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -31,9 +42,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)UnwindException.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.cpp">
       <Filter>Concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\UnwindException.cpp">
+      <Filter>Runtime</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -42,6 +55,9 @@
     </Filter>
     <Filter Include="Concurrency">
       <UniqueIdentifier>{ea73ca4f-83a5-4da6-8183-fec49eb39129}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Runtime">
+      <UniqueIdentifier>{b8ba6350-ed75-48eb-8bc4-c115d1ca96da}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

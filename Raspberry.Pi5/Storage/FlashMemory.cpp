@@ -10,9 +10,10 @@
 //=======
 
 #include "Storage/Buffer.h"
-#include <base.h>
+#include "Devices/Peripherals.h"
 
 using namespace Concurrency;
+using namespace Devices;
 using namespace Devices::Emmc;
 using namespace Devices::System;
 

@@ -16,9 +16,23 @@
 
 using namespace Concurrency;
 using namespace Devices::System;
+using namespace Runtime;
 using namespace Storage::Encoding;
 
-extern BYTE __eh_frame_hdr_start;
+extern "C"
+{
+BYTE __eh_frame_hdr_start;
+VOID exc_restore_context(EXC_FRAME* Context);
+VOID exc_resume(EXC_FRAME* Context, SIZE_T Resume, VOID* Argument);
+VOID exc_save_context(EXC_FRAME* Context);
+}
+
+
+//===========
+// Namespace
+//===========
+
+namespace Runtime {
 
 
 //============
@@ -400,4 +414,6 @@ assert(reg<=EXC_REG_COUNT);
 context->Registers[reg]=Registers[reg];
 SIZE_T stack=Frame.SP+context->StackOffset;
 Registers[reg]=*(SIZE_T*)(stack+offset);
+}
+
 }

@@ -1,10 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)base.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)config.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)cpu.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)irq.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)cpu.inc.S" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Dma\DmaChannel.h">
       <Filter>Devices\Dma</Filter>
     </ClInclude>
@@ -58,6 +55,12 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiConfig.h">
       <Filter>Devices\Wifi</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Peripherals.h">
+      <Filter>Devices</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\Configuration.h">
+      <Filter>Runtime</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -149,6 +152,9 @@
     </Filter>
     <Filter Include="Devices\Wifi">
       <UniqueIdentifier>{25dcd83a-d16e-4f3d-8415-16ebf1e11c2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Runtime">
+      <UniqueIdentifier>{12445055-6745-4d65-a1c3-c0b5a4fad7ac}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

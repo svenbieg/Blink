@@ -10,9 +10,8 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)base.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)config.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)cpu.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Peripherals.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)cpu.inc.S" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Dma\DmaChannel.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHost.h" />
@@ -31,7 +30,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiSpi.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiConfig.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiSdio.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)irq.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\Configuration.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props" />

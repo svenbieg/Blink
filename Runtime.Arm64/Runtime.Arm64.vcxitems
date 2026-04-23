@@ -11,13 +11,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)cpu.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)except.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)cpu.inc.S" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)irq.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)task.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)UnwindException.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\Configuration.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\ExceptionFrame.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\IrqFrame.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\TaskFrame.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\UnwindException.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props" />
@@ -33,6 +34,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)UnwindException.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\UnwindException.cpp" />
   </ItemGroup>
 </Project>

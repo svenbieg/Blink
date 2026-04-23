@@ -1,6 +1,6 @@
-//========
-// task.h
-//========
+//=============
+// TaskFrame.h
+//=============
 
 #pragma once
 
@@ -9,7 +9,14 @@
 // Using
 //=======
 
-#include <asm.h>
+#include "AsmHelper.h"
+
+
+//===========
+// Namespace
+//===========
+
+NAMESPACE(Runtime)
 
 
 //=======
@@ -26,3 +33,5 @@ STRUCT_FIELD(SIZE_T, 4, TASK_FRAME_, R9)
 STRUCT_FIELD(SIZE_T, 4, TASK_FRAME_, R10)
 STRUCT_FIELD(SIZE_T, 4, TASK_FRAME_, R11)
 STRUCT_END(TASK_FRAME)
+
+NAMESPACE_END

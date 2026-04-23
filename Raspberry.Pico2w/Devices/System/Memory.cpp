@@ -9,10 +9,10 @@
 // Using
 //=======
 
+#include "Devices/Peripherals.h"
+#include "Runtime/Configuration.h"
 #include "MemoryHelper.h"
-#include <base.h>
-#include <config.h>
-#include <heap.h>
+#include "heap.h"
 
 extern COPY_T __flash_data_start;
 extern COPY_T __data_start;

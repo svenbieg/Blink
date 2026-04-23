@@ -1,6 +1,6 @@
-//==========
-// unwind.h
-//==========
+//===================
+// UnwindException.h
+//===================
 
 #pragma once
 
@@ -9,8 +9,15 @@
 // Using
 //=======
 
+#include "Runtime/ExceptionFrame.h"
 #include "TypeInfo.h"
-#include <except.h>
+
+
+//===========
+// Namespace
+//===========
+
+namespace Runtime {
 
 
 //=========
@@ -78,3 +85,5 @@ private:
 	VOID* m_Thrown;
 	TypeInfo const* m_Type;
 };
+
+}

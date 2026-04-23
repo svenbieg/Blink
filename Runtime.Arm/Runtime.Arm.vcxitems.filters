@@ -17,20 +17,31 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)math.c" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)UnwindException.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.cpp">
       <Filter>Concurrency</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\UnwindException.cpp">
+      <Filter>Runtime</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)task.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)UnwindException.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.h">
       <Filter>Concurrency</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)except.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\TaskFrame.h">
+      <Filter>Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\ExceptionFrame.h">
+      <Filter>Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\UnwindException.h">
+      <Filter>Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\IrqFrame.h">
+      <Filter>Runtime</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Concurrency">
@@ -38,6 +49,9 @@
     </Filter>
     <Filter Include="Configuration">
       <UniqueIdentifier>{455d2a98-f7a5-4869-a39b-efb65a2790ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Runtime">
+      <UniqueIdentifier>{f3d71570-0905-46af-ae1b-b1a9aa739faf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

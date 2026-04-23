@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)TypeInfo.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)asm.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)AsmHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mutex" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mutex" />
@@ -22,9 +22,6 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\IoHelper.h">
       <Filter>Devices</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Network\Ethernet\MacAddress.h">
-      <Filter>Network\Ethernet</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)new" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\InterruptHandler.h">
@@ -78,9 +75,6 @@
       <Filter>UI</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)string.c" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Network\Ethernet\MacAddress.cpp">
-      <Filter>Network\Ethernet</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\IoHelper.cpp">
       <Filter>Devices</Filter>
     </ClCompile>
@@ -101,30 +95,6 @@
     </Filter>
     <Filter Include="Devices">
       <UniqueIdentifier>{7409c0a8-a473-40b4-8a2d-85d77a29c54c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Network">
-      <UniqueIdentifier>{e245800e-cf6d-4216-acba-e936a74dc604}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Network\Ethernet">
-      <UniqueIdentifier>{748bc5b3-e0fc-4911-9c99-2a912ba00ff2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Network\Tcp">
-      <UniqueIdentifier>{21fd0c2c-e145-47a3-a24a-a5c1e9c8949e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Network\Ip">
-      <UniqueIdentifier>{66feee69-fa4e-46ca-bd1c-95872e058c84}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Network\Dns">
-      <UniqueIdentifier>{96020517-8c00-42cc-92c3-2424ea681e01}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Network\Udp">
-      <UniqueIdentifier>{4e8c98c8-aae2-48c5-b3cb-0794d04d7be9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Network\Ntp">
-      <UniqueIdentifier>{684f105b-bd72-434a-a92c-53969012be6e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Network\Dhcp">
-      <UniqueIdentifier>{f1bb8cfb-bcee-49d2-afd7-a508a2ef164f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Devices\System">
       <UniqueIdentifier>{e13db7fb-9c1f-45d5-9912-46b262ed5fdb}</UniqueIdentifier>

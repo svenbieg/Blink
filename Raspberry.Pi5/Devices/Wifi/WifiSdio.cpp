@@ -13,7 +13,7 @@
 #include "Devices/Gpio/GpioHelper.h"
 #include "Devices/Timers/SystemTimer.h"
 #include "Devices/Wifi/Wifi.h"
-#include <base.h>
+#include "Devices/Peripherals.h"
 
 using namespace Concurrency;
 using namespace Devices::Emmc;
