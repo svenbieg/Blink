@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)'!='Win32'">
     <CompilerFlags>$(CompilerFlags) -fdata-sections -ffunction-sections</CompilerFlags>
     <CompilerFlags>$(CompilerFlags) -fno-builtin -nostartfiles</CompilerFlags>
     <CompilerFlags>$(CompilerFlags) -fexceptions -funwind-tables</CompilerFlags>
@@ -19,12 +19,12 @@
     <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(SolutionDir);$(ProjectDir)</NMakeIncludeSearchPath>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+  <PropertyGroup Condition="'$(Platform)'!='Win32' AND '$(Configuration)'=='Debug'">
     <CompilerFlags>$(CompilerFlags) -g</CompilerFlags>
     <NMakePreprocessorDefinitions>$(NMakePreprocessorDefinitions);_DEBUG</NMakePreprocessorDefinitions>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+  <PropertyGroup Condition="'$(Platform)'!='Win32' AND '$(Configuration)'=='Release'">
     <LinkerFlags>$(LinkerFlags) -flto=full</LinkerFlags>
     <NMakePreprocessorDefinitions>$(NMakePreprocessorDefinitions);NDEBUG</NMakePreprocessorDefinitions>
   </PropertyGroup>

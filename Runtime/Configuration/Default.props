@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <PropertyGroup Label="Configuration">
+  <PropertyGroup Label="Configuration" Condition="'$(Platform)'!='Win32'">
     <ConfigurationType>Makefile</ConfigurationType>
   </PropertyGroup>
 
-  <PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)'!='Win32'">
     <ProjectName>$(MSBuildProjectName)</ProjectName>
     <ProjectDir>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)'))\</ProjectDir>
     <SolutionDir>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..'))\</SolutionDir>
+    <TargetExt>.bin</TargetExt>
+    <TargetName>$(ProjectName)</TargetName>
+    <TargetType>Binary</TargetType>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -17,9 +20,6 @@
     <HomePath>$(HOMEDRIVE)$(HOMEPATH)\</HomePath>
     <IntDir>$(SolutionDir)$(Configuration)\$(Platform)\</IntDir>
     <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\</OutDir>
-    <TargetExt>.bin</TargetExt>
-    <TargetName>$(ProjectName)</TargetName>
-    <TargetType>Binary</TargetType>
     <Timestamp>$([System.DateTime]::Now.ToString("yyyy-MM-dd HH:mm:ss"))</Timestamp>
   </PropertyGroup>
 
@@ -28,7 +28,7 @@
   <Import Project="$(SolutionDir)$(Vendor).$(Board)\Configuration\Default.props" Condition="Exists('$(SolutionDir)$(Vendor).$(Board)\Configuration\Default.props')" />
   <Import Project="$(ProjectDir)Configuration\Default.props" Condition="Exists('$(ProjectDir)Configuration\Default.props')" />
 
-  <Import Project="$(MSBuildThisFileDirectory)Tools.props" />
-  <Import Project="$(MSBuildThisFileDirectory)Debug.props" />
+  <Import Project="$(MSBuildThisFileDirectory)Tools.props" Condition="'$(Platform)'!='Win32'" />
+  <Import Project="$(MSBuildThisFileDirectory)Debug.props" Condition="'$(Platform)'!='Win32'" />
 
 </Project>
