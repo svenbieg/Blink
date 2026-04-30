@@ -18,7 +18,7 @@
 
 namespace std
 {
-class nothrow_t;
+struct nothrow_t { nothrow_t()=default; };
 }
 
 
