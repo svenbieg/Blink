@@ -56,7 +56,7 @@ protected:
 		Cpu::InterlockedIncrement(&m_ReferenceCount);
 		}
 	virtual UINT Release()noexcept;
-	volatile UINT m_ReferenceCount;
+	UINT m_ReferenceCount;
 };
 
 
