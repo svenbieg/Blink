@@ -12,6 +12,7 @@
 #include "Exception.h"
 #include "MemoryHelper.h"
 #include "Object.h"
+#include <new>
 
 
 //========
@@ -42,7 +43,14 @@ public:
 	inline operator BOOL()const noexcept { return m_Object!=nullptr; }
 	inline operator _obj_t*()const noexcept { return m_Object; }
 	inline _obj_t* operator->()const { return m_Object; }
-	template <class _convert_t> inline Handle<_convert_t> As()noexcept { return dynamic_cast<_convert_t*>(m_Object); }
+	template <class _convert_t> inline Handle<_convert_t> As()const
+		{
+		auto convert=dynamic_cast<_convert_t*>(m_Object);
+		if(!convert)
+			throw InvalidArgumentException();
+		return convert;
+		}
+	template <class _convert_t> inline Handle<_convert_t> As(std::nothrow_t)const noexcept { return dynamic_cast<_convert_t*>(m_Object); }
 
 	// Comparison
 	inline BOOL operator==(nullptr_t)const noexcept { return m_Object==nullptr; }
