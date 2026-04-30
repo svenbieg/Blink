@@ -142,12 +142,7 @@ private:
 
 public:
 	// Access
-	_item_t GetCurrent()const
-		{
-		if(!HasCurrent())
-			return _item_t();
-		return m_Array->GetAt(m_Position);
-		}
+	inline _item_t const& GetCurrent()const { return m_Array->GetAt(m_Position); }
 	inline BOOL HasCurrent()const { return m_Position<m_Array->GetCount(); }
 	BOOL MoveNext()
 		{
@@ -164,6 +159,7 @@ public:
 		m_Position--;
 		return true;
 		}
+	VOID SetCurrent(_item_t const& Value) { m_Array->SetAt(m_Position, Value); }
 
 private:
 	// Con-/Destructors
