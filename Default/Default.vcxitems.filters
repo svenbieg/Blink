@@ -46,9 +46,6 @@
       <Filter>Storage\Streams</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)TypeHelper.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\Node.h">
-      <Filter>Collections</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Exception.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\cluster.hpp">
       <Filter>Collections</Filter>
@@ -90,9 +87,6 @@
       <Filter>Collections</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)StringBuilder.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Volume.h">
-      <Filter>Storage</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Global.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\Stream.h">
       <Filter>Storage\Streams</Filter>
@@ -116,6 +110,9 @@
       <Filter>Storage\Streams</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Callable.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Encoding\Unsigned.h">
+      <Filter>Storage\Encoding</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)StringHelper.cpp" />
@@ -136,9 +133,6 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamReader.cpp">
       <Filter>Storage\Streams</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Collections\Node.cpp">
-      <Filter>Collections</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)MemoryHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Encoding\Dwarf.cpp">

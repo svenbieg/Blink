@@ -38,7 +38,7 @@ public:
 	UINT Print(LPCWSTR Value);
 	UINT Print(UINT Length, LPCSTR Value);
 	UINT Print(UINT Length, LPCWSTR Value);
-	UINT Print(Handle<String> Value);
+	UINT Print(String const* Value);
 	UINT Print(LPCSTR Format, VariableArguments& Arguments);
 	template <class... _args_t> inline UINT Print(LPCSTR Format, _args_t... Arguments)
 		{
@@ -50,6 +50,7 @@ public:
 	UINT PrintChar(WCHAR Char, UINT Count=1);
 	VOID SetStream(OutputStream* Stream)noexcept;
 	SIZE_T Write(VOID const* Buffer, SIZE_T Size);
+	UINT WriteString(String const* Value);
 
 private:
 	// Using

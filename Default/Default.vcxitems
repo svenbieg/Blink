@@ -28,7 +28,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\list.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\Map.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\map.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Collections\Node.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\shared_cluster.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\shared_index.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\shared_list.hpp" />
@@ -52,6 +51,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Buffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Directory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Encoding\Dwarf.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Encoding\Unsigned.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\File.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\StaticBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\InputStream.h" />
@@ -62,7 +62,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamReader.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamWriter.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Volume.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StringBuilder.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StringClass.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StringHelper.h" />
@@ -71,7 +70,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)CharHelper.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Collections\Node.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Collections\StringList.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)MemoryHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Object.cpp" />

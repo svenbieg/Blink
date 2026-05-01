@@ -64,7 +64,7 @@ UINT StreamWriter::Print(UINT len, LPCWSTR value)
 return DoPrint(m_WriteUnicode, len, value);
 }
 
-UINT StreamWriter::Print(Handle<String> value)
+UINT StreamWriter::Print(String const* value)
 {
 if(!value)
 	return 0;
@@ -124,6 +124,15 @@ SIZE_T StreamWriter::Write(VOID const* buf, SIZE_T size)
 if(!m_Stream)
 	return 0;
 return m_Stream->Write(buf, size);
+}
+
+UINT StreamWriter::WriteString(String const* value)
+{
+UINT size=0;
+if(value)
+	size+=Print(0, value->Begin());
+size+=PrintChar('\0');
+return size;
 }
 
 

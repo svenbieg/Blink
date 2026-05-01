@@ -77,6 +77,12 @@ public:
 	DivisionByZeroException(): Exception(Status::DivisionByZero) {}
 };
 
+class ErrorException: public Exception
+{
+public:
+	ErrorException(): Exception(Status::Error) {}
+};
+
 class InvalidArgumentException: public Exception
 {
 public:
