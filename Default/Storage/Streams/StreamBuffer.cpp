@@ -79,6 +79,13 @@ while(pos<size)
 	MemoryHelper::Copy(&dst[pos], &src[m_Read], copy);
 	pos+=copy;
 	m_Read+=copy;
+	if(m_Read==m_Size)
+		{
+		m_Read=0;
+		m_Size=0;
+		m_Written=0;
+		break;
+		}
 	if(m_Read==m_ChunkSize)
 		{
 		FreeChunk();
