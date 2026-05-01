@@ -116,6 +116,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Xml\XmlNode.h">
       <Filter>Storage\Xml</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamBuffer.h">
+      <Filter>Storage\Streams</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)StringHelper.cpp" />
@@ -149,6 +152,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)VariableArguments.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Xml\XmlNode.cpp">
       <Filter>Storage\Xml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamBuffer.cpp">
+      <Filter>Storage\Streams</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

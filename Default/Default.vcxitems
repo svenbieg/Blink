@@ -59,6 +59,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\RandomAccessStream.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\Seekable.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\Stream.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamReader.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamWriter.h" />
@@ -78,6 +79,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Buffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Encoding\Dwarf.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\StaticBuffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamReader.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamWriter.cpp" />
