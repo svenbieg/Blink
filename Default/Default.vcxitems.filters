@@ -113,6 +113,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Encoding\Unsigned.h">
       <Filter>Storage\Encoding</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Xml\XmlNode.h">
+      <Filter>Storage\Xml</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)StringHelper.cpp" />
@@ -144,6 +147,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)StringBuilder.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VariableArguments.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Xml\XmlNode.cpp">
+      <Filter>Storage\Xml</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Storage">
@@ -160,6 +166,9 @@
     </Filter>
     <Filter Include="Culture">
       <UniqueIdentifier>{9163acb5-c885-4791-b4c8-e49817220d0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Storage\Xml">
+      <UniqueIdentifier>{33cf304c-12f7-43ee-b13b-e3303e283465}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
