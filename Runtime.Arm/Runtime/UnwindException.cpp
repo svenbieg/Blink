@@ -82,36 +82,6 @@ throw NotImplementedException();
 extern "C" UINT __aeabi_unwind_cpp_pr1(UINT flags, UnwindException* exc, UnwindContext* context)
 {
 throw NotImplementedException();
-/*SIZE_T frame_start=context->FrameStart;
-SIZE_T pc=context->ProgramCounter;
-Dwarf lsda(context->LanguageData);
-UINT value=lsda.ReadValue<UINT>();
-while(value)
-	{
-	UINT len=lsda.ReadValue<WORD>();
-	UINT offset=lsda.ReadValue<WORD>();
-	EntryKind kind=(EntryKind)(((offset&1)<<1)|(len&1));
-	BitHelper::Clear(len, 1);
-	BitHelper::Clear(offset, 1);
-	SIZE_T cs_start=frame_start+offset;
-	SIZE_T cs_end=cs_start+len;
-	BOOL in_scope=(pc>=cs_start)&&(pc<cs_end);
-	switch(kind)
-		{
-		case EntryKind::Cleanup:
-		case EntryKind::Function:
-			break;
-		case EntryKind::Catch:
-			{
-			UINT lpp31=lsda.ReadValue<UINT>();
-			if(!in_scope)
-				break;
-			UINT landing_pad=Prel31::Read(&lpp31);
-			break;
-			}
-		}
-	value=lsda.ReadValue<UINT>();
-	}*/
 return 0;
 }
 
@@ -218,8 +188,8 @@ VOID UnwindException::GetContext(SIZE_T pc, UnwindContext* context)
 context->InstructionCount=0;
 context->Personality=0;
 context->ProgramCounter=pc;
-SIZE_T exidx_start=(SIZE_T)&__exidx_start;
-SIZE_T exidx_end=(SIZE_T)&__exidx_end;
+UINT exidx_start=(UINT)&__exidx_start;
+UINT exidx_end=(UINT)&__exidx_end;
 UINT exidx_size=exidx_end-exidx_start;
 UINT entry_size=8;
 UINT entry_count=exidx_size/entry_size;
@@ -228,8 +198,8 @@ UINT entry_last=entry_count;
 while(entry_first<entry_last)
 	{
 	UINT entry_id=entry_first+(entry_last-entry_first)/2;
-	SIZE_T* entry=(SIZE_T*)(exidx_start+entry_id*entry_size);
-	SIZE_T frame_start=Prel31::Read(&entry[0]);
+	UINT* entry=(UINT*)(exidx_start+entry_id*entry_size);
+	UINT frame_start=Prel31::Read(&entry[0]);
 	if(frame_start>pc)
 		{
 		entry_last=entry_id;
@@ -244,13 +214,13 @@ while(entry_first<entry_last)
 	}
 assert(entry_first>0);
 UINT entry_id=entry_first-1;
-SIZE_T* entry=(SIZE_T*)(exidx_start+entry_id*entry_size);
-SIZE_T frame_start=Prel31::Read(&entry[0]);
-SIZE_T frame_end=SIZE_MAX;
+UINT* entry=(UINT*)(exidx_start+entry_id*entry_size);
+UINT frame_start=Prel31::Read(&entry[0]);
+UINT frame_end=SIZE_MAX;
 if(entry_id+1<entry_count)
 	{
 	UINT next_id=entry_id+1;
-	SIZE_T* next=(SIZE_T*)(exidx_start+next_id*entry_size);
+	UINT* next=(UINT*)(exidx_start+next_id*entry_size);
 	frame_end=Prel31::Read(&next[0]);
 	}
 context->FrameStart=frame_start;
@@ -263,25 +233,12 @@ if(FlagHelper::Get(entry[1], EXIDX_COMPACT))
 	context->Instructions=&context->Instruction;
 	return;
 	}
-SIZE_T table_pos=Prel31::Read(&entry[1]);
+UINT table_pos=Prel31::Read(&entry[1]);
 UINT* table=(UINT*)table_pos;
 UINT extra_words=0;
 if(FlagHelper::Get(table[0], EXIDX_COMPACT))
 	{
 	throw NotImplementedException();
-	//SIZE_T choice=BitHelper::Get(table[0], EXIDX_CHOICE);
-	//switch(choice)
-	//	{
-	//	case 1:
-	//		{
-	//		context->Personality=(SIZE_T)__aeabi_unwind_cpp_pr1;
-	//		extra_words=BitHelper::Get(table[0], EXIDX_EXTRA_WORDS);
-	//		context->LanguageData=table_pos+(extra_words+1)*4;
-	//		break;
-	//		}
-	//	default:
-	//		throw NotImplementedException();
-	//	}
 	}
 else
 	{
