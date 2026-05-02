@@ -38,6 +38,13 @@ SetStream(stream);
 // Common
 //========
 
+SIZE_T StreamReader::Available()
+{
+if(!m_Stream)
+	return 0;
+return m_Stream->Available();
+}
+
 UINT StreamReader::FindChar(LPCSTR chars)
 {
 UINT size=0;

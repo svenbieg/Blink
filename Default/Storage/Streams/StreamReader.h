@@ -33,7 +33,9 @@ public:
 	StreamReader(InputStream* Stream)noexcept;
 
 	// Common
+	SIZE_T Available();
 	UINT FindChar(LPCSTR Chars);
+	inline InputStream* GetStream()const { return m_Stream; }
 	TCHAR LastChar;
 	SIZE_T Read(VOID* Buffer, SIZE_T Size);
 	UINT ReadChar(CHAR* Char=nullptr);

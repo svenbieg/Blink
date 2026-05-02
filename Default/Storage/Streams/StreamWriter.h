@@ -34,6 +34,7 @@ public:
 
 	// Common
 	VOID Flush();
+	inline OutputStream* GetStream()const { return m_Stream; }
 	UINT Print(LPCSTR Value);
 	UINT Print(LPCWSTR Value);
 	UINT Print(UINT Length, LPCSTR Value);
