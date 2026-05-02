@@ -180,7 +180,7 @@ public:
 	inline BOOL MoveNext() { return m_It.move_next(); }
 	inline BOOL MovePrevious() { return m_It.move_previous(); }
 
-private:
+protected:
 	// Con-/Destructors
 	XmlNodeChildIterator(XmlNode* Node): m_It(&Node->m_Children), m_Node(Node)
 		{
