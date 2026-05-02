@@ -84,7 +84,7 @@ while(pos<size)
 		m_Read=0;
 		m_Size=0;
 		m_Written=0;
-		break;
+		continue;
 		}
 	if(m_Read==m_ChunkSize)
 		{
