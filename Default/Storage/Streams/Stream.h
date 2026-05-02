@@ -43,7 +43,15 @@ public:
 	using StreamFormat=Storage::Streams::StreamFormat;
 
 	// Common
-	virtual StreamFormat GetStreamFormat()const=0;
+	StreamFormat GetStreamFormat()const { return m_StreamFormat; }
+	virtual VOID SetStreamFormat(StreamFormat Format) { m_StreamFormat=Format; }
+
+protected:
+	// Con-/Destructors
+	Stream(StreamFormat Format=StreamFormat::UTF8): m_StreamFormat(Format) {}
+
+	// Common
+	StreamFormat m_StreamFormat;
 };
 
 }}
