@@ -174,6 +174,27 @@ if(byte&0x40)
 return (INT64)value;
 }
 
+UINT Dwarf::ReadSigned(InputStream* dwarf, INT64* value_ptr)
+{
+assert(dwarf);
+UINT64 value=0;
+UINT size=0;
+UINT shift=0;
+BYTE byte=0;
+do
+	{
+	size+=dwarf->Read(&byte, 1);
+	value|=((UINT64)byte&0x7F)<<shift;
+	shift+=7;
+	}
+while(byte&0x80);
+if(byte&0x40)
+	value|=~0ULL<<shift;
+if(value_ptr)
+	*value_ptr=(INT64)value;
+return size;
+}
+
 UINT64 Dwarf::ReadUnsigned(BYTE const*& dwarf)noexcept
 {
 UINT64 value=0;
@@ -187,6 +208,25 @@ do
 	}
 while(byte&0x80);
 return value;
+}
+
+UINT Dwarf::ReadUnsigned(InputStream* dwarf, UINT64* value_ptr)
+{
+assert(dwarf);
+UINT64 value=0;
+UINT size=0;
+UINT shift=0;
+BYTE byte=0;
+do
+	{
+	size+=dwarf->Read(&byte, 1);
+	value|=((UINT64)byte&0x7F)<<shift;
+	shift+=7;
+	}
+while(byte&0x80);
+if(value_ptr)
+	*value_ptr=value;
+return size;
 }
 
 UINT Dwarf::WriteSigned(OutputStream* dwarf, INT64 ivalue)
@@ -222,6 +262,28 @@ do
 	if(dwarf)
 		{
 		size+=(UINT)dwarf->Write(&byte, 1);
+		}
+	else
+		{
+		size++;
+		}
+	}
+while(value);
+return size;
+}
+
+UINT Dwarf::WriteUnsigned(OutputStream* dwarf, UINT64 value)
+{
+UINT size=0;
+do
+	{
+	BYTE byte=(BYTE)value&0x7F;
+	value>>=7;
+	if(value)
+		byte|=0x80;
+	if(dwarf)
+		{
+		size+=dwarf->Write(&byte, 1);
 		}
 	else
 		{

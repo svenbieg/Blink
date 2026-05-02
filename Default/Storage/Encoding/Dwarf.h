@@ -12,10 +12,9 @@
 // Using
 //=======
 
-#include <cassert>
 #include "Storage/Streams/InputStream.h"
 #include "Storage/Streams/OutputStream.h"
-#include "Exception.h"
+#include "MemoryHelper.h"
 
 
 //===========
@@ -78,40 +77,37 @@ public:
 	static UINT64 ReadEncoded(BYTE const*& Dwarf, BYTE Encoding, UINT64 DataRelative=0);
 	inline INT64 ReadSigned()noexcept { return ReadSigned((BYTE const*&)m_Buffer); }
 	static INT64 ReadSigned(BYTE const*& Dwarf)noexcept;
-	inline UINT64 ReadUnsigned()noexcept { return ReadUnsigned((BYTE const*&)m_Buffer); }
-	static UINT64 ReadUnsigned(BYTE const*& Dwarf)noexcept;
-	template <typename _value_t> static UINT ReadUnsigned(InputStream* Dwarf, _value_t* Value)
+	static inline UINT ReadSigned(InputStream* Dwarf, INT* Value)
 		{
-		assert(Dwarf);
-		_value_t value=0;
-		UINT size=0;
-		UINT shift=0;
-		BYTE byte=0;
-		do
-			{
-			UINT read=(UINT)Dwarf->Read(&byte, 1);
-			if(read!=1)
-				break;
-			if(size==sizeof(_value_t))
-				throw BufferOverrunException();
-			size+=read;
-			value|=((UINT)byte&0x7F)<<shift;
-			shift+=7;
-			}
-		while(byte&0x80);
+		INT64 value=0;
+		UINT size=ReadSigned(Dwarf, &value);
 		if(Value)
-			*Value=value;
+			*Value=TypeHelper::Integral<INT, INT64>(value);
 		return size;
 		}
+	static UINT ReadSigned(InputStream* Dwarf, INT64* Value);
+	inline UINT64 ReadUnsigned()noexcept { return ReadUnsigned((BYTE const*&)m_Buffer); }
+	static UINT64 ReadUnsigned(BYTE const*& Dwarf)noexcept;
+	static inline UINT ReadUnsigned(InputStream* Dwarf, UINT* Value)
+		{
+		UINT64 value=0;
+		UINT size=ReadUnsigned(Dwarf, &value);
+		if(Value)
+			*Value=TypeHelper::Integral<UINT, UINT64>(value);
+		return size;
+		}
+	static UINT ReadUnsigned(InputStream* Dwarf, UINT64* Value);
 	template <typename _value_t> inline _value_t ReadValue()noexcept
 		{
-		_value_t value=*(_value_t const*)m_Buffer;
+		_value_t value;
+		MemoryHelper::Copy(&value, m_Buffer, sizeof(_value_t));
 		m_Buffer+=sizeof(_value_t);
 		return value;
 		}
 	template <typename _value_t> static inline _value_t ReadValue(BYTE const*& Dwarf)noexcept
 		{
-		_value_t value=*(_value_t const*)Dwarf;
+		_value_t value;
+		MemoryHelper::Copy(&value, Dwarf, sizeof(_value_t));
 		Dwarf+=sizeof(_value_t);
 		return value;
 		}
@@ -119,36 +115,12 @@ public:
 		{
 		assert(Dwarf);
 		_value_t value;
-		SIZE_T read=Dwarf->Read(&value, sizeof(_value_t));
-		if(read!=sizeof(_value_t))
-			throw DeviceNotReadyException();
+		Dwarf->Read(&value, sizeof(_value_t));
 		return value;
 		}
 	VOID SetPosition(SIZE_T Position)noexcept { m_Buffer=(BYTE*)Position; }
 	static UINT WriteSigned(OutputStream* Dwarf, INT64 Value);
-	template <typename _value_t> static UINT WriteUnsigned(OutputStream* Dwarf, _value_t Value)
-		{
-		UINT size=0;
-		do
-			{
-			if(size==sizeof(_value_t))
-				throw BufferOverrunException();
-			BYTE byte=(BYTE)Value&0x7F;
-			Value>>=7;
-			if(Value)
-				byte|=0x80;
-			if(Dwarf)
-				{
-				size+=(UINT)Dwarf->Write(&byte, 1);
-				}
-			else
-				{
-				size++;
-				}
-			}
-		while(Value);
-		return size;
-		}
+	static UINT WriteUnsigned(OutputStream* Dwarf, UINT64 Value);
 
 private:
 	// Common
