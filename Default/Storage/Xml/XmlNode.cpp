@@ -48,6 +48,40 @@ Changed(this);
 return true;
 }
 
+VOID XmlNode::CopyFrom(XmlNode* copy)
+{
+if(!copy)
+	throw InvalidArgumentException();
+WriteLock lock(m_Mutex);
+ReadLock copy_lock(copy->m_Mutex);
+BOOL changed=false;
+changed|=ClearInternal();
+changed|=SetTagInternal(copy->m_Tag);
+for(auto const& attr: copy->m_Attributes)
+	{
+	auto const& key=attr.get_key();
+	auto const& value=attr.get_value();
+	changed|=SetAttributeInternal(key, value);
+	}
+if(copy->m_Value)
+	{
+	changed|=SetValue(copy->m_Value);
+	}
+else
+	{
+	changed|=copy->m_Children;
+	for(auto const& copy_child: copy->m_Children)
+		{
+		auto child=XmlNode::Create(this);
+		child->CopyFrom(copy_child);
+		}
+	}
+copy_lock.Unlock();
+lock.Unlock();
+if(changed)
+	Changed(this);
+}
+
 Handle<String> XmlNode::GetAttribute(Handle<String> key)
 {
 ReadLock lock(m_Mutex);
@@ -117,14 +151,6 @@ ReadLock lock(m_Mutex);
 return m_Value;
 }
 
-Handle<XmlNode> XmlNode::GetRoot()
-{
-XmlNode* node=this;
-while(node->m_Parent)
-	node=node->m_Parent;
-return node;
-}
-
 BOOL XmlNode::HasAttribute(Handle<String> key)
 {
 ReadLock lock(m_Mutex);
@@ -181,7 +207,7 @@ if(CharHelper::Equal(reader.LastChar, '/'))
 	}
 while(1)
 	{
-	auto child=XmlNode::Create();
+	auto child=CreateNode();
 	read+=child->ReadFromStream(stream);
 	if(!child->m_Tag)
 		{
@@ -236,16 +262,6 @@ Changed(this);
 return true;
 }
 
-BOOL XmlNode::SetName(Handle<String> name)
-{
-WriteLock lock(m_Mutex);
-if(!SetNameInternal(name))
-	return false;
-lock.Unlock();
-Changed(this);
-return true;
-}
-
 BOOL XmlNode::SetTag(Handle<String> tag)
 {
 WriteLock lock(m_Mutex);
@@ -259,7 +275,6 @@ return true;
 BOOL XmlNode::SetValue(Handle<String> value)
 {
 WriteLock lock(m_Mutex);
-assert(!m_Children);
 if(!SetValueInternal(value))
 	return false;
 lock.Unlock();
@@ -329,36 +344,13 @@ return size;
 // Con-/Destructors Protected
 //============================
 
-XmlNode::XmlNode(XmlNode* clone):
-m_Parent(nullptr)
-{
-if(!clone)
-	throw InvalidArgumentException();
-ReadLock node_lock(clone->m_Mutex);
-m_Tag=clone->m_Tag;
-m_Attributes.copy_from(clone->m_Attributes);
-if(clone->m_Value)
-	{
-	m_Value=clone->m_Value;
-	}
-else
-	{
-	for(auto it=clone->m_Children.cbegin(); it.has_current(); it.move_next())
-		{
-		auto child=XmlNode::Clone(it.get_current());
-		m_Children.append(child);
-		child->m_Parent=this;
-		auto name=child->GetName();
-		if(name)
-			m_Index.set(name, child);
-		}
-	}
-}
-
-XmlNode::XmlNode(Handle<String> tag):
-m_Parent(nullptr),
+XmlNode::XmlNode(XmlNode* Parent, Handle<String> tag):
+m_Parent(Parent),
 m_Tag(tag)
-{}
+{
+if(m_Parent)
+	m_Parent->AppendChild(this);
+}
 
 
 //==================
@@ -390,6 +382,11 @@ if(!cleared)
 	return false;
 m_Value=nullptr;
 return true;
+}
+
+Handle<XmlNode> XmlNode::CreateNode()
+{
+return XmlNode::Create();
 }
 
 VOID XmlNode::InsertChildInternal(UINT pos, XmlNode* child)
@@ -482,6 +479,7 @@ return true;
 
 BOOL XmlNode::SetValueInternal(Handle<String> value)
 {
+assert(!m_Children);
 if(m_Value==value)
 	return false;
 m_Value=value;

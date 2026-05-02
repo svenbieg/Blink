@@ -50,13 +50,14 @@ public:
 	friend XmlNodeChildIterator;
 
 	// Con-/Destructors
-	static inline Handle<XmlNode> Clone(XmlNode* Node) { return new XmlNode(Node); }
-	static inline Handle<XmlNode> Create(Handle<String> Tag=nullptr) { return new XmlNode(Tag); }
+	static inline Handle<XmlNode> Create(Handle<String> Tag=nullptr) { return new XmlNode(nullptr, Tag); }
+	static inline Handle<XmlNode> Create(XmlNode* Parent, Handle<String> Tag=nullptr) { return new XmlNode(Parent, Tag); }
 
 	// Common
-	VOID AppendChild(XmlNode* Child);
+	virtual VOID AppendChild(XmlNode* Child);
 	Event<XmlNode> Changed;
-	BOOL Clear();
+	virtual BOOL Clear();
+	virtual VOID CopyFrom(XmlNode* Node);
 	Handle<String> GetAttribute(Handle<String> Key);
 	BOOL GetAttribute(Handle<String> Key, UINT* Value);
 	BOOL GetAttribute(Handle<String> Key, UINT64* Value);
@@ -67,38 +68,33 @@ public:
 	Handle<String> GetName();
 	Handle<String> GetTag();
 	Handle<String> GetValue();
-	Handle<XmlNode> GetRoot();
 	BOOL HasAttribute(Handle<String> Key);
-	VOID InsertChildAt(UINT Position, XmlNode* Child);
+	virtual VOID InsertChildAt(UINT Position, XmlNode* Child);
 	SIZE_T ReadFromStream(InputStream* Stream);
-	BOOL RemoveAttribute(Handle<String> Key);
-	VOID RemoveChildAt(UINT Position);
-	inline VOID SetAttribute(Handle<String> Key, INT Value)
+	virtual BOOL RemoveAttribute(Handle<String> Key);
+	virtual VOID RemoveChildAt(UINT Position);
+	inline BOOL SetAttribute(Handle<String> Key, INT Value)
 		{
-		SetAttribute(Key, String::Create("%i", Value));
+		return SetAttribute(Key, String::Create("%i", Value));
 		}
-	inline VOID SetAttribute(Handle<String> Key, UINT Value)
+	inline BOOL SetAttribute(Handle<String> Key, INT64 Value)
 		{
-		SetAttribute(Key, String::Create("%u", Value));
+		return SetAttribute(Key, String::Create("%i", Value));
 		}
-	inline VOID SetAttribute(Handle<String> Key, UINT64 Value)
-		{
-		SetAttribute(Key, String::Create("%u", Value));
-		}
-	BOOL SetAttribute(Handle<String> Key, Handle<String> Value);
-	BOOL SetName(Handle<String> Name);
-	BOOL SetTag(Handle<String> Tag);
-	BOOL SetValue(Handle<String> Value);
+	virtual BOOL SetAttribute(Handle<String> Key, Handle<String> Value);
+	inline BOOL SetName(Handle<String> Name) { return SetAttribute("Name", Name); }
+	virtual BOOL SetTag(Handle<String> Tag);
+	virtual BOOL SetValue(Handle<String> Value);
 	SIZE_T WriteToStream(OutputStream* Stream, INT Level=-1);
 
 protected:
 	// Con-/Destructors
-	XmlNode(XmlNode* Clone);
-	XmlNode(Handle<String> Tag=nullptr);
+	XmlNode(XmlNode* Parent=nullptr, Handle<String> Tag=nullptr);
 
 	// Common
 	VOID AppendChildInternal(XmlNode* Child);
 	BOOL ClearInternal();
+	virtual Handle<XmlNode> CreateNode();
 	VOID InsertChildInternal(UINT Position, XmlNode* Child);
 	VOID RemoveAttributeInternal(UINT Position);
 	BOOL RemoveAttributeInternal(Handle<String> Key);
@@ -108,9 +104,9 @@ protected:
 	BOOL SetNameInternal(Handle<String> Name);
 	BOOL SetTagInternal(Handle<String> Tag);
 	BOOL SetValueInternal(Handle<String> Value);
-	Collections::map<Handle<String>, Handle<String>> m_Attributes;
-	Collections::list<Handle<XmlNode>> m_Children;
-	Collections::map<Handle<String>, XmlNode*> m_Index;
+	Collections::map<Handle<String>, Handle<String>, UINT> m_Attributes;
+	Collections::list<Handle<XmlNode>, UINT> m_Children;
+	Collections::map<Handle<String>, XmlNode*, UINT> m_Index;
 	Concurrency::Mutex m_Mutex;
 	XmlNode* m_Parent;
 	Handle<String> m_Tag;
@@ -132,7 +128,7 @@ public:
 	friend XmlNode;
 
 	// Access
-	inline Handle<String> GetName()const { return m_It.get_key(); }
+	inline Handle<String> GetKey()const { return m_It.get_key(); }
 	inline Handle<String> GetValue()const { return m_It.get_value(); }
 	inline BOOL HasCurrent()const { return m_It.has_current(); }
 
@@ -155,7 +151,7 @@ private:
 		}
 
 	// Common
-	typename Collections::map<Handle<String>, Handle<String>>::iterator m_It;
+	typename Collections::map<Handle<String>, Handle<String>, UINT>::iterator m_It;
 	Handle<XmlNode> m_Node;
 };
 
@@ -196,7 +192,7 @@ private:
 		}
 
 	// Common
-	typename Collections::list<Handle<XmlNode>>::iterator m_It;
+	typename Collections::list<Handle<XmlNode>, UINT>::iterator m_It;
 	Handle<XmlNode> m_Node;
 };
 
