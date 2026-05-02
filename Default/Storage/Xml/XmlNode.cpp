@@ -141,18 +141,15 @@ Changed(this);
 
 SIZE_T XmlNode::ReadFromStream(InputStream* stream)
 {
-WriteLock lock(m_Mutex);
-ClearInternal();
 StreamReader reader(stream);
 SIZE_T read=0;
+WriteLock lock(m_Mutex);
 auto value=reader.ReadString(&read, "<", "\r\n\t ");
 if(value)
 	{
 	if(m_Tag)
 		throw InvalidArgumentException();
 	m_Value=value;
-	lock.Unlock();
-	Changed(this);
 	return read;
 	}
 if(!CharHelper::Equal(reader.LastChar, '<'))
@@ -180,8 +177,6 @@ if(CharHelper::Equal(reader.LastChar, '/'))
 	read+=reader.ReadChar();
 	if(!CharHelper::Equal(reader.LastChar, '>'))
 		throw InvalidArgumentException();
-	lock.Unlock();
-	Changed(this);
 	return read;
 	}
 while(1)
@@ -210,8 +205,6 @@ if(!CharHelper::Equal(reader.LastChar, '>'))
 if(StringHelper::Compare(close, tag, 0, false)!=0)
 	throw InvalidArgumentException();
 m_Tag=tag;
-lock.Unlock();
-Changed(this);
 return read;
 }
 
@@ -256,9 +249,8 @@ return true;
 BOOL XmlNode::SetTag(Handle<String> tag)
 {
 WriteLock lock(m_Mutex);
-if(m_Tag==tag)
+if(!SetTagInternal(tag))
 	return false;
-m_Tag=tag;
 lock.Unlock();
 Changed(this);
 return true;
@@ -267,11 +259,9 @@ return true;
 BOOL XmlNode::SetValue(Handle<String> value)
 {
 WriteLock lock(m_Mutex);
-if(m_Value==value)
+assert(!m_Children);
+if(!SetValueInternal(value))
 	return false;
-m_Children.clear(),
-m_Index.clear(),
-m_Value=value;
 lock.Unlock();
 Changed(this);
 return true;
@@ -283,58 +273,55 @@ ReadLock lock(m_Mutex);
 if(!m_Tag)
 	return 0;
 StreamWriter writer(stream);
-SIZE_T written=0;
+SIZE_T size=0;
 INT next_level=-1;
 if(level>=0)
 	{
 	next_level=level+1;
-	written+=writer.Print("\r\n");
+	size+=writer.Print("\r\n");
 	}
 if(level>0)
-	written+=writer.PrintChar('\t', level);
-written+=writer.Print("<");
-written+=writer.Print(m_Tag);
-for(auto it=m_Attributes.cbegin(); it.has_current(); it.move_next())
+	size+=writer.PrintChar('\t', level);
+size+=writer.Print("<");
+size+=writer.Print(m_Tag);
+for(auto const& it: m_Attributes)
 	{
 	auto name=it.get_key();
 	auto value=it.get_value();
-	written+=writer.Print(" ");
-	written+=writer.Print(name);
+	size+=writer.Print(" ");
+	size+=writer.Print(name);
 	if(value)
 		{
-		written+=writer.Print("=\"");
-		written+=writer.Print(value);
-		written+=writer.Print("\"");
+		size+=writer.Print("=\"");
+		size+=writer.Print(value);
+		size+=writer.Print("\"");
 		}
 	}
 if(m_Value)
 	{
-	written+=writer.Print(">");
-	written+=writer.Print(m_Value);
-	written+=writer.Print("</");
-	written+=writer.Print(m_Tag);
-	written+=writer.Print(">");
-	return written;
+	size+=writer.Print(">");
+	size+=writer.Print(m_Value);
+	size+=writer.Print("</");
+	size+=writer.Print(m_Tag);
+	size+=writer.Print(">");
+	return size;
 	}
 if(!m_Children.get_count())
 	{
-	written+=writer.Print(" />");
-	return written;
+	size+=writer.Print(" />");
+	return size;
 	}
-written+=writer.Print(">");
-for(auto it=m_Children.cbegin(); it.has_current(); it.move_next())
-	{
-	auto child=it.get_current();
-	written+=child->WriteToStream(stream, next_level);
-	}
+size+=writer.Print(">");
+for(auto const& child: m_Children)
+	size+=child->WriteToStream(stream, next_level);
 if(level>=0)
-	written+=writer.Print("\r\n");
+	size+=writer.Print("\r\n");
 if(level>0)
-	written+=writer.PrintChar('\t', level);
-written+=writer.Print("</");
-written+=writer.Print(m_Tag);
-written+=writer.Print(">");
-return written;
+	size+=writer.PrintChar('\t', level);
+size+=writer.Print("</");
+size+=writer.Print(m_Tag);
+size+=writer.Print(">");
+return size;
 }
 
 
@@ -420,6 +407,13 @@ if(name)
 	m_Index.set(name, child);
 }
 
+VOID XmlNode::RemoveAttributeInternal(UINT pos)
+{
+auto const& att=m_Attributes.get_at(pos);
+auto const& key=att.get_key();
+RemoveAttributeInternal(key);
+}
+
 BOOL XmlNode::RemoveAttributeInternal(Handle<String> key)
 {
 if(StringHelper::Compare(key, "Name", 0, false)==0)
@@ -434,6 +428,13 @@ auto name=child->GetName();
 if(name)
 	m_Index.remove(name);
 m_Children.remove_at(pos);
+}
+
+VOID XmlNode::SetAttributeInternal(UINT pos, Handle<String> value)
+{
+auto const& att=m_Attributes.get_at(pos);
+auto const& key=att.get_key();
+SetAttributeInternal(key, value);
 }
 
 BOOL XmlNode::SetAttributeInternal(Handle<String> key, Handle<String> value)
@@ -468,6 +469,22 @@ else
 	{
 	m_Attributes.remove("Name");
 	}
+return true;
+}
+
+BOOL XmlNode::SetTagInternal(Handle<String> tag)
+{
+if(m_Tag==tag)
+	return false;
+m_Tag=tag;
+return true;
+}
+
+BOOL XmlNode::SetValueInternal(Handle<String> value)
+{
+if(m_Value==value)
+	return false;
+m_Value=value;
 return true;
 }
 

@@ -54,7 +54,7 @@ public:
 	static inline Handle<XmlNode> Create(Handle<String> Tag=nullptr) { return new XmlNode(Tag); }
 
 	// Common
-	virtual VOID AppendChild(XmlNode* Child);
+	VOID AppendChild(XmlNode* Child);
 	Event<XmlNode> Changed;
 	BOOL Clear();
 	Handle<String> GetAttribute(Handle<String> Key);
@@ -100,10 +100,14 @@ protected:
 	VOID AppendChildInternal(XmlNode* Child);
 	BOOL ClearInternal();
 	VOID InsertChildInternal(UINT Position, XmlNode* Child);
+	VOID RemoveAttributeInternal(UINT Position);
 	BOOL RemoveAttributeInternal(Handle<String> Key);
 	VOID RemoveChildInternal(UINT Position);
+	VOID SetAttributeInternal(UINT Position, Handle<String> Value);
 	BOOL SetAttributeInternal(Handle<String> Key, Handle<String> Value);
 	BOOL SetNameInternal(Handle<String> Name);
+	BOOL SetTagInternal(Handle<String> Tag);
+	BOOL SetValueInternal(Handle<String> Value);
 	Collections::map<Handle<String>, Handle<String>> m_Attributes;
 	Collections::list<Handle<XmlNode>> m_Children;
 	Collections::map<Handle<String>, XmlNode*> m_Index;
