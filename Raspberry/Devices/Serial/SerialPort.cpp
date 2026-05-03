@@ -82,8 +82,8 @@ const UINT IMSC_INT_RT			=(1<<6);
 const UINT IMSC_INT_TX			=(1<<5);
 const UINT IMSC_INT_RX			=(1<<4);
 
-const UINT LCRH_WORD_LEN_8		=3<<5;
-const UINT LCRH_FIFO_ENABLE		=1<<4;
+const UINT LCRH_WORD_LEN_8		=(3<<5);
+const UINT LCRH_FIFO_ENABLE		=(1<<4);
 
 
 //===========
