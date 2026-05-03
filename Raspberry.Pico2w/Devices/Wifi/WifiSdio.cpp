@@ -19,12 +19,12 @@ using namespace Devices::Gpio;
 using namespace Devices::Sdio;
 using namespace Devices::Timers;
 
-extern "C" UINT wifi_config;
-extern "C" UINT wifi_config_size;
-extern "C" UINT wifi_firmware;
-extern "C" UINT wifi_firmware_size;
-extern "C" UINT wifi_clm;
-extern "C" UINT wifi_clm_size;
+extern UINT wifi_config;
+extern UINT wifi_config_size;
+extern UINT wifi_firmware;
+extern UINT wifi_firmware_size;
+extern UINT wifi_clm;
+extern UINT wifi_clm_size;
 
 
 //===========
@@ -58,7 +58,11 @@ throw NotImplementedException();
 
 SIZE_T WifiSdio::Read(VOID* buf, SIZE_T size)
 {
-auto dst=(UINT*)buf;
+assert(buf);
+assert((SIZE_T)buf%sizeof(UINT)==0);
+assert(size);
+assert(size%sizeof(UINT)==0);
+auto dst=(BYTE*)buf;
 UINT cmd=CMD_INCR;
 BitHelper::Set(cmd, CMD_FN, FN2);
 UINT read=size;
@@ -66,12 +70,11 @@ while(read)
 	{
 	UINT copy=TypeHelper::Min(read, WIFI_BLOCK_SIZE);
 	BitHelper::Set(cmd, CMD_SIZE, copy);
-	UINT copy_count=copy/sizeof(UINT);
-	SpiBegin(1, copy_count);
-	SpiWrite(&cmd, 1);
-	SpiRead(dst, copy_count);
+	SpiBegin(sizeof(UINT), copy);
+	SpiWrite(&cmd, sizeof(UINT));
+	SpiRead(dst, copy);
 	SpiEnd();
-	dst+=copy_count;
+	dst+=copy;
 	read-=copy;
 	}
 return size;
@@ -89,7 +92,11 @@ throw NotImplementedException();
 
 SIZE_T WifiSdio::Write(VOID const* buf, SIZE_T size)
 {
-auto src=(UINT const*)buf;
+assert(buf);
+assert((SIZE_T)buf%sizeof(UINT)==0);
+assert(size);
+assert(size%sizeof(UINT)==0);
+auto src=(BYTE const*)buf;
 UINT cmd=CMD_WRITE|CMD_INCR;
 BitHelper::Set(cmd, CMD_FN, FN2);
 UINT write=size;
@@ -97,12 +104,11 @@ while(write)
 	{
 	UINT copy=TypeHelper::Min(write, WIFI_BLOCK_SIZE);
 	BitHelper::Set(cmd, CMD_SIZE, copy);
-	UINT copy_count=copy/sizeof(UINT);
-	SpiBegin(1+copy_count, 0);
-	SpiWrite(&cmd, 1);
-	SpiWrite(src, copy_count);
+	SpiBegin(sizeof(UINT)+copy, 0);
+	SpiWrite(&cmd, sizeof(UINT));
+	SpiWrite(src, copy);
 	SpiEnd();
-	src+=copy_count;
+	src+=copy;
 	write-=copy;
 	}
 return size;
@@ -165,9 +171,9 @@ BitHelper::Set(cmd, CMD_ADDR, reg.Address);
 BitHelper::Set(cmd, CMD_SIZE, 4);
 cmd=Swap16x2(cmd);
 UINT value=0;
-SpiBegin(1, 1);
-SpiWrite(&cmd, 1);
-SpiRead(&value, 1);
+SpiBegin(sizeof(UINT), sizeof(UINT));
+SpiWrite(&cmd, sizeof(UINT));
+SpiRead(&value, sizeof(UINT));
 SpiEnd();
 value=Swap16x2(value);
 return value;
@@ -182,17 +188,20 @@ BitHelper::Set(cmd, CMD_FN, FN1);
 BitHelper::Set(cmd, CMD_ADDR, SB_ADDR_32BIT|addr);
 BitHelper::Set(cmd, CMD_SIZE, sizeof(UINT));
 UINT delay_buf[SB_DELAY_COUNT];
-SpiBegin(1, SB_DELAY_COUNT+1);
-SpiWrite(&cmd, 1);
-SpiRead(delay_buf, SB_DELAY_COUNT);
+SpiBegin(sizeof(UINT), SB_DELAY_BYTES+sizeof(UINT));
+SpiWrite(&cmd, sizeof(UINT));
+SpiRead(delay_buf, SB_DELAY_BYTES);
 UINT value=0;
-SpiRead(&value, 1);
+SpiRead(&value, sizeof(UINT));
 SpiEnd();
 return value;
 }
 
-VOID WifiSdio::ReadBackplane(UINT addr, UINT* buf, UINT size)
+VOID WifiSdio::ReadBackplane(UINT addr, VOID* buf, UINT size)
 {
+assert(buf);
+assert((SIZE_T)buf%sizeof(UINT)==0);
+auto dst=(BYTE*)buf;
 UINT delay_buf[SB_DELAY_COUNT];
 while(size)
 	{
@@ -203,13 +212,13 @@ while(size)
 	BitHelper::Set(cmd, CMD_FN, FN1);
 	BitHelper::Set(cmd, CMD_ADDR, SB_ADDR_32BIT|wnd_pos);
 	BitHelper::Set(cmd, CMD_SIZE, copy);
-	UINT copy_count=TypeHelper::AlignUp(copy, sizeof(UINT))/sizeof(UINT);
-	SpiBegin(1, SB_DELAY_COUNT+copy_count);
-	SpiWrite(&cmd, 1);
-	SpiRead(delay_buf, SB_DELAY_COUNT);
-	SpiRead(buf, copy_count);
+	UINT transfer=TypeHelper::AlignUp(copy, sizeof(UINT));
+	SpiBegin(sizeof(UINT), SB_DELAY_BYTES+transfer);
+	SpiWrite(&cmd, sizeof(UINT));
+	SpiRead(delay_buf, SB_DELAY_BYTES);
+	SpiRead(dst, transfer);
 	SpiEnd();
-	buf+=copy_count;
+	dst+=copy;
 	addr+=copy;
 	size-=copy;
 	}
@@ -224,15 +233,15 @@ BitHelper::Set(cmd, CMD_SIZE, reg.Size);
 UINT delay_count=0;
 if(reg.Function==FN1)
 	delay_count=SB_DELAY_COUNT;
-SpiBegin(1, delay_count+1);
-SpiWrite(&cmd, 1);
+SpiBegin(sizeof(UINT), (delay_count+1)*sizeof(UINT));
+SpiWrite(&cmd, sizeof(UINT));
 if(delay_count>0)
 	{
 	UINT delay_buf[SB_DELAY_COUNT];
-	SpiRead(delay_buf, delay_count);
+	SpiRead(delay_buf, SB_DELAY_BYTES);
 	}
 UINT value=0;
-SpiRead(&value, 1);
+SpiRead(&value, sizeof(UINT));
 SpiEnd();
 return value;
 }
@@ -341,8 +350,8 @@ BitHelper::Set(cmd, CMD_SIZE, 4);
 UINT buf[2];
 buf[0]=Swap16x2(cmd);
 buf[1]=Swap16x2(value);
-SpiBegin(2, 0);
-SpiWrite(buf, 2);
+SpiBegin(2*sizeof(UINT), 0);
+SpiWrite(buf, 2*sizeof(UINT));
 SpiEnd();
 }
 
@@ -353,14 +362,15 @@ addr&=SB_WND_MASK;
 UINT cmd=CMD_WRITE|CMD_INCR;
 BitHelper::Set(cmd, CMD_ADDR, SB_ADDR_32BIT|addr);
 BitHelper::Set(cmd, CMD_SIZE, sizeof(UINT));
-SpiBegin(2, 0);
-SpiWrite(&cmd, 1);
-SpiWrite(&value, 1);
+SpiBegin(2*sizeof(UINT), 0);
+SpiWrite(&cmd, sizeof(UINT));
+SpiWrite(&value, sizeof(UINT));
 SpiEnd();
 }
 
-VOID WifiSdio::WriteBackplane(UINT addr, UINT const* buf, UINT size)
+VOID WifiSdio::WriteBackplane(UINT addr, VOID const* buf, UINT size)
 {
+auto src=(BYTE const*)buf;
 while(size)
 	{
 	SetBackplane(addr);
@@ -370,12 +380,12 @@ while(size)
 	BitHelper::Set(cmd, CMD_FN, FN1);
 	BitHelper::Set(cmd, CMD_ADDR, SB_ADDR_32BIT|wnd_pos);
 	BitHelper::Set(cmd, CMD_SIZE, copy);
-	UINT copy_count=TypeHelper::AlignUp(copy, sizeof(UINT))/sizeof(UINT);
-	SpiBegin(1+copy_count, 0);
-	SpiWrite(&cmd, 1);
-	SpiWrite(buf, copy_count);
+	UINT transfer=TypeHelper::AlignUp(copy, sizeof(UINT));
+	SpiBegin(sizeof(UINT)+transfer, 0);
+	SpiWrite(&cmd, sizeof(UINT));
+	SpiWrite(src, transfer);
 	SpiEnd();
-	buf+=copy_count;
+	src+=copy;
 	addr+=copy;
 	size-=copy;
 	}
@@ -390,8 +400,8 @@ BitHelper::Set(cmd, CMD_SIZE, reg.Size);
 UINT buf[2];
 buf[0]=cmd;
 buf[1]=value;
-SpiBegin(2, 0);
-SpiWrite(buf, 2);
+SpiBegin(2*sizeof(UINT), 0);
+SpiWrite(buf, 2*sizeof(UINT));
 SpiEnd();
 }
 

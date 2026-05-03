@@ -117,10 +117,10 @@ protected:
 	WifiSpi();
 
 	// Common
-	VOID SpiBegin(UINT TxCount, UINT RxCount);
+	VOID SpiBegin(SIZE_T TxSize, SIZE_T RxSize);
 	VOID SpiEnd();
-	VOID SpiRead(UINT* Buffer, UINT Count);
-	VOID SpiWrite(UINT const* Buffer, UINT Count);
+	VOID SpiRead(VOID* Buffer, SIZE_T Size);
+	VOID SpiWrite(VOID const* Buffer, SIZE_T Count);
 
 	// Members
 	Handle<GpioHost> m_GpioHost;

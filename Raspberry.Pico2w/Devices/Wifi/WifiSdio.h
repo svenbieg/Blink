@@ -72,7 +72,7 @@ private:
 	VOID PollRegister(SDIO_REG const& Register, UINT Mask, UINT Value, UINT Timeout=100);
 	UINT Read16x2(FN0_32 const& Register);
 	UINT ReadBackplane(UINT Address);
-	VOID ReadBackplane(UINT Address, UINT* Buffer, UINT Size);
+	VOID ReadBackplane(UINT Address, VOID* Buffer, UINT Size);
 	UINT ReadRegister(SDIO_REG const& Register);
 	VOID ResetDevice(UINT Address, UINT Flags);
 	VOID ServiceTask();
@@ -80,7 +80,7 @@ private:
 	VOID SetRegister(SDIO_REG const& Register, UINT Mask, UINT Value);
 	VOID Write16x2(FN0_32 const& Register, UINT Value);
 	VOID WriteBackplane(UINT Address, UINT Value);
-	VOID WriteBackplane(UINT Address, UINT const* Buffer, UINT Size);
+	VOID WriteBackplane(UINT Address, VOID const* Buffer, UINT Size);
 	VOID WriteRegister(SDIO_REG const& Register, UINT Value);
 	CriticalSection m_CriticalSection;
 	Signal m_InterruptPending;
