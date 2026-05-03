@@ -13,7 +13,6 @@
 #include "Devices/System/System.h"
 #include "BitHelper.h"
 #include "FlagHelper.h"
-#include <assert.h>
 
 using namespace Concurrency;
 using namespace Devices::System;
@@ -22,11 +21,11 @@ using namespace Storage::Encoding;
 
 extern "C"
 {
-BYTE __exidx_start;
-BYTE __exidx_end;
-VOID exc_restore_context(EXC_FRAME* Context);
-VOID exc_resume(VOID* Resume, VOID* Argument);
-VOID exc_save_context(EXC_FRAME* Context);
+extern BYTE __exidx_start;
+extern BYTE __exidx_end;
+extern VOID exc_restore_context(EXC_FRAME* Context);
+extern VOID exc_resume(VOID* Resume, VOID* Argument);
+extern VOID exc_save_context(EXC_FRAME* Context);
 }
 
 
@@ -45,11 +44,11 @@ class Prel31
 {
 public:
 	// Common
-	static inline UINT Read(UINT* Value)
+	static inline SIZE_T Read(UINT* Value)
 		{
 		return (SIZE_T)Value+SignExtend(*Value);
 		}
-	static inline UINT SignExtend(UINT Value)
+	static inline SIZE_T SignExtend(UINT Value)
 		{
 		return Value|((Value&0x40000000)<<1);
 		}
@@ -60,10 +59,10 @@ public:
 // Index
 //=======
 
-const SIZE_T EXIDX_COMPACT=1<<31;
-const BITS32 EXIDX_CHOICE={ 0xF, 24 };
-const BITS32 EXIDX_EXTRA_WORDS={ 0xFF, 16 };
-const SIZE_T EXIDX_INVALID=1;
+const UINT EXIDX_COMPACT		=1<<31;
+const BITS EXIDX_CHOICE			={ 0xF, 24 };
+const BITS EXIDX_EXTRA_WORDS	={ 0xFF, 16 };
+const UINT EXIDX_INVALID		=1;
 
 
 //==========
@@ -188,9 +187,9 @@ VOID UnwindException::GetContext(SIZE_T pc, UnwindContext* context)
 context->InstructionCount=0;
 context->Personality=0;
 context->ProgramCounter=pc;
-UINT exidx_start=(UINT)&__exidx_start;
-UINT exidx_end=(UINT)&__exidx_end;
-UINT exidx_size=exidx_end-exidx_start;
+SIZE_T exidx_start=(SIZE_T)&__exidx_start;
+SIZE_T exidx_end=(SIZE_T)&__exidx_end;
+SIZE_T exidx_size=exidx_end-exidx_start;
 UINT entry_size=8;
 UINT entry_count=exidx_size/entry_size;
 UINT entry_first=0;
@@ -199,7 +198,7 @@ while(entry_first<entry_last)
 	{
 	UINT entry_id=entry_first+(entry_last-entry_first)/2;
 	UINT* entry=(UINT*)(exidx_start+entry_id*entry_size);
-	UINT frame_start=Prel31::Read(&entry[0]);
+	SIZE_T frame_start=Prel31::Read(&entry[0]);
 	if(frame_start>pc)
 		{
 		entry_last=entry_id;
@@ -215,8 +214,8 @@ while(entry_first<entry_last)
 assert(entry_first>0);
 UINT entry_id=entry_first-1;
 UINT* entry=(UINT*)(exidx_start+entry_id*entry_size);
-UINT frame_start=Prel31::Read(&entry[0]);
-UINT frame_end=SIZE_MAX;
+SIZE_T frame_start=Prel31::Read(&entry[0]);
+SIZE_T frame_end=SIZE_MAX;
 if(entry_id+1<entry_count)
 	{
 	UINT next_id=entry_id+1;
@@ -233,7 +232,7 @@ if(FlagHelper::Get(entry[1], EXIDX_COMPACT))
 	context->Instructions=&context->Instruction;
 	return;
 	}
-UINT table_pos=Prel31::Read(&entry[1]);
+SIZE_T table_pos=Prel31::Read(&entry[1]);
 UINT* table=(UINT*)table_pos;
 UINT extra_words=0;
 if(FlagHelper::Get(table[0], EXIDX_COMPACT))
@@ -276,7 +275,7 @@ for(UINT pos=0; pos<sizeof(UINT); pos++)
 		assert(pos<sizeof(UINT));
 		UINT mask=TypeHelper::MakeLong(instr[pos], op&0xF)<<4;
 		assert(mask!=0);
-		auto stack=(UINT*)Frame.SP;
+		UINT* stack=(UINT*)Frame.SP;
 		for(UINT reg=4; reg<EXC_REG_COUNT; reg++)
 			{
 			if(BitHelper::Get(mask, 1U<<reg))
@@ -294,7 +293,7 @@ for(UINT pos=0; pos<sizeof(UINT); pos++)
 		}
 	if(op<0xB0)
 		{
-		auto stack=(UINT*)Frame.SP;
+		UINT* stack=(UINT*)Frame.SP;
 		UINT count=(op&0x7)+1;
 		for(UINT u=0; u<count; u++)
 			Registers[4+u]=*stack++;
@@ -309,7 +308,7 @@ for(UINT pos=0; pos<sizeof(UINT); pos++)
 		{
 		pos++;
 		assert(pos<sizeof(UINT));
-		auto stack=(UINT*)Frame.SP;
+		UINT* stack=(UINT*)Frame.SP;
 		BYTE mask=instr[pos];
 		for(UINT reg=0; reg<4; reg++)
 			{
