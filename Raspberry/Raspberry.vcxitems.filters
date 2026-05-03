@@ -13,6 +13,9 @@
     <Filter Include="Devices\Sdio">
       <UniqueIdentifier>{2ddd884a-edd9-47ed-a1da-b739e2337ce6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Devices\Spi">
+      <UniqueIdentifier>{5791131a-8b8f-484a-bb71-92ede4668a60}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiAdapter.cpp">
@@ -40,6 +43,9 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Sdio\Sdio.h">
       <Filter>Devices\Sdio</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Spi\PL022.h">
+      <Filter>Devices\Spi</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

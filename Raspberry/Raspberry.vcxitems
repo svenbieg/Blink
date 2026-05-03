@@ -17,6 +17,7 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Sdio\Sdio.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialPort.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Spi\PL022.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\Wifi.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiPacket.h" />
