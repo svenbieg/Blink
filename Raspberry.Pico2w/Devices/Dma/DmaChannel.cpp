@@ -35,6 +35,7 @@ namespace Devices {
 //==========
 
 const UINT DMA_CHANNEL_COUNT=4;
+const UINT DMA_DATA_SIZE[]={ 1, 2, 4 };
 
 
 //===========
@@ -73,13 +74,6 @@ const UINT CTRL_INCR_WRITE		=(1<<6);
 const UINT CTRL_INCR_READ		=(1<<4);
 const BITS CTRL_DATA_SIZE		={ 0x03, 2 };
 const UINT CTRL_EN				=(1<<0);
-
-enum DATA_SIZE
-{
-DATA_SIZE_8BIT,
-DATA_SIZE_16BIT,
-DATA_SIZE_32BIT
-};
 
 typedef struct
 {
@@ -165,17 +159,19 @@ IoHelper::Write(dma->ABORT, 1U<<m_Id);
 IoHelper::Retry(dma->CH[m_Id].CTRL_TRIG, CTRL_BUSY, 0);
 }
 
-VOID DmaChannel::BeginRead(DmaRequest dreq, RO32* reg, UINT* buf, SIZE_T count)
+VOID DmaChannel::BeginRead(DmaRequest dreq, RO32* reg, VOID* buf, SIZE_T size)
 {
 assert(buf);
-assert(count>0);
+assert((SIZE_T)buf%m_DataSize==0);
+assert(size);
+assert(size%m_DataSize==0);
 UINT ctrl=m_Control;
 BitHelper::Set(ctrl, CTRL_INCR_READ|CTRL_INCR_WRITE, CTRL_INCR_WRITE);
 BitHelper::Set(ctrl, CTRL_DREQ, (UINT)dreq);
 auto dma=(DMA_REGS*)DMA_BASE;
 dma->CH[m_Id].READ_ADDR=(SIZE_T)reg;
 dma->CH[m_Id].WRITE_ADDR=(SIZE_T)buf;
-dma->CH[m_Id].TRANSF_COUNT=count;
+dma->CH[m_Id].TRANSF_COUNT=size/m_DataSize;
 SpinLock lock(m_CriticalSection);
 m_Status=Status::Pending;
 dma->CH[m_Id].CTRL_TRIG=ctrl;
@@ -186,17 +182,26 @@ VOID DmaChannel::SetByteSwap(BOOL swap)
 BitHelper::Set(m_Control, CTRL_BSWAP, swap);
 }
 
-VOID DmaChannel::BeginWrite(DmaRequest dreq, RW32* reg, UINT const* buf, SIZE_T count)
+VOID DmaChannel::SetDataSize(DmaDataSize data_size)
+{
+UINT id=(UINT)data_size;
+BitHelper::Set(m_Control, CTRL_DATA_SIZE, id);
+m_DataSize=DMA_DATA_SIZE[id];
+}
+
+VOID DmaChannel::BeginWrite(DmaRequest dreq, RW32* reg, VOID const* buf, SIZE_T size)
 {
 assert(buf);
-assert(count>0);
+assert((SIZE_T)buf%m_DataSize==0);
+assert(size);
+assert(size%m_DataSize==0);
 UINT ctrl=m_Control;
 BitHelper::Set(ctrl, CTRL_INCR_READ|CTRL_INCR_WRITE, CTRL_INCR_READ);
 BitHelper::Set(ctrl, CTRL_DREQ, (UINT)dreq);
 auto dma=(DMA_REGS*)DMA_BASE;
 dma->CH[m_Id].READ_ADDR=(SIZE_T)buf;
 dma->CH[m_Id].WRITE_ADDR=(SIZE_T)reg;
-dma->CH[m_Id].TRANSF_COUNT=count;
+dma->CH[m_Id].TRANSF_COUNT=size/m_DataSize;
 SpinLock lock(m_CriticalSection);
 m_Status=Status::Pending;
 dma->CH[m_Id].CTRL_TRIG=ctrl;
@@ -218,11 +223,11 @@ if(m_Status!=Status::Success)
 
 DmaChannel::DmaChannel(UINT id):
 m_Control(0),
+m_DataSize(1),
 m_Id(id),
 m_Status(Status::Success)
 {
 BitHelper::Set(m_Control, CTRL_CHAIN_TO, m_Id);
-BitHelper::Set(m_Control, CTRL_DATA_SIZE, DATA_SIZE_32BIT);
 BitHelper::Set(m_Control, CTRL_EN);
 Irq irq=(Irq)((UINT)Irq::Dma0+m_Id);
 Interrupts::SetHandler(irq, this, &DmaChannel::OnInterrupt);
