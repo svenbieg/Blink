@@ -14,7 +14,6 @@
 
 #include "Storage/Streams/InputStream.h"
 #include "Storage/Streams/OutputStream.h"
-#include "MemoryHelper.h"
 
 
 //===========
@@ -74,53 +73,37 @@ public:
 	inline BYTE ReadByte()noexcept { return *m_Buffer++; }
 	static inline BYTE ReadByte(BYTE const*& Dwarf)noexcept { return *Dwarf++; }
 	inline UINT64 ReadEncoded(BYTE Encoding, SIZE_T DataRelative=0) { return ReadEncoded((BYTE const*&)m_Buffer, Encoding, DataRelative); }
-	static UINT64 ReadEncoded(BYTE const*& Dwarf, BYTE Encoding, UINT64 DataRelative=0);
+	static UINT64 ReadEncoded(BYTE const*& Dwarf, BYTE Encoding, SIZE_T DataRelative=0);
 	inline INT64 ReadSigned()noexcept { return ReadSigned((BYTE const*&)m_Buffer); }
 	static INT64 ReadSigned(BYTE const*& Dwarf)noexcept;
-	static inline UINT ReadSigned(InputStream* Dwarf, INT* Value)
-		{
-		INT64 value=0;
-		UINT size=ReadSigned(Dwarf, &value);
-		if(Value)
-			*Value=TypeHelper::Integral<INT, INT64>(value);
-		return size;
-		}
-	static UINT ReadSigned(InputStream* Dwarf, INT64* Value);
+	static SIZE_T ReadSigned(InputStream* Stream, INT* Value);
+	static SIZE_T ReadSigned(InputStream* Stream, INT64* Value);
 	inline UINT64 ReadUnsigned()noexcept { return ReadUnsigned((BYTE const*&)m_Buffer); }
 	static UINT64 ReadUnsigned(BYTE const*& Dwarf)noexcept;
-	static inline UINT ReadUnsigned(InputStream* Dwarf, UINT* Value)
-		{
-		UINT64 value=0;
-		UINT size=ReadUnsigned(Dwarf, &value);
-		if(Value)
-			*Value=TypeHelper::Integral<UINT, UINT64>(value);
-		return size;
-		}
-	static UINT ReadUnsigned(InputStream* Dwarf, UINT64* Value);
+	static SIZE_T ReadUnsigned(InputStream* Stream, UINT* Value);
+	static SIZE_T ReadUnsigned(InputStream* Stream, UINT64* Value);
 	template <typename _value_t> inline _value_t ReadValue()noexcept
 		{
-		_value_t value;
-		MemoryHelper::Copy(&value, m_Buffer, sizeof(_value_t));
+		_value_t value=*(_value_t const*)m_Buffer;
 		m_Buffer+=sizeof(_value_t);
 		return value;
 		}
 	template <typename _value_t> static inline _value_t ReadValue(BYTE const*& Dwarf)noexcept
 		{
-		_value_t value;
-		MemoryHelper::Copy(&value, Dwarf, sizeof(_value_t));
+		_value_t value=*(_value_t const*)Dwarf;
 		Dwarf+=sizeof(_value_t);
 		return value;
 		}
-	template <typename _value_t> static inline _value_t ReadValue(InputStream* Dwarf)
+	template <typename _value_t> static inline _value_t ReadValue(InputStream* Stream)
 		{
-		assert(Dwarf);
+		assert(Stream);
 		_value_t value;
-		Dwarf->Read(&value, sizeof(_value_t));
+		Stream->Read(&value, sizeof(_value_t));
 		return value;
 		}
 	VOID SetPosition(SIZE_T Position)noexcept { m_Buffer=(BYTE*)Position; }
-	static UINT WriteSigned(OutputStream* Dwarf, INT64 Value);
-	static UINT WriteUnsigned(OutputStream* Dwarf, UINT64 Value);
+	static SIZE_T WriteSigned(OutputStream* Stream, INT64 Value);
+	static SIZE_T WriteUnsigned(OutputStream* Stream, UINT64 Value);
 
 private:
 	// Common

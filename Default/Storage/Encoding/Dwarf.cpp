@@ -73,10 +73,10 @@ BYTE encoding=*dwarf++;
 return ReadEncoded(dwarf, encoding);
 }
 
-UINT64 Dwarf::ReadEncoded(BYTE const*& dwarf, BYTE encoding, UINT64 data_rel)
+UINT64 Dwarf::ReadEncoded(BYTE const*& dwarf, BYTE encoding, SIZE_T data_rel)
 {
 SIZE_T ptr_rel=(SIZE_T)dwarf;
-SIZE_T value=0;
+UINT64 value=0;
 UINT type=encoding&0xF;
 if(type==0xF)
 	return 0;
@@ -174,16 +174,41 @@ if(byte&0x40)
 return (INT64)value;
 }
 
-UINT Dwarf::ReadSigned(InputStream* dwarf, INT64* value_ptr)
+SIZE_T Dwarf::ReadSigned(InputStream* stream, INT* value_ptr)
 {
-assert(dwarf);
-UINT64 value=0;
-UINT size=0;
+assert(stream);
+SIZE_T size=0;
+UINT value=0;
 UINT shift=0;
 BYTE byte=0;
 do
 	{
-	size+=dwarf->Read(&byte, 1);
+	if(size==sizeof(UINT))
+		throw BufferOverrunException();
+	size+=stream->Read(&byte, 1);
+	value|=((UINT)byte&0x7F)<<shift;
+	shift+=7;
+	}
+while(byte&0x80);
+if(byte&0x40)
+	value|=~0UL<<shift;
+if(value_ptr)
+	*value_ptr=(INT)value;
+return size;
+}
+
+SIZE_T Dwarf::ReadSigned(InputStream* stream, INT64* value_ptr)
+{
+assert(stream);
+SIZE_T size=0;
+UINT64 value=0;
+UINT shift=0;
+BYTE byte=0;
+do
+	{
+	if(size==sizeof(UINT64))
+		throw BufferOverrunException();
+	size+=stream->Read(&byte, 1);
 	value|=((UINT64)byte&0x7F)<<shift;
 	shift+=7;
 	}
@@ -199,9 +224,12 @@ UINT64 Dwarf::ReadUnsigned(BYTE const*& dwarf)noexcept
 {
 UINT64 value=0;
 UINT shift=0;
+UINT size=0;
 BYTE byte;
 do
 	{
+	if(size==sizeof(UINT64))
+		throw BufferOverrunException();
 	byte=*dwarf++;
 	value|=((UINT64)byte&0x7F)<<shift;
 	shift+=7;
@@ -210,16 +238,18 @@ while(byte&0x80);
 return value;
 }
 
-UINT Dwarf::ReadUnsigned(InputStream* dwarf, UINT64* value_ptr)
+SIZE_T Dwarf::ReadUnsigned(InputStream* stream, UINT* value_ptr)
 {
-assert(dwarf);
-UINT64 value=0;
-UINT size=0;
+assert(stream);
+SIZE_T size=0;
+UINT value=0;
 UINT shift=0;
 BYTE byte=0;
 do
 	{
-	size+=dwarf->Read(&byte, 1);
+	if(size==sizeof(UINT))
+		throw BufferOverrunException();
+	size+=stream->Read(&byte, 1);
 	value|=((UINT64)byte&0x7F)<<shift;
 	shift+=7;
 	}
@@ -229,7 +259,28 @@ if(value_ptr)
 return size;
 }
 
-UINT Dwarf::WriteSigned(OutputStream* dwarf, INT64 ivalue)
+SIZE_T Dwarf::ReadUnsigned(InputStream* stream, UINT64* value_ptr)
+{
+assert(stream);
+SIZE_T size=0;
+UINT64 value=0;
+UINT shift=0;
+BYTE byte=0;
+do
+	{
+	if(size==sizeof(UINT64))
+		throw BufferOverrunException();
+	size+=stream->Read(&byte, 1);
+	value|=((UINT64)byte&0x7F)<<shift;
+	shift+=7;
+	}
+while(byte&0x80);
+if(value_ptr)
+	*value_ptr=value;
+return size;
+}
+
+SIZE_T Dwarf::WriteSigned(OutputStream* stream, INT64 ivalue)
 {
 BOOL neg=false;
 if(ivalue<0)
@@ -238,7 +289,7 @@ if(ivalue<0)
 	neg=true;
 	}
 UINT64 value=(UINT64)ivalue;
-UINT size=0;
+SIZE_T size=0;
 do
 	{
 	BYTE byte=(BYTE)value&0x7F;
@@ -259,9 +310,9 @@ do
 			byte|=0x40;
 			}
 		}
-	if(dwarf)
+	if(stream)
 		{
-		size+=(UINT)dwarf->Write(&byte, 1);
+		size+=stream->Write(&byte, 1);
 		}
 	else
 		{
@@ -272,18 +323,18 @@ while(value);
 return size;
 }
 
-UINT Dwarf::WriteUnsigned(OutputStream* dwarf, UINT64 value)
+SIZE_T Dwarf::WriteUnsigned(OutputStream* stream, UINT64 value)
 {
-UINT size=0;
+SIZE_T size=0;
 do
 	{
 	BYTE byte=(BYTE)value&0x7F;
 	value>>=7;
 	if(value)
 		byte|=0x80;
-	if(dwarf)
+	if(stream)
 		{
-		size+=dwarf->Write(&byte, 1);
+		size+=stream->Write(&byte, 1);
 		}
 	else
 		{
