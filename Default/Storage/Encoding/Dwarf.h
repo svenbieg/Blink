@@ -74,12 +74,12 @@ public:
 	static inline BYTE ReadByte(BYTE const*& Dwarf)noexcept { return *Dwarf++; }
 	inline UINT64 ReadEncoded(BYTE Encoding, SIZE_T DataRelative=0) { return ReadEncoded((BYTE const*&)m_Buffer, Encoding, DataRelative); }
 	static UINT64 ReadEncoded(BYTE const*& Dwarf, BYTE Encoding, SIZE_T DataRelative=0);
-	inline INT64 ReadSigned()noexcept { return ReadSigned((BYTE const*&)m_Buffer); }
-	static INT64 ReadSigned(BYTE const*& Dwarf)noexcept;
+	inline INT64 ReadSigned() { return ReadSigned((BYTE const*&)m_Buffer); }
+	static INT64 ReadSigned(BYTE const*& Dwarf);
 	static SIZE_T ReadSigned(InputStream* Stream, INT* Value);
 	static SIZE_T ReadSigned(InputStream* Stream, INT64* Value);
-	inline UINT64 ReadUnsigned()noexcept { return ReadUnsigned((BYTE const*&)m_Buffer); }
-	static UINT64 ReadUnsigned(BYTE const*& Dwarf)noexcept;
+	inline UINT64 ReadUnsigned() { return ReadUnsigned((BYTE const*&)m_Buffer); }
+	static UINT64 ReadUnsigned(BYTE const*& Dwarf);
 	static SIZE_T ReadUnsigned(InputStream* Stream, UINT* Value);
 	static SIZE_T ReadUnsigned(InputStream* Stream, UINT64* Value);
 	template <typename _value_t> inline _value_t ReadValue()noexcept

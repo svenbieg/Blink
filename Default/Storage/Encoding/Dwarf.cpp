@@ -157,16 +157,20 @@ if(FlagHelper::Get(encoding, DW_INDIRECT))
 return value;
 }
 
-INT64 Dwarf::ReadSigned(BYTE const*& dwarf)noexcept
+INT64 Dwarf::ReadSigned(BYTE const*& dwarf)
 {
 UINT64 value=0;
 UINT shift=0;
+UINT size=0;
 BYTE byte;
 do
 	{
+	if(size==sizeof(UINT))
+		throw BufferOverrunException();
 	byte=*dwarf++;
 	value|=((UINT64)byte&0x7F)<<shift;
 	shift+=7;
+	size++;
 	}
 while(byte&0x80);
 if(byte&0x40)
@@ -220,7 +224,7 @@ if(value_ptr)
 return size;
 }
 
-UINT64 Dwarf::ReadUnsigned(BYTE const*& dwarf)noexcept
+UINT64 Dwarf::ReadUnsigned(BYTE const*& dwarf)
 {
 UINT64 value=0;
 UINT shift=0;
@@ -233,6 +237,7 @@ do
 	byte=*dwarf++;
 	value|=((UINT64)byte&0x7F)<<shift;
 	shift+=7;
+	size++;
 	}
 while(byte&0x80);
 return value;
