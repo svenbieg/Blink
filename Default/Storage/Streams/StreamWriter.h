@@ -10,8 +10,7 @@
 //=======
 
 #include "Storage/Streams/OutputStream.h"
-#include "FlagHelper.h"
-#include "StringHelper.h"
+#include "StringClass.h"
 
 
 //===========

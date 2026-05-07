@@ -60,6 +60,7 @@ public:
 	static inline Handle<Array> Create(Handle<Array> const& Copy) { return Object::CreateEx<Array, Array const*>(Copy.m_Count*sizeof(_item_t), alignof(_item_t), Copy); }
 
 	// Access
+	inline Handle<Iterator> At(_size_t Position) { return new Iterator(this, Position); }
 	inline _item_t* Begin() { return m_Items; }
 	inline _item_t const* Begin()const { return m_Items; }
 	inline Handle<Iterator> First() { return new Iterator(this, 0); }
@@ -107,11 +108,6 @@ public:
 		}
 
 protected:
-	// Common
-	_size_t m_Count;
-	_item_t* m_Items;
-
-private:
 	// Con-/Destructors
 	Array(VOID* Buffer, SIZE_T Size): m_Count(Size/sizeof(_item_t)), m_Items((_item_t*)Buffer)
 		{
@@ -123,6 +119,10 @@ private:
 		for(UINT u=0; u<m_Count; u++)
 			new (&m_Items[u]) _item_t(Copy->GetAt(u));
 		}
+
+	// Common
+	_size_t m_Count;
+	_item_t* m_Items;
 };
 
 

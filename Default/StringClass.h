@@ -10,8 +10,8 @@
 //=======
 
 #include "Storage/Encoding/Dwarf.h"
-#include "Storage/Streams/StreamReader.h"
-#include "Storage/Streams/StreamWriter.h"
+#include "Storage/Streams/InputStream.h"
+#include "Storage/Streams/OutputStream.h"
 #include "Handle.h"
 #include "StringHelper.h"
 
@@ -24,14 +24,6 @@ class String;
 template <> class Handle<String>;
 
 class StringBuilder;
-
-namespace Storage
-{
-namespace Streams
-	{
-	class StreamReader;
-	}
-}
 
 
 //========
@@ -107,8 +99,7 @@ public:
 	using Dwarf=Storage::Encoding::Dwarf;
 	using InputStream=Storage::Streams::InputStream;
 	using OutputStream=Storage::Streams::OutputStream;
-	using StreamReader=Storage::Streams::StreamReader;
-	using StreamWriter=Storage::Streams::StreamWriter;
+	using StreamFormat=Storage::Streams::StreamFormat;
 
 	// Friends
 	template <class _friend_t> friend class Handle;
@@ -131,11 +122,34 @@ public:
 		{
 		if(!m_Object)
 			return Dwarf::WriteUnsigned(Stream, 0U);
-		StreamWriter writer(Stream);
+		auto format=StreamFormat::Ansi;
+		if(Stream)
+			format=Stream->GetStreamFormat();
 		SIZE_T size=0;
+		auto buf=m_Object->m_Buffer;
 		auto len=m_Object->m_Length;
 		size+=Dwarf::WriteUnsigned(Stream, len);
-		size+=writer.Print(len, m_Object->m_Buffer);
+		switch(format)
+			{
+			case StreamFormat::Ansi:
+				{
+				for(UINT u=0; u<len; u++)
+					size+=CharHelper::WriteAnsi(Stream, buf[u]);
+				break;
+				}
+			case StreamFormat::Unicode:
+				{
+				for(UINT u=0; u<len; u++)
+					size+=CharHelper::WriteUnicode(Stream, buf[u]);
+				break;
+				}
+			case StreamFormat::UTF8:
+				{
+				for(UINT u=0; u<len; u++)
+					size+=CharHelper::WriteUtf8(Stream, buf[u]);
+				break;
+				}
+			}
 		return size;
 		}
 
@@ -173,16 +187,38 @@ public:
 	inline Handle& operator=(LPCWSTR Value) { return operator=(String::Create(Value)); }
 	SIZE_T ReadFromStream(InputStream* Stream)
 		{
-		StreamReader reader(Stream);
 		SIZE_T size=0;
 		UINT len=0;
 		size+=Dwarf::ReadUnsigned(Stream, &len);
 		if(!len)
+			{
+			operator=(nullptr);
 			return size;
+			}
 		auto str=String::Create(len, nullptr);
 		auto buf=str->m_Buffer;
-		for(UINT u=0; u<len; u++)
-			size+=reader.ReadChar(&buf[u]);
+		auto format=Stream->GetStreamFormat();
+		switch(format)
+			{
+			case StreamFormat::Ansi:
+				{
+				for(UINT u=0; u<len; u++)
+					size+=CharHelper::ReadAnsi(Stream, &buf[u]);
+				break;
+				}
+			case StreamFormat::Unicode:
+				{
+				for(UINT u=0; u<len; u++)
+					size+=CharHelper::ReadUnicode(Stream, &buf[u]);
+				break;
+				}
+			case StreamFormat::UTF8:
+				{
+				for(UINT u=0; u<len; u++)
+					size+=CharHelper::ReadUtf8(Stream, &buf[u]);
+				break;
+				}
+			}
 		buf[len]=0;
 		str->m_Hash=StringHelper::Hash(buf);
 		str->m_Length=len;

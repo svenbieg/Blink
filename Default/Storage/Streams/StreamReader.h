@@ -10,8 +10,7 @@
 //=======
 
 #include "Storage/Streams/InputStream.h"
-#include "CharHelper.h"
-#include "StringHelper.h"
+#include "StringClass.h"
 
 
 //===========

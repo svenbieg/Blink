@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include "FlagHelper.h"
 #include "StringClass.h"
 
 
