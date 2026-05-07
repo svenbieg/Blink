@@ -49,6 +49,14 @@ float_func __aeabi_f2uiz
 dcp_float2uint_m r0, r0
 float_ret
 
+float_func __aeabi_f2lz
+dcp_float2int_m r0, r0
+float_ret
+
+float_func __aeabi_i2d
+dcp_int2double_m r0, r1, r0
+float_ret
+
 float_func __aeabi_i2f
 dcp_int2float_m r0, r0
 float_ret

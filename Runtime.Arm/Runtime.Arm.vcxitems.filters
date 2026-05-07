@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)irq.S" />
-    <None Include="$(MSBuildThisFileDirectory)long.S" />
     <None Include="$(MSBuildThisFileDirectory)vectors.S" />
     <None Include="$(MSBuildThisFileDirectory)except.S" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props">
@@ -16,7 +15,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)math.c" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.cpp">
       <Filter>Concurrency</Filter>
     </ClCompile>

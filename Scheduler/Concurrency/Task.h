@@ -17,9 +17,10 @@
 #include "Concurrency/DispatchedHandler.h"
 #include "Concurrency/Mutex.h"
 #include "Runtime/UnwindException.h"
+#include "FlagHelper.h"
 #include "MemoryHelper.h"
 #include "StringClass.h"
-#include <assert.h>
+#include <cassert>
 #include <new>
 #include <utility>
 

@@ -11,6 +11,7 @@
 
 #include "Concurrency/DispatchedQueue.h"
 #include "Devices/System/System.h"
+#include "Storage/Streams/StreamReader.h"
 #include "Storage/Streams/StreamWriter.h"
 
 using namespace Concurrency;

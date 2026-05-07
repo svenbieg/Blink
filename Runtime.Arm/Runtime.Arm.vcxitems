@@ -2,7 +2,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <HasSharedItems>true</HasSharedItems>
-    <ItemsProjectGuid>{D02B9E2E-72CC-4764-BFFC-8AA0889B0162}</ItemsProjectGuid>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(MSBuildThisFileDirectory)</NMakeIncludeSearchPath>
   </PropertyGroup>
@@ -15,12 +14,10 @@
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.targets" />
     <None Include="$(MSBuildThisFileDirectory)except.S" />
     <None Include="$(MSBuildThisFileDirectory)irq.S" />
-    <None Include="$(MSBuildThisFileDirectory)long.S" />
     <None Include="$(MSBuildThisFileDirectory)vectors.S" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)math.c" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Runtime\UnwindException.cpp" />
   </ItemGroup>
   <ItemGroup>

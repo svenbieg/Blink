@@ -56,6 +56,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiConfig.h">
       <Filter>Devices\Wifi</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Spi\SpiHost.h">
+      <Filter>Devices\Spi</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Peripherals.h">
       <Filter>Devices</Filter>
     </ClInclude>
@@ -85,6 +88,7 @@
     <None Include="$(MSBuildThisFileDirectory)Devices\Wifi\firmware.S">
       <Filter>Devices\Wifi</Filter>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)long.S" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)start.cpp" />
@@ -124,6 +128,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiSdio.cpp">
       <Filter>Devices\Wifi</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Spi\SpiHost.cpp">
+      <Filter>Devices\Spi</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)math.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">
@@ -152,6 +160,9 @@
     </Filter>
     <Filter Include="Devices\Wifi">
       <UniqueIdentifier>{25dcd83a-d16e-4f3d-8415-16ebf1e11c2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Spi">
+      <UniqueIdentifier>{90814a92-db0e-4cee-b6d9-2ac4e4e17552}</UniqueIdentifier>
     </Filter>
     <Filter Include="Runtime">
       <UniqueIdentifier>{12445055-6745-4d65-a1c3-c0b5a4fad7ac}</UniqueIdentifier>

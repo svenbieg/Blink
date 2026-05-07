@@ -22,8 +22,12 @@
 #define __builtin_ceill(f) 0
 #define __builtin_cosf(f) 0
 #define __builtin_cosl(f) 0
+#define __builtin_isfinite(f) false
 #define __builtin_isnan(f) false
 #define __builtin_isinf(f) false
+#define __builtin_isinf_sign(f) false
+#define __builtin_labs(l) 0
+#define __builtin_llabs(l) 0
 #define __builtin_offsetof(type, member) 0
 #define __has_builtin(b) true
 #define __extension__
@@ -40,6 +44,8 @@
 #define __INT16_TYPE__ short int
 #define __INT32_TYPE__ int
 #define __INT64_TYPE__ long long int
+#define __LONG_LONG_MAX__ 0x7FFFFFFFFFFFFFFFLL
+#define __LONG_LONG_MIN__ -0x7FFFFFFFFFFFFFFFLL
 #define __UINT8_TYPE__ unsigned char
 #define __UINT16_TYPE__ short unsigned int
 #define __UINT64_TYPE__ long long unsigned int
