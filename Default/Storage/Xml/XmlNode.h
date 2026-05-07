@@ -54,10 +54,10 @@ public:
 	static inline Handle<XmlNode> Create(XmlNode* Parent, Handle<String> Tag=nullptr) { return new XmlNode(Parent, Tag); }
 
 	// Common
-	virtual VOID AppendChild(XmlNode* Child);
+	VOID AppendChild(XmlNode* Child);
 	Event<XmlNode> Changed;
-	virtual BOOL Clear();
-	virtual VOID CopyFrom(XmlNode* Node);
+	BOOL Clear();
+	VOID CopyFrom(XmlNode* Node);
 	Handle<String> GetAttribute(Handle<String> Key);
 	BOOL GetAttribute(Handle<String> Key, UINT* Value);
 	BOOL GetAttribute(Handle<String> Key, UINT64* Value);
@@ -69,22 +69,14 @@ public:
 	Handle<String> GetTag();
 	Handle<String> GetValue();
 	BOOL HasAttribute(Handle<String> Key);
-	virtual VOID InsertChildAt(UINT Position, XmlNode* Child);
+	VOID InsertChildAt(UINT Position, XmlNode* Child);
 	SIZE_T ReadFromStream(InputStream* Stream);
-	virtual BOOL RemoveAttribute(Handle<String> Key);
-	virtual VOID RemoveChildAt(UINT Position);
-	inline BOOL SetAttribute(Handle<String> Key, INT Value)
-		{
-		return SetAttribute(Key, String::Create("%i", Value));
-		}
-	inline BOOL SetAttribute(Handle<String> Key, INT64 Value)
-		{
-		return SetAttribute(Key, String::Create("%i", Value));
-		}
-	virtual BOOL SetAttribute(Handle<String> Key, Handle<String> Value);
+	BOOL RemoveAttribute(Handle<String> Key);
+	VOID RemoveChildAt(UINT Position);
+	BOOL SetAttribute(Handle<String> Key, Handle<String> Value);
 	inline BOOL SetName(Handle<String> Name) { return SetAttribute("Name", Name); }
-	virtual BOOL SetTag(Handle<String> Tag);
-	virtual BOOL SetValue(Handle<String> Value);
+	BOOL SetTag(Handle<String> Tag);
+	BOOL SetValue(Handle<String> Value);
 	SIZE_T WriteToStream(OutputStream* Stream, INT Level=-1);
 
 protected:
@@ -94,7 +86,6 @@ protected:
 	// Common
 	VOID AppendChildInternal(XmlNode* Child);
 	BOOL ClearInternal();
-	virtual Handle<XmlNode> CreateNode();
 	VOID InsertChildInternal(UINT Position, XmlNode* Child);
 	VOID RemoveAttributeInternal(UINT Position);
 	BOOL RemoveAttributeInternal(Handle<String> Key);

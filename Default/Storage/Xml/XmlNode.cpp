@@ -207,7 +207,7 @@ if(CharHelper::Equal(reader.LastChar, '/'))
 	}
 while(1)
 	{
-	auto child=CreateNode();
+	auto child=XmlNode::Create();
 	read+=child->ReadFromStream(stream);
 	if(!child->m_Tag)
 		{
@@ -382,11 +382,6 @@ if(!cleared)
 	return false;
 m_Value=nullptr;
 return true;
-}
-
-Handle<XmlNode> XmlNode::CreateNode()
-{
-return XmlNode::Create();
 }
 
 VOID XmlNode::InsertChildInternal(UINT pos, XmlNode* child)
