@@ -99,6 +99,7 @@ public:
 	using Dwarf=Storage::Encoding::Dwarf;
 	using InputStream=Storage::Streams::InputStream;
 	using OutputStream=Storage::Streams::OutputStream;
+	using Stream=Storage::Streams::Stream;
 	using StreamFormat=Storage::Streams::StreamFormat;
 
 	// Friends
@@ -118,18 +119,17 @@ public:
 	inline operator bool()const noexcept { return m_Object&&m_Object->HasValue(); }
 	inline operator String*()const noexcept { return m_Object; }
 	inline String* operator->()const noexcept { return m_Object; }
-	SIZE_T WriteToStream(OutputStream* Stream)
+	SIZE_T WriteToStream(OutputStream* Stream, StreamFormat Format=Stream::DefaultStreamFormat)
 		{
 		if(!m_Object)
 			return Dwarf::WriteUnsigned(Stream, 0U);
-		auto format=StreamFormat::Ansi;
 		if(Stream)
-			format=Stream->GetStreamFormat();
+			Format=Stream->GetStreamFormat();
 		SIZE_T size=0;
 		auto buf=m_Object->m_Buffer;
 		auto len=m_Object->m_Length;
 		size+=Dwarf::WriteUnsigned(Stream, len);
-		switch(format)
+		switch(Format)
 			{
 			case StreamFormat::Ansi:
 				{
@@ -187,6 +187,8 @@ public:
 	inline Handle& operator=(LPCWSTR Value) { return operator=(String::Create(Value)); }
 	SIZE_T ReadFromStream(InputStream* Stream)
 		{
+		if(!Stream)
+			throw InvalidArgumentException();
 		SIZE_T size=0;
 		UINT len=0;
 		size+=Dwarf::ReadUnsigned(Stream, &len);

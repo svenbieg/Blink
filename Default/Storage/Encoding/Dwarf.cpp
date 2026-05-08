@@ -180,7 +180,8 @@ return (INT64)value;
 
 SIZE_T Dwarf::ReadSigned(InputStream* stream, INT* value_ptr)
 {
-assert(stream);
+if(!stream)
+	throw InvalidArgumentException();
 SIZE_T size=0;
 UINT value=0;
 UINT shift=0;
@@ -203,7 +204,8 @@ return size;
 
 SIZE_T Dwarf::ReadSigned(InputStream* stream, INT64* value_ptr)
 {
-assert(stream);
+if(!stream)
+	throw InvalidArgumentException();
 SIZE_T size=0;
 UINT64 value=0;
 UINT shift=0;
@@ -245,7 +247,8 @@ return value;
 
 SIZE_T Dwarf::ReadUnsigned(InputStream* stream, UINT* value_ptr)
 {
-assert(stream);
+if(!stream)
+	throw InvalidArgumentException();
 SIZE_T size=0;
 UINT value=0;
 UINT shift=0;
@@ -266,7 +269,8 @@ return size;
 
 SIZE_T Dwarf::ReadUnsigned(InputStream* stream, UINT64* value_ptr)
 {
-assert(stream);
+if(!stream)
+	throw InvalidArgumentException();
 SIZE_T size=0;
 UINT64 value=0;
 UINT shift=0;
