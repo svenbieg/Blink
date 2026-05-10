@@ -49,6 +49,8 @@ public:
 	static Handle<String> Create(UINT Length, LPCWSTR Value);
 	static Handle<String> Create(LPCSTR Format, VariableArguments& Arguments);
 	template <class... _args_t> static inline Handle<String> Create(LPCSTR Format, _args_t... Arguments);
+	static Handle<String> FromInt(INT Value);
+	static Handle<String> FromInt64(INT64 Value);
 	static Handle<String> ReadFromStream(InputStream* Stream, SIZE_T* Size=nullptr);
 
 	// Access
@@ -72,6 +74,8 @@ public:
 		VariableArguments vargs(args, TypeHelper::ArraySize(args));
 		return StringHelper::Scan(m_Buffer, Format, vargs);
 		}
+	inline BOOL ToInt(INT* Value)noexcept { return StringHelper::ToInt(m_Buffer, Value); }
+	inline BOOL ToInt64(INT64* Value)noexcept { return StringHelper::ToInt64(m_Buffer, Value); }
 	Handle<String> ToString(LanguageCode Language=LanguageCode::None)override;
 	SIZE_T WriteToStream(OutputStream* Stream);
 	static SIZE_T WriteToStream(String const* String, OutputStream* Stream);

@@ -75,6 +75,10 @@ public:
 		VariableArguments vargs(args, TypeHelper::ArraySize(args));
 		return Print(Destination, Size, Format, vargs);
 		}
+	static UINT PrintInt(LPSTR Destination, UINT Size, INT Value)noexcept;
+	static UINT PrintInt64(LPSTR Destination, UINT Size, INT64 Value)noexcept;
+	static UINT PrintUInt(LPSTR Destination, UINT Size, UINT Value)noexcept;
+	static UINT PrintUInt64(LPSTR Destination, UINT Size, UINT64 Value)noexcept;
 	static UINT Replace(LPSTR Destination, UINT Size, LPCSTR Source, LPCSTR Find, LPCSTR Insert, BOOL CaseSensitive, BOOL Repeat)noexcept;
 	static UINT Replace(LPWSTR Destination, UINT Size, LPCWSTR Source, LPCSTR Find, LPCSTR Insert, BOOL CaseSensitive, BOOL Repeat)noexcept;
 	static UINT Scan(LPCSTR String, LPCSTR Format, VariableArguments& Arguments)noexcept;
@@ -85,6 +89,10 @@ public:
 		VariableArguments vargs(args, TypeHelper::ArraySize(args));
 		return Scan(String, Format, vargs);
 		}
+	static BOOL ToInt(LPCSTR String, INT* Value)noexcept;
+	static BOOL ToInt(LPCWSTR String, INT* Value)noexcept;
+	static BOOL ToInt64(LPCSTR String, INT64* Value)noexcept;
+	static BOOL ToInt64(LPCWSTR String, INT64* Value)noexcept;
 	static LPCSTR Truncate(LPCSTR String, LPCSTR Characters)noexcept;
 	static LPCWSTR Truncate(LPCWSTR String, LPCSTR Characters)noexcept;
 	static UINT Uppercase(LPSTR String)noexcept;

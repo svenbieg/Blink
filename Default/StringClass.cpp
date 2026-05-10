@@ -71,6 +71,20 @@ new (str) String(buf, len+1, Format, Arguments);
 return str;
 }
 
+Handle<String> String::FromInt(INT value)
+{
+CHAR buf[12];
+StringHelper::PrintInt(buf, 12, value);
+return Create(buf);
+}
+
+Handle<String> String::FromInt64(INT64 value)
+{
+CHAR buf[22];
+StringHelper::PrintInt64(buf, 22, value);
+return Create(buf);
+}
+
 Handle<String> String::ReadFromStream(InputStream* stream, SIZE_T* size_ptr)
 {
 if(!stream)

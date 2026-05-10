@@ -567,11 +567,26 @@ if(pos<size)
 return pos-start;
 }
 
-template <std::character _dst_t, std::unsigned_integral _uint_t>
-UINT StringPrintUInt(_dst_t* dst, UINT size, _uint_t value, UINT pos)noexcept
+template <std::character _dst_t>
+UINT StringPrintUInt(_dst_t* dst, UINT size, UINT value, UINT pos)noexcept
 {
-CHAR chars[22];
-LPSTR buf=&chars[21];
+CHAR chars[11];
+LPSTR buf=&chars[10];
+*buf=0;
+do
+	{
+	*--buf=(CHAR)((value%10)+'0');
+	value/=10;
+	}
+while(value);
+return StringPrintString(dst, size, buf, pos);
+}
+
+template <std::character _dst_t>
+UINT StringPrintUInt(_dst_t* dst, UINT size, UINT64 value, UINT pos)noexcept
+{
+CHAR chars[21];
+LPSTR buf=&chars[20];
 *buf=0;
 do
 	{
@@ -658,6 +673,46 @@ if(len<width)
 if(pos<size)
 	dst[pos]=0;
 return pos-start;
+}
+
+template <std::character _dst_t>
+UINT StringPrintInt(_dst_t* dst, UINT size, INT value, UINT pos)noexcept
+{
+BOOL sign=value<0;
+if(sign)
+	value=-value;
+CHAR chars[12];
+LPSTR buf=&chars[11];
+*buf=0;
+do
+	{
+	*--buf=(CHAR)((value%10)+'0');
+	value/=10;
+	}
+while(value);
+if(sign)
+	*--buf='-';
+return StringPrintString(dst, size, buf, pos);
+}
+
+template <std::character _dst_t>
+UINT StringPrintInt(_dst_t* dst, UINT size, INT64 value, UINT pos)noexcept
+{
+BOOL sign=value<0;
+if(sign)
+	value=-value;
+CHAR chars[22];
+LPSTR buf=&chars[21];
+*buf=0;
+do
+	{
+	*--buf=(CHAR)((value%10)+'0');
+	value/=10;
+	}
+while(value);
+if(sign)
+	*--buf='-';
+return StringPrintString(dst, size, buf, pos);
 }
 
 template <std::character _dst_t, std::signed_integral _int_t>
@@ -948,9 +1003,12 @@ if(!str)
 	return 0;
 UINT pos=0;
 BOOL negative=false;
-for(; CharHelper::Equal(str[pos], '-'); pos++)
+if(CharHelper::Equal(str[pos], '-'))
 	{
-	negative=!negative;
+	pos++;
+	if(CharHelper::Equal(str[pos], '-'))
+		return 0;
+	negative=true;
 	}
 UINT digit=0;
 if(!CharHelper::ToDigit(str[pos], &digit))
@@ -1843,6 +1901,26 @@ UINT StringHelper::Print(LPWSTR dst, UINT size, LPCSTR format, VariableArguments
 return StringPrint<WCHAR>(dst, size, format, args);
 }
 
+UINT StringHelper::PrintInt(LPSTR dst, UINT size, INT value)noexcept
+{
+return StringPrintInt(dst, size, value, 0);
+}
+
+UINT StringHelper::PrintInt64(LPSTR dst, UINT size, INT64 value)noexcept
+{
+return StringPrintInt(dst, size, value, 0);
+}
+
+UINT StringHelper::PrintUInt(LPSTR dst, UINT size, UINT value)noexcept
+{
+return StringPrintUInt(dst, size, value, 0);
+}
+
+UINT StringHelper::PrintUInt64(LPSTR dst, UINT size, UINT64 value)noexcept
+{
+return StringPrintUInt(dst, size, value, 0);
+}
+
 UINT StringHelper::Replace(LPSTR dst, UINT size, LPCSTR src, LPCSTR find, LPCSTR insert, BOOL cs, BOOL repeat)noexcept
 {
 return StringReplace<CHAR, CHAR, CHAR>(dst, size, src, find, insert, cs, repeat);
@@ -1861,6 +1939,38 @@ return StringScan<CHAR>(str, format, args);
 UINT StringHelper::Scan(LPCWSTR str, LPCSTR format, VariableArguments& args)noexcept
 {
 return StringScan<WCHAR>(str, format, args);
+}
+
+BOOL StringHelper::ToInt(LPCSTR str, INT* value_ptr)noexcept
+{
+UINT len=StringScanInt(str, value_ptr);
+if(!len||str[len]!=0)
+	return false;
+return true;
+}
+
+BOOL StringHelper::ToInt(LPCWSTR str, INT* value_ptr)noexcept
+{
+UINT len=StringScanInt(str, value_ptr);
+if(!len||str[len]!=0)
+	return false;
+return true;
+}
+
+BOOL StringHelper::ToInt64(LPCSTR str, INT64* value_ptr)noexcept
+{
+UINT len=StringScanInt(str, value_ptr);
+if(!len||str[len]!=0)
+	return false;
+return true;
+}
+
+BOOL StringHelper::ToInt64(LPCWSTR str, INT64* value_ptr)noexcept
+{
+UINT len=StringScanInt(str, value_ptr);
+if(!len||str[len]!=0)
+	return false;
+return true;
 }
 
 LPCSTR StringHelper::Truncate(LPCSTR str, LPCSTR chars)noexcept
