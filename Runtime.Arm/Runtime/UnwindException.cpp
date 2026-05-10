@@ -11,6 +11,7 @@
 
 #include "Concurrency/Scheduler.h"
 #include "Devices/System/System.h"
+#include "Storage/Encoding/Dwarf.h"
 #include "BitHelper.h"
 #include "FlagHelper.h"
 
