@@ -81,7 +81,7 @@ size+=Dwarf::ReadUnsigned(stream, &len);
 if(!len)
 	{
 	if(size_ptr)
-		*size_ptr=size;
+		*size_ptr+=size;
 	return nullptr;
 	}
 auto str=Create(len, nullptr);
@@ -112,7 +112,7 @@ buf[len]=0;
 str->m_Hash=StringHelper::Hash(buf);
 str->m_Length=len;
 if(size_ptr)
-	*size_ptr=size;
+	*size_ptr+=size;
 return str;
 }
 
