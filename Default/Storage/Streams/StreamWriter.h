@@ -50,7 +50,6 @@ public:
 	UINT PrintChar(WCHAR Char, UINT Count=1);
 	VOID SetStream(OutputStream* Stream)noexcept;
 	SIZE_T Write(VOID const* Buffer, SIZE_T Size);
-	UINT WriteString(String const* Value);
 
 private:
 	// Using

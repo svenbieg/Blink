@@ -9,9 +9,11 @@
 // Using
 //=======
 
+#include "Storage/Encoding/Dwarf.h"
 #include "MemoryHelper.h"
 #include <new>
 
+using namespace Storage::Encoding;
 using namespace Storage::Streams;
 
 
@@ -69,6 +71,51 @@ new (str) String(buf, len+1, Format, Arguments);
 return str;
 }
 
+Handle<String> String::ReadFromStream(InputStream* stream, SIZE_T* size_ptr)
+{
+if(!stream)
+	throw InvalidArgumentException();
+SIZE_T size=0;
+UINT len=0;
+size+=Dwarf::ReadUnsigned(stream, &len);
+if(!len)
+	{
+	if(size_ptr)
+		*size_ptr=size;
+	return nullptr;
+	}
+auto str=Create(len, nullptr);
+auto buf=str->m_Buffer;
+auto format=stream->GetStreamFormat();
+switch(format)
+	{
+	case StreamFormat::Ansi:
+		{
+		for(UINT u=0; u<len; u++)
+			size+=CharHelper::ReadAnsi(stream, &buf[u]);
+		break;
+		}
+	case StreamFormat::Unicode:
+		{
+		for(UINT u=0; u<len; u++)
+			size+=CharHelper::ReadUnicode(stream, &buf[u]);
+		break;
+		}
+	case StreamFormat::UTF8:
+		{
+		for(UINT u=0; u<len; u++)
+			size+=CharHelper::ReadUtf8(stream, &buf[u]);
+		break;
+		}
+	}
+buf[len]=0;
+str->m_Hash=StringHelper::Hash(buf);
+str->m_Length=len;
+if(size_ptr)
+	*size_ptr=size;
+return str;
+}
+
 
 //========
 // Access
@@ -77,6 +124,41 @@ return str;
 Handle<String> String::ToString(LanguageCode lng)
 {
 return this;
+}
+
+SIZE_T String::WriteToStream(String const* str, OutputStream* stream)
+{
+if(!str)
+	return Dwarf::WriteUnsigned(stream, 0U);
+StreamFormat format=Stream::DefaultStreamFormat;
+if(stream)
+	format=stream->GetStreamFormat();
+auto buf=str->m_Buffer;
+auto len=str->m_Length;
+SIZE_T size=0;
+size+=Dwarf::WriteUnsigned(stream, len);
+switch(format)
+	{
+	case StreamFormat::Ansi:
+		{
+		for(UINT u=0; u<len; u++)
+			size+=CharHelper::WriteAnsi(stream, buf[u]);
+		break;
+		}
+	case StreamFormat::Unicode:
+		{
+		for(UINT u=0; u<len; u++)
+			size+=CharHelper::WriteUnicode(stream, buf[u]);
+		break;
+		}
+	case StreamFormat::UTF8:
+		{
+		for(UINT u=0; u<len; u++)
+			size+=CharHelper::WriteUtf8(stream, buf[u]);
+		break;
+		}
+	}
+return size;
 }
 
 

@@ -126,15 +126,6 @@ if(!m_Stream)
 return m_Stream->Write(buf, size);
 }
 
-UINT StreamWriter::WriteString(String const* value)
-{
-UINT size=0;
-if(value)
-	size+=Print(0, value->Begin());
-size+=PrintChar('\0');
-return size;
-}
-
 
 //================
 // Common Private

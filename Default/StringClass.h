@@ -9,11 +9,11 @@
 // Using
 //=======
 
-#include "Storage/Encoding/Dwarf.h"
 #include "Storage/Streams/InputStream.h"
 #include "Storage/Streams/OutputStream.h"
 #include "Handle.h"
 #include "StringHelper.h"
+#include <utility>
 
 
 //======================
@@ -33,6 +33,10 @@ class StringBuilder;
 class String: public Object
 {
 public:
+	// Using
+	using InputStream=Storage::Streams::InputStream;
+	using OutputStream=Storage::Streams::OutputStream;
+
 	// Friends
 	friend Handle<String>;
 	friend StringBuilder;
@@ -45,6 +49,7 @@ public:
 	static Handle<String> Create(UINT Length, LPCWSTR Value);
 	static Handle<String> Create(LPCSTR Format, VariableArguments& Arguments);
 	template <class... _args_t> static inline Handle<String> Create(LPCSTR Format, _args_t... Arguments);
+	static Handle<String> ReadFromStream(InputStream* Stream, SIZE_T* Size=nullptr);
 
 	// Access
 	inline LPCTSTR Begin()const noexcept { return m_Buffer; }
@@ -68,6 +73,8 @@ public:
 		return StringHelper::Scan(m_Buffer, Format, vargs);
 		}
 	Handle<String> ToString(LanguageCode Language=LanguageCode::None)override;
+	SIZE_T WriteToStream(OutputStream* Stream);
+	static SIZE_T WriteToStream(String const* String, OutputStream* Stream);
 
 	// Operators
 	Handle<String> Replace(LPCSTR Find, LPCSTR Replace, BOOL CaseSensitive=true, BOOL Repeat=false)noexcept;
@@ -96,11 +103,8 @@ class Handle<String>
 {
 public:
 	// Using
-	using Dwarf=Storage::Encoding::Dwarf;
 	using InputStream=Storage::Streams::InputStream;
 	using OutputStream=Storage::Streams::OutputStream;
-	using Stream=Storage::Streams::Stream;
-	using StreamFormat=Storage::Streams::StreamFormat;
 
 	// Friends
 	template <class _friend_t> friend class Handle;
@@ -119,39 +123,7 @@ public:
 	inline operator bool()const noexcept { return m_Object&&m_Object->HasValue(); }
 	inline operator String*()const noexcept { return m_Object; }
 	inline String* operator->()const noexcept { return m_Object; }
-	SIZE_T WriteToStream(OutputStream* Stream, StreamFormat Format=Stream::DefaultStreamFormat)
-		{
-		if(!m_Object)
-			return Dwarf::WriteUnsigned(Stream, 0U);
-		if(Stream)
-			Format=Stream->GetStreamFormat();
-		SIZE_T size=0;
-		auto buf=m_Object->m_Buffer;
-		auto len=m_Object->m_Length;
-		size+=Dwarf::WriteUnsigned(Stream, len);
-		switch(Format)
-			{
-			case StreamFormat::Ansi:
-				{
-				for(UINT u=0; u<len; u++)
-					size+=CharHelper::WriteAnsi(Stream, buf[u]);
-				break;
-				}
-			case StreamFormat::Unicode:
-				{
-				for(UINT u=0; u<len; u++)
-					size+=CharHelper::WriteUnicode(Stream, buf[u]);
-				break;
-				}
-			case StreamFormat::UTF8:
-				{
-				for(UINT u=0; u<len; u++)
-					size+=CharHelper::WriteUtf8(Stream, buf[u]);
-				break;
-				}
-			}
-		return size;
-		}
+	inline SIZE_T WriteToStream(OutputStream* Stream) { return String::WriteToStream(m_Object, Stream); }
 
 	// Comparison
 	inline bool operator==(nullptr_t)const noexcept { return !operator bool(); }
@@ -187,44 +159,9 @@ public:
 	inline Handle& operator=(LPCWSTR Value) { return operator=(String::Create(Value)); }
 	SIZE_T ReadFromStream(InputStream* Stream)
 		{
-		if(!Stream)
-			throw InvalidArgumentException();
 		SIZE_T size=0;
-		UINT len=0;
-		size+=Dwarf::ReadUnsigned(Stream, &len);
-		if(!len)
-			{
-			operator=(nullptr);
-			return size;
-			}
-		auto str=String::Create(len, nullptr);
-		auto buf=str->m_Buffer;
-		auto format=Stream->GetStreamFormat();
-		switch(format)
-			{
-			case StreamFormat::Ansi:
-				{
-				for(UINT u=0; u<len; u++)
-					size+=CharHelper::ReadAnsi(Stream, &buf[u]);
-				break;
-				}
-			case StreamFormat::Unicode:
-				{
-				for(UINT u=0; u<len; u++)
-					size+=CharHelper::ReadUnicode(Stream, &buf[u]);
-				break;
-				}
-			case StreamFormat::UTF8:
-				{
-				for(UINT u=0; u<len; u++)
-					size+=CharHelper::ReadUtf8(Stream, &buf[u]);
-				break;
-				}
-			}
-		buf[len]=0;
-		str->m_Hash=StringHelper::Hash(buf);
-		str->m_Length=len;
-		operator=(str);
+		auto str=String::ReadFromStream(Stream, &size);
+		operator=(std::move(str));
 		return size;
 		}
 
