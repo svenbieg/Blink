@@ -71,6 +71,9 @@ class DmaChannel: public Object
 {
 public:
 	// Using
+	using CriticalSection=Concurrency::CriticalSection;
+	using Mutex=Concurrency::Mutex;
+	using Signal=Concurrency::Signal;
 	using SpinLock=Concurrency::SpinLock;
 
 	// Con-/Destructors
@@ -89,17 +92,17 @@ private:
 	// Con-/Destructors
 	friend Object;
 	DmaChannel(UINT Id);
-	static Concurrency::Mutex s_Mutex;
+	static Mutex s_Mutex;
 	static UINT s_Used;
 
 	// Common
 	static UINT GetChannel();
 	VOID OnInterrupt();
-	Concurrency::CriticalSection m_CriticalSection;
+	CriticalSection m_CriticalSection;
 	UINT m_Control;
 	UINT m_DataSize;
 	UINT m_Id;
-	Concurrency::Signal m_Signal;
+	Signal m_Signal;
 	Status m_Status;
 };
 
