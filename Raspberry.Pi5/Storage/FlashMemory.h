@@ -32,11 +32,14 @@ public:
 	static inline Handle<FlashMemory> Create() { return Object::Create<FlashMemory>(); }
 
 	// Common
+	VOID Erase(UINT64 Position, UINT Size)override;
+	WORD GetAlignment()override;
 	UINT GetBlockSize()override;
+	UINT GetPageSize()override;
 	UINT64 GetSize()override;
-	SIZE_T Read(UINT64 Position, VOID* Buffer, SIZE_T Size)override;
-	BOOL SetSize(UINT64 Size)override;
-	SIZE_T Write(UINT64 Position, VOID const* Buffer, SIZE_T Size)override;
+	VOID Read(UINT64 Position, VOID* Buffer, SIZE_T Size)override;
+	VOID SetSize(UINT64 Size)override;
+	VOID Write(UINT64 Position, VOID const* Buffer, SIZE_T Size)override;
 
 private:
 	// Using

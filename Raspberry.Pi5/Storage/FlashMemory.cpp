@@ -29,7 +29,9 @@ namespace Storage {
 // Settings
 //==========
 
-const UINT BLOCK_SIZE=512;
+const UINT SD_BLOCK_SIZE=4096;
+const UINT SD_PAGE_SIZE=512;
+
 const SIZE_T EMMC_BASE=AXI_EMMC0_BASE;
 const UINT EMMC_BASE_CLOCK=200'000'000;
 const UINT EMMC_CLOCK_RATE=50'000'000;
@@ -71,9 +73,24 @@ WORD Magic;
 // Volume
 //========
 
+VOID FlashMemory::Erase(UINT64 pos, UINT size)
+{
+throw NotImplementedException();
+}
+
+WORD FlashMemory::GetAlignment()
+{
+return 2;
+}
+
 UINT FlashMemory::GetBlockSize()
 {
-return BLOCK_SIZE;
+return SD_BLOCK_SIZE;
+}
+
+UINT FlashMemory::GetPageSize()
+{
+return SD_PAGE_SIZE;
 }
 
 UINT64 FlashMemory::GetSize()
@@ -81,37 +98,36 @@ UINT64 FlashMemory::GetSize()
 return m_Size;
 }
 
-SIZE_T FlashMemory::Read(UINT64 pos, VOID* buf, SIZE_T size)
+VOID FlashMemory::Read(UINT64 pos, VOID* buf, SIZE_T size)
 {
-assert(pos%BLOCK_SIZE==0);
+assert(pos%SD_PAGE_SIZE==0);
 assert(size!=0);
-assert(size%BLOCK_SIZE==0);
+assert(size%SD_PAGE_SIZE==0);
 WriteLock lock(m_Mutex);
 UINT64 offset=m_Offset+pos;
-UINT block=(UINT)(offset/BLOCK_SIZE);
-UINT block_count=(UINT)(size/BLOCK_SIZE);
-auto cmd=block_count>1? EmmcCmd::ReadMulti: EmmcCmd::ReadSingle;
-m_EmmcHost->Command(cmd, block, nullptr, buf, block_count, BLOCK_SIZE);
-return size;
+UINT page=(UINT)(offset/SD_PAGE_SIZE);
+UINT page_count=(UINT)(size/SD_PAGE_SIZE);
+auto cmd=page_count>1? EmmcCmd::ReadMulti: EmmcCmd::ReadSingle;
+m_EmmcHost->Command(cmd, page, nullptr, buf, page_count, SD_PAGE_SIZE);
 }
 
-BOOL FlashMemory::SetSize(UINT64 size)
+VOID FlashMemory::SetSize(UINT64 size)
 {
-return size<=m_Size;
+if(size>m_Size)
+	throw OutOfMemoryException();
 }
 
-SIZE_T FlashMemory::Write(UINT64 pos, VOID const* buf, SIZE_T size)
+VOID FlashMemory::Write(UINT64 pos, VOID const* buf, SIZE_T size)
 {
-assert(pos%BLOCK_SIZE==0);
+assert(pos%SD_PAGE_SIZE==0);
 assert(size!=0);
-assert(size%BLOCK_SIZE==0);
+assert(size%SD_PAGE_SIZE==0);
 WriteLock lock(m_Mutex);
 UINT64 offset=m_Offset+pos;
-UINT block=(UINT)(offset/BLOCK_SIZE);
-UINT block_count=(UINT)(size/BLOCK_SIZE);
-auto cmd=block_count>1? EmmcCmd::WriteMulti: EmmcCmd::WriteSingle;
-m_EmmcHost->Command(cmd, block, nullptr, (VOID*)buf, block_count, BLOCK_SIZE);
-return size;
+UINT page=(UINT)(offset/SD_PAGE_SIZE);
+UINT page_count=(UINT)(size/SD_PAGE_SIZE);
+auto cmd=page_count>1? EmmcCmd::WriteMulti: EmmcCmd::WriteSingle;
+m_EmmcHost->Command(cmd, page, nullptr, (VOID*)buf, page_count, SD_PAGE_SIZE);
 }
 
 
@@ -147,28 +163,28 @@ m_EmmcHost->Command(EmmcCmd::SendCsd, rca<<16, csd);
 UINT csd_ver=csd[3]>>30;
 UINT size=(((csd[2]&0x3FF)<<2)|csd[1]>>30)+1;
 UINT shift=((csd[1]>>15)&0x7)+12;
-m_Size=((UINT64)size<<shift)*BLOCK_SIZE;
+m_Size=((UINT64)size<<shift)*SD_PAGE_SIZE;
 m_EmmcHost->SelectCard(rca);
-auto buf=Buffer::Create(BLOCK_SIZE);
+auto buf=Buffer::Create(SD_PAGE_SIZE);
 auto buf_ptr=buf->Begin();
-MemoryHelper::Zero(buf_ptr, BLOCK_SIZE);
-Read(0, buf_ptr, BLOCK_SIZE);
-auto mbr=(MBR*)&buf_ptr[BLOCK_SIZE-MBR_SIZE];
+MemoryHelper::Zero(buf_ptr, SD_PAGE_SIZE);
+Read(0, buf_ptr, SD_PAGE_SIZE);
+auto mbr=(MBR*)&buf_ptr[SD_PAGE_SIZE-MBR_SIZE];
 if(mbr->Magic!=MBR_MAGIC)
 	throw DeviceNotReadyException();
 auto entries=mbr->Entries;
 if(entries[1].Type!=MBR_TYPE_DATABASE)
 	{
 	UINT db_pos=entries[0].Position+entries[0].Size;
-	UINT db_size=(UINT)(m_Size/BLOCK_SIZE-db_pos);
+	UINT db_size=(UINT)(m_Size/SD_PAGE_SIZE-db_pos);
 	MemoryHelper::Zero(&entries[1], 3*sizeof(MBR_ENTRY));
 	entries[1].Position=db_pos;
 	entries[1].Size=db_size;
 	entries[1].Type=MBR_TYPE_DATABASE;
-	Write(0, buf_ptr, BLOCK_SIZE);
+	Write(0, buf_ptr, SD_PAGE_SIZE);
 	}
-m_Offset=(UINT64)entries[1].Position*BLOCK_SIZE;
-m_Size=(UINT64)entries[1].Size*BLOCK_SIZE;
+m_Offset=(UINT64)entries[1].Position*SD_PAGE_SIZE;
+m_Size=(UINT64)entries[1].Size*SD_PAGE_SIZE;
 }
 
 }
