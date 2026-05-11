@@ -36,6 +36,8 @@ typedef int BOOL;
 typedef short int SHORT;
 typedef int INT;
 typedef unsigned int UINT;
+typedef unsigned char UINT8;
+typedef unsigned short UINT16;
 typedef UINT UINT32;
 typedef __LONG_LONG int INT64;
 typedef unsigned __LONG_LONG int UINT64;
@@ -105,10 +107,11 @@ public:
 	template <class _item_t, SIZE_T _count> static constexpr SIZE_T ArraySize(_item_t (&)[_count])noexcept { return _count; }
 	template <std::unsigned_integral _value_t> static constexpr _value_t BigEndian(_value_t Value)noexcept
 		{
-		if constexpr(std::endian::native==std::endian::little)
+		if(std::endian::native==std::endian::little)
 			return std::byteswap(Value);
 		return Value;
 		}
+	static constexpr BYTE HighByte(WORD Value)noexcept { return (BYTE)(Value>>8); }
 	static constexpr UINT HighLong(UINT64 Value)noexcept { return (UINT)(Value>>32); }
 	template <std::numeric _num_t, std::numeric _value_t> static constexpr BOOL Fits(_value_t Value)noexcept
 		{
@@ -135,6 +138,7 @@ public:
 			return std::byteswap(Value);
 		return Value;
 		}
+	static constexpr BYTE LowByte(WORD Value)noexcept { return (BYTE)Value; }
 	static constexpr UINT LowLong(UINT64 Value)noexcept { return (UINT)Value; }
 	static constexpr WORD MakeLong(BYTE Low, BYTE High)noexcept
 		{
