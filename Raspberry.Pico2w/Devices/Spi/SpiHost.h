@@ -33,6 +33,8 @@ Spi1
 
 enum class SpiBaudRate: UINT
 {
+Baud1M,
+Baud15M,
 Baud75M
 };
 
@@ -60,11 +62,14 @@ public:
 	~SpiHost();
 
 	// Common
-	VOID Read(VOID* Buffer, SIZE_T Size, UINT Timeout=100);
-	VOID SetBaudRate(SpiBaudRate Baud);
-	VOID SetDataSize(SpiDataSize DataSize);
-	VOID SetEnabled(BOOL Enabled);
-	VOID Write(VOID const* Buffer, SIZE_T Size, UINT Timeout=100);
+	VOID Read(VOID* Buffer, SIZE_T Size, UINT Timeout);
+	VOID Transmit(VOID const* Tx, VOID* Rx, UINT Size);
+	VOID Write(VOID const* Buffer, SIZE_T Size);
+	VOID Write(VOID const* Buffer, SIZE_T Size, UINT Timeout);
+
+protected:
+	// Common
+	UINT Release()noexcept override;
 
 private:
 	// Con-/Destructors
@@ -72,7 +77,9 @@ private:
 	SpiHost(SpiDevice Device);
 
 	// Common
-	UINT m_DataSize;
+	VOID Initialize();
+	SpiBaudRate m_BaudRate;
+	SpiDataSize m_DataSize;
 	SIZE_T m_Device;
 	Handle<GpioHost> m_GpioHost;
 	UINT m_Id;
