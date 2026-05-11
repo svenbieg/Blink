@@ -19,7 +19,6 @@ using namespace Concurrency;
 //===========
 
 namespace Storage {
-	namespace Streams {
 
 
 //==================
@@ -198,4 +197,4 @@ while(buf)
 	}
 }
 
-}}
+}

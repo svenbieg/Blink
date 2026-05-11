@@ -19,7 +19,6 @@
 //===========
 
 namespace Storage {
-	namespace Streams {
 
 
 //===============
@@ -31,7 +30,7 @@ class OutputBuffer: public Object
 public:
 	// Con-/Destructors
 	~OutputBuffer()noexcept;
-	static inline Handle<OutputBuffer> Create(SIZE_T BlockSize=MemoryHelper::PAGE_SIZE) { return new OutputBuffer(BlockSize); }
+	static inline Handle<OutputBuffer> Create(SIZE_T BlockSize) { return new OutputBuffer(BlockSize); }
 
 	// Common
 	inline SIZE_T Available()const noexcept { return m_Written-m_Read; }
@@ -66,4 +65,4 @@ private:
 	SIZE_T m_Written;
 };
 
-}}
+}

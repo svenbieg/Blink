@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include "Concurrency/CriticalSection.h"
 #include "Handle.h"
 
 
@@ -26,6 +27,9 @@ namespace Storage {
 class RingBuffer: public Object
 {
 public:
+	// Using
+	using CriticalSection=Concurrency::CriticalSection;
+
 	// Friends
 	friend Object;
 
@@ -41,6 +45,7 @@ public:
 	inline BOOL Read(BYTE* Value)noexcept { return Read(Value, 1)==1; }
 	SIZE_T Read(VOID* Buffer, SIZE_T Size)noexcept;
 	inline BOOL Write(BYTE Value)noexcept { return Write(&Value, 1)==1; }
+	inline BOOL Write(WORD Value)noexcept { return Write(&Value, 2)==2; }
 	SIZE_T Write(VOID const* Buffer, SIZE_T Size)noexcept;
 	inline VOID Written(SIZE_T Size)noexcept { m_Head+=Size; }
 
@@ -50,6 +55,7 @@ private:
 
 	// Common
 	BYTE* m_Buffer;
+	CriticalSection m_CriticalSection;
 	SIZE_T m_Head;
 	SIZE_T m_Size;
 	SIZE_T m_Tail;

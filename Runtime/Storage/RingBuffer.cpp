@@ -9,9 +9,11 @@
 // Using
 //=======
 
+#include "Concurrency/SpinLock.h"
 #include "Devices/System/Cpu.h"
 #include "MemoryHelper.h"
 
+using namespace Concurrency;
 using namespace Devices::System;
 
 
@@ -28,16 +30,19 @@ namespace Storage {
 
 SIZE_T RingBuffer::Available()noexcept
 {
+SpinLock lock(m_CriticalSection);
 return m_Head-m_Tail;
 }
 
 SIZE_T RingBuffer::AvailableForWrite()noexcept
 {
+SpinLock lock(m_CriticalSection);
 return m_Size-(m_Head-m_Tail);
 }
 
 SIZE_T RingBuffer::BeginRead(BYTE** buf_ptr)noexcept
 {
+SpinLock lock(m_CriticalSection);
 SIZE_T available=m_Head-m_Tail;
 SIZE_T tail=m_Tail%m_Size;
 SIZE_T copy=TypeHelper::Min(available, m_Size-tail);
@@ -47,6 +52,7 @@ return copy;
 
 SIZE_T RingBuffer::BeginWrite(BYTE** buf_ptr)noexcept
 {
+SpinLock lock(m_CriticalSection);
 SIZE_T available=m_Size-(m_Head-m_Tail);
 SIZE_T head=m_Head%m_Size;
 SIZE_T copy=TypeHelper::Min(available, m_Size-head);
@@ -56,6 +62,7 @@ return copy;
 
 VOID RingBuffer::Consumed(SIZE_T size)noexcept
 {
+SpinLock lock(m_CriticalSection);
 m_Tail+=size;
 if(m_Head==m_Tail)
 	{
@@ -66,6 +73,7 @@ if(m_Head==m_Tail)
 
 SIZE_T RingBuffer::Read(VOID* buf, SIZE_T size)noexcept
 {
+SpinLock lock(m_CriticalSection);
 auto dst=(BYTE*)buf;
 SIZE_T available=m_Head-m_Tail;
 SIZE_T read=TypeHelper::Min(size, available);
@@ -89,6 +97,7 @@ return pos;
 
 SIZE_T RingBuffer::Write(VOID const* buf, SIZE_T size)noexcept
 {
+SpinLock lock(m_CriticalSection);
 auto src=(BYTE const*)buf;
 SIZE_T available=m_Size-(m_Head-m_Tail);
 SIZE_T write=TypeHelper::Min(available, size);

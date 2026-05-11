@@ -10,12 +10,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\RingBuffer.h">
       <Filter>Storage</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\InputBuffer.h">
-      <Filter>Storage\Streams</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\OutputBuffer.h">
-      <Filter>Storage\Streams</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)heap.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)UI\Console.h">
       <Filter>UI</Filter>
@@ -26,6 +20,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)new" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\InterruptHandler.h">
       <Filter>Devices\System</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\OutputBuffer.h">
+      <Filter>Storage</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -64,12 +61,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\RingBuffer.cpp">
       <Filter>Storage</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\InputBuffer.cpp">
-      <Filter>Storage\Streams</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\OutputBuffer.cpp">
-      <Filter>Storage\Streams</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)heap.c" />
     <ClCompile Include="$(MSBuildThisFileDirectory)UI\Console.cpp">
       <Filter>UI</Filter>
@@ -79,6 +70,9 @@
       <Filter>Devices</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)cxxabi.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\OutputBuffer.cpp">
+      <Filter>Storage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">
@@ -86,9 +80,6 @@
     </Filter>
     <Filter Include="Storage">
       <UniqueIdentifier>{b8394696-fb9d-47bf-8d7a-0b2054f61620}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Storage\Streams">
-      <UniqueIdentifier>{63b21686-c526-4fb7-961c-a45ad4774e85}</UniqueIdentifier>
     </Filter>
     <Filter Include="UI">
       <UniqueIdentifier>{86cab7a1-3892-4f4d-b65b-dcc822557fc6}</UniqueIdentifier>
