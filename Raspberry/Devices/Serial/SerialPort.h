@@ -11,8 +11,8 @@
 
 #include "Concurrency/Scheduler.h"
 #include "Devices/Serial/SerialConfig.h"
-#include "Storage/Streams/OutputBuffer.h"
 #include "Storage/Streams/RandomAccessStream.h"
+#include "Storage/OutputBuffer.h"
 #include "Storage/RingBuffer.h"
 #include "Event.h"
 
@@ -48,7 +48,7 @@ class SerialPort: public Object, public Storage::Streams::RandomAccessStream
 {
 public:
 	// Using
-	using OutputBuffer=Storage::Streams::OutputBuffer;
+	using OutputBuffer=Storage::OutputBuffer;
 	using RingBuffer=Storage::RingBuffer;
 
 	// Con-/Destructors

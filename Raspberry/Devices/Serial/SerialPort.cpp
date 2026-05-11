@@ -29,10 +29,11 @@ namespace Devices {
 // Settings
 //==========
 
-const UINT PL011_INPUT_BUF=48;
-const UINT PL011_OUTPUT_BUF=32;
+const UINT PL011_RX_BYTES=48;
+const UINT PL011_TX_BYTES=32;
 
-const UINT INPUT_BUF=PL011_INPUT_BUF*4;
+const UINT UART_RX_BYTES=PL011_RX_BYTES*4;
+const UINT UART_TX_BYTES=PL011_TX_BYTES*4;
 
 
 //===========
@@ -169,8 +170,8 @@ m_BaudRate(baud),
 m_Device((VOID*)SERIAL_DEVICES[(UINT)device].BASE),
 m_Id((UINT)device)
 {
-m_InputBuffer=RingBuffer::Create(INPUT_BUF);
-m_OutputBuffer=OutputBuffer::Create();
+m_InputBuffer=RingBuffer::Create(UART_RX_BYTES);
+m_OutputBuffer=OutputBuffer::Create(UART_TX_BYTES);
 auto name=String::Create("serial%u", m_Id);
 m_ServiceTask=ServiceTask::Create(this, &SerialPort::ServiceTask, name);
 }
@@ -192,7 +193,10 @@ while(!IoHelper::Read(uart->FLAGS, FLAG_RX_EMPTY))
 	{
 	UINT value=IoHelper::Read(uart->DATA);
 	if(!m_InputBuffer->Write((BYTE)value))
+		{
 		status=Status::BufferOverrun;
+		break;
+		}
 	}
 while(m_OutputBuffer->Available())
 	{
@@ -209,9 +213,8 @@ m_Signal.Trigger(status);
 
 VOID SerialPort::ServiceTask()
 {
-using System=Devices::System::System;
 auto reset=SERIAL_DEVICES[m_Id].RESET;
-System::Enable(reset);
+System::System::Enable(reset);
 GpioHelper::SetPinMode(SERIAL_DEVICES[m_Id].TX_PIN, SERIAL_DEVICES[m_Id].TX_ALT);
 GpioHelper::SetPinMode(SERIAL_DEVICES[m_Id].RX_PIN, SERIAL_DEVICES[m_Id].RX_ALT, GpioPullMode::PullUp);
 Interrupts::SetHandler(SERIAL_DEVICES[m_Id].IRQ, this, &SerialPort::OnInterrupt);
