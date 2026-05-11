@@ -56,14 +56,17 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiConfig.h">
       <Filter>Devices\Wifi</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Spi\SpiHost.h">
-      <Filter>Devices\Spi</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Peripherals.h">
       <Filter>Devices</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\Configuration.h">
       <Filter>Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pio\SpiEmulator.h">
+      <Filter>Devices\Pio</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Spi\SpiHost.h">
+      <Filter>Devices\Spi</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -128,10 +131,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiSdio.cpp">
       <Filter>Devices\Wifi</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Spi\SpiHost.cpp">
-      <Filter>Devices\Spi</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)math.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Pio\SpiEmulator.cpp">
+      <Filter>Devices\Pio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">

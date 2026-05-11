@@ -16,6 +16,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHost.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pio\Pio.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pio\SpiEmulator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Pio\StateMachine.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialConfig.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Spi\SpiHost.h" />
@@ -50,8 +51,8 @@
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Dma\DmaChannel.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHost.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Pio\SpiEmulator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Pio\StateMachine.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Spi\SpiHost.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Interrupts.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\MailBox.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Memory.cpp" />
