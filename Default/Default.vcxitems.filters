@@ -119,6 +119,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamBuffer.h">
       <Filter>Storage\Streams</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Volume.h">
+      <Filter>Storage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)StringHelper.cpp" />
