@@ -182,9 +182,9 @@ VOID DmaChannel::SetByteSwap(BOOL swap)
 BitHelper::Set(m_Control, CTRL_BSWAP, swap);
 }
 
-VOID DmaChannel::SetDataSize(DmaDataSize data_size)
+VOID DmaChannel::SetMode(DmaMode mode)
 {
-UINT id=(UINT)data_size;
+UINT id=(UINT)mode;
 BitHelper::Set(m_Control, CTRL_DATA_SIZE, id);
 m_DataSize=DMA_DATA_SIZE[id];
 }

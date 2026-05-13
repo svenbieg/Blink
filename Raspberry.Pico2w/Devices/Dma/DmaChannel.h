@@ -52,10 +52,10 @@ Force
 
 
 //===========
-// Data-Size
+// Data-Mode
 //===========
 
-enum class DmaDataSize
+enum class DmaMode: BYTE
 {
 Bits8,
 Bits16,
@@ -84,7 +84,7 @@ public:
 	VOID Abort();
 	VOID BeginRead(DmaRequest Request, RO32* Register, VOID* Buffer, SIZE_T Size);
 	VOID SetByteSwap(BOOL ByteSwap);
-	VOID SetDataSize(DmaDataSize Size);
+	VOID SetMode(DmaMode Mode);
 	VOID BeginWrite(DmaRequest Request, RW32* Register, VOID const* Buffer, SIZE_T Size);
 	VOID Wait(UINT Timeout=100);
 
