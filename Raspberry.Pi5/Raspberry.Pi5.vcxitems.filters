@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\FlashMemory.h">
-      <Filter>Storage</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Dma\DmaChannel.h">
       <Filter>Devices\Dma</Filter>
     </ClInclude>
@@ -67,9 +64,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)start.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\FlashMemory.cpp">
-      <Filter>Storage</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Dma\DmaChannel.cpp">
       <Filter>Devices\Dma</Filter>
     </ClCompile>
@@ -113,9 +107,6 @@
   <ItemGroup>
     <Filter Include="Configuration">
       <UniqueIdentifier>{1eaa4953-be9b-461c-b626-558d4b5885da}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Storage">
-      <UniqueIdentifier>{3f02ab51-ad91-4c77-81ba-f483c49dc26b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Devices">
       <UniqueIdentifier>{22bc1492-e06c-46dd-9fd9-0ee8a668c23b}</UniqueIdentifier>
