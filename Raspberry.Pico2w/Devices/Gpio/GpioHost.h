@@ -33,7 +33,7 @@ const UINT GPIO_PIN_COUNT=30;
 // Pins
 //======
 
-enum class GpioPin
+enum class GpioPin: BYTE
 {
 Gpio0, Gpio1, Gpio2, Gpio3,
 Gpio4, Gpio5, Gpio6, Gpio7,
