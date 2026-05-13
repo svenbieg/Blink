@@ -63,7 +63,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamReader.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamWriter.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Volume.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Xml\XmlNode.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StringBuilder.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StringClass.h" />
