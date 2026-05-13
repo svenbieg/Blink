@@ -27,10 +27,18 @@ namespace Devices {
 // Configuration
 //===============
 
+enum class SpiMode: BYTE
+{
+Bits8,
+Bits16,
+Bits32
+};
+
 typedef struct
 {
 using GpioPin=Devices::Gpio::GpioPin;
-UINT Divisor;
+BYTE Divisor;
+SpiMode Mode;
 GpioPin PinChipSelect;
 GpioPin PinClock;
 GpioPin PinRx;
@@ -70,6 +78,7 @@ protected:
 	SpiEmulator(SpiConfiguration const& Configuration);
 
 	// Members
+	UINT m_DataSize;
 	Handle<GpioHost> m_GpioHost;
 	RO32* m_InputBuffer;
 	Handle<DmaChannel> m_InputDma;

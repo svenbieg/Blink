@@ -22,9 +22,18 @@ namespace Devices {
 	namespace Pio {
 
 
-//=====
-// PIO
-//=====
+//==========
+// Settings
+//==========
+
+const DmaMode DMA_MODE[]={ DmaMode::Bits8, DmaMode::Bits16, DmaMode::Bits32 };
+const BYTE SPI_DATA_BITS[]={ 8, 16, 32 };
+const UINT SPI_DATA_SIZE[]={ 1, 2, 4 };
+
+
+//=========
+// Program
+//=========
 
 const WORD SPI_INSTR[]=
 {
@@ -44,6 +53,7 @@ const PIO_PROGRAM SPI_PROGRAM={ SPI_INSTR, TypeHelper::ArraySize(SPI_INSTR) };
 //============================
 
 SpiEmulator::SpiEmulator(SpiConfiguration const& config):
+m_DataSize(SPI_DATA_SIZE[(UINT)config.Mode]),
 m_InputBuffer(nullptr),
 m_InputRequest(DmaRequest::Force),
 m_PinChipSelect(config.PinChipSelect),
@@ -61,27 +71,29 @@ m_GpioHost->SetPinMode(config.PinRx, gpio_mode);
 m_GpioHost->SetPinMode(config.PinRx, GpioHysteresis::SchmittTrigger);
 m_GpioHost->SetPinMode(config.PinChipSelect, GpioPinMode::Output);
 m_GpioHost->DigitalWrite(config.PinChipSelect, true);
+auto data_bits=SPI_DATA_BITS[(UINT)config.Mode];
 m_StateMachine->SetDivisor(config.Divisor);
 m_StateMachine->SetInputPin(config.PinRx);
-m_StateMachine->SetInputShift(false, true, 16);
+m_StateMachine->SetInputShift(false, true, data_bits);
 m_StateMachine->SetInputSyncBypass(config.PinRx);
 m_StateMachine->SetOutputPins(config.PinTx, 1);
-m_StateMachine->SetOutputShift(false, true, 16);
+m_StateMachine->SetOutputShift(false, true, data_bits);
 m_StateMachine->SideSet(config.PinClock, 1, false, false);
 m_StateMachine->Wrap(0, 5);
 m_StateMachine->SetPinDirection(config.PinClock, PioPinDirection::Output);
 m_StateMachine->SetPinDirection(config.PinTx, PioPinDirection::Output);
 m_StateMachine->SetPinDirection(config.PinRx, PioPinDirection::Input);
 m_StateMachine->SetPins(0);
+auto dma_mode=DMA_MODE[(UINT)config.Mode];
 m_InputBuffer=m_StateMachine->GetInputBuffer();
 m_InputDma=DmaChannel::Create();
 m_InputDma->SetByteSwap(true);
-m_InputDma->SetDataSize(DmaDataSize::Bits16);
+m_InputDma->SetMode(dma_mode);
 m_InputRequest=m_StateMachine->GetInputRequest();
 m_OutputBuffer=m_StateMachine->GetOutputBuffer();
 m_OutputDma=DmaChannel::Create();
 m_OutputDma->SetByteSwap(true);
-m_OutputDma->SetDataSize(DmaDataSize::Bits16);
+m_OutputDma->SetMode(dma_mode);
 m_OutputRequest=m_StateMachine->GetOutputRequest();
 }
 
@@ -92,6 +104,8 @@ m_OutputRequest=m_StateMachine->GetOutputRequest();
 
 VOID SpiEmulator::SpiBegin(UINT tx_size, UINT rx_size)
 {
+assert(tx_size%m_DataSize==0);
+assert(rx_size%m_DataSize==0);
 m_GpioHost->DigitalWrite(m_PinChipSelect, false);
 m_StateMachine->Restart();
 m_StateMachine->ClearBuffers();
