@@ -99,7 +99,7 @@ class Interrupts
 {
 public:
 	// Settings
-	static const UINT IRQ_COUNT=52;
+	static const UINT IRQ_COUNT=Runtime::CONFIG_IRQ_COUNT;
 
 	// Common
 	static BOOL Active()noexcept;
