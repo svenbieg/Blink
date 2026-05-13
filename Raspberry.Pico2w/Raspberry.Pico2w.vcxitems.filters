@@ -135,6 +135,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Pio\SpiEmulator.cpp">
       <Filter>Devices\Pio</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.cpp">
+      <Filter>Devices\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">
