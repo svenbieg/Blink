@@ -59,6 +59,12 @@ public:
 	BufferOverrunException(): Exception(Status::BufferOverrun) {}
 };
 
+class ChecksumException: public Exception
+{
+public:
+	ChecksumException(): Exception(Status::ChecksumError) {}
+};
+
 class ConnectionFailedException: public Exception
 {
 public:
