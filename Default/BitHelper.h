@@ -9,8 +9,7 @@
 // Using
 //=======
 
-#include "TypeHelper.h"
-#include <assert.h>
+#include "Devices/System/Cpu.h"
 
 
 //===========
@@ -51,6 +50,9 @@ typedef BITS32 BITS;
 class BitHelper
 {
 public:
+	// Using
+	using Cpu=Devices::System::Cpu;
+
 	// Common
 	static constexpr VOID Clear(BYTE& Operand, BYTE Mask)noexcept { Operand&=~Mask; }
 	static constexpr VOID Clear(BYTE& Operand, BITS8 const& Bits)noexcept { Operand&=~(Bits.Mask<<Bits.Shift); }
@@ -60,6 +62,7 @@ public:
 	static constexpr VOID Clear(UINT& Operand, BITS32 const& Bits)noexcept { Operand&=~(Bits.Mask<<Bits.Shift); }
 	static constexpr VOID Clear(UINT64& Operand, UINT64 Mask)noexcept { Operand&=~Mask; }
 	static constexpr VOID Clear(UINT64& Operand, BITS64 const& Bits)noexcept { Operand&=~(Bits.Mask<<Bits.Shift); }
+	static inline UINT CountTrailingZeros(UINT Value) { return Cpu::CountTrailingZeros(Value); }
 	static constexpr BYTE Get(BYTE Operand, BYTE Mask)noexcept { return Operand&Mask; }
 	static constexpr BYTE Get(BYTE Operand, BITS8 const& Bits)noexcept { return (Operand>>Bits.Shift)&Bits.Mask; }
 	static constexpr WORD Get(WORD Operand, WORD Mask)noexcept { return Operand&Mask; }
