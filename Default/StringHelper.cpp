@@ -1941,6 +1941,24 @@ UINT StringHelper::Scan(LPCWSTR str, LPCSTR format, VariableArguments& args)noex
 return StringScan<WCHAR>(str, format, args);
 }
 
+INT StringHelper::ToInt(LPCSTR str)
+{
+INT value=0;
+UINT len=StringScanInt(str, &value);
+if(!len||str[len]!=0)
+	throw InvalidArgumentException();
+return value;
+}
+
+INT StringHelper::ToInt(LPCWSTR str)
+{
+INT value=0;
+UINT len=StringScanInt(str, &value);
+if(!len||str[len]!=0)
+	throw InvalidArgumentException();
+return value;
+}
+
 BOOL StringHelper::ToInt(LPCSTR str, INT* value_ptr)noexcept
 {
 UINT len=StringScanInt(str, value_ptr);
@@ -1957,6 +1975,24 @@ if(!len||str[len]!=0)
 return true;
 }
 
+INT64 StringHelper::ToInt64(LPCSTR str)
+{
+INT64 value=0;
+UINT len=StringScanInt(str, &value);
+if(!len||str[len]!=0)
+	throw InvalidArgumentException();
+return value;
+}
+
+INT64 StringHelper::ToInt64(LPCWSTR str)
+{
+INT64 value=0;
+UINT len=StringScanInt(str, &value);
+if(!len||str[len]!=0)
+	throw InvalidArgumentException();
+return value;
+}
+
 BOOL StringHelper::ToInt64(LPCSTR str, INT64* value_ptr)noexcept
 {
 UINT len=StringScanInt(str, value_ptr);
@@ -1971,6 +2007,74 @@ UINT len=StringScanInt(str, value_ptr);
 if(!len||str[len]!=0)
 	return false;
 return true;
+}
+
+UINT StringHelper::ToUInt(LPCSTR str)
+{
+UINT value=0;
+UINT len=StringScanUInt(str, &value);
+if(!len||str[len]!=0)
+	throw InvalidArgumentException();
+return value;
+}
+
+UINT StringHelper::ToUInt(LPCWSTR str)
+{
+UINT value=0;
+UINT len=StringScanUInt(str, &value);
+if(!len||str[len]!=0)
+	throw InvalidArgumentException();
+return value;
+}
+
+BOOL StringHelper::ToUInt(LPCSTR str, UINT* value_ptr)noexcept
+{
+UINT len=StringScanUInt(str, value_ptr);
+if(!len||str[len]!=0)
+	return false;
+return true;
+}
+
+BOOL StringHelper::ToUInt(LPCWSTR str, UINT* value_ptr)noexcept
+{
+UINT len=StringScanUInt(str, value_ptr);
+if(!len||str[len]!=0)
+	return false;
+return true;
+}
+
+BOOL StringHelper::ToUInt64(LPCSTR str, UINT64* value_ptr)noexcept
+{
+UINT len=StringScanUInt(str, value_ptr);
+if(!len||str[len]!=0)
+	return false;
+return true;
+}
+
+BOOL StringHelper::ToUInt64(LPCWSTR str, UINT64* value_ptr)noexcept
+{
+UINT len=StringScanUInt(str, value_ptr);
+if(!len||str[len]!=0)
+	return false;
+return true;
+}
+
+UINT64 StringHelper::ToUInt64(LPCSTR str)
+{
+UINT64 value=0;
+UINT len=StringScanUInt(str, &value);
+if(!len||str[len]!=0)
+	throw InvalidArgumentException();
+return value;
+}
+
+UINT64 StringHelper::ToUInt64(LPCWSTR str)
+{
+UINT64 value=0;
+UINT len=StringScanUInt(str, &value);
+if(!len||str[len]!=0)
+	throw InvalidArgumentException();
+return value;
 }
 
 LPCSTR StringHelper::Truncate(LPCSTR str, LPCSTR chars)noexcept

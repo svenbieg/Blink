@@ -89,10 +89,22 @@ public:
 		VariableArguments vargs(args, TypeHelper::ArraySize(args));
 		return Scan(String, Format, vargs);
 		}
+	static INT ToInt(LPCSTR String);
+	static INT ToInt(LPCWSTR String);
 	static BOOL ToInt(LPCSTR String, INT* Value)noexcept;
 	static BOOL ToInt(LPCWSTR String, INT* Value)noexcept;
+	static INT64 ToInt64(LPCSTR String);
+	static INT64 ToInt64(LPCWSTR String);
 	static BOOL ToInt64(LPCSTR String, INT64* Value)noexcept;
 	static BOOL ToInt64(LPCWSTR String, INT64* Value)noexcept;
+	static UINT ToUInt(LPCSTR String);
+	static UINT ToUInt(LPCWSTR String);
+	static BOOL ToUInt(LPCSTR String, UINT* Value)noexcept;
+	static BOOL ToUInt(LPCWSTR String, UINT* Value)noexcept;
+	static UINT64 ToUInt64(LPCSTR String);
+	static UINT64 ToUInt64(LPCWSTR String);
+	static BOOL ToUInt64(LPCSTR String, UINT64* Value)noexcept;
+	static BOOL ToUInt64(LPCWSTR String, UINT64* Value)noexcept;
 	static LPCSTR Truncate(LPCSTR String, LPCSTR Characters)noexcept;
 	static LPCWSTR Truncate(LPCWSTR String, LPCSTR Characters)noexcept;
 	static UINT Uppercase(LPSTR String)noexcept;

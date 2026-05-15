@@ -17,6 +17,73 @@ using namespace Storage::Encoding;
 using namespace Storage::Streams;
 
 
+//============
+// Conversion
+//============
+
+template <std::integral _int_t>
+VOID StringFromInt(LPTSTR dst, UINT size, _int_t value)noexcept
+{
+BOOL sign=value<0;
+if(sign)
+	value=-value;
+LPTSTR buf=&dst[size-1];
+*buf=0;
+do
+	{
+	*--buf=(TCHAR)((value%10)+'0');
+	value/=10;
+	}
+while(value);
+if(sign)
+	*--buf='-';
+}
+
+template <std::integral _int_t>
+UINT StringFromIntLength(_int_t value)noexcept
+{
+UINT len=0;
+if(value<0)
+	{
+	len++;
+	value=-value;
+	}
+do
+	{
+	value/=10;
+	len++;
+	}
+while(value);
+return len;
+}
+
+template <std::unsigned_integral _uint_t>
+VOID StringFromUInt(LPTSTR dst, UINT size, _uint_t value)noexcept
+{
+LPTSTR buf=&dst[size-1];
+*buf=0;
+do
+	{
+	*--buf=(TCHAR)((value%10)+'0');
+	value/=10;
+	}
+while(value);
+}
+
+template <std::unsigned_integral _uint_t>
+UINT StringFromUIntLength(_uint_t value)noexcept
+{
+UINT len=0;
+do
+	{
+	value/=10;
+	len++;
+	}
+while(value);
+return len;
+}
+
+
 //==================
 // Con-/Destructors
 //==================
@@ -24,65 +91,87 @@ using namespace Storage::Streams;
 Handle<String> String::Create(LPCSTR Value)
 {
 UINT len=StringHelper::Length(Value);
-UINT size=sizeof(String)+(len+1)*sizeof(TCHAR);
-auto str=(String*)MemoryHelper::Allocate(size);
-LPTSTR buf=(LPTSTR)((SIZE_T)str+sizeof(String));
-new (str) String(buf, len+1, Value);
+auto str=String::Create(len, nullptr);
+StringHelper::Copy(str->m_Buffer, len+1, Value);
+str->m_Hash=StringHelper::Hash(str->m_Buffer);
+str->m_Length=len;
 return str;
 }
 
 Handle<String> String::Create(LPCWSTR Value)
 {
 UINT len=StringHelper::Length(Value);
-UINT size=sizeof(String)+(len+1)*sizeof(TCHAR);
-auto str=(String*)MemoryHelper::Allocate(size);
-LPTSTR buf=(LPTSTR)((SIZE_T)str+sizeof(String));
-new (str) String(buf, len+1, Value);
+auto str=String::Create(len, nullptr);
+StringHelper::Copy(str->m_Buffer, len+1, Value);
+str->m_Hash=StringHelper::Hash(str->m_Buffer);
+str->m_Length=len;
 return str;
 }
 
 Handle<String> String::Create(UINT Length, LPCSTR Value)
 {
 UINT len=StringHelper::Length(Value, Length);
-UINT size=sizeof(String)+(len+1)*sizeof(TCHAR);
-auto str=(String*)MemoryHelper::Allocate(size);
-LPTSTR buf=(LPTSTR)((SIZE_T)str+sizeof(String));
-new (str) String(buf, len+1, Value);
+auto str=String::Create(len, nullptr);
+StringHelper::Copy(str->m_Buffer, len+1, Value, len);
+str->m_Hash=StringHelper::Hash(str->m_Buffer);
+str->m_Length=len;
 return str;
 }
 
 Handle<String> String::Create(UINT Length, LPCWSTR Value)
 {
 UINT len=StringHelper::Length(Value, Length);
-UINT size=sizeof(String)+(len+1)*sizeof(TCHAR);
-auto str=(String*)MemoryHelper::Allocate(size);
-LPTSTR buf=(LPTSTR)((SIZE_T)str+sizeof(String));
-new (str) String(buf, len+1, Value);
+auto str=String::Create(len, nullptr);
+StringHelper::Copy(str->m_Buffer, len+1, Value, len);
+str->m_Hash=StringHelper::Hash(str->m_Buffer);
+str->m_Length=len;
 return str;
 }
 
 Handle<String> String::Create(LPCSTR Format, VariableArguments& Arguments)
 {
 UINT len=StringHelper::Length(Format, Arguments);
-UINT size=sizeof(String)+(len+1)*sizeof(TCHAR);
-auto str=(String*)MemoryHelper::Allocate(size);
-LPTSTR buf=(LPTSTR)((SIZE_T)str+sizeof(String));
-new (str) String(buf, len+1, Format, Arguments);
+auto str=String::Create(len, nullptr);
+StringHelper::Print(str->m_Buffer, len+1, Format, Arguments);
+str->m_Hash=StringHelper::Hash(str->m_Buffer);
+str->m_Length=len;
 return str;
 }
 
-Handle<String> String::FromInt(INT value)
+Handle<String> String::From(INT value)
 {
-CHAR buf[12];
-StringHelper::PrintInt(buf, 12, value);
-return Create(buf);
+UINT len=StringFromIntLength(value);
+auto str=String::Create(len, nullptr);
+StringFromInt(str->m_Buffer, len+1, value);
+str->m_Length=len;
+return str;
 }
 
-Handle<String> String::FromInt64(INT64 value)
+Handle<String> String::From(INT64 value)
 {
-CHAR buf[22];
-StringHelper::PrintInt64(buf, 22, value);
-return Create(buf);
+UINT len=StringFromIntLength(value);
+auto str=String::Create(len, nullptr);
+StringFromInt(str->m_Buffer, len+1, value);
+str->m_Length=len;
+return str;
+}
+
+Handle<String> String::From(UINT value)
+{
+UINT len=StringFromUIntLength(value);
+auto str=String::Create(len, nullptr);
+StringFromUInt(str->m_Buffer, len+1, value);
+str->m_Length=len;
+return str;
+}
+
+Handle<String> String::From(UINT64 value)
+{
+UINT len=StringFromUIntLength(value);
+auto str=String::Create(len, nullptr);
+StringFromUInt(str->m_Buffer, len+1, value);
+str->m_Length=len;
+return str;
 }
 
 Handle<String> String::ReadFromStream(InputStream* stream, SIZE_T* size_ptr)
@@ -202,27 +291,6 @@ m_Hash(0),
 m_Length(0)
 {
 m_Buffer[0]=0;
-}
-
-String::String(LPTSTR Buffer, UINT Size, LPCSTR Value)noexcept:
-m_Buffer(Buffer)
-{
-m_Length=StringHelper::Copy(m_Buffer, Size, Value);
-m_Hash=StringHelper::Hash(m_Buffer);
-}
-
-String::String(LPTSTR Buffer, UINT Size, LPCWSTR Value)noexcept:
-m_Buffer(Buffer)
-{
-m_Length=StringHelper::Copy(m_Buffer, Size, Value);
-m_Hash=StringHelper::Hash(m_Buffer);
-}
-
-String::String(LPTSTR Buffer, UINT Size, LPCSTR Format, VariableArguments& Arguments)noexcept:
-m_Buffer(Buffer)
-{
-m_Length=StringHelper::Print(m_Buffer, Size, Format, Arguments);
-m_Hash=StringHelper::Hash(m_Buffer);
 }
 
 Handle<String> String::Create(UINT Length, nullptr_t)

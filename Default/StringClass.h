@@ -49,8 +49,10 @@ public:
 	static Handle<String> Create(UINT Length, LPCWSTR Value);
 	static Handle<String> Create(LPCSTR Format, VariableArguments& Arguments);
 	template <class... _args_t> static inline Handle<String> Create(LPCSTR Format, _args_t... Arguments);
-	static Handle<String> FromInt(INT Value);
-	static Handle<String> FromInt64(INT64 Value);
+	static Handle<String> From(INT Value);
+	static Handle<String> From(INT64 Value);
+	static Handle<String> From(UINT Value);
+	static Handle<String> From(UINT64 Value);
 	static Handle<String> ReadFromStream(InputStream* Stream, SIZE_T* Size=nullptr);
 
 	// Access
@@ -74,9 +76,15 @@ public:
 		VariableArguments vargs(args, TypeHelper::ArraySize(args));
 		return StringHelper::Scan(m_Buffer, Format, vargs);
 		}
+	inline INT ToInt() { return StringHelper::ToInt(m_Buffer); }
 	inline BOOL ToInt(INT* Value)noexcept { return StringHelper::ToInt(m_Buffer, Value); }
+	inline INT64 ToInt64() { return StringHelper::ToInt64(m_Buffer); }
 	inline BOOL ToInt64(INT64* Value)noexcept { return StringHelper::ToInt64(m_Buffer, Value); }
 	Handle<String> ToString(LanguageCode Language=LanguageCode::None)override;
+	inline UINT ToUInt() { return StringHelper::ToUInt(m_Buffer); }
+	inline BOOL ToUInt(UINT* Value)noexcept { return StringHelper::ToUInt(m_Buffer, Value); }
+	inline UINT64 ToUInt64() { return StringHelper::ToUInt64(m_Buffer); }
+	inline BOOL ToUInt64(UINT64* Value)noexcept { return StringHelper::ToUInt64(m_Buffer, Value); }
 	SIZE_T WriteToStream(OutputStream* Stream);
 	static SIZE_T WriteToStream(String const* String, OutputStream* Stream);
 
@@ -86,9 +94,6 @@ public:
 private:
 	// Con-/Destructors
 	String(LPTSTR Buffer)noexcept;
-	String(LPTSTR Buffer, UINT Size, LPCSTR Value)noexcept;
-	String(LPTSTR Buffer, UINT Size, LPCWSTR Value)noexcept;
-	String(LPTSTR Buffer, UINT Size, LPCSTR Format, VariableArguments& Arguments)noexcept;
 	static Handle<String> Create(UINT Length, nullptr_t);
 
 	// Common
