@@ -88,6 +88,42 @@ return len;
 // Con-/Destructors
 //==================
 
+Handle<String> String::Create(INT value)
+{
+UINT len=StringFromIntLength(value);
+auto str=String::Create(len, nullptr);
+StringFromInt(str->m_Buffer, len+1, value);
+str->m_Length=len;
+return str;
+}
+
+Handle<String> String::Create(INT64 value)
+{
+UINT len=StringFromIntLength(value);
+auto str=String::Create(len, nullptr);
+StringFromInt(str->m_Buffer, len+1, value);
+str->m_Length=len;
+return str;
+}
+
+Handle<String> String::Create(UINT value)
+{
+UINT len=StringFromUIntLength(value);
+auto str=String::Create(len, nullptr);
+StringFromUInt(str->m_Buffer, len+1, value);
+str->m_Length=len;
+return str;
+}
+
+Handle<String> String::Create(UINT64 value)
+{
+UINT len=StringFromUIntLength(value);
+auto str=String::Create(len, nullptr);
+StringFromUInt(str->m_Buffer, len+1, value);
+str->m_Length=len;
+return str;
+}
+
 Handle<String> String::Create(LPCSTR Value)
 {
 UINT len=StringHelper::Length(Value);
@@ -134,42 +170,6 @@ UINT len=StringHelper::Length(Format, Arguments);
 auto str=String::Create(len, nullptr);
 StringHelper::Print(str->m_Buffer, len+1, Format, Arguments);
 str->m_Hash=StringHelper::Hash(str->m_Buffer);
-str->m_Length=len;
-return str;
-}
-
-Handle<String> String::From(INT value)
-{
-UINT len=StringFromIntLength(value);
-auto str=String::Create(len, nullptr);
-StringFromInt(str->m_Buffer, len+1, value);
-str->m_Length=len;
-return str;
-}
-
-Handle<String> String::From(INT64 value)
-{
-UINT len=StringFromIntLength(value);
-auto str=String::Create(len, nullptr);
-StringFromInt(str->m_Buffer, len+1, value);
-str->m_Length=len;
-return str;
-}
-
-Handle<String> String::From(UINT value)
-{
-UINT len=StringFromUIntLength(value);
-auto str=String::Create(len, nullptr);
-StringFromUInt(str->m_Buffer, len+1, value);
-str->m_Length=len;
-return str;
-}
-
-Handle<String> String::From(UINT64 value)
-{
-UINT len=StringFromUIntLength(value);
-auto str=String::Create(len, nullptr);
-StringFromUInt(str->m_Buffer, len+1, value);
 str->m_Length=len;
 return str;
 }

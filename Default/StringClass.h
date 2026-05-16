@@ -43,16 +43,16 @@ public:
 	friend StringHelper;
 
 	// Con-/Destructors
+	static Handle<String> Create(INT Value);
+	static Handle<String> Create(INT64 Value);
+	static Handle<String> Create(UINT Value);
+	static Handle<String> Create(UINT64 Value);
 	static Handle<String> Create(LPCSTR Value);
 	static Handle<String> Create(LPCWSTR Value);
 	static Handle<String> Create(UINT Length, LPCSTR Value);
 	static Handle<String> Create(UINT Length, LPCWSTR Value);
 	static Handle<String> Create(LPCSTR Format, VariableArguments& Arguments);
 	template <class... _args_t> static inline Handle<String> Create(LPCSTR Format, _args_t... Arguments);
-	static Handle<String> From(INT Value);
-	static Handle<String> From(INT64 Value);
-	static Handle<String> From(UINT Value);
-	static Handle<String> From(UINT64 Value);
 	static Handle<String> ReadFromStream(InputStream* Stream, SIZE_T* Size=nullptr);
 
 	// Access
