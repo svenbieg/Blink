@@ -36,6 +36,12 @@ FreeBlocks(m_Free);
 // Common
 //========
 
+SIZE_T OutputBuffer::Available()noexcept
+{
+SpinLock lock(m_CriticalSection);
+return m_Written-m_Read;
+}
+
 VOID OutputBuffer::Clear()noexcept
 {
 SpinLock lock(m_CriticalSection);
@@ -61,9 +67,9 @@ m_Written=m_Size;
 SIZE_T OutputBuffer::Read(VOID* buf, SIZE_T size)noexcept
 {
 auto dst=(BYTE*)buf;
-SIZE_T pos=0;
+SIZE_T read=0;
 SpinLock lock(m_CriticalSection);
-while(pos<size)
+while(read<size)
 	{
 	SIZE_T available=m_Written-m_Read;
 	if(!available)
@@ -72,70 +78,69 @@ while(pos<size)
 	SIZE_T buf_pos=m_Read;
 	SIZE_T buf_size=m_First->Size;
 	lock.Unlock();
-	SIZE_T copy=TypeHelper::Min(available, size-pos);
+	SIZE_T copy=TypeHelper::Min(available, size-read);
 	copy=TypeHelper::Min(copy, buf_size);
-	MemoryHelper::Copy(&dst[pos], &src[buf_pos], copy);
-	pos+=copy;
-	lock.Lock();
+	MemoryHelper::Copy(&dst[read], &src[buf_pos], copy);
+	read+=copy;
 	m_Read+=copy;
-	if(m_Read==buf_size)
+	lock.Lock();
+	if(m_Read==m_Written)
 		{
-		auto next=m_First->Next;
-		if(next)
-			{
-			auto first=m_First;
-			m_First=next;
-			m_Read=0;
-			m_Size-=buf_size;
-			m_Written-=buf_size;
-			lock.Unlock();
-			FreeBlock(first);
-			lock.Lock();
-			}
-		else if(m_Read==m_Size)
-			{
-			m_First->Size=0;
-			m_Read=0;
-			m_Size=0;
-			m_Written=0;
-			}
+		m_First->Size=0;
+		m_Read=0;
+		m_Size=0;
+		m_Written=0;
+		break;
+		}
+	if(m_Read==m_BlockSize)
+		{
+		auto first=m_First;
+		auto next=first->Next;
+		m_First=next;
+		m_Read=0;
+		m_Size-=m_BlockSize;
+		m_Written-=m_BlockSize;
+		FreeBlock(first);
 		}
 	}
-return pos;
+return read;
 }
-
 
 SIZE_T OutputBuffer::Write(VOID const* buf, SIZE_T size)
 {
-SIZE_T written=0;
 auto src=(BYTE const*)buf;
-SIZE_T pos=0;
+SIZE_T written=0;
 SpinLock lock(m_CriticalSection);
 auto current=m_Last;
-while(pos<size)
+while(written<size)
 	{
 	auto dst=current->Buffer;
 	SIZE_T buf_size=current->Size;
 	lock.Unlock();
 	SIZE_T available=m_BlockSize-buf_size;
-	if(!available)
+	SIZE_T copy=0;
+	if(available)
+		{
+		copy=TypeHelper::Min(available, size-written);
+		MemoryHelper::Copy(&dst[buf_size], &src[written], copy);
+		written+=copy;
+		m_Size+=copy;
+		lock.Lock();
+		current->Size+=copy;
+		}
+	else
 		{
 		auto next=CreateBlock();
+		copy=TypeHelper::Min(m_BlockSize, size-written);
+		MemoryHelper::Copy(next->Buffer, &src[written], copy);
+		written+=copy;
+		m_Size+=copy;
 		lock.Lock();
 		current->Next=next;
-		m_Last=current;
-		lock.Unlock();
 		current=next;
-		buf_size=0;
-		available=m_BlockSize;
+		current->Size+=copy;
+		m_Last=current;
 		}
-	SIZE_T write=size-pos;
-	SIZE_T copy=TypeHelper::Min(available, write);
-	MemoryHelper::Copy(&dst[buf_size], &src[pos], copy);
-	pos+=copy;
-	lock.Lock();
-	current->Size+=copy;
-	m_Size+=copy;
 	}
 return written;
 }

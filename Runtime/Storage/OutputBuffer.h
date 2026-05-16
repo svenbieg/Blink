@@ -33,7 +33,7 @@ public:
 	static inline Handle<OutputBuffer> Create(SIZE_T BlockSize) { return new OutputBuffer(BlockSize); }
 
 	// Common
-	inline SIZE_T Available()const noexcept { return m_Written-m_Read; }
+	SIZE_T Available()noexcept;
 	VOID Clear()noexcept;
 	SIZE_T Read(VOID* Buffer, SIZE_T Size)noexcept;
 	VOID Flush()noexcept;
