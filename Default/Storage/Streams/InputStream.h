@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Storage/Streams/Stream.h"
+#include "TypeHelper.h"
 
 
 //===========
@@ -24,7 +24,7 @@ namespace Storage {
 // Input-Stream
 //==============
 
-class InputStream: public virtual Stream
+class InputStream
 {
 public:
 	// Common

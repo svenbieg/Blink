@@ -58,7 +58,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\OutputStream.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\RandomAccessStream.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\Seekable.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\Stream.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamReader.h" />

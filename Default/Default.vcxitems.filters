@@ -88,9 +88,6 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)StringBuilder.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Global.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\Stream.h">
-      <Filter>Storage\Streams</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\LinkedList.h">
       <Filter>Collections</Filter>
     </ClInclude>

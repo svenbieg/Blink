@@ -52,17 +52,10 @@ public:
 	SIZE_T Write(VOID const* Buffer, SIZE_T Size);
 
 private:
-	// Using
-	typedef UINT (*ANSI_PROC)(OutputStream* Stream, CHAR Char);
-	typedef UINT (*UNICODE_PROC)(OutputStream* Stream, WCHAR Char);
-
 	// Common
-	template <class _func_t, class _char_t> UINT DoPrint(_func_t WriteChar, UINT Length, _char_t const* Value);
-	template <class _func_t, class _char_t> UINT DoPrintChar(_func_t WriteChar, _char_t Char, UINT Count);
-
+	template <std::character _char_t> UINT DoPrint(UINT Length, _char_t const* Value);
+	template <std::character _char_t> UINT DoPrintChar(_char_t Char, UINT Count);
 	OutputStream* m_Stream;
-	ANSI_PROC m_WriteAnsi;
-	UNICODE_PROC m_WriteUnicode;
 };
 
 }}

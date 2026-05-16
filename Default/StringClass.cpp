@@ -189,28 +189,8 @@ if(!len)
 	}
 auto str=Create(len, nullptr);
 auto buf=str->m_Buffer;
-auto format=stream->GetStreamFormat();
-switch(format)
-	{
-	case StreamFormat::Ansi:
-		{
-		for(UINT u=0; u<len; u++)
-			size+=CharHelper::ReadAnsi(stream, &buf[u]);
-		break;
-		}
-	case StreamFormat::Unicode:
-		{
-		for(UINT u=0; u<len; u++)
-			size+=CharHelper::ReadUnicode(stream, &buf[u]);
-		break;
-		}
-	case StreamFormat::UTF8:
-		{
-		for(UINT u=0; u<len; u++)
-			size+=CharHelper::ReadUtf8(stream, &buf[u]);
-		break;
-		}
-	}
+for(UINT u=0; u<len; u++)
+	size+=CharHelper::Read(stream, &buf[u]);
 buf[len]=0;
 str->m_Hash=StringHelper::Hash(buf);
 str->m_Length=len;
@@ -233,34 +213,12 @@ SIZE_T String::WriteToStream(String const* str, OutputStream* stream)
 {
 if(!str)
 	return Dwarf::WriteUnsigned(stream, 0U);
-StreamFormat format=Stream::DefaultStreamFormat;
-if(stream)
-	format=stream->GetStreamFormat();
 auto buf=str->m_Buffer;
 auto len=str->m_Length;
 SIZE_T size=0;
 size+=Dwarf::WriteUnsigned(stream, len);
-switch(format)
-	{
-	case StreamFormat::Ansi:
-		{
-		for(UINT u=0; u<len; u++)
-			size+=CharHelper::WriteAnsi(stream, buf[u]);
-		break;
-		}
-	case StreamFormat::Unicode:
-		{
-		for(UINT u=0; u<len; u++)
-			size+=CharHelper::WriteUnicode(stream, buf[u]);
-		break;
-		}
-	case StreamFormat::UTF8:
-		{
-		for(UINT u=0; u<len; u++)
-			size+=CharHelper::WriteUtf8(stream, buf[u]);
-		break;
-		}
-	}
+for(UINT u=0; u<len; u++)
+	size+=CharHelper::Write(stream, buf[u]);
 return size;
 }
 

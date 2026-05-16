@@ -26,66 +26,6 @@ template<class _Ty> concept character=is_character<_Ty>::value;
 }
 
 
-//============
-// Characters
-//============
-
-namespace Ansi
-{
-const CHAR AE='\xC4';
-const CHAR ae='\xE4';
-const CHAR Average='\xD8';
-const CHAR Degree='\xB0';
-const CHAR Enumeration='\x95';
-const CHAR OE='\xD6';
-const CHAR oe='\xF6';
-const CHAR sz='\xDF';
-const CHAR UE='\xDC';
-const CHAR ue='\xFC';
-}
-
-#ifdef _UNICODE
-namespace Chars
-{
-const WCHAR AE=L'\x00C4';
-const WCHAR ae=L'\x00E4';
-const WCHAR Average=L'\x00D8';
-const WCHAR Degree=L'\x00B0';
-const WCHAR Enumeration=L'\x2022';
-const WCHAR OE=L'\x00D6';
-const WCHAR oe=L'\x00F6';
-const WCHAR UE=L'\x00DC';
-const WCHAR ue=L'\x00FC';
-}
-#else
-namespace Chars
-{
-const CHAR AE='\xC4';
-const CHAR ae='\xE4';
-const CHAR Average='\xD8';
-const CHAR Degree='\xB0';
-const CHAR Enumeration='\x95';
-const CHAR OE='\xD6';
-const CHAR oe='\xF6';
-const CHAR UE='\xDC';
-const CHAR ue='\xFC';
-}
-#endif
-
-namespace Unicode
-{
-const WCHAR AE=L'\x00C4';
-const WCHAR ae=L'\x00E4';
-const WCHAR Average=L'\x00D8';
-const WCHAR Degree=L'\x00B0';
-const WCHAR Enumeration=L'\x2022';
-const WCHAR OE=L'\x00D6';
-const WCHAR oe=L'\x00F6';
-const WCHAR UE=L'\x00DC';
-const WCHAR ue=L'\x00FC';
-}
-
-
 //=============
 // Char-Helper
 //=============
@@ -125,12 +65,15 @@ public:
 	static BOOL IsSmall(WCHAR Char)noexcept;
 	static BOOL IsSpecial(CHAR Char)noexcept;
 	static BOOL IsSpecial(WCHAR Char)noexcept;
-	static UINT ReadAnsi(InputStream* Stream, CHAR* Char);
-	static UINT ReadAnsi(InputStream* Stream, WCHAR* Char);
-	static UINT ReadUnicode(InputStream* Stream, CHAR* Char);
-	static UINT ReadUnicode(InputStream* Stream, WCHAR* Char);
-	static UINT ReadUtf8(InputStream* Stream, CHAR* Char);
-	static UINT ReadUtf8(InputStream* Stream, WCHAR* Char);
+	static UINT Read(LPCSTR String);
+	static UINT Read(LPCSTR String, CHAR* Char);
+	static UINT Read(LPCSTR String, WCHAR* Char);
+	static UINT Read(LPCWSTR String);
+	static UINT Read(LPCWSTR String, CHAR* Char);
+	static UINT Read(LPCWSTR String, WCHAR* Char);
+	static UINT Read(InputStream* Stream);
+	static UINT Read(InputStream* Stream, CHAR* Char);
+	static UINT Read(InputStream* Stream, WCHAR* Char);
 	static CHAR ToAnsi(WCHAR Char)noexcept;
 	template <std::character _dst_t, std::character _src_t> static _dst_t ToCapital(_src_t Char)noexcept;
 	static CHAR ToCapitalAnsi(CHAR Char)noexcept;
@@ -146,12 +89,12 @@ public:
 	static WCHAR ToSmallUnicode(CHAR Char)noexcept;
 	static WCHAR ToSmallUnicode(WCHAR Char)noexcept;
 	static WCHAR ToUnicode(CHAR Char)noexcept;
-	static UINT WriteAnsi(OutputStream* Stream, CHAR Char);
-	static UINT WriteAnsi(OutputStream* Stream, WCHAR Char);
-	static UINT WriteUnicode(OutputStream* Stream, CHAR Char);
-	static UINT WriteUnicode(OutputStream* Stream, WCHAR Char);
-	static UINT WriteUtf8(OutputStream* Stream, CHAR Char);
-	static UINT WriteUtf8(OutputStream* Stream, WCHAR Char);
+	static UINT Write(LPSTR Buffer, UINT Size, CHAR Char);
+	static UINT Write(LPSTR Buffer, UINT Size, WCHAR Char);
+	static UINT Write(LPWSTR Buffer, UINT Size, CHAR Char);
+	static UINT Write(LPWSTR Buffer, UINT Size, WCHAR Char);
+	static UINT Write(OutputStream* Stream, CHAR Char);
+	static UINT Write(OutputStream* Stream, WCHAR Char);
 };
 
 template <> inline CHAR CharHelper::ToCapital(CHAR Char)noexcept { return ToCapitalAnsi(Char); }

@@ -51,17 +51,11 @@ public:
 	UINT Skip(LPCSTR Chars);
 
 private:
-	// Using
-	typedef UINT (*ANSI_PROC)(InputStream* Stream, CHAR* Char);
-	typedef UINT (*UNICODE_PROC)(InputStream* Stream, WCHAR* Char);
-
 	// Common
-	template <class _func_t, class _char_t> UINT DoReadString(_func_t ReadChar, _char_t* Buffer, UINT Size);
-	template <class _func_t, class _char_t> UINT DoReadString(_func_t ReadChar, _char_t* Buffer, UINT Size, CHAR Escape);
-	template <class _func_t, class _char_t> UINT DoReadString(_func_t ReadChar, _char_t* Buffer, UINT Size, LPCSTR Escape, LPCSTR Truncate);
-	template <class _func_t> Handle<String> DoReadString(_func_t ReadChar, SIZE_T* Size, LPCSTR Escape, LPCSTR Truncate);
-	ANSI_PROC m_ReadAnsi;
-	UNICODE_PROC m_ReadUnicode;
+	template <std::character _char_t> UINT DoReadString(_char_t* Buffer, UINT Size);
+	template <std::character _char_t> UINT DoReadString(_char_t* Buffer, UINT Size, CHAR Escape);
+	template <std::character _char_t> UINT DoReadString(_char_t* Buffer, UINT Size, LPCSTR Escape, LPCSTR Truncate);
+	Handle<String> DoReadString(SIZE_T* Size, LPCSTR Escape, LPCSTR Truncate);
 	InputStream* m_Stream;
 };
 

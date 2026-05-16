@@ -13,6 +13,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialPort.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiAdapter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiPacket.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Network\Wifi\WifiStation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Sdio\Sdio.h" />
@@ -21,5 +22,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\Wifi.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiPacket.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Network\Wifi\WifiScan.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Network\Wifi\WifiStation.h" />
   </ItemGroup>
 </Project>

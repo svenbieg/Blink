@@ -68,7 +68,6 @@ Console::Console():
 m_This(this)
 {
 m_SerialPort=SerialPort::Create();
-m_SerialPort->SetStreamFormat(StreamFormat::UTF8);
 m_SerialPort->DataReceived.Add(this, &Console::OnSerialPortDataReceived);
 }
 
