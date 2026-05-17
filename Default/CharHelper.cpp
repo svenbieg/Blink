@@ -9,6 +9,8 @@
 // Using
 //=======
 
+#include "StringHelper.h"
+
 using namespace Storage::Streams;
 
 
@@ -23,9 +25,9 @@ const CHAR CHAR_UNKNOWN=0x1A;
 // Comparison
 //============
 
-const CHAR STR_BREAK[]			="\n\r\t;|/\\";
-const CHAR STR_LINE_BREAK[]		="\n\r";
-const CHAR STR_SPECIAL[]		="\"*/:<>?\\|";
+const LPCSTR STR_BREAK			="\n\r\t;|/\\";
+const LPCSTR STR_LINE_BREAK		="\n\r";
+const LPCSTR STR_SPECIAL		="\"*/:<>?\\|";
 
 const BYTE COMPARE_CS[]=
 	{
@@ -92,98 +94,70 @@ const BYTE COMPARE_NCS[]=
 
 INT CharHelper::Compare(CHAR c1, CHAR c2)noexcept
 {
-BYTE b1=TypeHelper::Min((BYTE)0x7F, (BYTE)c1);
-BYTE b2=TypeHelper::Min((BYTE)0x7F, (BYTE)c2);
-BYTE id1=COMPARE_CS[b1];
-BYTE id2=COMPARE_CS[b2];
-if(id1!=0xFF&&id2!=0xFF)
-	{
-	b1=id1;
-	b2=id2;
-	}
-if(b1>b2)
-	return 1;
-if(b1<b2)
-	return -1;
-return 0;
+WCHAR wc1=ToCharW(c1);
+WCHAR wc2=ToCharW(c2);
+return Compare(wc1, wc2);
 }
 
 INT CharHelper::Compare(CHAR c1, CHAR c2, CompareMode mode)noexcept
 {
-BYTE b1=TypeHelper::Min((BYTE)0x7F, (BYTE)c1);
-BYTE b2=TypeHelper::Min((BYTE)0x7F, (BYTE)c2);
-BYTE id1=COMPARE_NCS[b1];
-BYTE id2=COMPARE_NCS[b2];
-if(id1!=0xFF&&id2!=0xFF)
-	{
-	b1=id1;
-	b2=id2;
-	}
-if(b1>b2)
-	return 1;
-if(b1<b2)
-	return -1;
-return 0;
+WCHAR wc1=ToCharW(c1);
+WCHAR wc2=ToCharW(c2);
+return Compare(wc1, wc2, mode);
 }
 
 INT CharHelper::Compare(CHAR c1, WCHAR wc2)noexcept
 {
-CHAR c2=ToChar(wc2);
-return Compare(c1, c2);
+WCHAR wc1=ToCharW(c1);
+return Compare(wc1, wc2);
 }
 
 INT CharHelper::Compare(CHAR c1, WCHAR wc2, CompareMode mode)noexcept
 {
-CHAR c2=ToChar(wc2);
-return Compare(c1, c2, mode);
+WCHAR wc1=ToCharW(c1);
+return Compare(wc1, wc2, mode);
 }
 
 INT CharHelper::Compare(WCHAR wc1, CHAR c2)noexcept
 {
-CHAR c1=ToChar(wc1);
-return Compare(c1, c2);
+WCHAR wc2=ToCharW(c2);
+return Compare(wc1, wc2);
 }
 
 INT CharHelper::Compare(WCHAR wc1, CHAR c2, CompareMode mode)noexcept
 {
-CHAR c1=ToChar(wc1);
-return Compare(c1, c2, mode);
+WCHAR wc2=ToCharW(c2);
+return Compare(wc1, wc2, mode);
+}
+
+template <const BYTE* _compare_ids> inline INT CharCompare(WCHAR c1, WCHAR c2)noexcept
+{
+WORD w1=(WORD)c1;
+WORD w2=(WORD)c2;
+w1=TypeHelper::Min(0xFF, w1);
+w2=TypeHelper::Min(0xFF, w2);
+BYTE id1=_compare_ids[w1];
+BYTE id2=_compare_ids[w2];
+if(id1!=0xFF&&id2!=0xFF)
+	{
+	w1=id1;
+	w2=id2;
+	}
+if(w1>w2)
+	return 1;
+if(w1<w2)
+	return -1;
+return 0;
 }
 
 INT CharHelper::Compare(WCHAR c1, WCHAR c2)noexcept
 {
-WORD w1=TypeHelper::Min((WORD)0xFF, (WORD)c1);
-WORD w2=TypeHelper::Min((WORD)0xFF, (WORD)c2);
-BYTE id1=COMPARE_CS[w1];
-BYTE id2=COMPARE_CS[w2];
-if(id1!=0xFF&&id2!=0xFF)
-	{
-	w1=id1;
-	w2=id2;
-	}
-if(w1>w2)
-	return 1;
-if(w1<w2)
-	return -1;
-return 0;
+return CharCompare<COMPARE_CS>(c1, c2);
 }
 
 INT CharHelper::Compare(WCHAR c1, WCHAR c2, CompareMode mode)noexcept
 {
-WORD w1=TypeHelper::Min((WORD)0xFF, (WORD)c1);
-WORD w2=TypeHelper::Min((WORD)0xFF, (WORD)c2);
-BYTE id1=COMPARE_NCS[w1];
-BYTE id2=COMPARE_NCS[w2];
-if(id1!=0xFF&&id2!=0xFF)
-	{
-	w1=id1;
-	w2=id2;
-	}
-if(w1>w2)
-	return 1;
-if(w1<w2)
-	return -1;
-return 0;
+return CharCompare<COMPARE_NCS>(c1, c2);
 }
 
 BOOL CharHelper::Equal(CHAR c1, CHAR c2, CompareMode mode)noexcept
@@ -197,91 +171,70 @@ return c1==c2;
 
 BOOL CharHelper::Equal(CHAR c1, WCHAR wc2)noexcept
 {
-CHAR c2=ToChar(wc2);
-return Equal(c1, c2);
+WCHAR wc1=ToCharW(c1);
+return Equal(wc1, wc2);
 }
 
 BOOL CharHelper::Equal(CHAR c1, WCHAR wc2, CompareMode mode)noexcept
 {
-CHAR c2=ToChar(wc2);
-return Equal(c1, c2, mode);
+WCHAR wc1=ToCharW(c1);
+return Equal(wc1, wc2, mode);
 }
 
 BOOL CharHelper::Equal(WCHAR wc1, CHAR c2)noexcept
 {
-CHAR c1=ToChar(wc1);
-return Equal(c1, c2);
+WCHAR wc2=ToCharW(c2);
+return Equal(wc1, wc2);
 }
 
 BOOL CharHelper::Equal(WCHAR wc1, CHAR c2, CompareMode mode)noexcept
 {
-CHAR c1=ToChar(wc1);
-return Equal(c1, c2, mode);
+WCHAR wc2=ToCharW(c2);
+return Equal(wc1, wc2, mode);
 }
 
-BOOL CharHelper::Equal(WCHAR c1, WCHAR c2, CompareMode mode)noexcept
+BOOL CharHelper::Equal(WCHAR wc1, WCHAR wc2, CompareMode mode)noexcept
 {
-if(c1==c2)
+if(wc1==wc2)
 	return true;
-c1=ToCapitalW(c1);
-c2=ToCapitalW(c2);
-return c1==c2;
+wc1=ToCapitalW(wc1);
+wc2=ToCapitalW(wc2);
+return wc1==wc2;
+}
+
+template <std::character _char_t, class... _mode_t> inline BOOL CharEqual(_char_t c, LPCSTR chars, _mode_t... mode)noexcept
+{
+assert(chars);
+WCHAR wc1=CharHelper::ToCharW(c);
+UINT pos=0;
+while(chars[pos])
+	{
+	WCHAR wc2=0;
+	pos+=CharHelper::Read(&chars[pos], &wc2);
+	if(CharHelper::Equal(wc1, wc2, mode...))
+		return true;
+	}
+return false;
 }
 
 BOOL CharHelper::Equal(CHAR c, LPCSTR chars)noexcept
 {
-if(!chars)
-	return false;
-UINT pos=0;
-while(chars[pos])
-	{
-	if(Equal(c, chars[pos++]))
-		return true;
-	}
-return false;
+return CharEqual(c, chars);
 }
 
 BOOL CharHelper::Equal(CHAR c, LPCSTR chars, CompareMode mode)noexcept
 {
-if(!chars)
-	return false;
-UINT pos=0;
-while(chars[pos])
-	{
-	if(Equal(c, chars[pos++], mode))
-		return true;
-	}
-return false;
+return CharEqual(c, chars, mode);
 }
 
 BOOL CharHelper::Equal(WCHAR c, LPCSTR chars)noexcept
 {
-if(!chars)
-	return false;
-UINT pos=0;
-while(chars[pos])
-	{
-	WCHAR wc=0;
-	pos+=Read(&chars[pos], &wc);
-	if(Equal(c, wc))
-		return true;
-	}
-return false;
+return CharEqual(c, chars);
 }
 
 BOOL CharHelper::Equal(WCHAR c, LPCSTR chars, CompareMode mode)noexcept
 {
-if(!chars)
-	return false;
-UINT pos=0;
-while(chars[pos])
-	{
-	WCHAR wc=0;
-	pos+=Read(&chars[pos], &wc);
-	if(Equal(c, wc, mode))
-		return true;
-	}
-return false;
+return CharEqual(c, chars, mode);
 }
 
 BOOL CharHelper::IsAlpha(CHAR c)noexcept
@@ -295,9 +248,9 @@ return false;
 
 BOOL CharHelper::IsAlpha(WCHAR c)noexcept
 {
-if(c>='A'&&c<='Z')
+if(c>=L'A'&&c<=L'Z')
 	return true;
-if(c>='a'&&c<='z')
+if(c>=L'a'&&c<=L'z')
 	return true;
 switch(c)
 	{
@@ -315,26 +268,12 @@ return false;
 
 BOOL CharHelper::IsBreak(CHAR c)noexcept
 {
-if(c==0)
-	return true;
-for(UINT u=0; u<TypeHelper::ArraySize(STR_BREAK); u++)
-	{
-	if(c==STR_BREAK[u])
-		return true;
-	}
-return false;
+return StringHelper::FindChar(STR_BREAK, c);
 }
 
 BOOL CharHelper::IsBreak(WCHAR c)noexcept
 {
-if(c==0)
-	return true;
-for(UINT u=0; u<TypeHelper::ArraySize(STR_BREAK); u++)
-	{
-	if(c==STR_BREAK[u])
-		return true;
-	}
-return false;
+return StringHelper::FindChar(STR_BREAK, c);
 }
 
 BOOL CharHelper::IsCapital(CHAR c)noexcept
@@ -346,7 +285,7 @@ return false;
 
 BOOL CharHelper::IsCapital(WCHAR c)noexcept
 {
-if(c>='A'&&c<='Z')
+if(c>=L'A'&&c<=L'Z')
 	return true;
 switch(c)
 	{
@@ -360,42 +299,30 @@ return false;
 
 BOOL CharHelper::IsLineBreak(CHAR c)noexcept
 {
-if(c==0)
-	return true;
-for(UINT u=0; u<TypeHelper::ArraySize(STR_LINE_BREAK); u++)
-	{
-	if(c==STR_LINE_BREAK[u])
-		return true;
-	}
-return false;
+return StringHelper::FindChar(STR_LINE_BREAK, c);
 }
 
 BOOL CharHelper::IsLineBreak(WCHAR c)noexcept
 {
-if(c==0)
-	return true;
-for(UINT u=0; u<TypeHelper::ArraySize(STR_LINE_BREAK); u++)
-	{
-	if(c==STR_LINE_BREAK[u])
-		return true;
-	}
-return false;
+return StringHelper::FindChar(STR_LINE_BREAK, c);
 }
 
 BOOL CharHelper::IsPrintable(CHAR c)noexcept
 {
-if(c<0x20)
+BYTE b=(BYTE)c;
+if(b<0x20)
 	return false;
-if(c>0x7E)
+if(b>0x7E)
 	return false;
 return true;
 }
 
 BOOL CharHelper::IsPrintable(WCHAR c)noexcept
 {
-if(c<0x20)
+WORD w=(WORD)c;
+if(w<0x20)
 	return false;
-if(c>0x7E&&c<0xA0)
+if(w>0x7E&&w<0xA0)
 	return false;
 return true;
 }
@@ -409,7 +336,7 @@ return false;
 
 BOOL CharHelper::IsSmall(WCHAR c)noexcept
 {
-if(c>='a'&&c<='z')
+if(c>=L'a'&&c<=L'z')
 	return true;
 switch(c)
 	{
@@ -424,26 +351,12 @@ return false;
 
 BOOL CharHelper::IsSpecial(CHAR c)noexcept
 {
-if(c==0)
-	return false;
-for(UINT u=0; u<TypeHelper::ArraySize(STR_SPECIAL); u++)
-	{
-	if(c==STR_SPECIAL[u])
-		return true;
-	}
-return false;
+return StringHelper::FindChar(STR_SPECIAL, c);
 }
 
 BOOL CharHelper::IsSpecial(WCHAR c)noexcept
 {
-if(c==0)
-	return false;
-for(UINT u=0; u<TypeHelper::ArraySize(STR_SPECIAL); u++)
-	{
-	if(c==STR_SPECIAL[u])
-		return true;
-	}
-return false;
+return StringHelper::FindChar(STR_SPECIAL, c);
 }
 
 UINT CharHelper::Read(LPCSTR str, CHAR* c_ptr)
@@ -575,9 +488,9 @@ return read;
 
 CHAR CharHelper::ToCapital(CHAR c)noexcept
 {
-WCHAR wc=ToCharW(c);
-wc=ToCapitalW(wc);
-return ToChar(wc);
+if(c>='a'&&c<='z')
+	return c-0x20;
+return c;
 }
 
 CHAR CharHelper::ToCapital(WCHAR c)noexcept
@@ -588,13 +501,14 @@ return ToChar(c);
 
 WCHAR CharHelper::ToCapitalW(CHAR c)noexcept
 {
-WCHAR wc=ToCharW(c);
-return ToCapitalW(wc);
+if(c>='a'&&c<='z')
+	c-=0x20;
+return ToCharW(c);
 }
 
 WCHAR CharHelper::ToCapitalW(WCHAR c)noexcept
 {
-if(c>='a'&&c<='z')
+if(c>=L'a'&&c<=L'z')
 	return c-0x20;
 switch(c)
 	{
@@ -608,34 +522,36 @@ switch(c)
 return c;
 }
 
-CHAR CharHelper::ToChar(WCHAR wc)noexcept
+CHAR CharHelper::ToChar(WCHAR c)noexcept
 {
-if(wc<0x80)
-	return (CHAR)wc;
-return CHAR_UNKNOWN;
+WORD w=(WORD)c;
+if(w>=0x80)
+	return CHAR_UNKNOWN;
+return (CHAR)w;
 }
 
 WCHAR CharHelper::ToCharW(CHAR c)noexcept
 {
 BYTE b=(BYTE)c;
-if(b<0x80)
-	return (WCHAR)c;
-return CHAR_UNKNOWN;
+if(b>=0x80)
+	return CHAR_UNKNOWN;
+return (CHAR)b;
 }
 
 BOOL CharHelper::ToDigit(CHAR c, UINT* digit_ptr, UINT base)noexcept
 {
-if(c<'0')
+BYTE b=(BYTE)c;
+if(b<'0')
 	return false;
-if(c>='a')
+if(b>='a')
 	{
-	c-='a';
+	b-='a';
 	}
-else if(c>='A')
+else if(b>='A')
 	{
-	c-='A';
+	b-='A';
 	}
-c-='0';
+b-='0';
 UINT digit=(UINT)c;
 if(digit<base)
 	{
@@ -654,9 +570,9 @@ return ToDigit(c, digit_ptr, base);
 
 CHAR CharHelper::ToSmall(CHAR c)noexcept
 {
-WCHAR wc=ToCharW(c);
-wc=ToSmallW(wc);
-return ToChar(wc);
+if(c>='A'&&c<='Z')
+	c+=0x20;
+return c;
 }
 
 CHAR CharHelper::ToSmall(WCHAR c)noexcept
@@ -667,13 +583,14 @@ return ToChar(c);
 
 WCHAR CharHelper::ToSmallW(CHAR c)noexcept
 {
-WCHAR wc=ToCharW(c);
-return ToSmallW(wc);
+if(c>='A'&&c<='Z')
+	c+=0x20;
+return ToCharW(c);
 }
 
 WCHAR CharHelper::ToSmallW(WCHAR c)noexcept
 {
-if(c>='A'&&c<='Z')
+if(c>=L'A'&&c<=L'Z')
 	return c+0x20;
 switch(c)
 	{

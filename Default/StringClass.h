@@ -172,19 +172,19 @@ public:
 		}
 
 	// Operators
-	inline Handle<String> operator+(LPCSTR Append)
+	Handle<String> operator+(LPCSTR Append)
 		{
 		if(!m_Object)
 			return String::Create(Append);
 		return String::Create("%s%s", m_Object->Begin(), Append);
 		}
-	inline Handle<String> operator+(LPCWSTR Append)
+	Handle<String> operator+(LPCWSTR Append)
 		{
 		if(!m_Object)
 			return String::Create(Append);
 		return String::Create("%s%s", m_Object->Begin(), Append);
 		}
-	inline Handle<String> operator+(String* Append)
+	Handle<String> operator+(String* Append)
 		{
 		if(!m_Object)
 			return Append;

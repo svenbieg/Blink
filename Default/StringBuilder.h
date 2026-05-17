@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include "Storage/Streams/StreamBuffer.h"
 #include "StringClass.h"
 
 
@@ -19,9 +20,11 @@
 class StringBuilder
 {
 public:
+	// Using
+	using StreamBuffer=Storage::Streams::StreamBuffer;
+
 	// Con-/Destructors
 	StringBuilder(UINT Length=0);
-	~StringBuilder()noexcept;
 
 	// Common
 	UINT Append(CHAR Char);
@@ -35,33 +38,16 @@ public:
 	Handle<String> ToString();
 
 private:
-	// Settings
-	static const UINT STRING_BLOCK=64;
-
-	// String-Block
-	struct StringBlock
-		{
-		StringBlock(): Next(nullptr) {}
-		StringBlock* Next;
-		TCHAR Buffer[STRING_BLOCK];
-		};
-
 	// Functions
-	typedef UINT (StringBuilder::*APPEND_ANSI)(CHAR);
-	typedef UINT (StringBuilder::*APPEND_UNICODE)(WCHAR);
+	typedef UINT (StringBuilder::*APPEND_FN)(WCHAR);
 	typedef Handle<String> (StringBuilder::*TO_STRING_FN)();
 
-	UINT BufferAppend(TCHAR Char);
-	UINT BufferAppendAnsi(CHAR Char);
-	UINT BufferAppendUnicode(WCHAR Char);
+	UINT BufferAppend(WCHAR Char);
 	Handle<String> BufferToString();
-	UINT StringAppendAnsi(CHAR Char);
-	UINT StringAppendUnicode(WCHAR Char);
+	UINT StringAppend(WCHAR Char);
 	Handle<String> StringToString();
-	APPEND_ANSI m_AppendAnsi;
-	APPEND_UNICODE m_AppendUnicode;
-	StringBlock* m_First;
-	StringBlock* m_Last;
+	APPEND_FN m_Append;
+	Handle<StreamBuffer> m_Buffer;
 	UINT m_Position;
 	UINT m_Size;
 	Handle<String> m_String;

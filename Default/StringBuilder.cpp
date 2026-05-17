@@ -10,21 +10,13 @@
 //==================
 
 StringBuilder::StringBuilder(UINT len):
-m_AppendAnsi(&StringBuilder::BufferAppendAnsi),
-m_AppendUnicode(&StringBuilder::BufferAppendUnicode),
-m_First(nullptr),
-m_Last(nullptr),
+m_Append(&StringBuilder::BufferAppend),
 m_Position(0),
 m_Size(0),
 m_ToString(&StringBuilder::BufferToString)
 {
 if(len)
 	Initialize(len);
-}
-
-StringBuilder::~StringBuilder()noexcept
-{
-Clear();
 }
 
 
@@ -34,67 +26,71 @@ Clear();
 
 UINT StringBuilder::Append(CHAR c)
 {
-return (this->*m_AppendAnsi)(c);
+if(c>=0x80)
+	throw InvalidArgumentException();
+return (this->*m_Append)((WCHAR)c);
 }
 
 UINT StringBuilder::Append(WCHAR c)
 {
-return (this->*m_AppendUnicode)(c);
+return (this->*m_Append)(c);
 }
 
-UINT StringBuilder::Append(LPCSTR String)
+UINT StringBuilder::Append(LPCSTR str)
 {
+if(!str)
+	return 0;
 UINT pos=0;
-for(; String[pos]; pos++)
-	(this->*m_AppendAnsi)(String[pos]);
-return pos;
-}
-
-UINT StringBuilder::Append(LPCWSTR String)
-{
-UINT pos=0;
-for(; String[pos]; pos++)
-	(this->*m_AppendUnicode)(String[pos]);
-return pos;
-}
-
-UINT StringBuilder::Append(UINT Length, LPCSTR String)
-{
-UINT pos=0;
-for(; String[pos]; pos++)
+while(str[pos])
 	{
-	if(pos==Length)
-		break;
-	(this->*m_AppendAnsi)(String[pos]);
+	WCHAR wc=0;
+	pos+=CharHelper::Read(&str[pos], &wc);
+	(this->*m_Append)(wc);
 	}
 return pos;
 }
 
-UINT StringBuilder::Append(UINT Length, LPCWSTR String)
+UINT StringBuilder::Append(LPCWSTR str)
+{
+if(!str)
+	return 0;
+UINT pos=0;
+while(str[pos])
+	(this->*m_Append)(str[pos++]);
+return pos;
+}
+
+UINT StringBuilder::Append(UINT len, LPCSTR str)
+{
+if(!str)
+	return 0;
+UINT pos=0;
+while(str[pos])
+	{
+	if(pos>=len)
+		break;
+	WCHAR wc=0;
+	pos+=CharHelper::Read(&str[pos], &wc);
+	(this->*m_Append)(wc);
+	}
+return pos;
+}
+
+UINT StringBuilder::Append(UINT len, LPCWSTR str)
 {
 UINT pos=0;
-for(; String[pos]; pos++)
+while(str[pos])
 	{
-	if(pos==Length)
+	if(pos==len)
 		break;
-	(this->*m_AppendUnicode)(String[pos]);
+	Append(str[pos++]);
 	}
 return pos;
 }
 
 VOID StringBuilder::Clear()noexcept
 {
-auto block=m_First;
-while(block)
-	{
-	auto next=block->Next;
-	delete block;
-	block=next;
-	}
-m_AppendAnsi=&StringBuilder::BufferAppendAnsi;
-m_AppendUnicode=&StringBuilder::BufferAppendUnicode;
-m_First=nullptr;
-m_Last=nullptr;
+m_Append=&StringBuilder::BufferAppend;
 m_Position=0;
 m_Size=0;
 m_String=nullptr;
@@ -105,16 +101,14 @@ VOID StringBuilder::Initialize(UINT len)
 {
 if(len)
 	{
-	m_AppendAnsi=&StringBuilder::StringAppendAnsi;
-	m_AppendUnicode=&StringBuilder::StringAppendUnicode;
+	m_Append=&StringBuilder::StringAppend;
 	m_Size=len+1;
 	m_String=String::Create(len, nullptr);
 	m_ToString=&StringBuilder::StringToString;
 	}
 else
 	{
-	m_AppendAnsi=&StringBuilder::BufferAppendAnsi;
-	m_AppendUnicode=&StringBuilder::BufferAppendUnicode;
+	m_Append=&StringBuilder::BufferAppend;
 	m_Position=0;
 	m_Size=0;
 	m_String=nullptr;
@@ -133,82 +127,48 @@ return (this->*m_ToString)();
 // Common Private
 //================
 
-UINT StringBuilder::BufferAppend(TCHAR tc)
+UINT StringBuilder::BufferAppend(WCHAR c)
 {
-UINT pos=m_Position%STRING_BLOCK;
-if(pos==0)
-	{
-	if(m_Position==0)
-		{
-		if(m_First==nullptr)
-			m_First=new StringBlock();
-		m_Last=m_First;
-		}
-	else
-		{
-		auto block=m_Last->Next;
-		if(!block)
-			{
-			block=new StringBlock();
-			m_Last->Next=block;
-			}
-		m_Last=block;
-		}
-	}
-m_Last->Buffer[pos]=tc;
-m_Position++;
-return 1;
-}
-
-UINT StringBuilder::BufferAppendAnsi(CHAR c)
-{
-TCHAR tc=CharHelper::ToCharT<TCHAR, CHAR>(c);
-return BufferAppend(tc);
-}
-
-UINT StringBuilder::BufferAppendUnicode(WCHAR c)
-{
-TCHAR tc=CharHelper::ToCharT<TCHAR, WCHAR>(c);
-return BufferAppend(tc);
+if(!m_Buffer)
+	m_Buffer=StreamBuffer::Create();
+#ifdef _UNICODE
+UINT len=m_Buffer->Write(&c, sizeof(WCHAR));
+#else
+CHAR buf[4];
+UINT len=CharHelper::Write(buf, 4, c);
+m_Buffer->Write(buf, len);
+#endif
+m_Position+=len;
+return len;
 }
 
 Handle<String> StringBuilder::BufferToString()
 {
-if(m_Position==0)
+if(!m_Position)
 	return nullptr;
 auto str=String::Create(m_Position, nullptr);
 auto buf=const_cast<LPTSTR>(str->Begin());
-auto block=m_First;
-for(UINT pos=0; pos<m_Position; pos++)
-	{
-	UINT block_pos=pos%STRING_BLOCK;
-	if(block_pos==0&&pos>0)
-		block=block->Next;
-	buf[pos]=block->Buffer[block_pos];
-	}
+m_Buffer->Read(buf, m_Position);
 buf[m_Position]=0;
 str->m_Hash=StringHelper::Hash(buf);
 str->m_Length=m_Position;
-Clear();
+m_Position=0;
 return str;
 }
 
-UINT StringBuilder::StringAppendAnsi(CHAR c)
+UINT StringBuilder::StringAppend(WCHAR c)
 {
-if(m_Position+1>=m_Size)
-	throw BufferOverrunException();
 auto buf=const_cast<LPTSTR>(m_String->Begin());
-buf[m_Position++]=CharHelper::ToCharT<TCHAR, CHAR>(c);
-return 1;
-}
-
-UINT StringBuilder::StringAppendUnicode(WCHAR c)
-{
-if(m_Position+1>=m_Size)
+#ifdef _UNICODE
+UINT len=1;
+if(m_Position+len>=m_Size)
 	throw BufferOverrunException();
-auto buf=const_cast<LPTSTR>(m_String->Begin());
-buf[m_Position++]=CharHelper::ToCharT<TCHAR, WCHAR>(c);
-return 1;
+buf[m_Position]=c;
+#else
+UINT len=CharHelper::Write(&buf[m_Position], m_Size-m_Position, c);
+#endif
+m_Position+=len;
+return len;
 }
 
 Handle<String> StringBuilder::StringToString()

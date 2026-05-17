@@ -1240,8 +1240,8 @@ while(str1[pos1]&&str2[pos2])
 		{
 		if(len2==0)
 			{
-			CHAR c1=0;
-			CHAR c2=0;
+			WCHAR c1=0;
+			WCHAR c2=0;
 			len1=CharHelper::Read(&str1[pos1], &c1);
 			len2=CharHelper::Read(&str2[pos2], &c2);
 			INT cmp=CharHelper::Compare(c1, c2, mode...);
@@ -1486,29 +1486,6 @@ const BYTE HASH_CODE[]=
 //     p     q     r     s     t     u     v     w     x     y     z     {     |     }     ~
 	0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x01, 0x01, 0x01, 0x01, 0x00, // 0x70
 };
-
-template <std::character _str_t>
-UINT64 StringHash(_str_t const* str)noexcept
-{
-if(!str)
-	return 0;
-UINT64 hash=0;
-UINT pos=0;
-UINT count=0;
-for(; count<CHARS_PER_HASH; count++)
-	{
-	CHAR c=0;
-	pos+=CharHelper::Read(&str[pos], &c);
-	if(!c)
-		break;
-	BYTE b=TypeHelper::Min((BYTE)0x7F, (BYTE)c);
-	auto code=HASH_CODE[b];
-	hash<<=BITS_PER_CHAR;
-	hash|=code;
-	}
-hash<<=((CHARS_PER_HASH-count)*BITS_PER_CHAR);
-return hash;
-}
 
 
 //===============
@@ -1789,14 +1766,26 @@ BOOL StringHelper::FindString(LPCWSTR str, LPCWSTR find, UINT* pos, CompareMode 
 return StringFindString(str, find, pos, mode);
 }
 
-UINT64 StringHelper::Hash(LPCSTR str)noexcept
+UINT64 StringHelper::Hash(LPCTSTR str)noexcept
 {
-return StringHash(str);
-}
-
-UINT64 StringHelper::Hash(LPCWSTR str)noexcept
-{
-return StringHash(str);
+if(!str)
+	return 0;
+UINT64 hash=0;
+UINT pos=0;
+UINT count=0;
+for(; count<CHARS_PER_HASH; count++)
+	{
+	WCHAR c=0;
+	pos+=CharHelper::Read(&str[pos], &c);
+	if(!c)
+		break;
+	BYTE b=TypeHelper::Min((BYTE)0x7F, (WORD)c);
+	auto code=HASH_CODE[b];
+	hash<<=BITS_PER_CHAR;
+	hash|=code;
+	}
+hash<<=((CHARS_PER_HASH-count)*BITS_PER_CHAR);
+return hash;
 }
 
 UINT StringHelper::Insert(LPSTR dst, UINT size, LPCSTR src, UINT pos, LPCSTR value)noexcept

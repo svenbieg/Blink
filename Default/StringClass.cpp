@@ -31,7 +31,7 @@ LPTSTR buf=&dst[size-1];
 *buf=0;
 do
 	{
-	*--buf=(TCHAR)((value%10)+'0');
+	*--buf=(CHAR)((value%10)+'0');
 	value/=10;
 	}
 while(value);
@@ -64,7 +64,7 @@ LPTSTR buf=&dst[size-1];
 *buf=0;
 do
 	{
-	*--buf=(TCHAR)((value%10)+'0');
+	*--buf=(CHAR)((value%10)+'0');
 	value/=10;
 	}
 while(value);
@@ -189,8 +189,7 @@ if(!len)
 	}
 auto str=Create(len, nullptr);
 auto buf=str->m_Buffer;
-for(UINT u=0; u<len; u++)
-	size+=CharHelper::Read(stream, &buf[u]);
+size+=stream->Read(buf, len);
 buf[len]=0;
 str->m_Hash=StringHelper::Hash(buf);
 str->m_Length=len;
@@ -217,8 +216,7 @@ auto buf=str->m_Buffer;
 auto len=str->m_Length;
 SIZE_T size=0;
 size+=Dwarf::WriteUnsigned(stream, len);
-for(UINT u=0; u<len; u++)
-	size+=CharHelper::Write(stream, buf[u]);
+size+=OutputStream::Write(stream, buf, len);
 return size;
 }
 
@@ -232,8 +230,8 @@ Handle<String> String::Replace(LPCSTR find, LPCSTR replace, BOOL repeat)
 UINT len=StringHelper::Replace((LPTSTR)nullptr, 0, m_Buffer, find, replace, repeat);
 if(!len)
 	return nullptr;
-auto str=String::Create(len+1, nullptr);
-LPTSTR buf=const_cast<LPTSTR>(str->Begin());
+auto str=String::Create(len, nullptr);
+auto buf=str->m_Buffer;
 str->m_Length=StringHelper::Replace(buf, len+1, m_Buffer, find, replace, repeat);
 str->m_Hash=StringHelper::Hash(buf);
 return str;
@@ -244,8 +242,8 @@ Handle<String> String::Replace(LPCSTR find, LPCSTR replace, BOOL repeat, Compare
 UINT len=StringHelper::Replace((LPTSTR)nullptr, 0, m_Buffer, find, replace, repeat, mode);
 if(!len)
 	return nullptr;
-auto str=String::Create(len+1, nullptr);
-LPTSTR buf=const_cast<LPTSTR>(str->Begin());
+auto str=String::Create(len, nullptr);
+auto buf=str->m_Buffer;
 str->m_Length=StringHelper::Replace(buf, len+1, m_Buffer, find, replace, repeat, mode);
 str->m_Hash=StringHelper::Hash(buf);
 return str;

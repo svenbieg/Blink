@@ -84,25 +84,25 @@ public:
 	static BOOL IsSmall(WCHAR Char)noexcept;
 	static BOOL IsSpecial(CHAR Char)noexcept;
 	static BOOL IsSpecial(WCHAR Char)noexcept;
-	static inline UINT Read(LPCSTR String) { return Read(String, (WCHAR*)nullptr); }
+	static inline  UINT Read(LPCSTR String) { return Read(String, (WCHAR*)nullptr); }
 	static UINT Read(LPCSTR String, CHAR* Char);
 	static UINT Read(LPCSTR String, WCHAR* Char);
-	static inline UINT Read(LPCWSTR String) { return 1; }
+	static inline  UINT Read(LPCWSTR String) { return 1; }
 	static UINT Read(LPCWSTR String, CHAR* Char);
 	static UINT Read(LPCWSTR String, WCHAR* Char);
-	static inline UINT Read(InputStream* Stream) { return Read(Stream, (WCHAR*)nullptr); }
+	static inline  UINT Read(InputStream* Stream) { return Read(Stream, (WCHAR*)nullptr); }
 	static UINT Read(InputStream* Stream, CHAR* Char);
 	static UINT Read(InputStream* Stream, WCHAR* Char);
-	template <std::character _dst_t, std::character _src_t> static _dst_t ToCapitalT(_src_t Char)noexcept;
 	static CHAR ToCapital(CHAR Char)noexcept;
 	static CHAR ToCapital(WCHAR Char)noexcept;
+	template <std::character _dst_t, std::character _src_t> static _dst_t ToCapitalT(_src_t Char)noexcept;
 	static WCHAR ToCapitalW(CHAR Char)noexcept;
 	static WCHAR ToCapitalW(WCHAR Char)noexcept;
 	static inline CHAR ToChar(CHAR Char)noexcept { return Char; }
 	static CHAR ToChar(WCHAR Char)noexcept;
 	template <std::character _dst_t, std::character _src_t> static _dst_t ToCharT(_src_t Char)noexcept;
 	static WCHAR ToCharW(CHAR Char)noexcept;
-	static inline WCHAR ToCharW(WCHAR Char)noexcept { return Char; }
+	static inline  WCHAR ToCharW(WCHAR Char)noexcept { return Char; }
 	static BOOL ToDigit(CHAR Char, UINT* Digit, UINT Base=10)noexcept;
 	static BOOL ToDigit(WCHAR Char, UINT* Digit, UINT Base=10)noexcept;
 	static CHAR ToSmall(CHAR Char)noexcept;
@@ -118,17 +118,17 @@ public:
 	static UINT Write(OutputStream* Stream, WCHAR Char);
 };
 
-template <> inline CHAR CharHelper::ToCapitalT(CHAR Char)noexcept { return ToCapital(Char); }
-template <> inline CHAR CharHelper::ToCapitalT(WCHAR Char)noexcept { return ToCapital(Char); }
-template <> inline WCHAR CharHelper::ToCapitalT(CHAR Char)noexcept { return ToCapitalW(Char); }
-template <> inline WCHAR CharHelper::ToCapitalT(WCHAR Char)noexcept { return ToCapitalW(Char); }
+template <> inline  CHAR CharHelper::ToCapitalT(CHAR Char)noexcept { return ToCapital(Char); }
+template <> inline  CHAR CharHelper::ToCapitalT(WCHAR Char)noexcept { return ToCapital(Char); }
+template <> inline  WCHAR CharHelper::ToCapitalT(CHAR Char)noexcept { return ToCapitalW(Char); }
+template <> inline  WCHAR CharHelper::ToCapitalT(WCHAR Char)noexcept { return ToCapitalW(Char); }
 
-template <> inline CHAR CharHelper::ToCharT(CHAR Char)noexcept { return Char; }
-template <> inline CHAR CharHelper::ToCharT(WCHAR Char)noexcept { return ToChar(Char); }
-template <> inline WCHAR CharHelper::ToCharT(CHAR Char)noexcept { return ToCharW(Char); }
-template <> inline WCHAR CharHelper::ToCharT(WCHAR Char)noexcept { return Char; }
+template <> inline  CHAR CharHelper::ToCharT(CHAR Char)noexcept { return Char; }
+template <> inline  CHAR CharHelper::ToCharT(WCHAR Char)noexcept { return ToChar(Char); }
+template <> inline  WCHAR CharHelper::ToCharT(CHAR Char)noexcept { return ToCharW(Char); }
+template <> inline  WCHAR CharHelper::ToCharT(WCHAR Char)noexcept { return Char; }
 
-template <> inline CHAR CharHelper::ToSmallT(CHAR Char)noexcept { return ToSmall(Char); }
-template <> inline CHAR CharHelper::ToSmallT(WCHAR Char)noexcept { return ToSmall(Char); }
-template <> inline WCHAR CharHelper::ToSmallT(CHAR Char)noexcept { return ToSmallW(Char); }
-template <> inline WCHAR CharHelper::ToSmallT(WCHAR Char)noexcept { return ToSmallW(Char); }
+template <> inline  CHAR CharHelper::ToSmallT(CHAR Char)noexcept { return ToSmall(Char); }
+template <> inline  CHAR CharHelper::ToSmallT(WCHAR Char)noexcept { return ToSmall(Char); }
+template <> inline  WCHAR CharHelper::ToSmallT(CHAR Char)noexcept { return ToSmallW(Char); }
+template <> inline  WCHAR CharHelper::ToSmallT(WCHAR Char)noexcept { return ToSmallW(Char); }

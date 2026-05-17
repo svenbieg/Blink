@@ -58,8 +58,7 @@ public:
 	static BOOL FindString(LPCWSTR String, LPCSTR Find, UINT* Position, CompareMode Mode)noexcept;
 	static BOOL FindString(LPCWSTR String, LPCWSTR Find, UINT* Position=nullptr)noexcept;
 	static BOOL FindString(LPCWSTR String, LPCWSTR Find, UINT* Position, CompareMode Mode)noexcept;
-	static UINT64 Hash(LPCSTR String)noexcept;
-	static UINT64 Hash(LPCWSTR String)noexcept;
+	static UINT64 Hash(LPCTSTR String)noexcept;
 	static UINT Insert(LPSTR Destination, UINT Size, LPCSTR Source, UINT Position, LPCSTR Value)noexcept;
 	static UINT Insert(LPWSTR Destination, UINT Size, LPCWSTR Source, UINT Position, LPCSTR Value)noexcept;
 	static inline BOOL IsSet(LPCSTR String)noexcept { return String&&String[0]; }
