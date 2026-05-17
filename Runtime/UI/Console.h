@@ -58,6 +58,7 @@ public:
 		WriteLock lock(m_Mutex);
 		m_Commands.add(Command, handler);
 		}
+	VOID Command(Handle<String> Command) { HandleCommand(Command); }
 	Event<Console, Handle<String>> CommandReceived;
 	static VOID Print(LPCSTR Text);
 	static VOID Print(Handle<String> Text);

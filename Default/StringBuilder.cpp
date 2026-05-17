@@ -148,6 +148,7 @@ if(!m_Position)
 	return nullptr;
 auto str=String::Create(m_Position, nullptr);
 auto buf=const_cast<LPTSTR>(str->Begin());
+m_Buffer->Flush();
 m_Buffer->Read(buf, m_Position);
 buf[m_Position]=0;
 str->m_Hash=StringHelper::Hash(buf);

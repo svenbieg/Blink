@@ -81,6 +81,7 @@ while(pos<size)
 	m_Read+=copy;
 	if(m_Read==m_Size)
 		{
+		m_First->Size=0;
 		m_Read=0;
 		m_Size=0;
 		m_Written=0;
