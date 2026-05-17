@@ -185,7 +185,7 @@ if(!tag)
 	throw InvalidArgumentException();
 if(m_Tag)
 	{
-	if(StringHelper::Compare(m_Tag, tag, 0, false)!=0)
+	if(StringHelper::Compare(m_Tag, tag, 0, CompareMode::IgnoreCase)!=0)
 		throw InvalidArgumentException();
 	}
 while(CharHelper::Equal(reader.LastChar, ' '))
@@ -228,7 +228,7 @@ if(!CharHelper::Equal(reader.LastChar, '/'))
 auto close=reader.ReadString(&read, ">");
 if(!CharHelper::Equal(reader.LastChar, '>'))
 	throw InvalidArgumentException();
-if(StringHelper::Compare(close, tag, 0, false)!=0)
+if(StringHelper::Compare(close, tag, 0, CompareMode::IgnoreCase)!=0)
 	throw InvalidArgumentException();
 m_Tag=tag;
 return read;
@@ -408,7 +408,7 @@ RemoveAttributeInternal(key);
 
 BOOL XmlNode::RemoveAttributeInternal(Handle<String> key)
 {
-if(StringHelper::Compare(key, "Name", 0, false)==0)
+if(StringHelper::Compare(key, "Name", 0, CompareMode::IgnoreCase)==0)
 	return SetNameInternal(nullptr);
 return m_Attributes.remove(key);
 }
@@ -431,7 +431,7 @@ SetAttributeInternal(key, value);
 
 BOOL XmlNode::SetAttributeInternal(Handle<String> key, Handle<String> value)
 {
-if(StringHelper::Compare(key, "Name", 0, false)==0)
+if(StringHelper::Compare(key, "Name", 0, CompareMode::IgnoreCase)==0)
 	return SetNameInternal(value);
 return m_Attributes.set(key, value);
 }

@@ -227,14 +227,27 @@ return size;
 // Operators
 //===========
 
-Handle<String> String::Replace(LPCSTR find, LPCSTR replace, BOOL cs, BOOL repeat)noexcept
+Handle<String> String::Replace(LPCSTR find, LPCSTR replace, BOOL repeat)
 {
-UINT len=StringHelper::Replace((LPTSTR)nullptr, 0, m_Buffer, find, replace, cs, repeat);
+UINT len=StringHelper::Replace((LPTSTR)nullptr, 0, m_Buffer, find, replace, repeat);
 if(!len)
 	return nullptr;
 auto str=String::Create(len+1, nullptr);
 LPTSTR buf=const_cast<LPTSTR>(str->Begin());
-StringHelper::Replace(buf, len+1, m_Buffer, find, replace, cs, repeat);
+str->m_Length=StringHelper::Replace(buf, len+1, m_Buffer, find, replace, repeat);
+str->m_Hash=StringHelper::Hash(buf);
+return str;
+}
+
+Handle<String> String::Replace(LPCSTR find, LPCSTR replace, BOOL repeat, CompareMode mode)
+{
+UINT len=StringHelper::Replace((LPTSTR)nullptr, 0, m_Buffer, find, replace, repeat, mode);
+if(!len)
+	return nullptr;
+auto str=String::Create(len+1, nullptr);
+LPTSTR buf=const_cast<LPTSTR>(str->Begin());
+str->m_Length=StringHelper::Replace(buf, len+1, m_Buffer, find, replace, repeat, mode);
+str->m_Hash=StringHelper::Hash(buf);
 return str;
 }
 

@@ -32,7 +32,7 @@ while(str[pos])
 	{
 	WCHAR c=0;
 	UINT clen=CharHelper::Read(&str[pos], &c);
-	c=CharHelper::ToSmallUnicode(c);
+	c=CharHelper::ToSmallW(c);
 	pos+=CharHelper::Write(&str[pos], clen, c);
 	}
 return pos;
@@ -49,7 +49,7 @@ while(src[src_pos])
 	{
 	WCHAR c=0;
 	src_pos+=CharHelper::Read(&src[src_pos], &c);
-	c=CharHelper::ToSmallUnicode(c);
+	c=CharHelper::ToSmallW(c);
 	dst_pos+=CharHelper::Write(&dst[dst_pos], size-dst_pos, c);
 	}
 if(dst_pos==size)
@@ -68,7 +68,7 @@ while(str[pos])
 	{
 	WCHAR c=0;
 	UINT clen=CharHelper::Read(&str[pos], &c);
-	c=CharHelper::ToCapitalUnicode(c);
+	c=CharHelper::ToCapitalW(c);
 	pos+=CharHelper::Write(&str[pos], clen, c);
 	}
 return pos;
@@ -85,7 +85,7 @@ while(src[src_pos])
 	{
 	WCHAR c=0;
 	src_pos+=CharHelper::Read(&src[src_pos], &c);
-	c=CharHelper::ToCapitalUnicode(c);
+	c=CharHelper::ToCapitalW(c);
 	dst_pos+=CharHelper::Write(&dst[dst_pos], size-dst_pos, c);
 	}
 if(dst_pos==size)
@@ -413,11 +413,11 @@ if(pos+len>=size)
 	throw BufferOverrunException();
 if(FlagHelper::Get(flags, FormatFlags::High))
 	{
-	c=CharHelper::ToCapital<_char_t, _char_t>(c);
+	c=CharHelper::ToCapitalT<_char_t, _char_t>(c);
 	}
 else if(FlagHelper::Get(flags, FormatFlags::Low))
 	{
-	c=CharHelper::ToSmall<_char_t, _char_t>(c);
+	c=CharHelper::ToSmallT<_char_t, _char_t>(c);
 	}
 CharHelper::Write(&dst[pos], size-pos, c);
 return len;
@@ -451,7 +451,7 @@ while(src[src_pos])
 	src_pos+=CharHelper::Read(&src[src_pos], &c);
 	if(dst)
 		{
-		c=CharHelper::ToCapitalUnicode(c);
+		c=CharHelper::ToCapitalW(c);
 		dst_pos+=CharHelper::Write(&dst[dst_pos], size-dst_pos, c);
 		}
 	else
@@ -476,7 +476,7 @@ while(src[src_pos])
 	src_pos+=CharHelper::Read(&src[src_pos], &c);
 	if(dst)
 		{
-		c=CharHelper::ToSmallUnicode(c);
+		c=CharHelper::ToSmallW(c);
 		dst_pos+=CharHelper::Write(&dst[dst_pos], size-dst_pos, c);
 		}
 	else
@@ -1211,8 +1211,8 @@ return count;
 // Comparison
 //============
 
-template <std::character _str1_t, std::character _str2_t>
-INT StringCompare(_str1_t const* str1, _str2_t const* str2, UINT count, BOOL cs)
+template <std::character _str1_t, std::character _str2_t, class... _mode_t>
+INT StringCompare(_str1_t const* str1, _str2_t const* str2, UINT len, _mode_t... mode)
 {
 if(!str1)
 	{
@@ -1244,12 +1244,12 @@ while(str1[pos1]&&str2[pos2])
 			CHAR c2=0;
 			len1=CharHelper::Read(&str1[pos1], &c1);
 			len2=CharHelper::Read(&str2[pos2], &c2);
-			INT cmp=CharHelper::Compare(c1, c2, cs);
+			INT cmp=CharHelper::Compare(c1, c2, mode...);
 			if(cmp==0)
 				{
 				pos1+=len1;
 				pos2+=len2;
-				if(pos2==count)
+				if(pos2==len)
 					return 0;
 				continue;
 				}
@@ -1275,20 +1275,8 @@ if(str1[pos1]==0)
 return 1;
 }
 
-template <std::character _str_t> INT StringCompare(String const* str, _str_t const* value2, UINT len, BOOL cs)
-{
-auto value1=str? str->Begin(): nullptr;
-return StringCompare(value1, value2, len, cs);
-}
-
-template <std::character _str_t> INT StringCompare(_str_t const* value1, String const* str, UINT len, BOOL cs)
-{
-auto value2=str? str->Begin(): nullptr;
-return StringCompare(value1, value2, len, cs);
-}
-
-template <std::character _str_t, std::character _find_t>
-BOOL StringFindChar(_str_t const* str, _find_t c, UINT* pos_ptr, BOOL cs)
+template <std::character _str_t, std::character _find_t, class... _mode_t>
+BOOL StringFindChar(_str_t const* str, _find_t c, UINT* pos_ptr, _mode_t... mode)
 {
 if(!str||!c)
 	return false;
@@ -1298,7 +1286,7 @@ while(str[pos])
 	{
 	WCHAR wc=0;
 	pos+=CharHelper::Read(&str[pos], &wc);
-	if(CharHelper::Compare(wc, c, cs)==0)
+	if(CharHelper::Equal(wc, c, mode...))
 		{
 		found=true;
 		break;
@@ -1309,8 +1297,8 @@ if(pos_ptr)
 return found;
 }
 
-template <std::character _str_t, std::character _find_t>
-BOOL StringFindChars(_str_t const* str, _find_t const* find, UINT* pos_ptr, BOOL cs)
+template <std::character _str_t, std::character _find_t, class... _mode_t>
+BOOL StringFindChars(_str_t const* str, _find_t const* find, UINT* pos_ptr, _mode_t... mode)
 {
 if(!str||!find)
 	return false;
@@ -1323,7 +1311,7 @@ while(str[pos])
 		{
 		WCHAR fc=0;
 		find_pos+=CharHelper::Read(&find[find_pos], &fc);
-		if(CharHelper::Compare(c, fc, cs)==0)
+		if(CharHelper::Equal(c, fc, mode...))
 			{
 			if(pos_ptr)
 				*pos_ptr=pos;
@@ -1336,8 +1324,8 @@ if(pos_ptr)
 return false;
 }
 
-template <std::character _str_t, std::character _find_t>
-BOOL StringFindString(_str_t const* str, _find_t const* find, UINT* pos_ptr, BOOL cs)
+template <std::character _str_t, std::character _find_t, class... _mode_t>
+BOOL StringFindString(_str_t const* str, _find_t const* find, UINT* pos_ptr, _mode_t... mode)
 {
 if(!str||!find)
 	return false;
@@ -1346,7 +1334,7 @@ if(!find_len)
 	return false;
 for(UINT pos=0; str[pos]; pos++)
 	{
-	if(StringCompare(&str[pos], find, find_len, cs)==0)
+	if(StringCompare(&str[pos], find, find_len, mode...)==0)
 		{
 		if(pos_ptr)
 			*pos_ptr=pos;
@@ -1371,10 +1359,10 @@ UINT append_len=StringHelper::Length(append);
 if(!append_len)
 	return StringHelper::Copy(dst, size, str);
 UINT new_len=len+append_len;
-if(!size)
+if(!dst)
 	return new_len;
 if(new_len+1>size)
-	return 0;
+	throw BufferOverrunException();
 size-=StringHelper::Copy(dst, size, str);
 StringHelper::Copy(&dst[len], size, append);
 return new_len;
@@ -1390,18 +1378,18 @@ UINT insert_len=StringHelper::Length(insert);
 if(insert_len==0)
 	return StringHelper::Copy(dst, size, str);
 UINT new_len=len+insert_len;
-if(!size)
+if(!dst)
 	return new_len;
 if(new_len+1>size)
-	return 0;
+	throw BufferOverrunException();
 size-=StringHelper::Copy(dst, size, str, pos);
 size-=StringHelper::Copy(&dst[pos], size, insert);
 StringHelper::Copy(&dst[pos+insert_len], size, &str[pos]);
 return new_len;
 }
 
-template <std::character _dst_t, std::character _src_t, std::character _find_t, std::character _insert_t>
-UINT StringReplace(_dst_t* dst, UINT size, _src_t const* str, _find_t const* find, _insert_t const* insert, BOOL cs, BOOL repeat)
+template <std::character _dst_t, std::character _src_t, std::character _find_t, std::character _insert_t, class... _mode_t>
+UINT StringReplace(_dst_t* dst, UINT size, _src_t const* str, _find_t const* find, _insert_t const* insert, BOOL repeat, _mode_t... mode)
 {
 if(!str)
 	return 0;
@@ -1420,7 +1408,7 @@ while(*str)
 		}
 	if(parse)
 		{
-		if(StringCompare(str, find, find_len, cs)==0)
+		if(StringCompare(str, find, find_len, mode...)==0)
 			{
 			UINT insert_len=StringHelper::Copy(dst, size, insert);
 			if(dst)
@@ -1454,9 +1442,12 @@ UINT len=StringHelper::Length(chars);
 while(*str)
 	{
 	bool trunc=false;
-	for(UINT u=0; u<len; u++)
+	UINT pos=0;
+	while(chars[pos])
 		{
-		if(CharHelper::Compare(*str, chars[u])==0)
+		WCHAR c=0;
+		pos+=CharHelper::Read(&chars[pos], &c);
+		if(CharHelper::Equal(*str, c))
 			{
 			trunc=true;
 			break;
@@ -1494,21 +1485,6 @@ const BYTE HASH_CODE[]=
 	0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, // 0x60
 //     p     q     r     s     t     u     v     w     x     y     z     {     |     }     ~
 	0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x01, 0x01, 0x01, 0x01, 0x00, // 0x70
-//     €
-	0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // 0x80
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // 0x90
-//                                               §
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // 0xA0
-//                 ²     ³           µ
-	0x00, 0x00, 0x01, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // 0xB0
-//     À     Á     Â     Ã     Ä     Å     Æ     Ç     È     É     Ê     Ë     Ì     Í     Î     Ï
-	0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x04, 0x06, 0x06, 0x06, 0x06, 0x0A, 0x0A, 0x0A, 0x0A, // 0xC0
-//     Ð     Ñ     Ò     Ó     Ô     Õ     Ö     ×     Ø     Ù     Ú     Û     Ü     Ý     Þ     ß
-	0x05, 0x0F, 0x10, 0x10, 0x10, 0x10, 0x10, 0x01, 0x01, 0x16, 0x16, 0x16, 0x16, 0x1A, 0x01, 0x14, // 0xD0
-//     à     á     â     ã     ä     å     æ     ç     è     é     ê     ë     ì     í     î     ï
-	0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x04, 0x06, 0x06, 0x06, 0x06, 0x0A, 0x0A, 0x0A, 0x0A, // 0xE0
-//     ð     ñ     ò     ó     ô     õ     ö     ÷     ø     ù     ú     û     ü     ý     þ     ÿ
-	0x05, 0x0F, 0x10, 0x10, 0x10, 0x10, 0x10, 0x01, 0x01, 0x16, 0x16, 0x16, 0x16, 0x1A, 0x01, 0x1A, // 0xF0
 };
 
 template <std::character _str_t>
@@ -1521,91 +1497,17 @@ UINT pos=0;
 UINT count=0;
 for(; count<CHARS_PER_HASH; count++)
 	{
-	WCHAR wc=0;
-	pos+=CharHelper::Read(&str[pos], &wc);
-	CHAR c=CharHelper::ToChar<CHAR, WCHAR>(wc);
+	CHAR c=0;
+	pos+=CharHelper::Read(&str[pos], &c);
 	if(!c)
 		break;
-	auto code=HASH_CODE[(BYTE)c];
+	BYTE b=TypeHelper::Min((BYTE)0x7F, (BYTE)c);
+	auto code=HASH_CODE[b];
 	hash<<=BITS_PER_CHAR;
 	hash|=code;
 	}
 hash<<=((CHARS_PER_HASH-count)*BITS_PER_CHAR);
 return hash;
-}
-
-
-//============
-// Encryption
-//============
-
-const UINT ENCRYPT_BLOCK=16;
-const UINT ENCRYPT_LOOPS=16;
-
-const BYTE ENCRYPT_FWD[256]=
-	{
-	0x39, 0x47, 0x77, 0x09, 0x64, 0x20, 0x69, 0x94, 0x42, 0xE0, 0x0A, 0x36, 0x6D, 0x2B, 0x7A, 0x12,
-	0x23, 0x24, 0x5B, 0x57, 0x85, 0x22, 0x62, 0x26, 0xE3, 0xFC, 0x25, 0x84, 0xF7, 0x11, 0x0D, 0x3F,
-	0x52, 0x4A, 0x9F, 0xD1, 0xE7, 0xF0, 0x0E, 0xBE, 0xF4, 0xD7, 0x31, 0x2F, 0xD2, 0x66, 0xBB, 0xCE,
-	0xF9, 0x6E, 0xED, 0x1D, 0x9C, 0x78, 0x4E, 0xD5, 0xFE, 0xF1, 0xAC, 0x2A, 0x21, 0x70, 0x7B, 0x38,
-	0xA4, 0x06, 0x9B, 0xD9, 0x6F, 0xA6, 0xB9, 0xEB, 0x3D, 0xBF, 0xDA, 0x3A, 0x56, 0x28, 0xE8, 0x97,
-	0xC7, 0x71, 0x00, 0x7D, 0x2E, 0xBC, 0x6C, 0xE1, 0x60, 0x29, 0x65, 0x13, 0x82, 0x03, 0x0B, 0xB4,
-	0xDE, 0x14, 0xA1, 0xB2, 0xDC, 0xE4, 0x40, 0x79, 0xEC, 0xAE, 0x3B, 0x49, 0x8F, 0xEE, 0xCB, 0x87,
-	0x44, 0xC3, 0xE9, 0x41, 0x88, 0xB5, 0xA0, 0x35, 0x74, 0xDB, 0xF5, 0x99, 0xA9, 0xC9, 0xFD, 0xD8,
-	0x86, 0x1A, 0x45, 0xCD, 0x15, 0xD6, 0x37, 0x8D, 0x8E, 0xB6, 0xD0, 0xF8, 0xE5, 0xEA, 0x59, 0xC1,
-	0x04, 0xFF, 0xAD, 0x61, 0x67, 0xFB, 0x18, 0xF3, 0x16, 0x6B, 0x5C, 0x53, 0x81, 0x8A, 0xAA, 0x30,
-	0x7F, 0x07, 0x0C, 0x9A, 0x4D, 0xB8, 0x1B, 0x76, 0x96, 0x4C, 0x90, 0xDD, 0x5E, 0x8B, 0xE6, 0xCA,
-	0xC0, 0xCC, 0x05, 0x73, 0xEF, 0x43, 0xE2, 0x75, 0x54, 0xA3, 0x1F, 0xC6, 0x6A, 0x33, 0x7E, 0x93,
-	0x3C, 0x55, 0x92, 0xA8, 0x08, 0x80, 0x01, 0x98, 0xD4, 0x19, 0xAF, 0x7C, 0x2C, 0x27, 0xC2, 0x1E,
-	0x34, 0x58, 0x8C, 0x2D, 0x9D, 0xC5, 0x68, 0x02, 0x63, 0x5D, 0x72, 0xFA, 0x10, 0x3E, 0xDF, 0x17,
-	0x46, 0x5A, 0xA7, 0x83, 0x9E, 0x48, 0x4F, 0xC8, 0x0F, 0xB1, 0x5F, 0x95, 0xBD, 0x32, 0x91, 0xCF,
-	0x50, 0x89, 0xAB, 0x4B, 0xF6, 0xF2, 0xA2, 0xB0, 0xB7, 0x51, 0xBA, 0x1C, 0xD3, 0xB3, 0xC4, 0xA5
-	};
-
-const BYTE ENCRYPT_BACK[256]=
-	{
-	0x52, 0xC6, 0xD7, 0x5D, 0x90, 0xB2, 0x41, 0xA1, 0xC4, 0x03, 0x0A, 0x5E, 0xA2, 0x1E, 0x26, 0xE8,
-	0xDC, 0x1D, 0x0F, 0x5B, 0x61, 0x84, 0x98, 0xDF, 0x96, 0xC9, 0x81, 0xA6, 0xFB, 0x33, 0xCF, 0xBA,
-	0x05, 0x3C, 0x15, 0x10, 0x11, 0x1A, 0x17, 0xCD, 0x4D, 0x59, 0x3B, 0x0D, 0xCC, 0xD3, 0x54, 0x2B,
-	0x9F, 0x2A, 0xED, 0xBD, 0xD0, 0x77, 0x0B, 0x86, 0x3F, 0x00, 0x4B, 0x6A, 0xC0, 0x48, 0xDD, 0x1F,
-	0x66, 0x73, 0x08, 0xB5, 0x70, 0x82, 0xE0, 0x01, 0xE5, 0x6B, 0x21, 0xF3, 0xA9, 0xA4, 0x36, 0xE6,
-	0xF0, 0xF9, 0x20, 0x9B, 0xB8, 0xC1, 0x4C, 0x13, 0xD1, 0x8E, 0xE1, 0x12, 0x9A, 0xD9, 0xAC, 0xEA,
-	0x58, 0x93, 0x16, 0xD8, 0x04, 0x5A, 0x2D, 0x94, 0xD6, 0x06, 0xBC, 0x99, 0x56, 0x0C, 0x31, 0x44,
-	0x3D, 0x51, 0xDA, 0xB3, 0x78, 0xB7, 0xA7, 0x02, 0x35, 0x67, 0x0E, 0x3E, 0xCB, 0x53, 0xBE, 0xA0,
-	0xC5, 0x9C, 0x5C, 0xE3, 0x1B, 0x14, 0x80, 0x6F, 0x74, 0xF1, 0x9D, 0xAD, 0xD2, 0x87, 0x88, 0x6C,
-	0xAA, 0xEE, 0xC2, 0xBF, 0x07, 0xEB, 0xA8, 0x4F, 0xC7, 0x7B, 0xA3, 0x42, 0x34, 0xD4, 0xE4, 0x22,
-	0x76, 0x62, 0xF6, 0xB9, 0x40, 0xFF, 0x45, 0xE2, 0xC3, 0x7C, 0x9E, 0xF2, 0x3A, 0x92, 0x69, 0xCA,
-	0xF7, 0xE9, 0x63, 0xFD, 0x5F, 0x75, 0x89, 0xF8, 0xA5, 0x46, 0xFA, 0x2E, 0x55, 0xEC, 0x27, 0x49,
-	0xB0, 0x8F, 0xCE, 0x71, 0xFE, 0xD5, 0xBB, 0x50, 0xE7, 0x7D, 0xAF, 0x6E, 0xB1, 0x83, 0x2F, 0xEF,
-	0x8A, 0x23, 0x2C, 0xFC, 0xC8, 0x37, 0x85, 0x29, 0x7F, 0x43, 0x4A, 0x79, 0x64, 0xAB, 0x60, 0xDE,
-	0x09, 0x57, 0xB6, 0x18, 0x65, 0x8C, 0xAE, 0x24, 0x4E, 0x72, 0x8D, 0x47, 0x68, 0x32, 0x6D, 0xB4,
-	0x25, 0x39, 0xF5, 0x97, 0x28, 0x7A, 0xF4, 0x1C, 0x8B, 0x30, 0xDB, 0x95, 0x19, 0x7E, 0x38, 0x91
-	};
-
-VOID EncryptGenerateKey(BYTE* key, LPCSTR str)noexcept
-{
-UINT pos=0;
-UINT len=0;
-while(str[len])
-	key[pos++%ENCRYPT_BLOCK]^=ENCRYPT_FWD[(SIZE_T)str[len++]];
-while(pos<ENCRYPT_BLOCK)
-	key[pos++]=ENCRYPT_FWD[key[pos-len]];
-}
-
-VOID EncryptShiftLeft(BYTE* buf)noexcept
-{
-BYTE b0=buf[0];
-for(UINT u=1; u<ENCRYPT_BLOCK; u++)
-	buf[u-1]=buf[u];
-buf[ENCRYPT_BLOCK-1]=b0;
-}
-
-VOID EncryptShiftRight(BYTE* buf)noexcept
-{
-BYTE bn=buf[ENCRYPT_BLOCK-1];
-for(UINT u=1; u<ENCRYPT_BLOCK; u++)
-	buf[ENCRYPT_BLOCK-u]=buf[ENCRYPT_BLOCK-u-1];
-buf[0]=bn;
 }
 
 
@@ -1615,52 +1517,72 @@ buf[0]=bn;
 
 UINT StringHelper::Append(LPSTR dst, UINT size, LPCSTR src, LPCSTR value)noexcept
 {
-return StringAppend<CHAR, CHAR, CHAR>(dst, size, src, value);
+return StringAppend(dst, size, src, value);
 }
 
 UINT StringHelper::Append(LPWSTR dst, UINT size, LPCSTR src, LPCSTR value)noexcept
 {
-return StringAppend<WCHAR, CHAR, CHAR>(dst, size, src, value);
+return StringAppend(dst, size, src, value);
 }
 
-INT StringHelper::Compare(LPCSTR str1, LPCSTR str2, UINT len, BOOL cs)noexcept
+INT StringHelper::Compare(LPCSTR str1, LPCSTR str2, UINT len)noexcept
 {
-return StringCompare<CHAR, CHAR>(str1, str2, len, cs);
+return StringCompare(str1, str2, len);
 }
 
-INT StringHelper::Compare(LPCSTR str1, LPCWSTR str2, UINT len, BOOL cs)noexcept
+INT StringHelper::Compare(LPCSTR str1, LPCSTR str2, UINT len, CompareMode mode)noexcept
 {
-return StringCompare<CHAR, WCHAR>(str1, str2, len, cs);
+return StringCompare(str1, str2, len, mode);
 }
 
-INT StringHelper::Compare(LPCWSTR str1, LPCSTR str2, UINT len, BOOL cs)noexcept
+INT StringHelper::Compare(LPCSTR str1, LPCWSTR str2, UINT len)noexcept
 {
-return StringCompare<WCHAR, CHAR>(str1, str2, len, cs);
+return StringCompare(str1, str2, len);
 }
 
-INT StringHelper::Compare(LPCWSTR str1, LPCWSTR str2, UINT len, BOOL cs)noexcept
+INT StringHelper::Compare(LPCSTR str1, LPCWSTR str2, UINT len, CompareMode mode)noexcept
 {
-return StringCompare<WCHAR, WCHAR>(str1, str2, len, cs);
+return StringCompare(str1, str2, len, mode);
 }
 
-INT StringHelper::Compare(LPCSTR str1, String const* str2, UINT len, BOOL cs)noexcept
+INT StringHelper::Compare(LPCWSTR str1, LPCSTR str2, UINT len)noexcept
 {
-return StringCompare<CHAR>(str1, str2, len, cs);
+return StringCompare(str1, str2, len);
 }
 
-INT StringHelper::Compare(LPCWSTR str1, String const* str2, UINT len, BOOL cs)noexcept
+INT StringHelper::Compare(LPCWSTR str1, LPCSTR str2, UINT len, CompareMode mode)noexcept
 {
-return StringCompare<WCHAR>(str1, str2, len, cs);
+return StringCompare(str1, str2, len, mode);
 }
 
-INT StringHelper::Compare(String const* str1, LPCSTR str2, UINT len, BOOL cs)noexcept
+INT StringHelper::Compare(LPCWSTR str1, LPCWSTR str2, UINT len)noexcept
 {
-return StringCompare<CHAR>(str1, str2, len, cs);
+return StringCompare(str1, str2, len);
 }
 
-INT StringHelper::Compare(String const* str1, LPCWSTR str2, UINT len, BOOL cs)noexcept
+INT StringHelper::Compare(LPCWSTR str1, LPCWSTR str2, UINT len, CompareMode mode)noexcept
 {
-return StringCompare<WCHAR>(str1, str2, len, cs);
+return StringCompare(str1, str2, len, mode);
+}
+
+INT StringHelper::Compare(String const* str1, LPCSTR str2, UINT len)noexcept
+{
+return StringCompare(str1? str1->Begin(): nullptr, str2, len);
+}
+
+INT StringHelper::Compare(String const* str1, LPCSTR str2, UINT len, CompareMode mode)noexcept
+{
+return StringCompare(str1? str1->Begin(): nullptr, str2, len, mode);
+}
+
+INT StringHelper::Compare(String const* str1, LPCWSTR str2, UINT len)noexcept
+{
+return StringCompare(str1? str1->Begin(): nullptr, str2, len);
+}
+
+INT StringHelper::Compare(String const* str1, LPCWSTR str2, UINT len, CompareMode mode)noexcept
+{
+return StringCompare(str1? str1->Begin(): nullptr, str2, len, mode);
 }
 
 INT StringHelper::Compare(String const* str1, String const* str2)noexcept
@@ -1679,12 +1601,12 @@ if(hash1<hash2)
 	return -1;
 if(hash1>hash2)
 	return 1;
-return StringCompare(str1->Begin(), str2->Begin(), 0, false);
+return StringCompare(str1->Begin(), str2->Begin(), 0);
 }
 
-INT StringHelper::Compare(String const* str1, String const* str2, UINT len, BOOL cs)noexcept
+INT StringHelper::Compare(String const* str1, String const* str2, UINT len, CompareMode mode)noexcept
 {
-return StringCompare(str1? str1->Begin(): nullptr, str2? str2->Begin(): nullptr, len, cs);
+return StringCompare(str1? str1->Begin(): nullptr, str2? str2->Begin(): nullptr, len, mode);
 }
 
 UINT StringHelper::Copy(LPSTR dst, UINT size, LPCSTR src, UINT len)
@@ -1787,151 +1709,104 @@ dst[pos]=0;
 return pos;
 }
 
-UINT StringHelper::Decrypt(LPSTR dst, UINT size, BYTE const* src, LPCSTR key_str)noexcept
+BOOL StringHelper::FindChar(LPCSTR str, CHAR c, UINT* pos)noexcept
 {
-if(!src||!key_str||!key_str[0])
-	return 0;
-BYTE key[ENCRYPT_BLOCK]={ 0 };
-EncryptGenerateKey(key, key_str);
-UINT src_pos=0;
-UINT len=0;
-while(1)
-	{
-	BYTE buf[ENCRYPT_BLOCK];
-	MemoryHelper::Copy(buf, &src[src_pos], ENCRYPT_BLOCK);
-	for(UINT loop=0; loop<ENCRYPT_LOOPS; loop++)
-		{
-		EncryptShiftRight(buf);
-		for(UINT u=0; u<ENCRYPT_BLOCK; u++)
-			buf[u]=ENCRYPT_BACK[buf[u]]^key[u];
-		}
-	for(UINT u=0; u<ENCRYPT_BLOCK; u++)
-		{
-		if(dst)
-			dst[len]=buf[u];
-		if(!buf[u])
-			return len;
-		len++;
-		}
-	src_pos+=ENCRYPT_BLOCK;
-	}
-return len;
+return StringFindChar(str, c, pos);
 }
 
-UINT StringHelper::Encrypt(BYTE* dst, SIZE_T size, LPCSTR src, LPCSTR key_str)
+BOOL StringHelper::FindChar(LPCSTR str, CHAR c, UINT* pos, CompareMode mode)noexcept
 {
-if(!src||!src[0]||!key_str||!key_str[0])
-	return 0;
-if(!dst)
-	{
-	UINT len=Length(src);
-	return TypeHelper::AlignUp(len, ENCRYPT_BLOCK);
-	}
-BYTE key[ENCRYPT_BLOCK]={ 0 };
-EncryptGenerateKey(key, key_str);
-UINT src_pos=0;
-UINT dst_pos=0;
-while(src[src_pos])
-	{
-	BYTE buf[ENCRYPT_BLOCK]={ 0 };
-	for(UINT u=0; u<ENCRYPT_BLOCK; u++)
-		{
-		if(!src[src_pos])
-			break;
-		buf[u]=src[src_pos++];
-		}
-	for(UINT loop=0; loop<ENCRYPT_LOOPS; loop++)
-		{
-		for(UINT u=0; u<ENCRYPT_BLOCK; u++)
-			buf[u]=ENCRYPT_FWD[buf[u]^key[u]];
-		EncryptShiftLeft(buf);
-		}
-	if(dst_pos+ENCRYPT_BLOCK>size)
-		throw BufferOverrunException();
-	MemoryHelper::Copy(&dst[dst_pos], buf, ENCRYPT_BLOCK);
-	dst_pos+=ENCRYPT_BLOCK;
-	}
-return dst_pos;
+return StringFindChar(str, c, pos, mode);
 }
 
-BOOL StringHelper::FindChar(LPCSTR str, CHAR c, UINT* pos, BOOL cs)noexcept
+BOOL StringHelper::FindChar(LPCWSTR str, CHAR c, UINT* pos)noexcept
 {
-return StringFindChar<CHAR, CHAR>(str, c, pos, cs);
+return StringFindChar(str, c, pos);
 }
 
-BOOL StringHelper::FindChar(LPCSTR str, WCHAR c, UINT* pos, BOOL cs)noexcept
+BOOL StringHelper::FindChar(LPCWSTR str, CHAR c, UINT* pos, CompareMode mode)noexcept
 {
-return StringFindChar<CHAR, WCHAR>(str, c, pos, cs);
+return StringFindChar(str, c, pos, mode);
 }
 
-BOOL StringHelper::FindChar(LPCWSTR str, CHAR c, UINT* pos, BOOL cs)noexcept
+BOOL StringHelper::FindChars(LPCSTR str, LPCSTR find, UINT* pos)noexcept
 {
-return StringFindChar<WCHAR, CHAR>(str, c, pos, cs);
+return StringFindChars(str, find, pos);
 }
 
-BOOL StringHelper::FindChar(LPCWSTR str, WCHAR c, UINT* pos, BOOL cs)noexcept
+BOOL StringHelper::FindChars(LPCSTR str, LPCSTR find, UINT* pos, CompareMode mode)noexcept
 {
-return StringFindChar<WCHAR, WCHAR>(str, c, pos, cs);
+return StringFindChars(str, find, pos, mode);
 }
 
-BOOL StringHelper::FindChars(LPCSTR str, LPCSTR find, UINT* pos, BOOL cs)noexcept
+BOOL StringHelper::FindChars(LPCWSTR str, LPCSTR find, UINT* pos)noexcept
 {
-return StringFindChars<CHAR, CHAR>(str, find, pos, cs);
+return StringFindChars(str, find, pos);
 }
 
-BOOL StringHelper::FindChars(LPCSTR str, LPCWSTR find, UINT* pos, BOOL cs)noexcept
+BOOL StringHelper::FindChars(LPCWSTR str, LPCSTR find, UINT* pos, CompareMode mode)noexcept
 {
-return StringFindChars<CHAR, WCHAR>(str, find, pos, cs);
+return StringFindChars(str, find, pos, mode);
 }
 
-BOOL StringHelper::FindChars(LPCWSTR str, LPCSTR find, UINT* pos, BOOL cs)noexcept
+BOOL StringHelper::FindString(LPCSTR str, LPCSTR find, UINT* pos)noexcept
 {
-return StringFindChars<WCHAR, CHAR>(str, find, pos, cs);
+return StringFindString(str, find, pos);
 }
 
-BOOL StringHelper::FindChars(LPCWSTR str, LPCWSTR find, UINT* pos, BOOL cs)noexcept
+BOOL StringHelper::FindString(LPCSTR str, LPCSTR find, UINT* pos, CompareMode mode)noexcept
 {
-return StringFindChars<WCHAR, WCHAR>(str, find, pos, cs);
+return StringFindString(str, find, pos, mode);
 }
 
-BOOL StringHelper::FindString(LPCSTR str, LPCSTR find, UINT* pos, BOOL cs)noexcept
+BOOL StringHelper::FindString(LPCSTR str, LPCWSTR find, UINT* pos)noexcept
 {
-return StringFindString<CHAR, CHAR>(str, find, pos, cs);
+return StringFindString(str, find, pos);
 }
 
-BOOL StringHelper::FindString(LPCSTR str, LPCWSTR find, UINT* pos, BOOL cs)noexcept
+BOOL StringHelper::FindString(LPCSTR str, LPCWSTR find, UINT* pos, CompareMode mode)noexcept
 {
-return StringFindString<CHAR, WCHAR>(str, find, pos, cs);
+return StringFindString(str, find, pos, mode);
 }
 
-BOOL StringHelper::FindString(LPCWSTR str, LPCSTR find, UINT* pos, BOOL cs)noexcept
+BOOL StringHelper::FindString(LPCWSTR str, LPCSTR find, UINT* pos)noexcept
 {
-return StringFindString<WCHAR, CHAR>(str, find, pos, cs);
+return StringFindString(str, find, pos);
 }
 
-BOOL StringHelper::FindString(LPCWSTR str, LPCWSTR find, UINT* pos, BOOL cs)noexcept
+BOOL StringHelper::FindString(LPCWSTR str, LPCSTR find, UINT* pos, CompareMode mode)noexcept
 {
-return StringFindString<WCHAR, WCHAR>(str, find, pos, cs);
+return StringFindString(str, find, pos, mode);
+}
+
+BOOL StringHelper::FindString(LPCWSTR str, LPCWSTR find, UINT* pos)noexcept
+{
+return StringFindString(str, find, pos);
+}
+
+BOOL StringHelper::FindString(LPCWSTR str, LPCWSTR find, UINT* pos, CompareMode mode)noexcept
+{
+return StringFindString(str, find, pos, mode);
 }
 
 UINT64 StringHelper::Hash(LPCSTR str)noexcept
 {
-return StringHash<CHAR>(str);
+return StringHash(str);
 }
 
 UINT64 StringHelper::Hash(LPCWSTR str)noexcept
 {
-return StringHash<WCHAR>(str);
+return StringHash(str);
 }
 
 UINT StringHelper::Insert(LPSTR dst, UINT size, LPCSTR src, UINT pos, LPCSTR value)noexcept
 {
-return StringInsert<CHAR, CHAR, CHAR>(dst, size, src, pos, value);
+return StringInsert(dst, size, src, pos, value);
 }
 
 UINT StringHelper::Insert(LPWSTR dst, UINT size, LPCWSTR src, UINT pos, LPCSTR value)noexcept
 {
-return StringInsert<WCHAR, WCHAR, CHAR>(dst, size, src, pos, value);
+return StringInsert(dst, size, src, pos, value);
 }
 
 UINT StringHelper::Length(LPCSTR str)noexcept
@@ -1993,32 +1868,32 @@ return StringPrint((LPSTR)nullptr, 0, format, args);
 
 UINT StringHelper::Lowercase(LPSTR str)noexcept
 {
-return StringLowercase<CHAR>(str);
+return StringLowercase(str);
 }
 
 UINT StringHelper::Lowercase(LPWSTR str)noexcept
 {
-return StringLowercase<WCHAR>(str);
+return StringLowercase(str);
 }
 
 UINT StringHelper::Lowercase(LPSTR dst, UINT size, LPCSTR src)noexcept
 {
-return StringLowercase<CHAR, CHAR>(dst, size, src);
+return StringLowercase(dst, size, src);
 }
 
 UINT StringHelper::Lowercase(LPWSTR dst, UINT size, LPCWSTR src)noexcept
 {
-return StringLowercase<WCHAR, WCHAR>(dst, size, src);
+return StringLowercase(dst, size, src);
 }
 
 UINT StringHelper::Print(LPSTR dst, UINT size, LPCSTR format, VariableArguments& args)noexcept
 {
-return StringPrint<CHAR>(dst, size, format, args);
+return StringPrint(dst, size, format, args);
 }
 
 UINT StringHelper::Print(LPWSTR dst, UINT size, LPCSTR format, VariableArguments& args)noexcept
 {
-return StringPrint<WCHAR>(dst, size, format, args);
+return StringPrint(dst, size, format, args);
 }
 
 UINT StringHelper::PrintInt(LPSTR dst, UINT size, INT value)noexcept
@@ -2041,24 +1916,34 @@ UINT StringHelper::PrintUInt64(LPSTR dst, UINT size, UINT64 value)noexcept
 return StringPrintUInt(dst, size, value, 0);
 }
 
-UINT StringHelper::Replace(LPSTR dst, UINT size, LPCSTR src, LPCSTR find, LPCSTR insert, BOOL cs, BOOL repeat)noexcept
+UINT StringHelper::Replace(LPSTR dst, UINT size, LPCSTR src, LPCSTR find, LPCSTR insert, BOOL repeat)noexcept
 {
-return StringReplace<CHAR, CHAR, CHAR>(dst, size, src, find, insert, cs, repeat);
+return StringReplace(dst, size, src, find, insert, repeat);
 }
 
-UINT StringHelper::Replace(LPWSTR dst, UINT size, LPCWSTR src, LPCSTR find, LPCSTR insert, BOOL cs, BOOL repeat)noexcept
+UINT StringHelper::Replace(LPSTR dst, UINT size, LPCSTR src, LPCSTR find, LPCSTR insert, BOOL repeat, CompareMode mode)noexcept
 {
-return StringReplace<WCHAR, WCHAR, CHAR>(dst, size, src, find, insert, cs, repeat);
+return StringReplace(dst, size, src, find, insert, repeat, mode);
+}
+
+UINT StringHelper::Replace(LPWSTR dst, UINT size, LPCWSTR src, LPCSTR find, LPCSTR insert, BOOL repeat)noexcept
+{
+return StringReplace(dst, size, src, find, insert, repeat);
+}
+
+UINT StringHelper::Replace(LPWSTR dst, UINT size, LPCWSTR src, LPCSTR find, LPCSTR insert, BOOL repeat, CompareMode mode)noexcept
+{
+return StringReplace(dst, size, src, find, insert, repeat, mode);
 }
 
 UINT StringHelper::Scan(LPCSTR str, LPCSTR format, VariableArguments& args)noexcept
 {
-return StringScan<CHAR>(str, format, args);
+return StringScan(str, format, args);
 }
 
 UINT StringHelper::Scan(LPCWSTR str, LPCSTR format, VariableArguments& args)noexcept
 {
-return StringScan<WCHAR>(str, format, args);
+return StringScan(str, format, args);
 }
 
 INT StringHelper::ToInt(LPCSTR str)
@@ -2199,30 +2084,30 @@ return value;
 
 LPCSTR StringHelper::Truncate(LPCSTR str, LPCSTR chars)noexcept
 {
-return StringTruncate<CHAR>(str, chars);
+return StringTruncate(str, chars);
 }
 
 LPCWSTR StringHelper::Truncate(LPCWSTR str, LPCSTR chars)noexcept
 {
-return StringTruncate<WCHAR>(str, chars);
+return StringTruncate(str, chars);
 }
 
 UINT StringHelper::Uppercase(LPSTR str)noexcept
 {
-return StringUppercase<CHAR>(str);
+return StringUppercase(str);
 }
 
 UINT StringHelper::Uppercase(LPWSTR str)noexcept
 {
-return StringUppercase<WCHAR>(str);
+return StringUppercase(str);
 }
 
 UINT StringHelper::Uppercase(LPSTR dst, UINT size, LPCSTR src)noexcept
 {
-return StringUppercase<CHAR, CHAR>(dst, size, src);
+return StringUppercase(dst, size, src);
 }
 
 UINT StringHelper::Uppercase(LPWSTR dst, UINT size, LPCWSTR src)noexcept
 {
-return StringUppercase<WCHAR, WCHAR>(dst, size, src);
+return StringUppercase(dst, size, src);
 }

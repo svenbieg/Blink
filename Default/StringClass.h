@@ -57,14 +57,10 @@ public:
 
 	// Access
 	inline LPCTSTR Begin()const noexcept { return m_Buffer; }
-	inline BOOL Contains(LPCSTR Value, BOOL CaseSensitive=true)noexcept
-		{
-		return StringHelper::FindString(m_Buffer, Value, nullptr, CaseSensitive);
-		}
-	inline BOOL Contains(LPCWSTR Value, BOOL CaseSensitive=true)noexcept
-		{
-		return StringHelper::FindString(m_Buffer, Value, nullptr, CaseSensitive);
-		}
+	inline BOOL Contains(LPCSTR Value)noexcept { return StringHelper::FindString(m_Buffer, Value); }
+	inline BOOL Contains(LPCSTR Value, CompareMode Mode)noexcept { return StringHelper::FindString(m_Buffer, Value, (UINT*)nullptr, Mode); }
+	inline BOOL Contains(LPCWSTR Value)noexcept { return StringHelper::FindString(m_Buffer, Value); }
+	inline BOOL Contains(LPCWSTR Value, CompareMode Mode)noexcept { return StringHelper::FindString(m_Buffer, Value, (UINT*)nullptr, Mode); }
 	inline UINT Copy(LPSTR Buffer, UINT Size)noexcept { return StringHelper::Copy(Buffer, Size, m_Buffer); }
 	inline UINT Copy(LPWSTR Buffer, UINT Size)noexcept { return StringHelper::Copy(Buffer, Size, m_Buffer); }
 	inline UINT GetLength()const noexcept { return m_Length; }
@@ -89,7 +85,8 @@ public:
 	static SIZE_T WriteToStream(String const* String, OutputStream* Stream);
 
 	// Operators
-	Handle<String> Replace(LPCSTR Find, LPCSTR Replace, BOOL CaseSensitive=true, BOOL Repeat=false)noexcept;
+	Handle<String> Replace(LPCSTR Find, LPCSTR Replace, BOOL Repeat=false);
+	Handle<String> Replace(LPCSTR Find, LPCSTR Replace, BOOL Repeat, CompareMode Mode);
 
 private:
 	// Con-/Destructors

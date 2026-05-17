@@ -49,7 +49,7 @@ private:
 	// Functions
 	typedef UINT (StringBuilder::*APPEND_ANSI)(CHAR);
 	typedef UINT (StringBuilder::*APPEND_UNICODE)(WCHAR);
-	typedef Handle<String> (StringBuilder::*TO_STRING)();
+	typedef Handle<String> (StringBuilder::*TO_STRING_FN)();
 
 	UINT BufferAppend(TCHAR Char);
 	UINT BufferAppendAnsi(CHAR Char);
@@ -65,5 +65,5 @@ private:
 	UINT m_Position;
 	UINT m_Size;
 	Handle<String> m_String;
-	TO_STRING m_ToString;
+	TO_STRING_FN m_ToString;
 };

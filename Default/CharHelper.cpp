@@ -90,103 +90,195 @@ const BYTE COMPARE_NCS[]=
 // Char-Helper
 //=============
 
-INT CharHelper::Compare(CHAR c1, CHAR c2, BOOL cs)noexcept
+INT CharHelper::Compare(CHAR c1, CHAR c2)noexcept
 {
-BYTE const* sort=cs? COMPARE_CS: COMPARE_NCS;
-BYTE id1=sort[(SIZE_T)c1];
-BYTE id2=sort[(SIZE_T)c2];
-if(id1>id2)
+BYTE b1=TypeHelper::Min((BYTE)0x7F, (BYTE)c1);
+BYTE b2=TypeHelper::Min((BYTE)0x7F, (BYTE)c2);
+BYTE id1=COMPARE_CS[b1];
+BYTE id2=COMPARE_CS[b2];
+if(id1!=0xFF&&id2!=0xFF)
+	{
+	b1=id1;
+	b2=id2;
+	}
+if(b1>b2)
 	return 1;
-if(id1<id2)
-	return -1;
-if(id1!=255)
-	return 0;
-if(c1>c2)
-	return 1;
-if(c1<c2)
+if(b1<b2)
 	return -1;
 return 0;
 }
 
-INT CharHelper::Compare(CHAR c1, WCHAR wc2, BOOL cs)noexcept
+INT CharHelper::Compare(CHAR c1, CHAR c2, CompareMode mode)noexcept
 {
-CHAR c2=ToAnsi(wc2);
-return Compare(c1, c2, cs);
-}
-
-INT CharHelper::Compare(WCHAR wc1, CHAR c2, BOOL cs)noexcept
-{
-CHAR c1=ToAnsi(wc1);
-return Compare(c1, c2, cs);
-}
-
-INT CharHelper::Compare(WCHAR wc1, WCHAR wc2, BOOL cs)noexcept
-{
-CHAR c1=ToAnsi(wc1);
-CHAR c2=ToAnsi(wc2);
-return Compare(c1, c2, cs);
-}
-
-BOOL CharHelper::Equal(CHAR c1, CHAR c2, BOOL cs)noexcept
-{
-WCHAR wc1=ToUnicode(c1);
-WCHAR wc2=ToUnicode(c2);
-return Equal(wc1, wc2, cs);
-}
-
-BOOL CharHelper::Equal(CHAR c1, WCHAR wc2, BOOL cs)noexcept
-{
-WCHAR wc1=ToUnicode(c1);
-return Equal(wc1, wc2, cs);
-}
-
-BOOL CharHelper::Equal(WCHAR wc1, CHAR c2, BOOL cs)noexcept
-{
-WCHAR wc2=ToUnicode(c2);
-return Equal(wc1, wc2, cs);
-}
-
-BOOL CharHelper::Equal(WCHAR c1, WCHAR c2, BOOL cs)noexcept
-{
-if(!cs)
+BYTE b1=TypeHelper::Min((BYTE)0x7F, (BYTE)c1);
+BYTE b2=TypeHelper::Min((BYTE)0x7F, (BYTE)c2);
+BYTE id1=COMPARE_NCS[b1];
+BYTE id2=COMPARE_NCS[b2];
+if(id1!=0xFF&&id2!=0xFF)
 	{
-	c1=ToCapitalUnicode(c1);
-	c2=ToCapitalUnicode(c2);
+	b1=id1;
+	b2=id2;
 	}
+if(b1>b2)
+	return 1;
+if(b1<b2)
+	return -1;
+return 0;
+}
+
+INT CharHelper::Compare(CHAR c1, WCHAR wc2)noexcept
+{
+CHAR c2=ToChar(wc2);
+return Compare(c1, c2);
+}
+
+INT CharHelper::Compare(CHAR c1, WCHAR wc2, CompareMode mode)noexcept
+{
+CHAR c2=ToChar(wc2);
+return Compare(c1, c2, mode);
+}
+
+INT CharHelper::Compare(WCHAR wc1, CHAR c2)noexcept
+{
+CHAR c1=ToChar(wc1);
+return Compare(c1, c2);
+}
+
+INT CharHelper::Compare(WCHAR wc1, CHAR c2, CompareMode mode)noexcept
+{
+CHAR c1=ToChar(wc1);
+return Compare(c1, c2, mode);
+}
+
+INT CharHelper::Compare(WCHAR c1, WCHAR c2)noexcept
+{
+WORD w1=TypeHelper::Min((WORD)0xFF, (WORD)c1);
+WORD w2=TypeHelper::Min((WORD)0xFF, (WORD)c2);
+BYTE id1=COMPARE_CS[w1];
+BYTE id2=COMPARE_CS[w2];
+if(id1!=0xFF&&id2!=0xFF)
+	{
+	w1=id1;
+	w2=id2;
+	}
+if(w1>w2)
+	return 1;
+if(w1<w2)
+	return -1;
+return 0;
+}
+
+INT CharHelper::Compare(WCHAR c1, WCHAR c2, CompareMode mode)noexcept
+{
+WORD w1=TypeHelper::Min((WORD)0xFF, (WORD)c1);
+WORD w2=TypeHelper::Min((WORD)0xFF, (WORD)c2);
+BYTE id1=COMPARE_NCS[w1];
+BYTE id2=COMPARE_NCS[w2];
+if(id1!=0xFF&&id2!=0xFF)
+	{
+	w1=id1;
+	w2=id2;
+	}
+if(w1>w2)
+	return 1;
+if(w1<w2)
+	return -1;
+return 0;
+}
+
+BOOL CharHelper::Equal(CHAR c1, CHAR c2, CompareMode mode)noexcept
+{
+if(c1==c2)
+	return true;
+c1=ToCapital(c1);
+c2=ToCapital(c2);
 return c1==c2;
 }
 
-BOOL CharHelper::Equal(CHAR c, LPCSTR chars, BOOL cs)noexcept
+BOOL CharHelper::Equal(CHAR c1, WCHAR wc2)noexcept
+{
+CHAR c2=ToChar(wc2);
+return Equal(c1, c2);
+}
+
+BOOL CharHelper::Equal(CHAR c1, WCHAR wc2, CompareMode mode)noexcept
+{
+CHAR c2=ToChar(wc2);
+return Equal(c1, c2, mode);
+}
+
+BOOL CharHelper::Equal(WCHAR wc1, CHAR c2)noexcept
+{
+CHAR c1=ToChar(wc1);
+return Equal(c1, c2);
+}
+
+BOOL CharHelper::Equal(WCHAR wc1, CHAR c2, CompareMode mode)noexcept
+{
+CHAR c1=ToChar(wc1);
+return Equal(c1, c2, mode);
+}
+
+BOOL CharHelper::Equal(WCHAR c1, WCHAR c2, CompareMode mode)noexcept
+{
+if(c1==c2)
+	return true;
+c1=ToCapitalW(c1);
+c2=ToCapitalW(c2);
+return c1==c2;
+}
+
+BOOL CharHelper::Equal(CHAR c, LPCSTR chars)noexcept
 {
 if(!chars)
 	return false;
-for(UINT u=0; chars[u]; u++)
+UINT pos=0;
+while(chars[pos])
 	{
-	if(Equal(c, chars[u], cs))
+	if(Equal(c, chars[pos++]))
 		return true;
 	}
 return false;
 }
 
-BOOL CharHelper::Equal(WCHAR c, LPCSTR chars, BOOL cs)noexcept
+BOOL CharHelper::Equal(CHAR c, LPCSTR chars, CompareMode mode)noexcept
 {
 if(!chars)
 	return false;
-for(UINT u=0; chars[u]; u++)
+UINT pos=0;
+while(chars[pos])
 	{
-	if(Equal(c, chars[u], cs))
+	if(Equal(c, chars[pos++], mode))
 		return true;
 	}
 return false;
 }
 
-BOOL CharHelper::Equal(WCHAR c, LPCWSTR chars, BOOL cs)noexcept
+BOOL CharHelper::Equal(WCHAR c, LPCSTR chars)noexcept
 {
 if(!chars)
 	return false;
-for(UINT u=0; chars[u]; u++)
+UINT pos=0;
+while(chars[pos])
 	{
-	if(Equal(c, chars[u], cs))
+	WCHAR wc=0;
+	pos+=Read(&chars[pos], &wc);
+	if(Equal(c, wc))
+		return true;
+	}
+return false;
+}
+
+BOOL CharHelper::Equal(WCHAR c, LPCSTR chars, CompareMode mode)noexcept
+{
+if(!chars)
+	return false;
+UINT pos=0;
+while(chars[pos])
+	{
+	WCHAR wc=0;
+	pos+=Read(&chars[pos], &wc);
+	if(Equal(c, wc, mode))
 		return true;
 	}
 return false;
@@ -209,13 +301,13 @@ if(c>='a'&&c<='z')
 	return true;
 switch(c)
 	{
-	case 'Ä':
-	case 'ä':
-	case 'Ö':
-	case 'ö':
-	case 'ß':
-	case 'Ü':
-	case 'ü':
+	case L'Ä':
+	case L'ä':
+	case L'Ö':
+	case L'ö':
+	case L'ß':
+	case L'Ü':
+	case L'ü':
 		return true;
 	}
 return false;
@@ -258,9 +350,9 @@ if(c>='A'&&c<='Z')
 	return true;
 switch(c)
 	{
-	case 'Ä':
-	case 'Ö':
-	case 'Ü':
+	case L'Ä':
+	case L'Ö':
+	case L'Ü':
 		return true;
 	}
 return false;
@@ -321,10 +413,10 @@ if(c>='a'&&c<='z')
 	return true;
 switch(c)
 	{
-	case 'ä':
-	case 'ö':
-	case 'ß':
-	case 'ü':
+	case L'ä':
+	case L'ö':
+	case L'ß':
+	case L'ü':
 		return true;
 	}
 return false;
@@ -354,18 +446,13 @@ for(UINT u=0; u<TypeHelper::ArraySize(STR_SPECIAL); u++)
 return false;
 }
 
-UINT CharHelper::Read(LPCSTR str)
-{
-return Read(str, (WCHAR*)nullptr);
-}
-
 UINT CharHelper::Read(LPCSTR str, CHAR* c_ptr)
 {
 if(!c_ptr)
 	return Read(str);
 WCHAR c=0;
 UINT len=Read(str, &c);
-*c_ptr=ToAnsi(c);
+*c_ptr=ToChar(c);
 return len;
 }
 
@@ -411,17 +498,12 @@ if(c_ptr)
 return 1;
 }
 
-UINT CharHelper::Read(LPCWSTR str)
-{
-return 1;
-}
-
 UINT CharHelper::Read(LPCWSTR str, CHAR* c_ptr)
 {
 if(!str)
 	return 0;
 if(c_ptr)
-	*c_ptr=ToAnsi(str[0]);
+	*c_ptr=ToChar(str[0]);
 return 1;
 }
 
@@ -434,18 +516,13 @@ if(c_ptr)
 return 1;
 }
 
-UINT CharHelper::Read(InputStream* stream)
-{
-return Read(stream, (WCHAR*)nullptr);
-}
-
 UINT CharHelper::Read(InputStream* stream, CHAR* c_ptr)
 {
 if(!c_ptr)
 	return Read(stream);
 WCHAR c=0;
 UINT len=Read(stream, &c);
-*c_ptr=ToAnsi(c);
+*c_ptr=ToChar(c);
 return len;
 }
 
@@ -496,46 +573,54 @@ if(c_ptr)
 return read;
 }
 
-CHAR CharHelper::ToAnsi(WCHAR wc)noexcept
+CHAR CharHelper::ToCapital(CHAR c)noexcept
+{
+WCHAR wc=ToCharW(c);
+wc=ToCapitalW(wc);
+return ToChar(wc);
+}
+
+CHAR CharHelper::ToCapital(WCHAR c)noexcept
+{
+c=ToCapitalW(c);
+return ToChar(c);
+}
+
+WCHAR CharHelper::ToCapitalW(CHAR c)noexcept
+{
+WCHAR wc=ToCharW(c);
+return ToCapitalW(wc);
+}
+
+WCHAR CharHelper::ToCapitalW(WCHAR c)noexcept
+{
+if(c>='a'&&c<='z')
+	return c-0x20;
+switch(c)
+	{
+	case L'ä':
+		return L'Ä';
+	case L'ö':
+		return L'Ö';
+	case L'ü':
+		return L'Ü';
+	}
+return c;
+}
+
+CHAR CharHelper::ToChar(WCHAR wc)noexcept
 {
 if(wc<0x80)
 	return (CHAR)wc;
 return CHAR_UNKNOWN;
 }
 
-CHAR CharHelper::ToCapitalAnsi(CHAR c)noexcept
+WCHAR CharHelper::ToCharW(CHAR c)noexcept
 {
-WCHAR wc=ToUnicode(c);
-wc=ToCapitalUnicode(wc);
-return ToAnsi(wc);
-}
-
-CHAR CharHelper::ToCapitalAnsi(WCHAR c)noexcept
-{
-c=ToCapitalUnicode(c);
-return ToAnsi(c);
-}
-
-WCHAR CharHelper::ToCapitalUnicode(CHAR c)noexcept
-{
-WCHAR wc=ToUnicode(c);
-return ToCapitalUnicode(wc);
-}
-
-WCHAR CharHelper::ToCapitalUnicode(WCHAR c)noexcept
-{
-if(c>='a'&&c<='z')
-	return c-0x20;
-switch(c)
-	{
-	case 'ä':
-		return 'Ä';
-	case 'ö':
-		return 'Ö';
-	case 'ü':
-		return 'Ü';
-	}
-return c;
+BYTE b=(BYTE)c;
+if(b<0x80)
+	return (WCHAR)c;
+return CHAR_UNKNOWN;
 }
 
 BOOL CharHelper::ToDigit(CHAR c, UINT* digit_ptr, UINT base)noexcept
@@ -563,55 +648,49 @@ return false;
 
 BOOL CharHelper::ToDigit(WCHAR wc, UINT* digit_ptr, UINT base)noexcept
 {
-CHAR c=ToAnsi(wc);
+CHAR c=ToChar(wc);
 return ToDigit(c, digit_ptr, base);
 }
 
-CHAR CharHelper::ToSmallAnsi(CHAR c)noexcept
+CHAR CharHelper::ToSmall(CHAR c)noexcept
 {
-WCHAR wc=ToUnicode(c);
-wc=ToSmallUnicode(wc);
-return ToAnsi(wc);
+WCHAR wc=ToCharW(c);
+wc=ToSmallW(wc);
+return ToChar(wc);
 }
 
-CHAR CharHelper::ToSmallAnsi(WCHAR c)noexcept
+CHAR CharHelper::ToSmall(WCHAR c)noexcept
 {
-c=ToSmallUnicode(c);
-return ToAnsi(c);
+c=ToSmallW(c);
+return ToChar(c);
 }
 
-WCHAR CharHelper::ToSmallUnicode(CHAR c)noexcept
+WCHAR CharHelper::ToSmallW(CHAR c)noexcept
 {
-WCHAR wc=ToUnicode(c);
-return ToSmallUnicode(wc);
+WCHAR wc=ToCharW(c);
+return ToSmallW(wc);
 }
 
-WCHAR CharHelper::ToSmallUnicode(WCHAR c)noexcept
+WCHAR CharHelper::ToSmallW(WCHAR c)noexcept
 {
 if(c>='A'&&c<='Z')
 	return c+0x20;
 switch(c)
 	{
-	case 'Ä':
-		return 'ä';
-	case 'Ö':
-		return 'ö';
-	case 'Ü':
-		return 'ü';
+	case L'Ä':
+		return L'ä';
+	case L'Ö':
+		return L'ö';
+	case L'Ü':
+		return L'ü';
 	}
 return c;
 }
 
-WCHAR CharHelper::ToUnicode(CHAR c)noexcept
-{
-BYTE b=(BYTE)c;
-if(b<0x80)
-	return (WCHAR)c;
-return CHAR_UNKNOWN;
-}
-
 UINT CharHelper::Write(LPSTR str, UINT size, CHAR c)
 {
+if(!str)
+	return 1;
 if(size<1)
 	throw BufferOverrunException();
 str[0]=c;
@@ -655,7 +734,7 @@ if(!str)
 	return 1;
 if(size<1)
 	throw BufferOverrunException();
-str[0]=ToUnicode(c);
+str[0]=ToCharW(c);
 return 1;
 }
 

@@ -51,7 +51,7 @@ while(1)
 	if(!read)
 		break;
 	size+=read;
-	LastChar=CharHelper::ToChar<TCHAR, WCHAR>(c);
+	LastChar=CharHelper::ToCharT<TCHAR, WCHAR>(c);
 	if(c==0)
 		break;
 	for(UINT u=0; chars[u]; u++)
@@ -171,7 +171,7 @@ while(1)
 	{
 	_char_t c=0;
 	UINT rd=CharHelper::Read(m_Stream, &c);
-	LastChar=CharHelper::ToChar<TCHAR>(c);
+	LastChar=CharHelper::ToCharT<TCHAR>(c);
 	if(!rd)
 		break;
 	read+=rd;
@@ -195,7 +195,7 @@ while(1)
 	{
 	_char_t c=0;
 	UINT rd=CharHelper::Read(m_Stream, &c);
-	LastChar=CharHelper::ToChar<TCHAR, _char_t>(c);
+	LastChar=CharHelper::ToCharT<TCHAR, _char_t>(c);
 	if(!rd)
 		break;
 	read+=rd;
@@ -221,7 +221,7 @@ while(1)
 	{
 	_char_t c=0;
 	UINT rd=CharHelper::Read(m_Stream, &c);
-	LastChar=CharHelper::ToChar<TCHAR, _char_t>(c);
+	LastChar=CharHelper::ToCharT<TCHAR, _char_t>(c);
 	if(!rd)
 		break;
 	read+=rd;
