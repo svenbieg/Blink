@@ -10,9 +10,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\IrqFrame.h">
       <Filter>Runtime</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\Configuration.h">
-      <Filter>Runtime</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\ExceptionFrame.h">
       <Filter>Runtime</Filter>
     </ClInclude>

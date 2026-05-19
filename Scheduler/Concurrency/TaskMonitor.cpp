@@ -10,6 +10,7 @@
 //=======
 
 #include "Concurrency/Scheduler.h"
+#include "Runtime/Configuration.h"
 
 
 //===========

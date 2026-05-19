@@ -30,6 +30,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiConfig.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiSdio.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\Configuration.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Dma\DmaChannel.cpp" />

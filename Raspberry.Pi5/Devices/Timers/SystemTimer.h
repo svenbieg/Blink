@@ -11,6 +11,7 @@
 
 #include "Concurrency/Signal.h"
 #include "Event.h"
+#include "Global.h"
 
 
 //===========
@@ -25,30 +26,38 @@ namespace Devices {
 // System-Timer
 //==============
 
-class SystemTimer: public Object
+class SystemTimer: public Global<SystemTimer>
 {
 public:
+	// Using
+	using Signal=Concurrency::Signal;
+	using Task=Concurrency::Task;
+
+	// Friends
+	friend Object;
+
 	// Con-/Destructors
 	~SystemTimer();
 
+	// Con-/Destructors
+	static inline Handle<SystemTimer> Create() { return Global::Create(); }
+
 	// Common
-	static Handle<SystemTimer> Get();
 	static inline UINT GetTickCount() { return (UINT)GetTickCount64(); }
 	static UINT64 GetTickCount64();
 	static inline UINT Microseconds() { return (UINT)Microseconds64(); }
 	static UINT64 Microseconds64();
-	Event<SystemTimer> Triggered; // 10ms (100Hz)
+	Event<SystemTimer> Tick; // 10ms (100Hz)
 
 private:
 	// Con-/Destructors
 	SystemTimer();
-	static SystemTimer* s_Current;
 
 	// Common
 	VOID HandleInterrupt();
 	VOID ServiceTask();
-	Concurrency::Signal m_Signal;
-	Handle<Concurrency::Task> m_Task;
+	Signal m_Signal;
+	Handle<Task> m_Task;
 };
 
 }}

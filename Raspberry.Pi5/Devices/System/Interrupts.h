@@ -10,6 +10,7 @@
 //=======
 
 #include "Concurrency/CriticalSection.h"
+#include "Concurrency/TaskMonitor.h"
 #include "Devices/Pcie/PcieHost.h"
 #include "Devices/System/Cpu.h"
 
@@ -82,8 +83,13 @@ class Interrupts
 {
 public:
 	// Using
+	using CriticalSection=Concurrency::CriticalSection;
 	using PcieHost=Devices::Pcie::PcieHost;
 	using Rp1Irq=Devices::Pcie::Rp1Irq;
+	using TaskMonitor=Concurrency::TaskMonitor;
+
+	// Friends
+	friend TaskMonitor;
 
 	// Common
 	static BOOL Active();
@@ -122,10 +128,12 @@ private:
 	static VOID Enable(UINT Irq);
 	static VOID HandleTaskSwitch()noexcept;
 	static VOID SetHandlerInternal(Irq Irq, InterruptHandler* Handler)noexcept;
+	static VOID SetTaskMonitor(TaskMonitor* Monitor)noexcept;
 	static BOOL s_Active[CPU_COUNT];
-	static Concurrency::CriticalSection s_CriticalSection;
+	static CriticalSection s_CriticalSection;
 	static UINT s_DisableCount[CPU_COUNT];
 	static InterruptHandler* s_IrqHandlers[IRQ_COUNT];
+	static TaskMonitor* s_TaskMonitor;
 };
 
 }}

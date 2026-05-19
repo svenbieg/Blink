@@ -61,6 +61,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Peripherals.h">
       <Filter>Devices</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Runtime\Configuration.h">
+      <Filter>Runtime</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)start.cpp" />
@@ -134,6 +137,9 @@
     </Filter>
     <Filter Include="Devices\Timers">
       <UniqueIdentifier>{1d7d1180-6e26-4082-86ed-60a5b0cf0c85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Runtime">
+      <UniqueIdentifier>{56553c68-c926-4a0c-97fd-e2a54e754190}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

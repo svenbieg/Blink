@@ -42,20 +42,12 @@ SystemTimer::~SystemTimer()
 {
 Interrupts::SetHandler(Irq::SystemTimer, nullptr);
 m_Task->Cancel();
-s_Current=nullptr;
 }
 
 
 //========
 // Common
 //========
-
-Handle<SystemTimer> SystemTimer::Get()
-{
-if(!s_Current)
-	s_Current=new SystemTimer();
-return s_Current;
-}
 
 UINT64 SystemTimer::GetTickCount64()
 {
@@ -81,8 +73,6 @@ SystemTimer::SystemTimer()
 m_Task=ServiceTask::Create(this, &SystemTimer::ServiceTask, "systimer");
 }
 
-SystemTimer* SystemTimer::s_Current=nullptr;
-
 
 //================
 // Common Private
@@ -91,7 +81,6 @@ SystemTimer* SystemTimer::s_Current=nullptr;
 VOID SystemTimer::HandleInterrupt()
 {
 m_Signal.Trigger();
-__asm inline volatile("msr CNTP_TVAL_EL0, %0":: "r" (PERIOD));
 }
 
 VOID SystemTimer::ServiceTask()
@@ -103,7 +92,8 @@ auto task=Task::Get();
 while(!task->Cancelled)
 	{
 	m_Signal.Wait();
-	Triggered(this);
+	Tick(this);
+	__asm inline volatile("msr CNTP_TVAL_EL0, %0":: "r" (PERIOD));
 	}
 }
 

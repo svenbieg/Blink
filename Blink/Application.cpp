@@ -43,7 +43,7 @@ namespace Blink {
 Application::Application()
 {
 m_StatusLed=StatusLed::Create();
-auto console=Console::Get();
+auto console=Console::Create();
 console->AddCommand("off", this, [this]()
 	{
 	Console::Print("Led off\n");

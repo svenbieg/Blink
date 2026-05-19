@@ -124,15 +124,21 @@ return s_DisableCount[core]==0;
 
 VOID Interrupts::HandleInterrupt(UINT irq)
 {
-SpinLock lock(s_CriticalSection);
-if(!s_IrqHandlers[irq])
-	return;
 UINT core=Cpu::GetId();
 s_Active[core]=true;
 s_DisableCount[core]++;
-s_IrqHandlers[irq]->Run();
+SpinLock lock(s_CriticalSection);
+auto handler=s_IrqHandlers[irq];
+if(s_TaskMonitor)
+	s_TaskMonitor->SetInterrupt(core);
+lock.Unlock();
+assert(handler);
+handler->Run();
 s_Active[core]=false;
 s_DisableCount[core]--;
+lock.Lock();
+if(s_TaskMonitor)
+	s_TaskMonitor->ClearInterrupt(core);
 }
 
 VOID Interrupts::Initialize()
@@ -236,19 +242,19 @@ s_IrqHandlers[id]=handler;
 lock.Unlock();
 if(old_handler)
 	delete old_handler;
-if(handler)
-	{
-	Enable(id);
-	}
-else
-	{
-	Disable(id);
-	}
+handler? Enable(id): Disable(id);
+}
+
+VOID Interrupts::SetTaskMonitor(TaskMonitor* monitor)noexcept
+{
+SpinLock lock(s_CriticalSection);
+s_TaskMonitor=monitor;
 }
 
 BOOL Interrupts::s_Active[CPU_COUNT]={ false };
 CriticalSection Interrupts::s_CriticalSection;
 UINT Interrupts::s_DisableCount[CPU_COUNT]={ 0 };
 InterruptHandler* Interrupts::s_IrqHandlers[IRQ_COUNT]={ nullptr };
+TaskMonitor* Interrupts::s_TaskMonitor=nullptr;
 
 }}
