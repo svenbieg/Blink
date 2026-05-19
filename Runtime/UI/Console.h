@@ -27,7 +27,7 @@ namespace UI {
 // Console
 //=========
 
-class Console: public Global<Console>
+class Console: public Global<Console>, public Storage::Streams::OutputStream
 {
 public:
 	// Using
@@ -36,7 +36,7 @@ public:
 	using SerialPort=Devices::Serial::SerialPort;
 
 	// Con-/Destructors
-	static inline Handle<Console> Get() { return Global::Create(); }
+	static inline Handle<Console> Create() { return Global::Create(); }
 
 	// Common
 	VOID AddCommand(Handle<String> Command, VOID (*Procedure)());
@@ -67,6 +67,10 @@ public:
 		auto str=String::Create(Format, Arguments...);
 		Print(str);
 		}
+
+	// Output-Stream
+	VOID Flush()override;
+	SIZE_T Write(VOID const* Buffer, SIZE_T Size)override;
 
 private:
 	// Con-/Destructors

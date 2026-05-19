@@ -121,10 +121,18 @@ VOID Interrupts::HandleInterrupt(UINT irq)noexcept
 UINT core=Cpu::GetId();
 s_Active[core]=true;
 s_DisableCount[core]++;
-if(s_IrqHandler[irq])
-	s_IrqHandler[irq]->Run();
+SpinLock lock(s_CriticalSection);
+if(s_TaskMonitor)
+	s_TaskMonitor->SetInterrupt(core);
+auto handler=s_IrqHandler[irq];
+lock.Unlock();
+assert(handler);
+handler->Run();
 s_Active[core]=false;
 s_DisableCount[core]--;
+lock.Lock();
+if(s_TaskMonitor)
+	s_TaskMonitor->ClearInterrupt(core);
 }
 
 VOID Interrupts::HandleTaskSwitch()noexcept
@@ -167,7 +175,7 @@ if(proc)
 	}
 else
 	{
-	SetHandlerInternal(irq, nullptr);
+	SetHandlerInternal(irq, (InterruptHandler*)nullptr);
 	}
 }
 
@@ -176,18 +184,32 @@ else
 // Common Private
 //================
 
+InterruptHandler* Interrupts::SetHandler(UINT irq, InterruptHandler* handler)noexcept
+{
+SpinLock lock(s_CriticalSection);
+auto old_handler=s_IrqHandler[irq];
+s_IrqHandler[irq]=handler;
+return old_handler;
+}
+
 VOID Interrupts::SetHandlerInternal(Irq irq, InterruptHandler* handler)noexcept
 {
-UINT id=(UINT)irq;
-auto old_handler=s_IrqHandler[id];
-s_IrqHandler[id]=handler;
+auto old_handler=SetHandler((UINT)irq, handler);
 if(old_handler)
 	delete old_handler;
 handler? Enable(irq): Disable(irq);
 }
 
+VOID Interrupts::SetTaskMonitor(TaskMonitor* monitor)noexcept
+{
+SpinLock lock(s_CriticalSection);
+s_TaskMonitor=monitor;
+}
+
 BOOL Interrupts::s_Active[Cpu::CPU_COUNT]={ false };
+CriticalSection Interrupts::s_CriticalSection;
 UINT Interrupts::s_DisableCount[Cpu::CPU_COUNT]={ 0 };
 InterruptHandler* Interrupts::s_IrqHandler[Interrupts::IRQ_COUNT]={ nullptr };
+TaskMonitor* Interrupts::s_TaskMonitor=nullptr;
 
 }}

@@ -9,6 +9,8 @@
 // Using
 //=======
 
+#include "Concurrency/CriticalSection.h"
+#include "Concurrency/TaskMonitor.h"
 #include "Devices/System/Cpu.h"
 #include "Devices/System/InterruptHandler.h"
 #include "TypeHelper.h"
@@ -98,6 +100,13 @@ Core1=(1<<1)
 class Interrupts
 {
 public:
+	// Using
+	using CriticalSection=Concurrency::CriticalSection;
+	using TaskMonitor=Concurrency::TaskMonitor;
+
+	// Friends
+	friend TaskMonitor;
+
 	// Settings
 	static const UINT IRQ_COUNT=Runtime::CONFIG_IRQ_COUNT;
 
@@ -120,10 +129,14 @@ public:
 
 private:
 	// Common
+	static InterruptHandler* SetHandler(UINT Irq, InterruptHandler* Handler)noexcept;
 	static VOID SetHandlerInternal(Irq Irq, InterruptHandler* Handler)noexcept;
+	static VOID SetTaskMonitor(TaskMonitor* Monitor)noexcept;
 	static BOOL s_Active[Cpu::CPU_COUNT];
+	static CriticalSection s_CriticalSection;
 	static UINT s_DisableCount[Cpu::CPU_COUNT];
 	static InterruptHandler* s_IrqHandler[IRQ_COUNT];
+	static TaskMonitor* s_TaskMonitor;
 };
 
 }}

@@ -30,7 +30,7 @@ StatusLed::~StatusLed()
 {
 m_ServiceTask->Cancel();
 if(m_Timer)
-	m_Timer->Triggered.Remove(this);
+	m_Timer->Tick.Remove(this);
 }
 
 
@@ -47,12 +47,12 @@ m_Period=period;
 if(m_Period)
 	{
 	if(!m_Timer)
-		m_Timer=SystemTimer::Get();
-	m_Timer->Triggered.Add(this, &StatusLed::OnSystemTimer);
+		m_Timer=SystemTimer::Create();
+	m_Timer->Tick.Add(this, &StatusLed::OnSystemTimer);
 	}
 else
 	{
-	m_Timer->Triggered.Remove(this);
+	m_Timer->Tick.Remove(this);
 	m_Timer=nullptr;
 	}
 }

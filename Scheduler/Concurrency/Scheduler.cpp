@@ -40,11 +40,13 @@ namespace Concurrency {
 VOID Scheduler::Begin()
 {
 UINT core=Cpu::GetId();
-auto idle=Task::CreateInternal(IdleTask, String::Create("idle%u", core));
+auto idle=Task::CreateInternal(IdleTask, String::Create("idle%u", core), 1024);
+s_All.Append(idle);
 FlagHelper::Set(idle->m_Flags, TaskFlags::Idle);
 if(core==0)
 	{
 	auto main=Task::CreateInternal(MainTask, "main");
+	s_All.Append(main);
 	s_MainTask=main;
 	}
 SpinLock lock(s_CriticalSection);
@@ -70,6 +72,7 @@ UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
 FlagHelper::Set(current->m_Flags, TaskFlags::Creator);
 task->m_Creator=current;
+s_All.Append(task);
 s_Create.Append(task);
 }
 
@@ -179,6 +182,8 @@ else
 s_CurrentTask[core]=next;
 TaskHelper::Switch(core, current, next);
 lock.Unlock();
+if(s_TaskMonitor)
+	s_TaskMonitor->TaskSwitch(core, next);
 }
 
 VOID Scheduler::IdleTask()
@@ -196,8 +201,8 @@ Interrupts::Enable();
 auto status=Status::Success;
 try
 	{
-	auto timer=SystemTimer::Get();
-	timer->Triggered.Add(Scheduler::Schedule);
+	auto timer=SystemTimer::Create();
+	timer->Tick.Add(Scheduler::Schedule);
 	Main();
 	}
 catch(...)
@@ -226,6 +231,9 @@ SpinLock lock(s_CriticalSection);
 auto release=s_Release.RemoveFirst();
 while(release)
 	{
+	s_All.Remove(release);
+	if(s_TaskMonitor)
+		s_TaskMonitor->RemoveTask(release);
 	lock.Unlock();
 	release->m_This=nullptr;
 	lock.Lock();
@@ -250,6 +258,12 @@ if(sleeping)
 UINT waiting_count=s_Waiting.Count(CPU_COUNT);
 if(waiting_count)
 	ResumeWaitingTasks(waiting_count, CPU_COUNT);
+}
+
+VOID Scheduler::SetTaskMonitor(TaskMonitor* monitor)noexcept
+{
+SpinLock lock(s_CriticalSection);
+s_TaskMonitor=monitor;
 }
 
 VOID Scheduler::SuspendCurrentTask(UINT ms)
@@ -289,6 +303,7 @@ if(!current->m_Next)
 	}
 }
 
+Scheduler::AllList Scheduler::s_All;
 Scheduler::CreateList Scheduler::s_Create;
 CriticalSection Scheduler::s_CriticalSection;
 UINT Scheduler::s_CurrentCore=0;
@@ -297,6 +312,7 @@ Task* Scheduler::s_IdleTask[CPU_COUNT]={ nullptr };
 Task* Scheduler::s_MainTask=nullptr;
 Scheduler::ReleaseList Scheduler::s_Release;
 Scheduler::SleepingList Scheduler::s_Sleeping;
+TaskMonitor* Scheduler::s_TaskMonitor=nullptr;
 Scheduler::WaitingList Scheduler::s_Waiting;
 
 }

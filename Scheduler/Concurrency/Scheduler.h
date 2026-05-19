@@ -20,6 +20,7 @@
 #include "Concurrency/SpinLock.h"
 #include "Concurrency/Task.h"
 #include "Concurrency/TaskHelper.h"
+#include "Concurrency/TaskMonitor.h"
 #include "Concurrency/WriteLock.h"
 #include "Devices/System/Interrupts.h"
 
@@ -44,6 +45,7 @@ public:
 	friend Mutex;
 	friend Signal;
 	friend Task;
+	friend TaskMonitor;
 
 	// Con-/Destructors
 	Scheduler()=delete;
@@ -54,6 +56,7 @@ public:
 private:
 	// Using
 	static const UINT CPU_COUNT=Devices::System::Cpu::CPU_COUNT;
+	using AllList=LINKED_LIST(Task, m_All);
 	using CreateList=LINKED_LIST(Task, m_Create);
 	using OwnerList=FORWARD_LIST(Task, m_Owners);
 	using ReleaseList=LINKED_LIST(Task, m_Release);
@@ -72,8 +75,10 @@ private:
 	static VOID MainTask();
 	static VOID ResumeWaitingTasks(UINT Count, BOOL Suspend)noexcept;
 	static VOID Schedule()noexcept;
+	static VOID SetTaskMonitor(TaskMonitor* Monitor)noexcept;
 	static VOID SuspendCurrentTask(UINT MilliSeconds);
 	static VOID SuspendCurrentTask(UINT Core, Task* Current, UINT64 ResumeTime=0)noexcept;
+	static AllList s_All;
 	static CreateList s_Create;
 	static CriticalSection s_CriticalSection;
 	static UINT s_CurrentCore;
@@ -82,6 +87,7 @@ private:
 	static Task* s_MainTask;
 	static ReleaseList s_Release;
 	static SleepingList s_Sleeping;
+	static TaskMonitor* s_TaskMonitor;
 	static WaitingList s_Waiting;
 };
 

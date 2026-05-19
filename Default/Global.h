@@ -50,7 +50,6 @@ protected:
 		return ref_count;
 		}
 
-private:
 	// Common
 	static Mutex s_Mutex;
 	static _obj_t* s_Global;

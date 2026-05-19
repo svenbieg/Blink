@@ -105,27 +105,27 @@ public:
 		return Value+(Align-Value%Align)%Align;
 		}
 	template <class _item_t, SIZE_T _count> static constexpr SIZE_T ArraySize(_item_t (&)[_count])noexcept { return _count; }
-	template <std::unsigned_integral _value_t> static constexpr _value_t BigEndian(_value_t Value)noexcept
+	template <std::unsigned_integral _value_t> static constexpr inline _value_t BigEndian(_value_t Value)noexcept
 		{
 		if(std::endian::native==std::endian::little)
 			return std::byteswap(Value);
 		return Value;
 		}
-	static constexpr BYTE HighByte(WORD Value)noexcept { return (BYTE)(Value>>8); }
-	static constexpr UINT HighLong(UINT64 Value)noexcept { return (UINT)(Value>>32); }
+	static constexpr inline BYTE HighByte(WORD Value)noexcept { return (BYTE)(Value>>8); }
+	static constexpr inline UINT HighLong(UINT64 Value)noexcept { return (UINT)(Value>>32); }
 	template <std::numeric _num_t, std::numeric _value_t> static constexpr BOOL Fits(_value_t Value)noexcept
 		{
 		constexpr auto min=std::numeric_limits<_num_t>::min();
 		constexpr auto max=std::numeric_limits<_num_t>::max();
 		return std::isgreaterequal(Value, min)&&std::islessequal(Value, max);
 		}
-	template <std::floating_point _float_t, std::numeric _value_t> static constexpr _float_t Float(_value_t Value)
+	template <std::floating_point _float_t, std::numeric _value_t> static constexpr inline _float_t Float(_value_t Value)
 		{
 		if(!Fits<_float_t, _value_t>(Value))
 			throw InvalidArgumentException();
 		return static_cast<_float_t>(Value);
 		}
-	template <std::floating_point _float_t, std::numeric _value_t> static constexpr BOOL Float(_value_t Value, _float_t* Result)noexcept
+	template <std::floating_point _float_t, std::numeric _value_t> static constexpr inline bool Float(_value_t Value, _float_t* Result)noexcept
 		{
 		if(!Fits<_float_t, _value_t>(Value))
 			return false;
@@ -134,58 +134,58 @@ public:
 		}
 	template <std::unsigned_integral _value_t> static constexpr _value_t LittleEndian(_value_t Value)noexcept
 		{
-		if constexpr(std::endian::native==std::endian::big)
+		if(std::endian::native==std::endian::big)
 			return std::byteswap(Value);
 		return Value;
 		}
-	static constexpr BYTE LowByte(WORD Value)noexcept { return (BYTE)Value; }
-	static constexpr UINT LowLong(UINT64 Value)noexcept { return (UINT)Value; }
-	static constexpr WORD MakeLong(BYTE Low, BYTE High)noexcept
+	static constexpr inline BYTE LowByte(WORD Value)noexcept { return (BYTE)Value; }
+	static constexpr inline UINT LowLong(UINT64 Value)noexcept { return (UINT)Value; }
+	static constexpr inline WORD MakeLong(BYTE Low, BYTE High)noexcept
 		{
 		return (((WORD)High)<<8)|Low;
 		}
-	static constexpr UINT MakeLong(BYTE Low, BYTE High8, BYTE High16, BYTE High24)noexcept
+	static constexpr inline UINT MakeLong(BYTE Low, BYTE High8, BYTE High16, BYTE High24)noexcept
 		{
 		return (((UINT)High24)<<24)|((UINT)High16<<16)|((UINT)High8<<8)|Low;
 		}
-	static constexpr UINT MakeLong(WORD Low, WORD High)noexcept
+	static constexpr inline UINT MakeLong(WORD Low, WORD High)noexcept
 		{
 		return (((UINT)High)<<16)|Low;
 		}
-	static constexpr UINT64 MakeLong(UINT Low, UINT High)noexcept
+	static constexpr inline UINT64 MakeLong(UINT Low, UINT High)noexcept
 		{
 		return (((UINT64)High)<<32)|Low;
 		}
-	template <class _size1_t, class _size2_t> static constexpr _size1_t Max(_size1_t Value1, _size2_t Value2)noexcept
+	template <class _size1_t, class _size2_t> static constexpr inline _size1_t Max(_size1_t Value1, _size2_t Value2)noexcept
 		{
 		if(Value1>Value2)
 			return Value1;
 		return Value2;
 		}
-	template <class _size1_t, class _size2_t> static constexpr _size1_t Min(_size1_t Value1, _size2_t Value2)noexcept
+	template <class _size1_t, class _size2_t> static constexpr inline _size1_t Min(_size1_t Value1, _size2_t Value2)noexcept
 		{
 		if(Value1<Value2)
 			return Value1;
 		return Value2;
 		}
-	template <std::integral _int_t, std::integral _value_t> static constexpr _int_t Integral(_value_t Value)
+	template <std::integral _int_t, std::integral _value_t> static constexpr inline _int_t Integral(_value_t Value)
 		{
 		if(!Fits<_int_t, _value_t>(Value))
 			throw InvalidArgumentException();
 		return static_cast<_int_t>(Value);
 		}
-	template <std::integral _int_t, std::floating_point _value_t> static constexpr _int_t Integral(_value_t Value)
+	template <std::integral _int_t, std::floating_point _value_t> static constexpr inline _int_t Integral(_value_t Value)
 		{
 		return Integral<_int_t, long long>(std::llround(Value));
 		}
-	template <std::integral _int_t, std::integral _value_t> static constexpr bool Integral(_value_t Value, _int_t* Result)noexcept
+	template <std::integral _int_t, std::integral _value_t> static constexpr bool inline Integral(_value_t Value, _int_t* Result)noexcept
 		{
 		if(!Fits<_int_t, _value_t>(Value))
 			return false;
 		*Result=static_cast<_int_t>(Value);
 		return true;
 		}
-	template <std::integral _int_t, std::floating_point _value_t> static constexpr bool Integral(_value_t Value, _int_t* Result)noexcept
+	template <std::integral _int_t, std::floating_point _value_t> static constexpr inline bool Integral(_value_t Value, _int_t* Result)noexcept
 		{
 		return Integral<_int_t, long long>(std::llround(Value), Result);
 		}

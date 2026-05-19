@@ -36,6 +36,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\ReadLock.cpp">
       <Filter>Concurrency</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskMonitor.cpp">
+      <Filter>Concurrency</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\CriticalSection.h">
@@ -75,6 +78,9 @@
       <Filter>Concurrency</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\ServiceTask.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskMonitor.h">
       <Filter>Concurrency</Filter>
     </ClInclude>
   </ItemGroup>

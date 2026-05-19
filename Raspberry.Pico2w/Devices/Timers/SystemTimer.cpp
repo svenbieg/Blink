@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Concurrency/ServiceTask.h"
+#include "Concurrency/Scheduler.h"
 #include "Devices/System/Interrupts.h"
 #include "Devices/Timers/Clocks.h"
 
@@ -57,20 +57,12 @@ RO32 INTS;
 SystemTimer::~SystemTimer()
 {
 m_Task->Cancel();
-s_Current=nullptr;
 }
 
 
 //========
 // Common
 //========
-
-Handle<SystemTimer> SystemTimer::Get()
-{
-if(!s_Current)
-	s_Current=new SystemTimer();
-return s_Current;
-}
 
 UINT SystemTimer::Microseconds()
 {
@@ -113,7 +105,7 @@ VOID SystemTimer::OnInterrupt()
 auto timer=(TIMER_REGS*)TIMER0_BASE;
 SpinLock lock(m_CriticalSection);
 IoHelper::Set(timer->INTR, 1);
-s_Current->m_Signal.Trigger();
+m_Signal.Trigger();
 }
 
 VOID SystemTimer::TaskProc()
@@ -130,14 +122,12 @@ while(!task->Cancelled)
 	{
 	m_Signal.Wait(lock);
 	lock.Unlock();
-	Triggered(this);
+	Tick(this);
 	lock.Lock();
 	time=timer->TIMERAWL;
 	timer->ALARM[0]=time+10*TICKS_MS;
 	}
 Interrupts::SetHandler(Irq::Timer0, nullptr);
 }
-
-SystemTimer* SystemTimer::s_Current=nullptr;
 
 }}

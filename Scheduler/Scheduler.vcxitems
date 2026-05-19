@@ -19,6 +19,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Signal.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\SpinLock.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Task.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskMonitor.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\WriteLock.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -34,6 +35,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\Signal.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\SpinLock.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\Task.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskMonitor.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\WriteLock.h" />
   </ItemGroup>
 </Project>

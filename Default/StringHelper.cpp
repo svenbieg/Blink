@@ -584,24 +584,42 @@ UINT len=0;
 if(width>0)
 	len=StringPrintUInt((LPSTR)nullptr, 0, value, flags, 0, 0);
 UINT start=pos;
+UINT space=0;
 if(len<width)
-	{
-	if(!FlagHelper::Get(flags, FormatFlags::Left)&&!FlagHelper::Get(flags, FormatFlags::Zero))
-		pos+=StringPrintChars(dst, size, ' ', width-len, pos);
-	}
+	space=width-len;
+CHAR c=' ';
+if(FlagHelper::Get(flags, FormatFlags::Zero))
+	c='0';
 if(FlagHelper::Get(flags, FormatFlags::Signed))
-	pos+=StringPrintChar(dst, size, '+', pos);
-if(len<width)
 	{
-	if(!FlagHelper::Get(flags, FormatFlags::Left)&&FlagHelper::Get(flags, FormatFlags::Zero))
-		pos+=StringPrintChars(dst, size, '0', width-len, pos);
+	if(space&&!FlagHelper::Get(flags, FormatFlags::Left))
+		{
+		if(FlagHelper::Get(flags, FormatFlags::Zero))
+			{
+			pos+=StringPrintChar(dst, size, '+', pos);
+			pos+=StringPrintChars(dst, size, '0', space, pos);
+			}
+		else
+			{
+			pos+=StringPrintChars(dst, size, ' ', space, pos);
+			pos+=StringPrintChar(dst, size, '+', pos);
+			}
+		space=0;
+		}
+	else
+		{
+		pos+=StringPrintChar(dst, size, '+', pos);
+		}
+	}
+else
+	{
+	if(space&&!FlagHelper::Get(flags, FormatFlags::Left))
+		pos+=StringPrintChars(dst, size, c, space, pos);
+	space=0;
 	}
 pos+=StringPrintUInt(dst, size, value, pos);
-if(len<width)
-	{
-	if(FlagHelper::Get(flags, FormatFlags::Left))
-		pos+=StringPrintChars(dst, size, ' ', width-len, pos);
-	}
+if(space)
+	pos+=StringPrintChars(dst, size, c, space, pos);
 if(pos<size)
 	dst[pos]=0;
 return pos-start;
@@ -702,32 +720,48 @@ UINT len=0;
 if(width>0)
 	len=StringPrintInt((LPSTR)nullptr, 0, value, flags, 0, 0);
 UINT start=pos;
-if(len<width)
-	{
-	if(!FlagHelper::Get(flags, FormatFlags::Left)&&!FlagHelper::Get(flags, FormatFlags::Zero))
-		pos+=StringPrintChars(dst, size, ' ', width-len, pos);
-	}
+CHAR sign='+';
 if(value<0)
 	{
-	pos+=StringPrintChar(dst, size, '-', pos);
-	value*=-1;
+	FlagHelper::Set(flags, FormatFlags::Signed);
+	sign='-';
 	}
-else if(FlagHelper::Get(flags, FormatFlags::Signed))
-	{
-	pos+=StringPrintChar(dst, size, '+', pos);
-	}
+UINT space=0;
 if(len<width)
+	space=width-len;
+CHAR c=' ';
+if(FlagHelper::Get(flags, FormatFlags::Zero))
+	c='0';
+if(FlagHelper::Get(flags, FormatFlags::Signed))
 	{
-	if(!FlagHelper::Get(flags, FormatFlags::Left)&&FlagHelper::Get(flags, FormatFlags::Zero))
-		pos+=StringPrintChars(dst, size, '0', width-len, pos);
+	if(space&&!FlagHelper::Get(flags, FormatFlags::Left))
+		{
+		if(FlagHelper::Get(flags, FormatFlags::Zero))
+			{
+			pos+=StringPrintChar(dst, size, sign, pos);
+			pos+=StringPrintChars(dst, size, '0', space, pos);
+			}
+		else
+			{
+			pos+=StringPrintChars(dst, size, ' ', space, pos);
+			pos+=StringPrintChar(dst, size, sign, pos);
+			}
+		space=0;
+		}
+	else
+		{
+		pos+=StringPrintChar(dst, size, sign, pos);
+		}
 	}
-using _uint_t=std::make_unsigned_t<_int_t>;
-pos+=StringPrintUInt(dst, size, (_uint_t)value, pos);
-if(len<width)
+else
 	{
-	if(FlagHelper::Get(flags, FormatFlags::Left))
-		pos+=StringPrintChars(dst, size, ' ', width-len, pos);
+	if(space&&!FlagHelper::Get(flags, FormatFlags::Left))
+		pos+=StringPrintChars(dst, size, c, space, pos);
+	space=0;
 	}
+pos+=StringPrintInt(dst, size, value, pos);
+if(space)
+	pos+=StringPrintChars(dst, size, c, space, pos);
 if(pos<size)
 	dst[pos]=0;
 return pos-start;

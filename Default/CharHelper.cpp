@@ -552,11 +552,10 @@ else if(b>='A')
 	b-='A';
 	}
 b-='0';
-UINT digit=(UINT)c;
-if(digit<base)
+if(b<base)
 	{
 	if(digit_ptr)
-		*digit_ptr=digit;
+		*digit_ptr=b;
 	return true;
 	}
 return false;

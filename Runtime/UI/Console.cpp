@@ -41,7 +41,7 @@ VOID Console::Print(LPCSTR text)
 {
 if(!text)
 	return;
-auto console=Get();
+auto console=Create();
 WriteLock lock(console->m_Mutex);
 StreamWriter writer(console->m_SerialPort);
 writer.Print(text);
@@ -52,11 +52,26 @@ VOID Console::Print(Handle<String> text)
 {
 if(!text)
 	return;
-auto console=Get();
+auto console=Create();
 WriteLock lock(console->m_Mutex);
 StreamWriter writer(console->m_SerialPort);
 writer.Print(text);
 writer.Flush();
+}
+
+
+//===============
+// Output-Stream
+//===============
+
+VOID Console::Flush()
+{
+m_SerialPort->Flush();
+}
+
+SIZE_T Console::Write(VOID const* buf, SIZE_T size)
+{
+return m_SerialPort->Write(buf, size);
 }
 
 

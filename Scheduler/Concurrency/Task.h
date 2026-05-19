@@ -41,6 +41,7 @@ class Scheduler;
 class ServiceTask;
 class Signal;
 class TaskHelper;
+class TaskMonitor;
 
 
 //=======
@@ -79,6 +80,7 @@ public:
 	friend ServiceTask;
 	friend Signal;
 	friend TaskHelper;
+	friend TaskMonitor;
 	friend UnwindException;
 
 	// Con-/Destructors
@@ -100,6 +102,7 @@ public:
 	VOID Cancel()noexcept;
 	volatile BOOL Cancelled;
 	static Handle<Task> Get()noexcept;
+	inline Handle<String> GetName()const noexcept { return m_Name; }
 	inline Status GetStatus()const noexcept { return m_Status; }
 	static BOOL IsMainTask()noexcept;
 	const LPCTSTR Name;
@@ -151,6 +154,7 @@ protected:
 	virtual VOID Run()=0;
 	static VOID Schedule(Task* Task)noexcept;
 	static VOID TaskProc(VOID* Parameter);
+	Link<Task> m_All;
 	Link<Task> m_Create;
 	Task* m_Creator;
 	UnwindException* m_Exception;
@@ -167,10 +171,14 @@ protected:
 	Link<Task> m_Sleeping;
 	SIZE_T m_StackBottom;
 	SIZE_T m_StackPointer;
+	SIZE_T m_StackUsed;
 	SIZE_T m_StackSize;
+	SIZE_T m_StackTop;
+	UINT64 m_StartTime;
 	Status m_Status;
 	DispatchedHandler* m_Then;
 	Handle<Task> m_This;
+	UINT64 m_TotalTime;
 	FwdLink<Task> m_Waiting;
 	SIZE_T z_StackHeader;
 };

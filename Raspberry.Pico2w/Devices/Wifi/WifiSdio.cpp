@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include "Concurrency/ServiceTask.h"
 #include "Devices/Gpio/GpioHelper.h"
 #include "Devices/Timers/SystemTimer.h"
 #include "Devices/Wifi/WifiAdapter.h"

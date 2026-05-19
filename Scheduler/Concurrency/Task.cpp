@@ -101,10 +101,14 @@ m_Signal(nullptr),
 m_SignalCount(0),
 m_StackBottom((SIZE_T)stack),
 m_StackPointer((SIZE_T)stack+stack_size),
+m_StackUsed(0),
 m_StackSize(stack_size),
+m_StackTop(m_StackPointer),
+m_StartTime(0),
 m_Status(Status::Success),
 m_Then(nullptr),
 m_This(this),
+m_TotalTime(0),
 z_StackHeader(STACK_HEADER)
 {
 TaskHelper::Initialize(&m_StackPointer, TaskProc, this);
