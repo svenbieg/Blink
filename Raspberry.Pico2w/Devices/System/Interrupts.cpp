@@ -194,10 +194,13 @@ return old_handler;
 
 VOID Interrupts::SetHandlerInternal(Irq irq, InterruptHandler* handler)noexcept
 {
+if(!handler)
+	Disable(irq);
 auto old_handler=SetHandler((UINT)irq, handler);
 if(old_handler)
 	delete old_handler;
-handler? Enable(irq): Disable(irq);
+if(handler)
+	Enable(irq);
 }
 
 VOID Interrupts::SetTaskMonitor(TaskMonitor* monitor)noexcept

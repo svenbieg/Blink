@@ -236,13 +236,16 @@ Scheduler::HandleTaskSwitch();
 VOID Interrupts::SetHandlerInternal(Irq irq, InterruptHandler* handler)noexcept
 {
 UINT id=(UINT)irq;
+if(!handler)
+	Disable(id);
 SpinLock lock(s_CriticalSection);
 auto old_handler=s_IrqHandlers[id];
 s_IrqHandlers[id]=handler;
 lock.Unlock();
 if(old_handler)
 	delete old_handler;
-handler? Enable(id): Disable(id);
+if(handler)
+	Enable(id);
 }
 
 VOID Interrupts::SetTaskMonitor(TaskMonitor* monitor)noexcept
