@@ -173,7 +173,7 @@ m_Id((UINT)device)
 m_InputBuffer=RingBuffer::Create(UART_RX_BYTES);
 m_OutputBuffer=OutputBuffer::Create(UART_TX_BYTES);
 auto name=String::Create("serial%u", m_Id);
-m_ServiceTask=ServiceTask::Create(this, &SerialPort::ServiceTask, name, 1024);
+m_ServiceTask=ServiceTask::Create(this, &SerialPort::ServiceTask, name, 2048);
 }
 
 SerialPort* SerialPort::s_Current[SERIAL_COUNT]={ nullptr };

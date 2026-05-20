@@ -9,7 +9,9 @@
 // Using
 //=======
 
+#include "Concurrency/DispatchedQueue.h"
 #include "Concurrency/ServiceTask.h"
+#include "Concurrency/SpinLock.h"
 #include "Devices/System/Interrupts.h"
 
 using namespace Concurrency;
@@ -80,19 +82,24 @@ m_Task=ServiceTask::Create(this, &SystemTimer::ServiceTask, "systimer");
 
 VOID SystemTimer::HandleInterrupt()
 {
+SpinLock lock(m_CriticalSection);
 m_Signal.Trigger();
 }
 
 VOID SystemTimer::ServiceTask()
 {
 Interrupts::SetHandler(Irq::SystemTimer, this, &SystemTimer::HandleInterrupt);
+auto task=Task::Get();
+SpinLock lock(m_CriticalSection);
 __asm inline volatile("msr CNTP_TVAL_EL0, %0":: "r" (PERIOD));
 __asm inline volatile("msr CNTP_CTL_EL0, %0":: "r" (1UL));
-auto task=Task::Get();
 while(!task->Cancelled)
 	{
-	m_Signal.Wait();
-	Tick(this);
+	m_Signal.Wait(lock);
+	lock.Unlock();
+	auto handler=DispatchedQueue::Append(this, [this](){ Tick(this); });
+	handler->Wait();
+	lock.Lock();
 	__asm inline volatile("msr CNTP_TVAL_EL0, %0":: "r" (PERIOD));
 	}
 }

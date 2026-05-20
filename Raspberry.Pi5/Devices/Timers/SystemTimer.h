@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include "Concurrency/CriticalSection.h"
 #include "Concurrency/Signal.h"
 #include "Event.h"
 #include "Global.h"
@@ -30,6 +31,7 @@ class SystemTimer: public Global<SystemTimer>
 {
 public:
 	// Using
+	using CriticalSection=Concurrency::CriticalSection;
 	using Signal=Concurrency::Signal;
 	using Task=Concurrency::Task;
 
@@ -56,6 +58,7 @@ private:
 	// Common
 	VOID HandleInterrupt();
 	VOID ServiceTask();
+	CriticalSection m_CriticalSection;
 	Signal m_Signal;
 	Handle<Task> m_Task;
 };

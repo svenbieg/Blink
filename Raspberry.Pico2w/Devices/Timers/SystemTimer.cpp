@@ -102,8 +102,8 @@ m_Task=ServiceTask::Create(this, &SystemTimer::TaskProc, "systimer");
 
 VOID SystemTimer::OnInterrupt()
 {
-auto timer=(TIMER_REGS*)TIMER0_BASE;
 SpinLock lock(m_CriticalSection);
+auto timer=(TIMER_REGS*)TIMER0_BASE;
 IoHelper::Set(timer->INTR, 1);
 m_Signal.Trigger();
 }
@@ -122,7 +122,8 @@ while(!task->Cancelled)
 	{
 	m_Signal.Wait(lock);
 	lock.Unlock();
-	Tick(this);
+	auto handler=DispatchedQueue::Append(this, [this](){ Tick(this); });
+	handler->Wait();
 	lock.Lock();
 	time=timer->TIMERAWL;
 	timer->ALARM[0]=time+10*TICKS_MS;
