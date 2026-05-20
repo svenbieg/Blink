@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include "Collections/map.hpp"
 #include "Storage/Streams/OutputStream.h"
 #include "Concurrency/Task.h"
 #include "Devices/System/Cpu.h"
@@ -23,6 +24,7 @@
 namespace Concurrency
 {
 class Scheduler;
+class TaskMonitor;
 }
 
 namespace Devices
@@ -52,6 +54,22 @@ SIZE_T StackSize;
 SIZE_T StackUsed;
 UINT64 TotalTime;
 }TASK_INFO;
+
+
+//==========
+// Snapshot
+//==========
+
+class SNAPSHOT: private Collections::map<Handle<Task>, UINT64>
+{
+public:
+	// Friends
+	friend TaskMonitor;
+
+private:
+	// Con-/Destructors
+	SNAPSHOT()=default;
+};
 
 
 //==============
@@ -87,7 +105,7 @@ private:
 	VOID ClearInterrupt(UINT Core);
 	VOID RemoveTask(Task* Task);
 	VOID SetInterrupt(UINT Core);
-	VOID TaskSwitch(UINT Core, Task* Next);
+	VOID SetTask(UINT Core, Task* Next);
 	Task* m_Current[Cpu::CPU_COUNT];
 	UINT64 m_IrqStart[Cpu::CPU_COUNT];
 	Handle<SystemTimer> m_SystemTimer;

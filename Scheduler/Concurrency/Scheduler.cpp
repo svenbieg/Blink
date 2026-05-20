@@ -183,7 +183,7 @@ s_CurrentTask[core]=next;
 TaskHelper::Switch(core, current, next);
 lock.Unlock();
 if(s_TaskMonitor)
-	s_TaskMonitor->TaskSwitch(core, next);
+	s_TaskMonitor->SetTask(core, next);
 }
 
 VOID Scheduler::IdleTask()
