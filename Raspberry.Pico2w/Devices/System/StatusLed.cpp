@@ -28,9 +28,9 @@ namespace Devices {
 
 StatusLed::~StatusLed()
 {
+if(m_BlinkTask)
+	m_BlinkTask->Cancel();
 m_ServiceTask->Cancel();
-if(m_Timer)
-	m_Timer->Tick.Remove(this);
 }
 
 
@@ -46,14 +46,16 @@ if(m_Period==period)
 m_Period=period;
 if(m_Period)
 	{
-	if(!m_Timer)
-		m_Timer=SystemTimer::Create();
-	m_Timer->Tick.Add(this, &StatusLed::OnSystemTimer);
+	if(!m_BlinkTask)
+		m_BlinkTask=Task::Create(this, &StatusLed::BlinkTask, "blink", 1024);
 	}
 else
 	{
-	m_Timer->Tick.Remove(this);
-	m_Timer=nullptr;
+	if(m_BlinkTask)
+		{
+		m_BlinkTask->Cancel();
+		m_BlinkTask=nullptr;
+		}
 	}
 }
 
@@ -83,12 +85,12 @@ m_ServiceTask=ServiceTask::Create(this, &StatusLed::ServiceTask, "status_led", 1
 // Common Private
 //================
 
-VOID StatusLed::OnSystemTimer()
+VOID StatusLed::BlinkTask()
 {
-m_Ticks+=10;
-if(m_Ticks>=m_Period)
+auto task=Task::Get();
+while(!task->Cancelled)
 	{
-	m_Ticks=0;
+	Task::Sleep(m_Period);
 	m_On=!m_On;
 	m_Signal.Trigger();
 	}
@@ -96,12 +98,12 @@ if(m_Ticks>=m_Period)
 
 VOID StatusLed::ServiceTask()
 {
-WriteLock lock(m_Mutex);
 m_WifiAdapter=WifiAdapter::Create();
 m_WifiAdapter->Ready.Wait(2000);
 UINT mask=(1<<0);
 UINT buf[2];
 buf[0]=mask;
+WriteLock lock(m_Mutex);
 auto task=Task::Get();
 while(!task->Cancelled)
 	{

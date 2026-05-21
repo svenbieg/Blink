@@ -13,7 +13,6 @@
 #include "Storage/Streams/OutputStream.h"
 #include "Concurrency/Task.h"
 #include "Devices/System/Cpu.h"
-#include "Devices/Timers/SystemTimer.h"
 #include "Global.h"
 
 
@@ -56,22 +55,6 @@ UINT64 TotalTime;
 }TASK_INFO;
 
 
-//==========
-// Snapshot
-//==========
-
-class SNAPSHOT: private Collections::map<Handle<Task>, UINT64>
-{
-public:
-	// Friends
-	friend TaskMonitor;
-
-private:
-	// Con-/Destructors
-	SNAPSHOT()=default;
-};
-
-
 //==============
 // Task-Monitor
 //==============
@@ -83,7 +66,6 @@ public:
 	using Cpu=Devices::System::Cpu;
 	using Interrupts=Devices::System::Interrupts;
 	using OutputStream=Storage::Streams::OutputStream;
-	using SystemTimer=Devices::Timers::SystemTimer;
 
 	// Friends
 	friend Interrupts;
@@ -108,7 +90,6 @@ private:
 	VOID SetTask(UINT Core, Task* Next);
 	Task* m_Current[Cpu::CPU_COUNT];
 	UINT64 m_IrqStart[Cpu::CPU_COUNT];
-	Handle<SystemTimer> m_SystemTimer;
 	UINT64 m_TotalTime;
 };
 

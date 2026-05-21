@@ -23,6 +23,7 @@
 #include "Concurrency/TaskMonitor.h"
 #include "Concurrency/WriteLock.h"
 #include "Devices/System/Interrupts.h"
+#include "Devices/Timers/SystemTimer.h"
 
 
 //===========
@@ -39,11 +40,15 @@ namespace Concurrency {
 class Scheduler
 {
 public:
+	// Using
+	using SystemTimer=Devices::Timers::SystemTimer;
+
 	// Friends
 	friend Devices::System::Interrupts;
 	friend CriticalMutex;
 	friend Mutex;
 	friend Signal;
+	friend SystemTimer;
 	friend Task;
 	friend TaskMonitor;
 

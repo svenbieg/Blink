@@ -10,7 +10,6 @@
 //=======
 
 #include "Concurrency/Task.h"
-#include "Devices/Timers/SystemTimer.h"
 #include "Devices/Wifi/WifiAdapter.h"
 
 
@@ -32,7 +31,6 @@ public:
 	// Using
 	using Mutex=Concurrency::Mutex;
 	using Signal=Concurrency::Signal;
-	using SystemTimer=Devices::Timers::SystemTimer;
 	using Task=Concurrency::Task;
 	using WifiAdapter=Devices::Wifi::WifiAdapter;
 
@@ -53,15 +51,14 @@ private:
 	StatusLed();
 
 	// Common
-	VOID OnSystemTimer();
+	VOID BlinkTask();
 	VOID ServiceTask();
+	Handle<Task> m_BlinkTask;
 	Mutex m_Mutex;
 	volatile BOOL m_On;
 	UINT m_Period;
 	Handle<Task> m_ServiceTask;
 	Signal m_Signal;
-	UINT m_Ticks;
-	Handle<SystemTimer> m_Timer;
 	Handle<WifiAdapter> m_WifiAdapter;
 };
 

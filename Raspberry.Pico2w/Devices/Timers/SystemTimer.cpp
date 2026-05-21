@@ -50,16 +50,6 @@ RO32 INTS;
 }TIMER_REGS;
 
 
-//==================
-// Con-/Destructors
-//==================
-
-SystemTimer::~SystemTimer()
-{
-m_Task->Cancel();
-}
-
-
 //========
 // Common
 //========
@@ -85,50 +75,49 @@ return TypeHelper::MakeLong(lo, hi);
 }
 
 
-//==========================
-// Con-/Destructors Private
-//==========================
-
-SystemTimer::SystemTimer()
-{
-Clocks::Initialize();
-m_Task=ServiceTask::Create(this, &SystemTimer::TaskProc, "systimer");
-}
-
-
 //================
 // Common Private
 //================
 
-VOID SystemTimer::OnInterrupt()
+VOID SystemTimer::Begin()
 {
-SpinLock lock(m_CriticalSection);
-auto timer=(TIMER_REGS*)TIMER0_BASE;
-IoHelper::Set(timer->INTR, 1);
-m_Signal.Trigger();
+s_ServiceTask=ServiceTask::Create(ServiceTask, "systimer", 1024);
+s_ServiceTask->Then(nullptr, []()
+	{
+	Interrupts::SetHandler(Irq::Timer0, nullptr);
+	});
 }
 
-VOID SystemTimer::TaskProc()
+VOID SystemTimer::HandleInterrupt()
 {
-Interrupts::SetHandler(Irq::Timer0, this, &SystemTimer::OnInterrupt);
+SpinLock lock(s_CriticalSection);
+auto timer=(TIMER_REGS*)TIMER0_BASE;
+IoHelper::Set(timer->INTR, 1);
+s_Signal.Trigger();
+}
+
+VOID SystemTimer::ServiceTask()
+{
+Clocks::Initialize();
+Interrupts::SetHandler(Irq::Timer0, HandleInterrupt);
 auto timer=(TIMER_REGS*)TIMER0_BASE;
 IoHelper::Set(timer->INTR, 1);
 IoHelper::Set(timer->INTE, 1);
-SpinLock lock(m_CriticalSection);
+SpinLock lock(s_CriticalSection);
 UINT time=timer->TIMERAWL;
 timer->ALARM[0]=time+10*TICKS_MS;
 auto task=Task::Get();
 while(!task->Cancelled)
 	{
-	m_Signal.Wait(lock);
-	lock.Unlock();
-	auto handler=DispatchedQueue::Append(this, [this](){ Tick(this); });
-	handler->Wait();
-	lock.Lock();
+	s_Signal.Wait(lock);
+	Scheduler::Schedule();
 	time=timer->TIMERAWL;
 	timer->ALARM[0]=time+10*TICKS_MS;
 	}
-Interrupts::SetHandler(Irq::Timer0, nullptr);
 }
+
+CriticalSection SystemTimer::s_CriticalSection;
+Handle<Task> SystemTimer::s_ServiceTask;
+Signal SystemTimer::s_Signal;
 
 }}

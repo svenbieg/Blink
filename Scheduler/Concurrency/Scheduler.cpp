@@ -201,8 +201,7 @@ Interrupts::Enable();
 auto status=Status::Success;
 try
 	{
-	auto timer=SystemTimer::Create();
-	timer->Tick.Add(Scheduler::Schedule);
+	SystemTimer::Begin();
 	Main();
 	}
 catch(...)

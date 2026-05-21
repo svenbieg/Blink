@@ -9,9 +9,7 @@
 // Using
 //=======
 
-#include "Concurrency/DispatchedQueue.h"
-#include "Concurrency/ServiceTask.h"
-#include "Concurrency/SpinLock.h"
+#include "Concurrency/Scheduler.h"
 #include "Devices/System/Interrupts.h"
 
 using namespace Concurrency;
@@ -36,17 +34,6 @@ const UINT64 MHZ=1000000;
 const UINT64 PERIOD=FREQ_HZ/100;
 
 
-//==================
-// Con-/Destructors
-//==================
-
-SystemTimer::~SystemTimer()
-{
-Interrupts::SetHandler(Irq::SystemTimer, nullptr);
-m_Task->Cancel();
-}
-
-
 //========
 // Common
 //========
@@ -66,42 +53,38 @@ return cnt_pct*MHZ/FREQ_HZ;
 }
 
 
-//==========================
-// Con-/Destructors Private
-//==========================
-
-SystemTimer::SystemTimer()
-{
-m_Task=ServiceTask::Create(this, &SystemTimer::ServiceTask, "systimer");
-}
-
-
 //================
 // Common Private
 //================
 
+VOID SystemTimer::Begin()
+{
+s_ServiceTask=ServiceTask::Create(ServiceTask, "systimer", 1024);
+}
+
 VOID SystemTimer::HandleInterrupt()
 {
-SpinLock lock(m_CriticalSection);
-m_Signal.Trigger();
+SpinLock lock(s_CriticalSection);
+s_Signal.Trigger();
 }
 
 VOID SystemTimer::ServiceTask()
 {
-Interrupts::SetHandler(Irq::SystemTimer, this, &SystemTimer::HandleInterrupt);
+Interrupts::SetHandler(Irq::SystemTimer, HandleInterrupt);
 auto task=Task::Get();
-SpinLock lock(m_CriticalSection);
+SpinLock lock(s_CriticalSection);
 __asm inline volatile("msr CNTP_TVAL_EL0, %0":: "r" (PERIOD));
 __asm inline volatile("msr CNTP_CTL_EL0, %0":: "r" (1UL));
 while(!task->Cancelled)
 	{
-	m_Signal.Wait(lock);
-	lock.Unlock();
-	auto handler=DispatchedQueue::Append(this, [this](){ Tick(this); });
-	handler->Wait();
-	lock.Lock();
+	s_Signal.Wait(lock);
+	Scheduler::Schedule();
 	__asm inline volatile("msr CNTP_TVAL_EL0, %0":: "r" (PERIOD));
 	}
 }
+
+CriticalSection SystemTimer::s_CriticalSection;
+Handle<Task> SystemTimer::s_ServiceTask;
+Signal SystemTimer::s_Signal;
 
 }}
