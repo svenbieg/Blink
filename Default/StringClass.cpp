@@ -11,6 +11,7 @@
 
 #include "Storage/Encoding/Dwarf.h"
 #include "MemoryHelper.h"
+#include "StringBuilder.h"
 #include <new>
 
 using namespace Storage::Encoding;
@@ -187,12 +188,24 @@ if(!len)
 		*size_ptr+=size;
 	return nullptr;
 	}
+#ifdef _UNICODE
+StringBuilder builder;
+SIZE_T end=size+len;
+while(size<end)
+	{
+	WCHAR wc=0;
+	size+=CharHelper::Read(stream, &wc);
+	builder.Append(wc);
+	}
+auto str=builder.ToString();
+#else
 auto str=Create(len, nullptr);
 auto buf=str->m_Buffer;
 size+=stream->Read(buf, len);
 buf[len]=0;
 str->m_Hash=StringHelper::Hash(buf);
 str->m_Length=len;
+#endif
 if(size_ptr)
 	*size_ptr+=size;
 return str;
@@ -213,10 +226,16 @@ SIZE_T String::WriteToStream(String const* str, OutputStream* stream)
 if(!str)
 	return Dwarf::WriteUnsigned(stream, 0U);
 auto buf=str->m_Buffer;
-auto len=str->m_Length;
 SIZE_T size=0;
+#ifndef _UNICODE
+UINT len=0;
+while(buf[len])
+	len+=CharHelper::Write(nullptr, buf[len]);
+#else
+auto len=str->m_Length;
+#endif
 size+=Dwarf::WriteUnsigned(stream, len);
-size+=OutputStream::Write(stream, buf, len);
+size+=OutputStream::Write(stream, buf, len*sizeof(TCHAR));
 return size;
 }
 
