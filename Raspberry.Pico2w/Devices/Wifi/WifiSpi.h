@@ -9,9 +9,6 @@
 // Using
 //=======
 
-#include "Devices/Dma/DmaChannel.h"
-#include "Devices/Gpio/GpioHost.h"
-#include "Devices/Pio/StateMachine.h"
 #include "Devices/Wifi/Wifi.h"
 
 
@@ -96,41 +93,5 @@ inline UINT Swap16x2(UINT Value)
 __asm inline volatile("rev16 %0, %0": "+l" (Value));
 return Value;
 }
-
-
-//==========
-// SPI-Host
-//==========
-
-class WifiSpi: public Object
-{
-public:
-	// Using
-	using DmaChannel=Devices::Dma::DmaChannel;
-	using DmaRequest=Devices::Dma::DmaRequest;
-	using GpioHost=Devices::Gpio::GpioHost;
-	using StateMachine=Devices::Pio::StateMachine;
-
-protected:
-	// Con-/Destructors
-	friend Object;
-	WifiSpi();
-
-	// Common
-	VOID SpiBegin(SIZE_T TxSize, SIZE_T RxSize);
-	VOID SpiEnd();
-	VOID SpiRead(VOID* Buffer, SIZE_T Size);
-	VOID SpiWrite(VOID const* Buffer, SIZE_T Count);
-
-	// Members
-	Handle<GpioHost> m_GpioHost;
-	RO32* m_InputBuffer;
-	Handle<DmaChannel> m_InputDma;
-	DmaRequest m_InputRequest;
-	RW32* m_OutputBuffer;
-	Handle<DmaChannel> m_OutputDma;
-	DmaRequest m_OutputRequest;
-	Handle<StateMachine> m_StateMachine;
-};
 
 }}

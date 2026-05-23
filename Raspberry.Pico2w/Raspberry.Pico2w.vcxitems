@@ -61,7 +61,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\System.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Timers\Clocks.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiSpi.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiSdio.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)math.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)start.cpp" />

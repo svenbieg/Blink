@@ -19,6 +19,7 @@ using namespace Concurrency;
 using namespace Devices::Gpio;
 using namespace Devices::Sdio;
 using namespace Devices::Timers;
+using namespace Devices::Pio;
 
 extern UINT wifi_config;
 extern UINT wifi_config_size;
@@ -34,6 +35,21 @@ extern UINT wifi_clm_size;
 
 namespace Devices {
 	namespace Wifi {
+
+
+//===============
+// Configuration
+//===============
+
+const SPI_CONFIG WIFI_SPI_CONFIG=
+	{
+	2,
+	SpiMode::Bits32,
+	PIN_CHIPSEL,
+	PIN_CLOCK,
+	PIN_DATA,
+	PIN_DATA
+	};
 
 
 //==================
@@ -71,6 +87,8 @@ while(read)
 	{
 	UINT copy=TypeHelper::Min(read, WIFI_BLOCK_SIZE);
 	BitHelper::Set(cmd, CMD_SIZE, copy);
+	m_GpioHost->SetPinMode(PIN_DATA, m_PinMode);
+	m_StateMachine->SetPinDirection(PIN_DATA, PioPinDirection::Output);
 	SpiBegin(sizeof(UINT), copy);
 	SpiWrite(&cmd, sizeof(UINT));
 	SpiRead(dst, copy);
@@ -78,6 +96,7 @@ while(read)
 	dst+=copy;
 	read-=copy;
 	}
+m_GpioHost->SetPinMode(PIN_DATA, GpioPinMode::Input, GpioPullMode::PullDown);
 return size;
 }
 
@@ -105,6 +124,8 @@ while(write)
 	{
 	UINT copy=TypeHelper::Min(write, WIFI_BLOCK_SIZE);
 	BitHelper::Set(cmd, CMD_SIZE, copy);
+	m_GpioHost->SetPinMode(PIN_DATA, m_PinMode);
+	m_StateMachine->SetPinDirection(PIN_DATA, PioPinDirection::Output);
 	SpiBegin(sizeof(UINT)+copy, 0);
 	SpiWrite(&cmd, sizeof(UINT));
 	SpiWrite(src, copy);
@@ -112,6 +133,7 @@ while(write)
 	src+=copy;
 	write-=copy;
 	}
+m_GpioHost->SetPinMode(PIN_DATA, GpioPinMode::Input, GpioPullMode::PullDown);
 return size;
 }
 
@@ -121,6 +143,7 @@ return size;
 //==========================
 
 WifiSdio::WifiSdio():
+SpiEmulator(WIFI_SPI_CONFIG),
 m_Window(0)
 {
 m_ServiceTask=ServiceTask::Create(this, &WifiSdio::ServiceTask, "wifi_sdio", 1024);
@@ -172,10 +195,13 @@ BitHelper::Set(cmd, CMD_ADDR, reg.Address);
 BitHelper::Set(cmd, CMD_SIZE, 4);
 cmd=Swap16x2(cmd);
 UINT value=0;
+m_GpioHost->SetPinMode(PIN_DATA, m_PinMode);
+m_StateMachine->SetPinDirection(PIN_DATA, PioPinDirection::Output);
 SpiBegin(sizeof(UINT), sizeof(UINT));
 SpiWrite(&cmd, sizeof(UINT));
 SpiRead(&value, sizeof(UINT));
 SpiEnd();
+m_GpioHost->SetPinMode(PIN_DATA, GpioPinMode::Input, GpioPullMode::PullDown);
 value=Swap16x2(value);
 return value;
 }
@@ -189,12 +215,15 @@ BitHelper::Set(cmd, CMD_FN, FN1);
 BitHelper::Set(cmd, CMD_ADDR, SB_ADDR_32BIT|addr);
 BitHelper::Set(cmd, CMD_SIZE, sizeof(UINT));
 UINT delay_buf[SB_DELAY_COUNT];
+m_GpioHost->SetPinMode(PIN_DATA, m_PinMode);
+m_StateMachine->SetPinDirection(PIN_DATA, PioPinDirection::Output);
 SpiBegin(sizeof(UINT), SB_DELAY_BYTES+sizeof(UINT));
 SpiWrite(&cmd, sizeof(UINT));
 SpiRead(delay_buf, SB_DELAY_BYTES);
 UINT value=0;
 SpiRead(&value, sizeof(UINT));
 SpiEnd();
+m_GpioHost->SetPinMode(PIN_DATA, GpioPinMode::Input, GpioPullMode::PullDown);
 return value;
 }
 
@@ -214,6 +243,8 @@ while(size)
 	BitHelper::Set(cmd, CMD_ADDR, SB_ADDR_32BIT|wnd_pos);
 	BitHelper::Set(cmd, CMD_SIZE, copy);
 	UINT transfer=TypeHelper::AlignUp(copy, sizeof(UINT));
+	m_GpioHost->SetPinMode(PIN_DATA, m_PinMode);
+	m_StateMachine->SetPinDirection(PIN_DATA, PioPinDirection::Output);
 	SpiBegin(sizeof(UINT), SB_DELAY_BYTES+transfer);
 	SpiWrite(&cmd, sizeof(UINT));
 	SpiRead(delay_buf, SB_DELAY_BYTES);
@@ -223,6 +254,7 @@ while(size)
 	addr+=copy;
 	size-=copy;
 	}
+m_GpioHost->SetPinMode(PIN_DATA, GpioPinMode::Input, GpioPullMode::PullDown);
 }
 
 UINT WifiSdio::ReadRegister(SDIO_REG const& reg)
@@ -234,6 +266,8 @@ BitHelper::Set(cmd, CMD_SIZE, reg.Size);
 UINT delay_count=0;
 if(reg.Function==FN1)
 	delay_count=SB_DELAY_COUNT;
+m_GpioHost->SetPinMode(PIN_DATA, m_PinMode);
+m_StateMachine->SetPinDirection(PIN_DATA, PioPinDirection::Output);
 SpiBegin(sizeof(UINT), (delay_count+1)*sizeof(UINT));
 SpiWrite(&cmd, sizeof(UINT));
 if(delay_count>0)
@@ -244,6 +278,7 @@ if(delay_count>0)
 UINT value=0;
 SpiRead(&value, sizeof(UINT));
 SpiEnd();
+m_GpioHost->SetPinMode(PIN_DATA, GpioPinMode::Input, GpioPullMode::PullDown);
 return value;
 }
 
@@ -351,9 +386,12 @@ BitHelper::Set(cmd, CMD_SIZE, 4);
 UINT buf[2];
 buf[0]=Swap16x2(cmd);
 buf[1]=Swap16x2(value);
+m_GpioHost->SetPinMode(PIN_DATA, m_PinMode);
+m_StateMachine->SetPinDirection(PIN_DATA, PioPinDirection::Output);
 SpiBegin(2*sizeof(UINT), 0);
 SpiWrite(buf, 2*sizeof(UINT));
 SpiEnd();
+m_GpioHost->SetPinMode(PIN_DATA, GpioPinMode::Input, GpioPullMode::PullDown);
 }
 
 VOID WifiSdio::WriteBackplane(UINT addr, UINT value)
@@ -363,10 +401,13 @@ addr&=SB_WND_MASK;
 UINT cmd=CMD_WRITE|CMD_INCR;
 BitHelper::Set(cmd, CMD_ADDR, SB_ADDR_32BIT|addr);
 BitHelper::Set(cmd, CMD_SIZE, sizeof(UINT));
+m_GpioHost->SetPinMode(PIN_DATA, m_PinMode);
+m_StateMachine->SetPinDirection(PIN_DATA, PioPinDirection::Output);
 SpiBegin(2*sizeof(UINT), 0);
 SpiWrite(&cmd, sizeof(UINT));
 SpiWrite(&value, sizeof(UINT));
 SpiEnd();
+m_GpioHost->SetPinMode(PIN_DATA, GpioPinMode::Input, GpioPullMode::PullDown);
 }
 
 VOID WifiSdio::WriteBackplane(UINT addr, VOID const* buf, UINT size)
@@ -382,6 +423,8 @@ while(size)
 	BitHelper::Set(cmd, CMD_ADDR, SB_ADDR_32BIT|wnd_pos);
 	BitHelper::Set(cmd, CMD_SIZE, copy);
 	UINT transfer=TypeHelper::AlignUp(copy, sizeof(UINT));
+	m_GpioHost->SetPinMode(PIN_DATA, m_PinMode);
+	m_StateMachine->SetPinDirection(PIN_DATA, PioPinDirection::Output);
 	SpiBegin(sizeof(UINT)+transfer, 0);
 	SpiWrite(&cmd, sizeof(UINT));
 	SpiWrite(src, transfer);
@@ -390,6 +433,7 @@ while(size)
 	addr+=copy;
 	size-=copy;
 	}
+m_GpioHost->SetPinMode(PIN_DATA, GpioPinMode::Input, GpioPullMode::PullDown);
 }
 
 VOID WifiSdio::WriteRegister(SDIO_REG const& reg, UINT value)
@@ -401,9 +445,12 @@ BitHelper::Set(cmd, CMD_SIZE, reg.Size);
 UINT buf[2];
 buf[0]=cmd;
 buf[1]=value;
+m_GpioHost->SetPinMode(PIN_DATA, m_PinMode);
+m_StateMachine->SetPinDirection(PIN_DATA, PioPinDirection::Output);
 SpiBegin(2*sizeof(UINT), 0);
 SpiWrite(buf, 2*sizeof(UINT));
 SpiEnd();
+m_GpioHost->SetPinMode(PIN_DATA, GpioPinMode::Input, GpioPullMode::PullDown);
 }
 
 }}

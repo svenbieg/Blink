@@ -34,6 +34,7 @@ namespace Concurrency {
 
 VOID Signal::Count(UINT times, UINT timeout)
 {
+assert(!Interrupts::Active());
 assert(!Task::IsMainTask());
 UINT64 resume_time=0;
 if(timeout)
@@ -54,6 +55,7 @@ StatusHelper::ThrowIfFailed(current->m_Status);
 
 VOID Signal::Count(ScopedLock& scoped_lock, UINT times, UINT timeout)
 {
+assert(!Interrupts::Active());
 assert(!Task::IsMainTask());
 UINT64 resume_time=0;
 if(timeout)

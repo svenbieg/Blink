@@ -58,6 +58,7 @@ const SERIAL_CONFIG SERIAL_DEVICES[]=
 
 const UINT SERIAL_CLOCK=Clocks::PERI_CLK_HZ;
 const UINT SERIAL_COUNT=TypeHelper::ArraySize(SERIAL_DEVICES);
+const UINT SERIAL_STACK=1024;
 
 
 //=========

@@ -43,7 +43,7 @@ GpioPin PinChipSelect;
 GpioPin PinClock;
 GpioPin PinRx;
 GpioPin PinTx;
-}SpiConfiguration;
+}SPI_CONFIG;
 
 
 //==============
@@ -58,10 +58,14 @@ public:
 	using DmaRequest=Devices::Dma::DmaRequest;
 	using GpioHost=Devices::Gpio::GpioHost;
 	using GpioPin=Devices::Gpio::GpioPin;
+	using GpioPinMode=Devices::Gpio::GpioPinMode;
 	using StateMachine=Devices::Pio::StateMachine;
 
+	// Friends
+	friend Object;
+
 	// Con-/Destructors
-	static inline Handle<SpiEmulator> Create(SpiConfiguration const& Configuration)
+	static inline Handle<SpiEmulator> Create(SPI_CONFIG const& Configuration)
 		{
 		return new SpiEmulator(Configuration);
 		}
@@ -74,8 +78,7 @@ public:
 
 protected:
 	// Con-/Destructors
-	friend Object;
-	SpiEmulator(SpiConfiguration const& Configuration);
+	SpiEmulator(SPI_CONFIG const& Configuration);
 
 	// Members
 	UINT m_DataSize;
@@ -87,6 +90,7 @@ protected:
 	RW32* m_OutputBuffer;
 	Handle<DmaChannel> m_OutputDma;
 	DmaRequest m_OutputRequest;
+	GpioPinMode m_PinMode;
 	Handle<StateMachine> m_StateMachine;
 };
 

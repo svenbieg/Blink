@@ -11,6 +11,7 @@
 
 #include "Devices/Wifi/WifiPacket.h"
 #include "Devices/Wifi/WifiSpi.h"
+#include "Devices/Pio/SpiEmulator.h"
 #include "Storage/Streams/RandomAccessStream.h"
 #include "Event.h"
 
@@ -34,7 +35,7 @@ class WifiAdapter;
 // Wifi-Sdio
 //===========
 
-class WifiSdio: public WifiSpi, public Storage::Streams::RandomAccessStream
+class WifiSdio: public Pio::SpiEmulator, public Storage::Streams::RandomAccessStream
 {
 public:
 	// Friends
