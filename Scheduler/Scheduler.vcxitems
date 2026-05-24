@@ -12,6 +12,7 @@
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\CriticalMutex.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\CriticalSection.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\DispatchedHandler.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\DispatchedQueue.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\Mutex.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\ReadLock.cpp" />

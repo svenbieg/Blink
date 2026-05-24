@@ -39,6 +39,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskMonitor.cpp">
       <Filter>Concurrency</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\DispatchedHandler.cpp">
+      <Filter>Concurrency</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\CriticalSection.h">

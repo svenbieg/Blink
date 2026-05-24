@@ -13,6 +13,7 @@
 //=======
 
 #include "Concurrency/Signal.h"
+#include "Concurrency/SpinLock.h"
 #include "Handle.h"
 #include <utility>
 
@@ -45,16 +46,19 @@ public:
 	virtual ~DispatchedHandler() {}
 
 	// Common
+	Status GetStatus();
 	virtual VOID Run()=0;
-	inline VOID Wait() { m_Signal.Wait(); }
+	VOID Wait();
 
 protected:
 	// Con-/Destructors
-	DispatchedHandler()=default;
+	DispatchedHandler();
 
 	// Common
+	CriticalSection m_CriticalSection;
 	Handle<DispatchedHandler> m_Next;
 	Signal m_Signal;
+	Status m_Status;
 };
 
 
@@ -73,11 +77,7 @@ public:
 	typedef VOID (*proc_t)();
 
 	// Common
-	inline VOID Run()override
-		{
-		(*m_Procedure)();
-		m_Signal.Trigger();
-		}
+	VOID Run()override;
 
 private:
 	// Con-/Destructors
@@ -104,9 +104,19 @@ public:
 	typedef VOID (_owner_t::*_proc_t)();
 
 	// Common
-	inline VOID Run()override
+	VOID Run()override
 		{
-		(m_Owner->*m_Procedure)();
+		Status status=Status::Success;
+		try
+			{
+			(m_Owner->*m_Procedure)();
+			}
+		catch(Exception e)
+			{
+			status=e.GetStatus();
+			}
+		SpinLock lock(m_CriticalSection);
+		m_Status=status;
 		m_Signal.Trigger();
 		}
 
@@ -136,9 +146,19 @@ public:
 	friend Task;
 
 	// Common
-	inline VOID Run()override
+	VOID Run()override
 		{
-		m_Lambda();
+		Status status=Status::Success;
+		try
+			{
+			m_Lambda();
+			}
+		catch(Exception e)
+			{
+			status=e.GetStatus();
+			}
+		SpinLock lock(m_CriticalSection);
+		m_Status=status;
 		m_Signal.Trigger();
 		}
 
@@ -162,9 +182,19 @@ public:
 	friend Task;
 
 	// Common
-	inline VOID Run()override
+	VOID Run()override
 		{
-		m_Lambda();
+		Status status=Status::Success;
+		try
+			{
+			m_Lambda();
+			}
+		catch(Exception e)
+			{
+			status=e.GetStatus();
+			}
+		SpinLock lock(m_CriticalSection);
+		m_Status=status;
 		m_Signal.Trigger();
 		}
 
