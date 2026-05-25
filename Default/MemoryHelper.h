@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "TypeHelper.h"
+#include "Devices/System/Memory.h"
 
 
 //===============
@@ -19,14 +19,16 @@
 class MemoryHelper
 {
 public:
+	// Using
+	using Memory=Devices::System::Memory;
+
 	// Settings
 	static const UINT PAGE_SIZE=4096;
 
 	// Common
 	static inline VOID* Allocate(SIZE_T Size)
 		{
-		extern VOID* Allocate(SIZE_T);
-		return Allocate(Size);
+		return Memory::Allocate(Size);
 		}
 	static INT Compare(VOID const* Buffer1, VOID const* Buffer2, SIZE_T Size)noexcept;
 	template <class _value_t> static INT CompareT(_value_t const* Values1, _value_t const* Values2, SIZE_T Count)noexcept
@@ -64,8 +66,7 @@ public:
 		}
 	static inline VOID Free(VOID* Buffer)noexcept
 		{
-		extern VOID Free(VOID*)noexcept;
-		Free(Buffer);
+		Memory::Free(Buffer);
 		}
 	static VOID Move(VOID* To, VOID const* From, SIZE_T Size)noexcept;
 	template <class _value_t> static VOID MoveT(_value_t* To, _value_t const* From, SIZE_T Count)noexcept

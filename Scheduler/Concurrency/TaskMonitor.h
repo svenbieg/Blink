@@ -31,6 +31,7 @@ namespace Devices
 namespace System
 	{
 	class Interrupts;
+	class Memory;
 	}
 }
 
@@ -48,6 +49,8 @@ namespace Concurrency {
 
 typedef struct
 {
+UINT AllocCount;
+SIZE_T AllocSize;
 Handle<String> Name;
 SIZE_T StackSize;
 SIZE_T StackUsed;
@@ -65,10 +68,12 @@ public:
 	// Using
 	using Cpu=Devices::System::Cpu;
 	using Interrupts=Devices::System::Interrupts;
+	using Memory=Devices::System::Memory;
 	using OutputStream=Storage::Streams::OutputStream;
 
 	// Friends
 	friend Interrupts;
+	friend Memory;
 	friend Object;
 	friend Scheduler;
 
@@ -84,7 +89,9 @@ private:
 	TaskMonitor();
 
 	// Common
+	VOID Allocate(SIZE_T Size);
 	VOID ClearInterrupt(UINT Core);
+	VOID Free(SIZE_T Size);
 	VOID RemoveTask(Task* Task);
 	VOID SetInterrupt(UINT Core);
 	VOID SetTask(UINT Core, Task* Next);

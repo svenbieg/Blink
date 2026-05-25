@@ -90,6 +90,8 @@ Scheduler::SuspendCurrentTask(ms);
 Task::Task(BYTE* stack, SIZE_T stack_size, Handle<String> name)noexcept:
 Cancelled(false),
 Name(name->Begin()),
+m_AllocCount(0),
+m_AllocSize(0),
 m_Creator(nullptr),
 m_Exception(nullptr),
 m_Flags(TaskFlags::None),

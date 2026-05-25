@@ -9,15 +9,10 @@
 // Using
 //=======
 
-#include "Concurrency/CriticalMutex.h"
-#include "Concurrency/WriteLock.h"
+#include "Devices/System/Memory.h"
 #include "Exception.h"
-#include "heap.h"
 
-using namespace Concurrency;
-
-extern heap_t* g_heap;
-extern CriticalMutex g_heap_mutex;
+using namespace Devices::System;
 
 
 //=====
@@ -26,42 +21,46 @@ extern CriticalMutex g_heap_mutex;
 
 void* operator new(__ISENSE_T size)
 {
-WriteLock lock(g_heap_mutex);
-auto buf=heap_alloc(g_heap, size);
+auto buf=Memory::Allocate(size);
 if(!buf)
 	throw OutOfMemoryException();
 return buf;
+}
+
+void* operator new(__ISENSE_T size, std::nothrow_t)noexcept
+{
+return Memory::Allocate(size);
 }
 
 void* operator new[](__ISENSE_T size)
 {
-WriteLock lock(g_heap_mutex);
-auto buf=heap_alloc(g_heap, size);
+auto buf=Memory::Allocate(size);
 if(!buf)
 	throw OutOfMemoryException();
 return buf;
 }
 
+void* operator new[](__ISENSE_T size, std::nothrow_t)noexcept
+{
+return Memory::Allocate(size);
+}
+
 void operator delete(void* buf)noexcept
 {
-WriteLock lock(g_heap_mutex);
-heap_free(g_heap, buf);
+Memory::Free(buf);
 }
 
 void operator delete(void* buf, __ISENSE_T)noexcept
 {
-WriteLock lock(g_heap_mutex);
-heap_free(g_heap, buf);
+Memory::Free(buf);
 }
 
-void operator delete[](void* array)noexcept
+void operator delete[](void* buf)noexcept
 {
-WriteLock lock(g_heap_mutex);
-heap_free(g_heap, array);
+Memory::Free(buf);
 }
 
-void operator delete[](void* array, __ISENSE_T)noexcept
+void operator delete[](void* buf, __ISENSE_T)noexcept
 {
-WriteLock lock(g_heap_mutex);
-heap_free(g_heap, array);
+Memory::Free(buf);
 }

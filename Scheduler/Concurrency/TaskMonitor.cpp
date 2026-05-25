@@ -10,6 +10,7 @@
 //=======
 
 #include "Concurrency/Scheduler.h"
+#include "Devices/System/Memory.h"
 #include "Devices/Timers/SystemTimer.h"
 #include "Runtime/Configuration.h"
 
@@ -31,6 +32,7 @@ TaskMonitor::~TaskMonitor()
 {
 Interrupts::SetTaskMonitor(nullptr);
 Scheduler::SetTaskMonitor(nullptr);
+Memory::SetTaskMonitor(nullptr);
 }
 
 
@@ -56,6 +58,8 @@ Task* task=Scheduler::s_All.First();
 while(task)
 	{
 	UINT64 task_time=task->m_TotalTime;
+	info[pos].AllocCount=task->m_AllocCount;
+	info[pos].AllocSize=task->m_AllocSize;
 	info[pos].Name=task->m_Name;
 	info[pos].StackSize=task->m_StackSize;
 	info[pos].StackUsed=task->m_StackUsed;
@@ -63,12 +67,16 @@ while(task)
 	total_time+=task_time;
 	if(++pos==count)
 		throw BufferOverrunException();
+	task->m_AllocCount=0;
+	task->m_AllocSize=0;
 	task->m_TotalTime=0;
 	task=Scheduler::s_All.Next(task);
 	}
 lock.Unlock();
 if(pos>=count)
 	throw BufferOverrunException();
+info[pos].AllocCount=0;
+info[pos].AllocSize=0;
 info[pos].Name="system";
 info[pos].StackSize=Runtime::CONFIG_STACK_SIZE;
 info[pos].StackUsed=0;
@@ -91,6 +99,8 @@ SpinLock lock(Scheduler::s_CriticalSection);
 Task* task=Scheduler::s_All.First();
 while(task)
 	{
+	task->m_AllocCount=0;
+	task->m_AllocSize=0;
 	task->m_TotalTime=0;
 	task=Scheduler::s_All.Next(task);
 	}
@@ -105,6 +115,7 @@ for(UINT u=0; u<Scheduler::CPU_COUNT; u++)
 	}
 Scheduler::s_TaskMonitor=this;
 Interrupts::SetTaskMonitor(this);
+Memory::SetTaskMonitor(this);
 }
 
 
@@ -112,12 +123,25 @@ Interrupts::SetTaskMonitor(this);
 // Common Private
 //================
 
+VOID TaskMonitor::Allocate(SIZE_T size)
+{
+UINT core=Cpu::GetId();
+m_Current[core]->m_AllocCount++;
+m_Current[core]->m_AllocSize+=size;
+}
+
 VOID TaskMonitor::ClearInterrupt(UINT core)
 {
 UINT64 time=SystemTimer::Microseconds64();
 UINT64 irq_time=time-m_IrqStart[core];
 m_Current[core]->m_StartTime+=irq_time;
 m_TotalTime+=irq_time;
+}
+
+VOID TaskMonitor::Free(SIZE_T size)
+{
+UINT core=Cpu::GetId();
+m_Current[core]->m_AllocSize-=size;
 }
 
 VOID TaskMonitor::RemoveTask(Task* task)
