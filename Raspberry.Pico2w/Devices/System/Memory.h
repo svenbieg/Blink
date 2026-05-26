@@ -10,7 +10,6 @@
 //=======
 
 #include "Concurrency/CriticalMutex.h"
-#include "Concurrency/CriticalSection.h"
 
 
 //======================
@@ -51,7 +50,6 @@ class Memory
 public:
 	// Using
 	using CriticalMutex=Concurrency::CriticalMutex;
-	using CriticalSection=Concurrency::CriticalSection;
 	using TaskMonitor=Concurrency::TaskMonitor;
 
 	// Friends
@@ -59,17 +57,14 @@ public:
 
 	// Common
 	static VOID* Allocate(SIZE_T Size);
-	static VOID Free(VOID* Buffer);
+	static VOID Free(VOID* Buffer)noexcept;
 	static VOID GetInfo(MEMORY_INFO* Info);
 	static VOID Initialize();
 
 private:
 	// Common
-	static VOID SetTaskMonitor(TaskMonitor* Monitor)noexcept;
-	static CriticalSection s_CriticalSection;
 	static VOID* s_Heap;
 	static CriticalMutex s_Mutex;
-	static TaskMonitor* s_TaskMonitor;
 };
 
 }}

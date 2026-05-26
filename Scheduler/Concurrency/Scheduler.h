@@ -80,7 +80,6 @@ private:
 	static VOID MainTask();
 	static VOID ResumeWaitingTasks(UINT Count, BOOL Suspend)noexcept;
 	static VOID Schedule()noexcept;
-	static VOID SetTaskMonitor(TaskMonitor* Monitor)noexcept;
 	static VOID SuspendCurrentTask(UINT MilliSeconds);
 	static VOID SuspendCurrentTask(UINT Core, Task* Current, UINT64 ResumeTime=0)noexcept;
 	static AllList s_All;
@@ -92,7 +91,6 @@ private:
 	static Task* s_MainTask;
 	static ReleaseList s_Release;
 	static SleepingList s_Sleeping;
-	static TaskMonitor* s_TaskMonitor;
 	static WaitingList s_Waiting;
 };
 

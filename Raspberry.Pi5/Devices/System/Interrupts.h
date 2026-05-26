@@ -128,12 +128,10 @@ private:
 	static VOID Enable(UINT Irq);
 	static VOID HandleTaskSwitch()noexcept;
 	static VOID SetHandlerInternal(Irq Irq, InterruptHandler* Handler)noexcept;
-	static VOID SetTaskMonitor(TaskMonitor* Monitor)noexcept;
 	static BOOL s_Active[CPU_COUNT];
 	static CriticalSection s_CriticalSection;
 	static UINT s_DisableCount[CPU_COUNT];
 	static InterruptHandler* s_IrqHandlers[IRQ_COUNT];
-	static TaskMonitor* s_TaskMonitor;
 };
 
 }}

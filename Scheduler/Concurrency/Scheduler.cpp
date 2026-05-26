@@ -55,6 +55,7 @@ auto task=idle;
 if(core==0)
 	task=s_MainTask;
 s_CurrentTask[core]=task;
+TaskMonitor::SetTask(core, task);
 task->m_StackPointer=task->m_StackBottom+task->m_StackSize;
 lock.Unlock();
 Cpu::SetContext(&Task::TaskProc, task, task->m_StackPointer);
@@ -181,9 +182,7 @@ else
 	}
 s_CurrentTask[core]=next;
 TaskHelper::Switch(core, current, next);
-lock.Unlock();
-if(s_TaskMonitor)
-	s_TaskMonitor->SetTask(core, next);
+TaskMonitor::SetTask(core, next);
 }
 
 VOID Scheduler::IdleTask()
@@ -231,8 +230,7 @@ auto release=s_Release.RemoveFirst();
 while(release)
 	{
 	s_All.Remove(release);
-	if(s_TaskMonitor)
-		s_TaskMonitor->RemoveTask(release);
+	TaskMonitor::RemoveTask(release);
 	lock.Unlock();
 	release->m_This=nullptr;
 	lock.Lock();
@@ -257,12 +255,6 @@ if(sleeping)
 UINT waiting_count=s_Waiting.Count(CPU_COUNT);
 if(waiting_count)
 	ResumeWaitingTasks(waiting_count, CPU_COUNT);
-}
-
-VOID Scheduler::SetTaskMonitor(TaskMonitor* monitor)noexcept
-{
-SpinLock lock(s_CriticalSection);
-s_TaskMonitor=monitor;
 }
 
 VOID Scheduler::SuspendCurrentTask(UINT ms)
@@ -311,7 +303,6 @@ Task* Scheduler::s_IdleTask[CPU_COUNT]={ nullptr };
 Task* Scheduler::s_MainTask=nullptr;
 Scheduler::ReleaseList Scheduler::s_Release;
 Scheduler::SleepingList Scheduler::s_Sleeping;
-TaskMonitor* Scheduler::s_TaskMonitor=nullptr;
 Scheduler::WaitingList Scheduler::s_Waiting;
 
 }

@@ -9,11 +9,8 @@
 // Using
 //=======
 
-#include "Collections/map.hpp"
-#include "Storage/Streams/OutputStream.h"
 #include "Concurrency/Task.h"
 #include "Devices/System/Cpu.h"
-#include "Global.h"
 
 
 //======================
@@ -49,7 +46,6 @@ namespace Concurrency {
 
 typedef struct
 {
-UINT AllocCount;
 SIZE_T AllocSize;
 Handle<String> Name;
 SIZE_T StackSize;
@@ -62,7 +58,7 @@ UINT64 TotalTime;
 // Task-Monitor
 //==============
 
-class TaskMonitor: public Global<TaskMonitor>
+class TaskMonitor
 {
 public:
 	// Using
@@ -77,27 +73,21 @@ public:
 	friend Object;
 	friend Scheduler;
 
-	// Con-/Destructors
-	static inline Handle<TaskMonitor> Create() { return Global::Create(); }
-	~TaskMonitor();
-
 	// Common
-	UINT GetTaskInfo(TASK_INFO* TaskInfo, UINT Count);
+	static UINT GetTaskInfo(TASK_INFO* TaskInfo, UINT Count);
 
 private:
-	// Con-/Destructors
-	TaskMonitor();
-
 	// Common
-	VOID Allocate(SIZE_T Size);
-	VOID ClearInterrupt(UINT Core);
-	VOID Free(SIZE_T Size);
-	VOID RemoveTask(Task* Task);
-	VOID SetInterrupt(UINT Core);
-	VOID SetTask(UINT Core, Task* Next);
-	Task* m_Current[Cpu::CPU_COUNT];
-	UINT64 m_IrqStart[Cpu::CPU_COUNT];
-	UINT64 m_TotalTime;
+	static VOID Allocate(VOID* Buffer);
+	static VOID ClearInterrupt(UINT Core);
+	static VOID Free(VOID* Buffer)noexcept;
+	static VOID Initialize();
+	static VOID RemoveTask(Task* Task);
+	static VOID SetInterrupt(UINT Core);
+	static VOID SetTask(UINT Core, Task* Next);
+	static Task* s_Current[Cpu::CPU_COUNT];
+	static UINT64 s_IrqStart[Cpu::CPU_COUNT];
+	static UINT64 s_TotalTime;
 };
 
 }

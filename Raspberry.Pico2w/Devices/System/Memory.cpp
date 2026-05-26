@@ -53,19 +53,15 @@ WriteLock lock(s_Mutex);
 VOID* buf=heap_alloc((heap_t*)s_Heap, size);
 if(!buf)
 	throw OutOfMemoryException();
-SpinLock monitor_lock(s_CriticalSection);
-if(s_TaskMonitor)
-	s_TaskMonitor->Allocate(size);
+TaskMonitor::Allocate(buf);
 return buf;
 }
 
-VOID Memory::Free(VOID* buf)
+VOID Memory::Free(VOID* buf)noexcept
 {
 WriteLock lock(s_Mutex);
-SIZE_T size=heap_free((heap_t*)s_Heap, buf);
-SpinLock monitor_lock(s_CriticalSection);
-if(s_TaskMonitor)
-	s_TaskMonitor->Free(size);
+TaskMonitor::Free(buf);
+heap_free((heap_t*)s_Heap, buf);
 }
 
 VOID Memory::GetInfo(MEMORY_INFO* info)
@@ -95,15 +91,7 @@ for(CTOR_PTR* ctor=&__init_array_start; ctor!=&__init_array_end; ctor++)
 // Common Private
 //================
 
-VOID Memory::SetTaskMonitor(TaskMonitor* monitor)noexcept
-{
-SpinLock lock(s_CriticalSection);
-s_TaskMonitor=monitor;
-}
-
-CriticalSection Memory::s_CriticalSection;
 VOID* Memory::s_Heap=nullptr;
 CriticalMutex Memory::s_Mutex;
-TaskMonitor* Memory::s_TaskMonitor=nullptr;
 
 }}

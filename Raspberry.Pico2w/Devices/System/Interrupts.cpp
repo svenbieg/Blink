@@ -119,20 +119,17 @@ IoHelper::Write(ic->SETEN[reg], mask);
 VOID Interrupts::HandleInterrupt(UINT irq)noexcept
 {
 UINT core=Cpu::GetId();
+TaskMonitor::SetInterrupt(core);
 s_Active[core]=true;
 s_DisableCount[core]++;
 SpinLock lock(s_CriticalSection);
-if(s_TaskMonitor)
-	s_TaskMonitor->SetInterrupt(core);
 auto handler=s_IrqHandler[irq];
 lock.Unlock();
 assert(handler);
 handler->Run();
 s_Active[core]=false;
 s_DisableCount[core]--;
-lock.Lock();
-if(s_TaskMonitor)
-	s_TaskMonitor->ClearInterrupt(core);
+TaskMonitor::ClearInterrupt(core);
 }
 
 VOID Interrupts::HandleTaskSwitch()noexcept
@@ -203,16 +200,9 @@ if(handler)
 	Enable(irq);
 }
 
-VOID Interrupts::SetTaskMonitor(TaskMonitor* monitor)noexcept
-{
-SpinLock lock(s_CriticalSection);
-s_TaskMonitor=monitor;
-}
-
 BOOL Interrupts::s_Active[Cpu::CPU_COUNT]={ false };
 CriticalSection Interrupts::s_CriticalSection;
 UINT Interrupts::s_DisableCount[Cpu::CPU_COUNT]={ 0 };
 InterruptHandler* Interrupts::s_IrqHandler[Interrupts::IRQ_COUNT]={ nullptr };
-TaskMonitor* Interrupts::s_TaskMonitor=nullptr;
 
 }}

@@ -131,12 +131,10 @@ private:
 	// Common
 	static InterruptHandler* SetHandler(UINT Irq, InterruptHandler* Handler)noexcept;
 	static VOID SetHandlerInternal(Irq Irq, InterruptHandler* Handler)noexcept;
-	static VOID SetTaskMonitor(TaskMonitor* Monitor)noexcept;
 	static BOOL s_Active[Cpu::CPU_COUNT];
 	static CriticalSection s_CriticalSection;
 	static UINT s_DisableCount[Cpu::CPU_COUNT];
 	static InterruptHandler* s_IrqHandler[IRQ_COUNT];
-	static TaskMonitor* s_TaskMonitor;
 };
 
 }}
