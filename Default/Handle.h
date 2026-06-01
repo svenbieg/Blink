@@ -2,6 +2,11 @@
 // Handle.h
 //==========
 
+// Reference-counted object on the heap.
+
+// Copyright 2026, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Default
+
 #pragma once
 
 
