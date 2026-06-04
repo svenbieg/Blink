@@ -2,6 +2,9 @@
 // Event.h
 //=========
 
+// Copyright 2026, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Default/wiki#Events
+
 #pragma once
 
 
@@ -9,6 +12,7 @@
 // Using
 //=======
 
+#include "Concurrency/Task.h"
 #include "EventHandler.h"
 
 
@@ -22,61 +26,67 @@ class EventBase
 public:
 	// Using
 	using _handler_t=EventHandler<_sender_t, _args_t...>;
+	using Task=Concurrency::Task;
 
 	// Common
 	VOID Remove(VOID* Owner)noexcept
 		{
-		_handler_t* prev=nullptr;
-		auto handler=m_Handler;
-		while(handler)
+		assert(Task::IsMainTask());
+		_handler_t** current_ptr=&m_Handler;
+		while(*current_ptr)
 			{
-			auto next=handler->m_Next;
-			if(handler->GetOwner()!=Owner)
+			auto current=*current_ptr;
+			if(current->GetOwner()==Owner)
 				{
-				prev=handler;
-				handler=next;
-				continue;
+				if(current->IsRunning())
+					{
+					current->Invalidate();
+					}
+				else
+					{
+					*current_ptr=current->m_Next;
+					delete current;
+					continue;
+					}
 				}
-			handler->Invalidate();
-			if(prev)
-				{
-				prev->m_Next=next;
-				}
-			else
-				{
-				m_Handler=next;
-				}
-			handler=next;
+			current_ptr=&current->m_Next;
 			}
 		}
 
 protected:
 	// Con-/Destructors
-	EventBase()=default;
+	EventBase(): m_Handler(nullptr) {}
 
 	// Common
 	VOID AddHandler(_handler_t* Handler)noexcept
 		{
-		if(!m_Handler)
+		assert(Task::IsMainTask());
+		auto current_ptr=&m_Handler;
+		while(*current_ptr)
 			{
-			m_Handler=Handler;
-			return;
+			auto current=*current_ptr;
+			current_ptr=&current->m_Next;
 			}
-		auto handler=m_Handler;
-		while(handler->m_Next)
-			handler=handler->m_Next;
-		handler->m_Next=Handler;
+		*current_ptr=Handler;
 		}
 	VOID Run(_sender_t* Sender, _args_t... Arguments)
 		{
-		auto handler=m_Handler;
-		while(handler)
+		assert(Task::IsMainTask());
+		auto current_ptr=&m_Handler;
+		while(*current_ptr)
 			{
-			handler->Run(Sender, Arguments...);
-			handler=handler->m_Next;
+			auto current=*current_ptr;
+			current->Run(Sender, Arguments...);
+			if(!current->IsValid())
+				{
+				*current_ptr=current->m_Next;
+				delete current;
+				continue;
+				}
+			current_ptr=&current->m_Next;
 			}
 		}
-	Handle<_handler_t> m_Handler;
+	_handler_t* m_Handler;
 };
 
 
@@ -89,6 +99,7 @@ class Event: public EventBase<_sender_t, _args_t...>
 {
 public:
 	// Using
+	using _base_t=EventBase<_sender_t, _args_t...>;
 	using _handler_t=EventHandler<_sender_t, _args_t...>;
 
 	// Con-/Destructors
@@ -97,54 +108,54 @@ public:
 	Event(Event const&)=delete;
 
 	// Access
-	inline operator BOOL() { return this->m_Handler!=nullptr; }
-	inline VOID operator()(_sender_t* Sender, _args_t... Arguments) { this->Run(Sender, Arguments...); }
+	inline operator BOOL() { return _base_t::m_Handler!=nullptr; }
+	inline VOID operator()(_sender_t* Sender, _args_t... Arguments) { _base_t::Run(Sender, Arguments...); }
 
 	// Modification
 	inline VOID Add(VOID (*Procedure)())
 		{
 		auto handler=new EventProcedure<_sender_t, _args_t...>(Procedure);
-		this->AddHandler(handler);
+		_base_t::AddHandler(handler);
 		}
 	inline VOID Add(VOID (*Procedure)(_args_t...))
 		{
 		auto handler=new EventProcedureWithArgs<_sender_t, _args_t...>(Procedure);
-		this->AddHandler(handler);
+		_base_t::AddHandler(handler);
 		}
 	inline VOID Add(VOID (*Procedure)(_sender_t*, _args_t...))
 		{
 		auto handler=new EventProcedureWithSender<_sender_t, _args_t...>(Procedure);
-		this->AddHandler(handler);
+		_base_t::AddHandler(handler);
 		}
 	template <class _owner_t> inline VOID Add(_owner_t* Owner, VOID (_owner_t::*Procedure)())
 		{
 		auto handler=new EventMemberFunction<_sender_t, _owner_t, _args_t...>(Owner, Procedure);
-		this->AddHandler(handler);
+		_base_t::AddHandler(handler);
 		}
 	template <class _owner_t> inline VOID Add(Handle<_owner_t> Owner, VOID (_owner_t::*Procedure)())
 		{
 		auto handler=new EventMemberFunction<_sender_t, _owner_t, _args_t...>(Owner, Procedure);
-		this->AddHandler(handler);
+		_base_t::AddHandler(handler);
 		}
 	template <class _owner_t> inline VOID Add(_owner_t* Owner, VOID (_owner_t::*Procedure)(_args_t...))
 		{
 		auto handler=new EventMemberFunctionWithArgs<_sender_t, _owner_t, _args_t...>(Owner, Procedure);
-		this->AddHandler(handler);
+		_base_t::AddHandler(handler);
 		}
 	template <class _owner_t> inline VOID Add(Handle<_owner_t> Owner, VOID (_owner_t::*Procedure)(_args_t...))
 		{
 		auto handler=new EventMemberFunctionWithArgs<_sender_t, _owner_t, _args_t...>(Owner, Procedure);
-		this->AddHandler(handler);
+		_base_t::AddHandler(handler);
 		}
 	template <class _owner_t> inline VOID Add(_owner_t* Owner, VOID (_owner_t::*Procedure)(_sender_t*, _args_t...))
 		{
 		auto handler=new EventMemberFunctionWithSender<_sender_t, _owner_t, _args_t...>(Owner, Procedure);
-		this->AddHandler(handler);
+		_base_t::AddHandler(handler);
 		}
 	template <class _owner_t> inline VOID Add(Handle<_owner_t> Owner, VOID (_owner_t::*Procedure)(_sender_t*, _args_t...))
 		{
 		auto handler=new EventMemberFunctionWithSender<_sender_t, _owner_t, _args_t...>(Owner, Procedure);
-		this->AddHandler(handler);
+		_base_t::AddHandler(handler);
 		}
 };
 
@@ -158,6 +169,7 @@ class Event<_sender_t>: public EventBase<_sender_t>
 {
 public:
 	// Using
+	using _base_t=EventBase<_sender_t>;
 	using _handler_t=EventHandler<_sender_t>;
 
 	// Con-/Destructors
@@ -166,33 +178,33 @@ public:
 	Event(Event&&)=delete;
 
 	// Access
-	inline operator BOOL() { return this->m_Handler!=nullptr; }
-	inline VOID operator()(_sender_t* Sender) { this->Run(Sender); }
+	inline operator BOOL() { return _base_t::m_Handler!=nullptr; }
+	inline VOID operator()(_sender_t* Sender) { _base_t::Run(Sender); }
 
 	// Modification
 	inline VOID Add(VOID (*Procedure)())
 		{
 		auto handler=new EventProcedure<_sender_t>(Procedure);
-		this->AddHandler(handler);
+		_base_t::AddHandler(handler);
 		}
 	template <class _owner_t> inline VOID Add(_owner_t* Owner, VOID (_owner_t::*Procedure)())
 		{
 		auto handler=new EventMemberFunction<_sender_t, _owner_t>(Owner, Procedure);
-		this->AddHandler(handler);
+		_base_t::AddHandler(handler);
 		}
 	template <class _owner_t> inline VOID Add(Handle<_owner_t> Owner, VOID (_owner_t::*Procedure)())
 		{
 		auto handler=new EventMemberFunction<_sender_t, _owner_t>(Owner, Procedure);
-		this->AddHandler(handler);
+		_base_t::AddHandler(handler);
 		}
 	template <class _owner_t> inline VOID Add(_owner_t* Owner, VOID (_owner_t::*Procedure)(_sender_t*))
 		{
 		auto handler=new EventMemberFunctionWithSender<_sender_t, _owner_t>(Owner, Procedure);
-		this->AddHandler(handler);
+		_base_t::AddHandler(handler);
 		}
 	template <class _owner_t> inline VOID Add(Handle<_owner_t> Owner, VOID (_owner_t::*Procedure)(_sender_t*))
 		{
 		auto handler=new EventMemberFunctionWithSender<_sender_t, _owner_t>(Owner, Procedure);
-		this->AddHandler(handler);
+		_base_t::AddHandler(handler);
 		}
 };
