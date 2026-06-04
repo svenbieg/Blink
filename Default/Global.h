@@ -2,7 +2,7 @@
 // Global.h
 //==========
 
-// Using objectes randomly in multiple tasks.
+// Using unique objects randomly in multiple tasks.
 
 // Copyright 2026, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Default
