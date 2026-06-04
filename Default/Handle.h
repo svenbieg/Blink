@@ -5,7 +5,7 @@
 // Reference-counted objects on the heap.
 
 // Copyright 2026, Sven Bieg (svenbieg@outlook.de)
-// https://github.com/svenbieg/Default
+// https://github.com/svenbieg/Default/wiki#Handles
 
 #pragma once
 
