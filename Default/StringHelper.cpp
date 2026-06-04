@@ -1319,12 +1319,13 @@ UINT pos=0;
 while(str[pos])
 	{
 	WCHAR wc=0;
-	pos+=CharHelper::Read(&str[pos], &wc);
+	UINT clen=CharHelper::Read(&str[pos], &wc);
 	if(CharHelper::Equal(wc, c, mode...))
 		{
 		found=true;
 		break;
 		}
+	pos+=clen;
 	}
 if(pos_ptr)
 	*pos_ptr=pos;
