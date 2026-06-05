@@ -239,7 +239,7 @@ while(release)
 auto sleeping=s_Sleeping.First();
 if(sleeping)
 	{
-	UINT64 time=SystemTimer::GetTickCount64();
+	UINT64 time=SystemTimer::GetTickCount();
 	while(sleeping)
 		{
 		if(sleeping->m_ResumeTime>time)
@@ -259,7 +259,7 @@ if(waiting_count)
 
 VOID Scheduler::SuspendCurrentTask(UINT ms)
 {
-UINT64 resume_time=SystemTimer::GetTickCount64()+ms;
+UINT64 resume_time=SystemTimer::GetTickCount()+ms;
 SpinLock lock(s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];

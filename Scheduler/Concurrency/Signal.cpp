@@ -38,7 +38,7 @@ assert(!Interrupts::Active());
 assert(!Task::IsMainTask());
 UINT64 resume_time=0;
 if(timeout)
-	resume_time=SystemTimer::GetTickCount64()+timeout;
+	resume_time=SystemTimer::GetTickCount()+timeout;
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
@@ -59,7 +59,7 @@ assert(!Interrupts::Active());
 assert(!Task::IsMainTask());
 UINT64 resume_time=0;
 if(timeout)
-	resume_time=SystemTimer::GetTickCount64()+timeout;
+	resume_time=SystemTimer::GetTickCount()+timeout;
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];

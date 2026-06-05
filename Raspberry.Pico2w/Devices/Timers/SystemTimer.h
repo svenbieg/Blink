@@ -50,10 +50,8 @@ public:
 	friend Scheduler;
 
 	// Common
-	static inline UINT GetTickCount() { return (UINT)(Microseconds64()/1000); }
-	static inline UINT64 GetTickCount64() { return Microseconds64()/1000; }
-	static UINT Microseconds();
-	static UINT64 Microseconds64();
+	static inline UINT64 GetTickCount() { return Microseconds()/1000; }
+	static UINT64 Microseconds();
 
 private:
 	// Settings

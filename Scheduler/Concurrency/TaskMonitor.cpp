@@ -34,7 +34,7 @@ UINT TaskMonitor::GetTaskInfo(TASK_INFO* info, UINT count)
 if(!info||!count)
 	throw InvalidArgumentException();
 SpinLock lock(Scheduler::s_CriticalSection);
-UINT64 time=SystemTimer::Microseconds64();
+UINT64 time=SystemTimer::Microseconds();
 for(UINT core=0; core<Scheduler::CPU_COUNT; core++)
 	{
 	if(!s_Current[core])
@@ -86,7 +86,7 @@ s_Current[core]->m_AllocSize+=info.size;
 
 VOID TaskMonitor::ClearInterrupt(UINT core)
 {
-UINT64 time=SystemTimer::Microseconds64();
+UINT64 time=SystemTimer::Microseconds();
 UINT64 irq_time=time-s_IrqStart[core];
 s_Current[core]->m_StartTime+=irq_time;
 s_TotalTime+=irq_time;
@@ -103,7 +103,7 @@ s_Current[core]->m_AllocSize-=info.size;
 VOID TaskMonitor::Initialize()
 {
 SpinLock lock(Scheduler::s_CriticalSection);
-UINT64 time=SystemTimer::Microseconds64();
+UINT64 time=SystemTimer::Microseconds();
 for(UINT u=0; u<Scheduler::CPU_COUNT; u++)
 	{
 	auto current=Scheduler::s_CurrentTask[u];
@@ -121,12 +121,12 @@ s_TotalTime-=task->m_TotalTime;
 
 VOID TaskMonitor::SetInterrupt(UINT core)
 {
-s_IrqStart[core]=SystemTimer::Microseconds64();
+s_IrqStart[core]=SystemTimer::Microseconds();
 }
 
 VOID TaskMonitor::SetTask(UINT core, Task* next)
 {
-UINT64 time=SystemTimer::Microseconds64();
+UINT64 time=SystemTimer::Microseconds();
 if(s_Current[core])
 	{
 	UINT64 task_time=time-s_Current[core]->m_StartTime;

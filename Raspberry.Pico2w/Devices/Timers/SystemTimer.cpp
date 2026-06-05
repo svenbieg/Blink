@@ -54,13 +54,7 @@ RO32 INTS;
 // Common
 //========
 
-UINT SystemTimer::Microseconds()
-{
-auto timer=(TIMER_REGS*)TIMER0_BASE;
-return timer->TIMERAWL;
-}
-
-UINT64 SystemTimer::Microseconds64()
+UINT64 SystemTimer::Microseconds()
 {
 auto timer=(TIMER_REGS*)TIMER0_BASE;
 UINT hi=0;

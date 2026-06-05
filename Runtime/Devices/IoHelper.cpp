@@ -40,14 +40,14 @@ for(UINT u=0; u>=0; u++)
 
 VOID IoHelper::Wait(RO32& reg, UINT mask, UINT value, UINT timeout)
 {
-UINT64 time=SystemTimer::GetTickCount64();
+UINT64 time=SystemTimer::GetTickCount();
 UINT64 end=time+timeout;
 while(time<end)
 	{
 	if(IoHelper::Read(reg, mask)==value)
 		return;
 	Task::Sleep(10);
-	time=SystemTimer::GetTickCount64();
+	time=SystemTimer::GetTickCount();
 	}
 throw TimeoutException();
 }
