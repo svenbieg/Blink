@@ -17,6 +17,7 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)BitHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Callable.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Callback.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CharHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\Array.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\cluster.hpp" />

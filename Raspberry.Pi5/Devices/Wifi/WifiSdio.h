@@ -12,7 +12,7 @@
 #include "Concurrency/Task.h"
 #include "Devices/Emmc/EmmcHost.h"
 #include "Devices/Wifi/Wifi.h"
-#include "Event.h"
+#include "Callback.h"
 
 
 //===========
@@ -41,7 +41,7 @@ public:
 	~WifiSdio();
 
 	// Common
-	Event<WifiSdio, WifiPacket*> PacketReceived;
+	Callback<WifiPacket*> PacketReceived;
 
 	// Input-Stream
 	SIZE_T Available()override;

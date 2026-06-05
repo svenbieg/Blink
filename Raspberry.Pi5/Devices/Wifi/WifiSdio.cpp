@@ -355,7 +355,7 @@ while(!task->Cancelled)
 				auto pkt=WifiPacket::ReadFromStream(this);
 				if(pkt)
 					{
-					PacketReceived(this, pkt);
+					PacketReceived.Call(pkt);
 					}
 				else
 					{

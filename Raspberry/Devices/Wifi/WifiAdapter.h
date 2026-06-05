@@ -13,7 +13,6 @@
 #include "Concurrency/DispatchedQueue.h"
 #include "Concurrency/Task.h"
 #include "Devices/Wifi/WifiSdio.h"
-#include "Event.h"
 #include "Global.h"
 
 
@@ -47,7 +46,7 @@ public:
 	// Common
 	VOID Command(WifiCommand Command, UINT Argument);
 	VOID GetVariable(LPCSTR Name, VOID* Buffer, UINT Size);
-	Event<WifiAdapter, WifiPacket*> PacketReceived;
+	Callback<WifiPacket*> PacketReceived;
 	Signal Ready;
 	Handle<WifiPacket> SendAndReceive(Handle<WifiPacket> Request);
 	inline VOID SetVariable(LPCSTR Name, UINT Value) { SetVariable(Name, &Value, sizeof(UINT)); }

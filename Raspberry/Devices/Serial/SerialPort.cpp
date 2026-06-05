@@ -240,7 +240,7 @@ while(!task->Cancelled)
 	if(read)
 		{
 		spin_lock.Unlock();
-		DataReceived(this);
+		DataReceived.Call();
 		spin_lock.Lock();
 		}
 	while(m_OutputBuffer->Available())

@@ -13,7 +13,7 @@
 #include "Devices/Wifi/WifiSpi.h"
 #include "Devices/Pio/SpiEmulator.h"
 #include "Storage/Streams/RandomAccessStream.h"
-#include "Event.h"
+#include "Callback.h"
 
 
 //===========
@@ -52,7 +52,7 @@ public:
 	~WifiSdio();
 
 	// Common
-	Event<WifiSdio, WifiPacket*> PacketReceived;
+	Callback<WifiPacket*> PacketReceived;
 
 	// Input-Stream
 	SIZE_T Available()override;

@@ -162,7 +162,7 @@ m_InterruptPending.Trigger();
 
 VOID WifiSdio::PollBackplane(UINT addr, UINT mask, UINT value, UINT timeout)
 {
-UINT64 end=SystemTimer::GetTickCount64()+timeout;
+UINT64 end=SystemTimer::GetTickCount()+timeout;
 do
 	{
 	UINT read=ReadBackplane(addr);
@@ -170,13 +170,13 @@ do
 		return;
 	Task::Sleep(10);
 	}
-while(SystemTimer::GetTickCount64()<end);
+while(SystemTimer::GetTickCount()<end);
 throw TimeoutException();
 }
 
 VOID WifiSdio::PollRegister(SDIO_REG const& reg, UINT mask, UINT value, UINT timeout)
 {
-UINT64 end=SystemTimer::GetTickCount64()+timeout;
+UINT64 end=SystemTimer::GetTickCount()+timeout;
 do
 	{
 	UINT read=ReadRegister(reg);
@@ -184,7 +184,7 @@ do
 		return;
 	Task::Sleep(10);
 	}
-while(SystemTimer::GetTickCount64()<end);
+while(SystemTimer::GetTickCount()<end);
 throw TimeoutException();
 }
 
@@ -345,7 +345,7 @@ while(!task->Cancelled)
 		auto pkt=WifiPacket::ReadFromStream(this);
 		if(pkt)
 			{
-			PacketReceived(this, pkt);
+			PacketReceived.Call(pkt);
 			}
 		else
 			{

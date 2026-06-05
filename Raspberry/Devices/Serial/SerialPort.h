@@ -14,7 +14,7 @@
 #include "Storage/Streams/RandomAccessStream.h"
 #include "Storage/OutputBuffer.h"
 #include "Storage/RingBuffer.h"
-#include "Event.h"
+#include "Callback.h"
 
 
 //===========
@@ -56,7 +56,7 @@ public:
 	static Handle<SerialPort> Create(SerialDevice Device=SerialDevice::Serial0, BaudRate Baud=BaudRate::Baud115200);
 
 	// Common
-	Event<SerialPort> DataReceived;
+	Callback<> DataReceived;
 
 	// Input-Stream
 	SIZE_T Available()override;

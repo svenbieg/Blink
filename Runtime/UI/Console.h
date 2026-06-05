@@ -12,6 +12,7 @@
 #include "Collections/map.hpp"
 #include "Devices/Serial/SerialPort.h"
 #include "Callable.h"
+#include "Event.h"
 #include "Global.h"
 #include "StringBuilder.h"
 

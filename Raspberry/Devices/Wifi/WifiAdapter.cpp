@@ -152,7 +152,7 @@ m_RequestId(0)
 {
 wifi_config_size=InitializeConfiguration(&wifi_config, wifi_config_size);
 m_Sdio=WifiSdio::Create();
-m_Sdio->PacketReceived.Add(this, &WifiAdapter::OnPacketReceived);
+m_Sdio->PacketReceived.Set(this, &WifiAdapter::OnPacketReceived);
 }
 
 
@@ -231,7 +231,7 @@ switch(type)
 		}
 	default:
 		{
-		PacketReceived(this, pkt);
+		PacketReceived.Call(pkt);
 		break;
 		}
 	}
