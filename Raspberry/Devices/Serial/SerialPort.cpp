@@ -226,18 +226,7 @@ while(!IoHelper::Read(uart->FLAGS, FLAG_RX_EMPTY))
 	}
 if(read)
 	m_InputSignal.Trigger();
-SIZE_T written=0;
-while(m_OutputBuffer->Available())
-	{
-	if(IoHelper::Read(uart->FLAGS, FLAG_TX_FULL))
-		break;
-	BYTE value=0;
-	m_OutputBuffer->Read(&value, 1);
-	IoHelper::Write(uart->DATA, value);
-	written++;
-	}
-if(written)
-	m_OutputSignal.Trigger(status);
+m_OutputSignal.Trigger(status);
 UINT mis=IoHelper::Read(uart->MIS);
 IoHelper::Write(uart->ICR, mis); // ACK
 }
