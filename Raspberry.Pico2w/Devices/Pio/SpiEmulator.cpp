@@ -88,15 +88,12 @@ if(config.PinTx!=config.PinRx)
 	m_StateMachine->SetPinDirection(config.PinRx, PioPinDirection::Input);
 m_StateMachine->SetPins(0);
 auto dma_mode=DMA_MODE[(UINT)config.Mode];
+m_DmaChannel=DmaChannel::Create();
+m_DmaChannel->SetByteSwap(true);
+m_DmaChannel->SetMode(dma_mode);
 m_InputBuffer=m_StateMachine->GetInputBuffer();
-m_InputDma=DmaChannel::Create();
-m_InputDma->SetByteSwap(true);
-m_InputDma->SetMode(dma_mode);
 m_InputRequest=m_StateMachine->GetInputRequest();
 m_OutputBuffer=m_StateMachine->GetOutputBuffer();
-m_OutputDma=DmaChannel::Create();
-m_OutputDma->SetByteSwap(true);
-m_OutputDma->SetMode(dma_mode);
 m_OutputRequest=m_StateMachine->GetOutputRequest();
 }
 
@@ -127,14 +124,14 @@ m_StateMachine->SetPins(0);
 
 VOID SpiEmulator::SpiRead(VOID* buf, UINT size)
 {
-m_InputDma->BeginRead(m_InputRequest, m_InputBuffer, buf, size);
-m_InputDma->Wait();
+m_DmaChannel->BeginRead(m_InputRequest, m_InputBuffer, buf, size);
+m_DmaChannel->Wait();
 }
 
 VOID SpiEmulator::SpiWrite(VOID const* buf, UINT size)
 {
-m_OutputDma->BeginWrite(m_OutputRequest, m_OutputBuffer, buf, size);
-m_OutputDma->Wait();
+m_DmaChannel->BeginWrite(m_OutputRequest, m_OutputBuffer, buf, size);
+m_DmaChannel->Wait();
 }
 
 }}

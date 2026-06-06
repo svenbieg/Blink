@@ -82,13 +82,12 @@ protected:
 
 	// Members
 	UINT m_DataSize;
+	Handle<DmaChannel> m_DmaChannel;
 	Handle<GpioHost> m_GpioHost;
 	RO32* m_InputBuffer;
-	Handle<DmaChannel> m_InputDma;
 	DmaRequest m_InputRequest;
 	GpioPin m_PinChipSelect;
 	RW32* m_OutputBuffer;
-	Handle<DmaChannel> m_OutputDma;
 	DmaRequest m_OutputRequest;
 	GpioPinMode m_PinMode;
 	Handle<StateMachine> m_StateMachine;
