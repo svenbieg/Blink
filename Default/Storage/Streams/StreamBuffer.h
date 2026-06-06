@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Concurrency/Mutex.h"
+#include "Concurrency/CriticalSection.h"
 #include "Concurrency/Signal.h"
 #include "Storage/Streams/RandomAccessStream.h"
 #include "Handle.h"
@@ -31,18 +31,15 @@ class StreamBuffer: public Object, public RandomAccessStream
 {
 public:
 	// Using
-	using Mutex=Concurrency::Mutex;
+	using CriticalSection=Concurrency::CriticalSection;
 	using Signal=Concurrency::Signal;
 
-	// Friends
-	friend Object;
-
 	// Con-/Destructors
-	~StreamBuffer();
+	~StreamBuffer()noexcept;
 	static inline Handle<StreamBuffer> Create(SIZE_T ChunkSize=64) { return new StreamBuffer(ChunkSize); }
 
 	// Common
-	VOID Clear();
+	VOID Clear()noexcept;
 
 	// Input-Stream
 	SIZE_T Available()override;
@@ -66,12 +63,12 @@ private:
 
 	// Common
 	CHUNK* CreateChunk();
-	VOID FreeChunk();
 	VOID FreeChunks(CHUNK* First);
 	SIZE_T m_ChunkSize;
+	CriticalSection m_CriticalSection;
 	CHUNK* m_First;
+	CHUNK* m_Free;
 	CHUNK* m_Last;
-	Mutex m_Mutex;
 	SIZE_T m_Read;
 	Signal m_Signal;
 	SIZE_T m_Size;

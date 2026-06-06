@@ -11,8 +11,7 @@
 
 #include "Concurrency/Scheduler.h"
 #include "Devices/Serial/SerialConfig.h"
-#include "Storage/Streams/RandomAccessStream.h"
-#include "Storage/OutputBuffer.h"
+#include "Storage/Streams/StreamBuffer.h"
 #include "Storage/RingBuffer.h"
 #include "Callback.h"
 
@@ -48,8 +47,11 @@ class SerialPort: public Object, public Storage::Streams::RandomAccessStream
 {
 public:
 	// Using
-	using OutputBuffer=Storage::OutputBuffer;
 	using RingBuffer=Storage::RingBuffer;
+	using StreamBuffer=Storage::Streams::StreamBuffer;
+
+	// Friends
+	friend Object;
 
 	// Con-/Destructors
 	~SerialPort();
@@ -66,9 +68,12 @@ public:
 	VOID Flush()override;
 	SIZE_T Write(VOID const* Buffer, SIZE_T Size)override;
 
+protected:
+	// Common
+	UINT Release()noexcept override;
+
 private:
 	// Con-/Destructors
-	friend Object;
 	SerialPort(SerialDevice Device, BaudRate Baud);
 	static SerialPort* s_Current[SERIAL_COUNT];
 	static Concurrency::Mutex s_Mutex;
@@ -81,9 +86,9 @@ private:
 	VOID* m_Device;
 	UINT m_Id;
 	Handle<RingBuffer> m_InputBuffer;
+	Handle<StreamBuffer> m_OutputBuffer;
 	Handle<Concurrency::Task> m_ServiceTask;
 	Concurrency::Signal m_Signal;
-	Handle<OutputBuffer> m_OutputBuffer;
 };
 
 }}

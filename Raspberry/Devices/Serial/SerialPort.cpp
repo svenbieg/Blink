@@ -9,8 +9,6 @@
 // Using
 //=======
 
-#include <new>
-
 using namespace Concurrency;
 using namespace Devices::Gpio;
 using namespace Devices::System;
@@ -110,16 +108,13 @@ return (rem*64+baud16/2)/baud16;
 
 SerialPort::~SerialPort()
 {
-WriteLock lock(s_Mutex);
-if(m_ServiceTask)
-	m_ServiceTask->Cancel();
-s_Current[m_Id]=nullptr;
+m_ServiceTask->Cancel();
 }
 
 Handle<SerialPort> SerialPort::Create(SerialDevice device, BaudRate baud)
 {
-UINT id=(UINT)device;
 WriteLock lock(s_Mutex);
+UINT id=(UINT)device;
 if(s_Current[id])
 	throw AccessDeniedException();
 auto serial=Object::Create<SerialPort>(device, baud);
@@ -134,13 +129,11 @@ return serial;
 
 SIZE_T SerialPort::Available()
 {
-SpinLock lock(m_CriticalSection);
 return m_InputBuffer->Available();
 }
 
 SIZE_T SerialPort::Read(VOID* buf, SIZE_T size)
 {
-SpinLock lock(m_CriticalSection);
 return m_InputBuffer->Read(buf, size);
 }
 
@@ -171,13 +164,30 @@ m_Device((VOID*)SERIAL_DEVICES[(UINT)device].BASE),
 m_Id((UINT)device)
 {
 m_InputBuffer=RingBuffer::Create(UART_RX_BYTES);
-m_OutputBuffer=OutputBuffer::Create(UART_TX_BYTES);
+m_OutputBuffer=StreamBuffer::Create(UART_TX_BYTES);
 auto name=String::Create("serial%u", m_Id);
 m_ServiceTask=ServiceTask::Create(this, &SerialPort::ServiceTask, name, SERIAL_STACK);
 }
 
 SerialPort* SerialPort::s_Current[SERIAL_COUNT]={ nullptr };
 Mutex SerialPort::s_Mutex;
+
+
+//==================
+// Common Protected
+//==================
+
+UINT SerialPort::Release()noexcept
+{
+WriteLock lock(s_Mutex);
+UINT ref_count=Cpu::InterlockedDecrement(&m_ReferenceCount);
+if(ref_count==0)
+	{
+	s_Current[m_Id]=nullptr;
+	delete this;
+	}
+return ref_count;
+}
 
 
 //================
@@ -233,15 +243,15 @@ IoHelper::Write(uart->IFLS, ifls);
 IoHelper::Write(uart->IMSC, IMSC_INT_OE|IMSC_INT_RT|IMSC_INT_TX|IMSC_INT_RX);
 IoHelper::Set(uart->CTRL, CTRL_RX_ENABLE|CTRL_TX_ENABLE|CTRL_ENABLE);
 auto task=Task::Get();
-SpinLock spin_lock(m_CriticalSection);
+SpinLock lock(m_CriticalSection);
 while(!task->Cancelled)
 	{
 	UINT read=m_InputBuffer->Available();
 	if(read)
 		{
-		spin_lock.Unlock();
+		lock.Unlock();
 		DataReceived.Call();
-		spin_lock.Lock();
+		lock.Lock();
 		}
 	while(m_OutputBuffer->Available())
 		{
@@ -252,7 +262,7 @@ while(!task->Cancelled)
 		IoHelper::Write(uart->DATA, value);
 		}
 	if(!read)
-		m_Signal.Wait(spin_lock);
+		m_Signal.Wait(lock);
 	}
 }
 

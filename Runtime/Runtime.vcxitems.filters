@@ -21,9 +21,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\InterruptHandler.h">
       <Filter>Devices\System</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\OutputBuffer.h">
-      <Filter>Storage</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props">
@@ -70,9 +67,6 @@
       <Filter>Devices</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)cxxabi.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\OutputBuffer.cpp">
-      <Filter>Storage</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">

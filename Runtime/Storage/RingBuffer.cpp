@@ -34,12 +34,6 @@ SpinLock lock(m_CriticalSection);
 return m_Head-m_Tail;
 }
 
-SIZE_T RingBuffer::AvailableForWrite()noexcept
-{
-SpinLock lock(m_CriticalSection);
-return m_Size-(m_Head-m_Tail);
-}
-
 SIZE_T RingBuffer::BeginRead(BYTE** buf_ptr)noexcept
 {
 SpinLock lock(m_CriticalSection);
@@ -93,6 +87,12 @@ while(pos<size)
 	pos+=copy;
 	}
 return pos;
+}
+
+SIZE_T RingBuffer::Writable()noexcept
+{
+SpinLock lock(m_CriticalSection);
+return m_Size-(m_Head-m_Tail);
 }
 
 SIZE_T RingBuffer::Write(VOID const* buf, SIZE_T size)noexcept

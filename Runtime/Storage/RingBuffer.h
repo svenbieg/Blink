@@ -38,12 +38,12 @@ public:
 
 	// Common
 	SIZE_T Available()noexcept;
-	SIZE_T AvailableForWrite()noexcept;
 	SIZE_T BeginRead(BYTE** Buffer)noexcept;
 	SIZE_T BeginWrite(BYTE** Buffer)noexcept;
 	VOID Consumed(SIZE_T Size)noexcept;
 	inline BOOL Read(BYTE* Value)noexcept { return Read(Value, 1)==1; }
 	SIZE_T Read(VOID* Buffer, SIZE_T Size)noexcept;
+	SIZE_T Writable()noexcept;
 	inline BOOL Write(BYTE Value)noexcept { return Write(&Value, 1)==1; }
 	inline BOOL Write(WORD Value)noexcept { return Write(&Value, 2)==2; }
 	SIZE_T Write(VOID const* Buffer, SIZE_T Size)noexcept;
