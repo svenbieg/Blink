@@ -13,7 +13,6 @@
 #include "Devices/Serial/SerialConfig.h"
 #include "Storage/Streams/StreamBuffer.h"
 #include "Storage/RingBuffer.h"
-#include "Callback.h"
 
 
 //===========
@@ -47,8 +46,11 @@ class SerialPort: public Object, public Storage::Streams::RandomAccessStream
 {
 public:
 	// Using
+	using CriticalSection=Concurrency::CriticalSection;
 	using RingBuffer=Storage::RingBuffer;
+	using Signal=Concurrency::Signal;
 	using StreamBuffer=Storage::Streams::StreamBuffer;
+	using Task=Concurrency::Task;
 
 	// Friends
 	friend Object;
@@ -56,9 +58,6 @@ public:
 	// Con-/Destructors
 	~SerialPort();
 	static Handle<SerialPort> Create(SerialDevice Device=SerialDevice::Serial0, BaudRate Baud=BaudRate::Baud115200);
-
-	// Common
-	Callback<> DataReceived;
 
 	// Input-Stream
 	SIZE_T Available()override;
@@ -82,13 +81,14 @@ private:
 	VOID OnInterrupt();
 	VOID ServiceTask();
 	BaudRate m_BaudRate;
-	Concurrency::CriticalSection m_CriticalSection;
+	CriticalSection m_CriticalSection;
 	VOID* m_Device;
 	UINT m_Id;
 	Handle<RingBuffer> m_InputBuffer;
+	Signal m_InputSignal;
 	Handle<StreamBuffer> m_OutputBuffer;
-	Handle<Concurrency::Task> m_ServiceTask;
-	Concurrency::Signal m_Signal;
+	Signal m_OutputSignal;
+	Handle<Task> m_ServiceTask;
 };
 
 }}

@@ -134,7 +134,21 @@ return m_InputBuffer->Available();
 
 SIZE_T SerialPort::Read(VOID* buf, SIZE_T size)
 {
-return m_InputBuffer->Read(buf, size);
+auto dst=(BYTE*)buf;
+SIZE_T pos=0;
+while(pos<size)
+	{
+	SIZE_T available=m_InputBuffer->Available();
+	if(!available)
+		{
+		m_InputSignal.Wait();
+		continue;
+		}
+	SIZE_T copy=TypeHelper::Min(available, size-pos);
+	SIZE_T read=m_InputBuffer->Read(&dst[pos], copy);
+	pos+=read;
+	}
+return pos;
 }
 
 
@@ -145,7 +159,7 @@ return m_InputBuffer->Read(buf, size);
 VOID SerialPort::Flush()
 {
 m_OutputBuffer->Flush();
-m_Signal.Trigger();
+m_OutputSignal.Trigger();
 }
 
 SIZE_T SerialPort::Write(VOID const* buf, SIZE_T size)
@@ -199,6 +213,7 @@ VOID SerialPort::OnInterrupt()
 SpinLock lock(m_CriticalSection);
 auto uart=(PL011_REGS*)m_Device;
 Status status=Status::Success;
+SIZE_T read=0;
 while(!IoHelper::Read(uart->FLAGS, FLAG_RX_EMPTY))
 	{
 	UINT value=IoHelper::Read(uart->DATA);
@@ -207,7 +222,11 @@ while(!IoHelper::Read(uart->FLAGS, FLAG_RX_EMPTY))
 		status=Status::BufferOverrun;
 		break;
 		}
+	read++;
 	}
+if(read)
+	m_InputSignal.Trigger();
+SIZE_T written=0;
 while(m_OutputBuffer->Available())
 	{
 	if(IoHelper::Read(uart->FLAGS, FLAG_TX_FULL))
@@ -215,10 +234,12 @@ while(m_OutputBuffer->Available())
 	BYTE value=0;
 	m_OutputBuffer->Read(&value, 1);
 	IoHelper::Write(uart->DATA, value);
+	written++;
 	}
+if(written)
+	m_OutputSignal.Trigger(status);
 UINT mis=IoHelper::Read(uart->MIS);
 IoHelper::Write(uart->ICR, mis); // ACK
-m_Signal.Trigger(status);
 }
 
 VOID SerialPort::ServiceTask()
@@ -246,13 +267,6 @@ auto task=Task::Get();
 SpinLock lock(m_CriticalSection);
 while(!task->Cancelled)
 	{
-	UINT read=m_InputBuffer->Available();
-	if(read)
-		{
-		lock.Unlock();
-		DataReceived.Call();
-		lock.Lock();
-		}
 	while(m_OutputBuffer->Available())
 		{
 		if(IoHelper::Read(uart->FLAGS, FLAG_TX_FULL))
@@ -261,8 +275,7 @@ while(!task->Cancelled)
 		m_OutputBuffer->Read(&value, 1);
 		IoHelper::Write(uart->DATA, value);
 		}
-	if(!read)
-		m_Signal.Wait(lock);
+	m_OutputSignal.Wait(lock);
 	}
 }
 

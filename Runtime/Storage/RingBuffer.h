@@ -47,7 +47,7 @@ public:
 	inline BOOL Write(BYTE Value)noexcept { return Write(&Value, 1)==1; }
 	inline BOOL Write(WORD Value)noexcept { return Write(&Value, 2)==2; }
 	SIZE_T Write(VOID const* Buffer, SIZE_T Size)noexcept;
-	inline VOID Written(SIZE_T Size)noexcept { m_Head+=Size; }
+	VOID Written(SIZE_T Size)noexcept;
 
 private:
 	// Con-/Destructors

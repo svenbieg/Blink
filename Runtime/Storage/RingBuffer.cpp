@@ -113,6 +113,12 @@ while(pos<write)
 return size;
 }
 
+VOID RingBuffer::Written(SIZE_T size)noexcept
+{
+SpinLock lock(m_CriticalSection);
+m_Head+=size;
+}
+
 
 //==========================
 // Con-/Destructors Private

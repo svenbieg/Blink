@@ -10,6 +10,7 @@
 //=======
 
 #include "Collections/map.hpp"
+#include "Concurrency/Task.h"
 #include "Devices/Serial/SerialPort.h"
 #include "Callable.h"
 #include "Event.h"
@@ -33,8 +34,10 @@ class Console: public Global<Console>, public Storage::Streams::OutputStream
 public:
 	// Using
 	using ConsoleHandler=Callable<VOID>;
+	using CommandMap=Collections::map<Handle<String>, Handle<ConsoleHandler>>;
 	using Mutex=Concurrency::Mutex;
 	using SerialPort=Devices::Serial::SerialPort;
+	using Task=Concurrency::Task;
 
 	// Con-/Destructors
 	static inline Handle<Console> Create() { return Global::Create(); }
@@ -79,9 +82,10 @@ private:
 	Console();
 
 	// Common
+	VOID ConsoleTask();
 	VOID HandleCommand(Handle<String> Command);
-	VOID OnSerialPortDataReceived();
-	Collections::map<Handle<String>, Handle<ConsoleHandler>> m_Commands;
+	CommandMap m_Commands;
+	Handle<Task> m_ConsoleTask;
 	Mutex m_Mutex;
 	Handle<SerialPort> m_SerialPort;
 	StringBuilder m_StringBuilder;

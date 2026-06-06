@@ -83,13 +83,32 @@ Console::Console():
 m_This(this)
 {
 m_SerialPort=SerialPort::Create();
-m_SerialPort->DataReceived.Set(this, &Console::OnSerialPortDataReceived);
+m_ConsoleTask=Task::Create(this, &Console::ConsoleTask, "console", 1024);
 }
 
 
 //================
 // Common Private
 //================
+
+VOID Console::ConsoleTask()
+{
+StreamReader reader(m_SerialPort);
+auto task=Task::Get();
+while(!task->Cancelled)
+	{
+	TCHAR c=0;
+	reader.ReadChar(&c);
+	if(CharHelper::IsLineBreak(c))
+		{
+		auto cmd=m_StringBuilder.ToString();
+		if(cmd)
+			DispatchedQueue::Append(this, [this, cmd](){ HandleCommand(cmd); });
+		continue;
+		}
+	m_StringBuilder.Append(c);
+	}
+}
 
 VOID Console::HandleCommand(Handle<String> cmd)
 {
@@ -104,24 +123,6 @@ if(found)
 else
 	{
 	CommandReceived(this, cmd);
-	}
-}
-
-VOID Console::OnSerialPortDataReceived()
-{
-StreamReader reader(m_SerialPort);
-while(m_SerialPort->Available())
-	{
-	TCHAR c=0;
-	reader.ReadChar(&c);
-	if(CharHelper::IsLineBreak(c))
-		{
-		auto cmd=m_StringBuilder.ToString();
-		if(cmd)
-			DispatchedQueue::Append(this, [this, cmd](){ HandleCommand(cmd); });
-		continue;
-		}
-	m_StringBuilder.Append(c);
 	}
 }
 
