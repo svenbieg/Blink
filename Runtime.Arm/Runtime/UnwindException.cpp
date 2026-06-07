@@ -25,7 +25,7 @@ extern "C"
 extern BYTE __exidx_start;
 extern BYTE __exidx_end;
 extern VOID exc_restore_context(EXC_FRAME* Context);
-extern VOID exc_resume(VOID* Resume, VOID* Argument);
+extern VOID exc_resume(EXC_FRAME* Frame, SIZE_T Resume, VOID* Argument);
 extern VOID exc_save_context(EXC_FRAME* Context);
 }
 
@@ -138,8 +138,7 @@ System::Restart();
 
 [[noreturn]] VOID UnwindException::Cleanup(SIZE_T landing_pad)
 {
-Frame.PC=landing_pad|THUMB_BIT;
-exc_restore_context(&Frame);
+exc_resume(&Frame, landing_pad|THUMB_BIT, this);
 System::Restart();
 }
 
@@ -148,7 +147,7 @@ System::Restart();
 auto task=Task::Get();
 auto exc=task->m_Exception;
 exc->Frame.SP=exc->m_Context.StackPointer;
-exc_resume((VOID*)_Unwind_Resume, exc);
+exc_resume(&exc->Frame, (SIZE_T)_Unwind_Resume, exc);
 System::Restart();
 }
 

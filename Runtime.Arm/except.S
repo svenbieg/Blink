@@ -30,9 +30,10 @@ ldrd r0, r1, [r0, #EXC_FRAME_R0]
 bx lr
 
 globl_func exc_resume
-mov r2, r0
-mov r0, r1
-bx r2
+ldr r3, [r0, #EXC_FRAME_SP]
+mov sp, r3
+mov r0, r2
+bx r1
 
 globl_func exc_save_context
 strd r0, r1, [r0, #EXC_FRAME_R0]
