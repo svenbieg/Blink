@@ -70,7 +70,7 @@ SECTIONS
 .nodata (NOLOAD) :
 	{
 	*(.nodata .nodata.*)
-	. = ALIGN(CONFIG_STACK_SIZE);
+	. = ALIGN(4);
 	__stack_start = .;
 	. += CONFIG_CPU_COUNT * CONFIG_STACK_SIZE;
 	__stack_end = .;
