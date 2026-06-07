@@ -87,7 +87,7 @@ private:
 	Handle<RingBuffer> m_InputBuffer;
 	Signal m_InputSignal;
 	Handle<StreamBuffer> m_OutputBuffer;
-	Signal m_OutputSignal;
+	Signal m_ServiceSignal;
 	Handle<Task> m_ServiceTask;
 };
 

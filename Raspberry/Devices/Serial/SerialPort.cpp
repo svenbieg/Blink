@@ -159,7 +159,7 @@ return pos;
 VOID SerialPort::Flush()
 {
 m_OutputBuffer->Flush();
-m_OutputSignal.Trigger();
+m_ServiceSignal.Trigger();
 }
 
 SIZE_T SerialPort::Write(VOID const* buf, SIZE_T size)
@@ -213,7 +213,6 @@ VOID SerialPort::OnInterrupt()
 SpinLock lock(m_CriticalSection);
 auto uart=(PL011_REGS*)m_Device;
 Status status=Status::Success;
-SIZE_T read=0;
 while(!IoHelper::Read(uart->FLAGS, FLAG_RX_EMPTY))
 	{
 	UINT value=IoHelper::Read(uart->DATA);
@@ -222,13 +221,10 @@ while(!IoHelper::Read(uart->FLAGS, FLAG_RX_EMPTY))
 		status=Status::BufferOverrun;
 		break;
 		}
-	read++;
 	}
-if(read)
-	m_InputSignal.Trigger();
-m_OutputSignal.Trigger(status);
 UINT mis=IoHelper::Read(uart->MIS);
 IoHelper::Write(uart->ICR, mis); // ACK
+m_ServiceSignal.Trigger(status);
 }
 
 VOID SerialPort::ServiceTask()
@@ -256,6 +252,8 @@ auto task=Task::Get();
 SpinLock lock(m_CriticalSection);
 while(!task->Cancelled)
 	{
+	if(m_InputBuffer->Available())
+		m_InputSignal.Trigger();
 	while(m_OutputBuffer->Available())
 		{
 		if(IoHelper::Read(uart->FLAGS, FLAG_TX_FULL))
@@ -264,7 +262,7 @@ while(!task->Cancelled)
 		m_OutputBuffer->Read(&value, 1);
 		IoHelper::Write(uart->DATA, value);
 		}
-	m_OutputSignal.Wait(lock);
+	m_ServiceSignal.Wait(lock);
 	}
 }
 
