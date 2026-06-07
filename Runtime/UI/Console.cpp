@@ -83,7 +83,7 @@ Console::Console():
 m_This(this)
 {
 m_SerialPort=SerialPort::Create();
-m_ConsoleTask=Task::Create(this, &Console::ConsoleTask, "console", 1024);
+m_ConsoleTask=Task::Create(this, &Console::ConsoleTask, "console", 2048);
 }
 
 
