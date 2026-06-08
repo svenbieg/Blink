@@ -2,7 +2,7 @@
 // Handle.h
 //==========
 
-// Reference-counted objects on the heap.
+// Smart pointer to a reference-counted object.
 
 // Copyright 2026, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Default/wiki#Handles
@@ -32,96 +32,237 @@ public:
 	template <class _friend_t> friend class Handle;
 
 	// Con-/Destructors
-	Handle()=default;
-	inline Handle(nullptr_t)noexcept: m_Object(nullptr) {}
-	inline Handle(_obj_t* Object)noexcept { Create(&m_Object, Object); }
-	inline Handle(Handle const& Copy)noexcept { Create(&m_Object, Copy.m_Object); }
-	Handle(Handle&& Move)noexcept: m_Object(Move.m_Object)
+	Handle()noexcept:
+		m_Object(nullptr)
+		{}
+	inline Handle(nullptr_t)noexcept:
+		m_Object(nullptr)
+		{}
+	inline Handle(_obj_t* Object)noexcept
+		{
+		Create(&m_Object, Object);
+		}
+	inline Handle(Handle const& Copy)noexcept
+		{
+		Create(&m_Object, Copy.m_Object);
+		}
+	inline Handle(Handle&& Move)noexcept:
+		m_Object(Move.m_Object)
 		{
 		Move.m_Object=nullptr;
 		}
-	template <class _convert_t> inline Handle(_convert_t* Object)noexcept { Create(&m_Object, Object); }
-	template <class _convert_t> inline Handle(Handle<_convert_t>const& Copy)noexcept { Create(&m_Object, Copy.m_Object); }
-	inline ~Handle()noexcept { Clear(&m_Object); }
+	template <class _convert_t> inline Handle(_convert_t* Object)noexcept
+		{
+		Create(&m_Object, Object);
+		}
+	template <class _convert_t> inline Handle(Handle<_convert_t>const& Copy)noexcept
+		{
+		Create(&m_Object, Copy.m_Object);
+		}
+	inline ~Handle()noexcept
+		{
+		Clear(&m_Object);
+		}
 
 	// Access
-	inline operator BOOL()const noexcept { return m_Object!=nullptr; }
-	inline operator _obj_t*()const noexcept { return m_Object; }
-	inline _obj_t* operator->()const { return m_Object; }
-	template <class _convert_t> inline Handle<_convert_t> As()const
+	inline operator bool()const noexcept
+		{
+		return m_Object!=nullptr;
+		}
+	inline operator _obj_t*()const noexcept
+		{
+		return m_Object;
+		}
+	inline _obj_t* operator->()const
+		{
+		return m_Object;
+		}
+	template <class _convert_t> Handle<_convert_t> As()const
 		{
 		auto convert=dynamic_cast<_convert_t*>(m_Object);
 		if(!convert)
 			throw InvalidArgumentException();
 		return convert;
 		}
-	template <class _convert_t> inline Handle<_convert_t> As(std::nothrow_t)const noexcept { return dynamic_cast<_convert_t*>(m_Object); }
+	template <class _convert_t> inline Handle<_convert_t> As(std::nothrow_t)const noexcept
+		{
+		return dynamic_cast<_convert_t*>(m_Object);
+		}
 
 	// Comparison
-	inline BOOL operator==(nullptr_t)const noexcept { return m_Object==nullptr; }
-	inline BOOL operator==(_obj_t* Compare)const noexcept { return m_Object==Compare; }
-	inline BOOL operator==(Handle const& Compare)const noexcept { return m_Object==Compare.m_Object; }
-	template <class _convert_t> inline BOOL operator==(_convert_t* Compare)const noexcept { return m_Object==(_obj_t*)Compare; }
-	template <class _convert_t> inline BOOL operator==(Handle<_convert_t> const& Compare)const noexcept { return m_Object==(_obj_t*)Compare.m_Object; }
-	inline BOOL operator!=(nullptr_t)const noexcept { return !operator==(nullptr); }
-	inline BOOL operator!=(_obj_t* Compare)const noexcept { return !operator==(Compare); }
-	inline BOOL operator!=(Handle const& Compare)const noexcept { return !operator==(Compare.m_Object); }
-	template <class _convert_t> inline BOOL operator!=(_convert_t* Compare)const noexcept { return m_Object!=(_obj_t*)Compare; }
-	template <class _convert_t> inline BOOL operator!=(Handle<_convert_t> const& Compare)const noexcept { return m_Object!=(_obj_t*)Compare.m_Object; }
-	inline BOOL operator>(nullptr_t)const noexcept { return m_Object>nullptr; }
-	inline BOOL operator>(_obj_t* Compare)const noexcept { return m_Object>Compare; }
-	inline BOOL operator>(Handle const& Compare)const noexcept { return m_Object>Compare.m_Object; }
-	template <class _convert_t> inline BOOL operator>(_convert_t* Compare)const noexcept { return m_Object>Compare; }
-	template <class _convert_t> inline BOOL operator>(Handle<_convert_t> const& Compare)const noexcept { return m_Object>Compare.m_Object; }
-	inline BOOL operator>=(nullptr_t)const noexcept { return m_Object>=nullptr; }
-	inline BOOL operator>=(_obj_t* Compare)const noexcept { return m_Object>=Compare; }
-	inline BOOL operator>=(Handle const& Compare)const noexcept { return m_Object>=Compare.m_Object; }
-	template <class _convert_t> inline BOOL operator>=(_convert_t* Compare)const noexcept { return m_Object>=Compare; }
-	template <class _convert_t> inline BOOL operator>=(Handle<_convert_t> const& Compare)const noexcept { return m_Object>=Compare.m_Object; }
-	inline BOOL operator<(nullptr_t)const noexcept { return false; }
-	inline BOOL operator<(_obj_t* Compare)const noexcept { return m_Object<Compare; }
-	inline BOOL operator<(Handle const& Compare)const noexcept { return m_Object<Compare.m_Object; }
-	template <class _convert_t> inline BOOL operator<(_convert_t* Compare)const noexcept { return m_Object<Compare; }
-	template <class _convert_t> inline BOOL operator<(Handle<_convert_t> const& Compare)const noexcept { return m_Object<Compare.m_Object; }
-	inline BOOL operator<=(nullptr_t)const noexcept { return m_Object<=nullptr; }
-	inline BOOL operator<=(_obj_t* Compare)const noexcept { return m_Object<=Compare; }
-	inline BOOL operator<=(Handle const& Compare)const noexcept { return m_Object<=Compare.m_Object; }
-	template <class _convert_t> inline BOOL operator<=(_convert_t* Compare)const noexcept { return m_Object<=Compare; }
-	template <class _convert_t> inline BOOL operator<=(Handle<_convert_t> const& Compare)const noexcept { return m_Object<=Compare.m_Object; }
+	inline BOOL operator==(nullptr_t)const noexcept
+		{
+		return m_Object==nullptr;
+		}
+	inline BOOL operator==(_obj_t* Compare)const noexcept
+		{
+		return m_Object==Compare;
+		}
+	inline BOOL operator==(Handle const& Compare)const noexcept
+		{
+		return m_Object==Compare.m_Object;
+		}
+	template <class _convert_t> inline BOOL operator==(_convert_t* Compare)const noexcept
+		{
+		return m_Object==static_cast<_obj_t*>(Compare);
+		}
+	template <class _convert_t> inline BOOL operator==(Handle<_convert_t> const& Compare)const noexcept
+		{
+		return m_Object==static_cast<_obj_t*>(Compare.m_Object);
+		}
+	inline BOOL operator!=(nullptr_t)const noexcept
+		{
+		return !operator==(nullptr);
+		}
+	inline BOOL operator!=(_obj_t* Compare)const noexcept
+		{
+		return !operator==(Compare);
+		}
+	inline BOOL operator!=(Handle const& Compare)const noexcept
+		{
+		return !operator==(Compare.m_Object);
+		}
+	template <class _convert_t> inline BOOL operator!=(_convert_t* Compare)const noexcept
+		{
+		return !operator==(Compare);
+		}
+	template <class _convert_t> inline BOOL operator!=(Handle<_convert_t> const& Compare)const noexcept
+		{
+		return !operator==(Compare);
+		}
+	inline BOOL operator>(nullptr_t)const noexcept
+		{
+		return m_Object>nullptr;
+		}
+	inline BOOL operator>(_obj_t* Compare)const noexcept
+		{
+		return m_Object>Compare;
+		}
+	inline BOOL operator>(Handle const& Compare)const noexcept
+		{
+		return m_Object>Compare.m_Object;
+		}
+	template <class _convert_t> inline BOOL operator>(_convert_t* Compare)const noexcept
+		{
+		return m_Object>Compare;
+		}
+	template <class _convert_t> inline BOOL operator>(Handle<_convert_t> const& Compare)const noexcept
+		{
+		return m_Object>Compare.m_Object;
+		}
+	inline BOOL operator>=(nullptr_t)const noexcept
+		{
+		return m_Object>=nullptr;
+		}
+	inline BOOL operator>=(_obj_t* Compare)const noexcept
+		{
+		return m_Object>=Compare;
+		}
+	inline BOOL operator>=(Handle const& Compare)const noexcept
+		{
+		return m_Object>=Compare.m_Object;
+		}
+	template <class _convert_t> inline BOOL operator>=(_convert_t* Compare)const noexcept
+		{
+		return m_Object>=Compare;
+		}
+	template <class _convert_t> inline BOOL operator>=(Handle<_convert_t> const& Compare)const noexcept
+		{
+		return m_Object>=Compare.m_Object;
+		}
+	inline BOOL operator<(nullptr_t)const noexcept
+		{
+		return false;
+		}
+	inline BOOL operator<(_obj_t* Compare)const noexcept
+		{
+		return m_Object<Compare;
+		}
+	inline BOOL operator<(Handle const& Compare)const noexcept
+		{
+		return m_Object<Compare.m_Object;
+		}
+	template <class _convert_t> inline BOOL operator<(_convert_t* Compare)const noexcept
+		{
+		return m_Object<Compare;
+		}
+	template <class _convert_t> inline BOOL operator<(Handle<_convert_t> const& Compare)const noexcept
+		{
+		return m_Object<Compare.m_Object;
+		}
+	inline BOOL operator<=(nullptr_t)const noexcept
+		{
+		return m_Object<=nullptr;
+		}
+	inline BOOL operator<=(_obj_t* Compare)const noexcept
+		{
+		return m_Object<=Compare;
+		}
+	inline BOOL operator<=(Handle const& Compare)const noexcept
+		{
+		return m_Object<=Compare.m_Object;
+		}
+	template <class _convert_t> inline BOOL operator<=(_convert_t* Compare)const noexcept
+		{
+		return m_Object<=Compare;
+		}
+	template <class _convert_t> inline BOOL operator<=(Handle<_convert_t> const& Compare)const noexcept
+		{
+		return m_Object<=Compare.m_Object;
+		}
 
 	// Assignment
-	inline Handle& operator=(nullptr_t)noexcept { Clear(&m_Object); return *this; }
-	inline Handle& operator=(_obj_t* Object)noexcept { Set(&m_Object, Object); return *this; }
-	inline Handle& operator=(Handle const& Copy)noexcept { Set(&m_Object, Copy.m_Object); return *this; }
-	template <class _convert_t> inline Handle& operator=(_convert_t* Object)noexcept { Set(&m_Object, Object); return *this; }
-	template <class _convert_t> inline Handle& operator=(Handle<_convert_t> const& Copy)noexcept { Set(&m_Object, Copy.m_Object); return *this; }
+	inline Handle& operator=(nullptr_t)noexcept
+		{
+		Clear(&m_Object);
+		return *this;
+		}
+	inline Handle& operator=(_obj_t* Object)noexcept
+		{
+		Set(&m_Object, Object);
+		return *this;
+		}
+	inline Handle& operator=(Handle const& Copy)noexcept
+		{
+		Set(&m_Object, Copy.m_Object);
+		return *this;
+		}
+	template <class _convert_t> inline Handle& operator=(_convert_t* Object)noexcept
+		{
+		Set(&m_Object, Object);
+		return *this;
+		}
+	template <class _convert_t> inline Handle& operator=(Handle<_convert_t> const& Copy)noexcept
+		{
+		Set(&m_Object, Copy.m_Object);
+		return *this;
+		}
 
 private:
 	// Common
-	template <class _clear_t> static VOID Clear(_clear_t** Clear)noexcept
+	template <class _clear_t> static VOID Clear(_clear_t** Destination)noexcept
 		{
-		auto obj=static_cast<Object*>(*Clear);
-		*Clear=nullptr;
-		if(obj)
-			obj->Release();
+		auto dst=static_cast<Object*>(*Destination);
+		*Destination=nullptr;
+		if(dst)
+			dst->Release();
 		}
-	template <class _create_t, class _convert_t> static VOID Create(_create_t** Create, _convert_t* Init)noexcept
+	template <class _create_t, class _convert_t> static VOID Create(_create_t** Destination, _convert_t* Source)noexcept
 		{
-		auto init=static_cast<_create_t*>(Init);
-		if(init)
-			init->AddReference();
-		*Create=init;
+		auto src=static_cast<_create_t*>(Source);
+		if(src)
+			src->AddReference();
+		*Destination=src;
 		}
-	template <class _set_t, class _convert_t> static VOID Set(_set_t** Set, _convert_t* To)noexcept
+	template <class _set_t, class _convert_t> static VOID Set(_set_t** Destination, _convert_t* Source)noexcept
 		{
-		if(*Set==To)
-			return;
-		auto obj=static_cast<Object*>(*Set);
-		*Set=static_cast<_set_t*>(To);
-		if(obj)
-			obj->Release();
-		if(To)
-			To->AddReference();
+		auto dst=static_cast<Object*>(*Destination);
+		auto src=static_cast<_set_t*>(Source);
+		if(src)
+			src->AddReference();
+		*Destination=src;
+		if(dst)
+			dst->Release();
 		}
-	_obj_t* m_Object=nullptr;
+	_obj_t* m_Object;
 };
