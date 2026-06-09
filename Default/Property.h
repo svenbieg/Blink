@@ -2,6 +2,9 @@
 // Property.h
 //============
 
+// Copyright 2026, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Default
+
 #pragma once
 
 
@@ -21,13 +24,22 @@ class Property
 {
 public:
 	// Con-/Destructors
-	Property(_owner_t* Owner, _item_t Value=_item_t())noexcept: m_Owner(Owner), m_Value(Value) {}
+	Property(_owner_t* Owner, _item_t Value=_item_t())noexcept:
+		m_Owner(Owner),
+		m_Value(Value)
+		{}
 	Property(Property const&)=delete;
 	Property(Property&&)=delete;
 
 	// Access
-	inline operator _item_t const&()const noexcept { return m_Value; }
-	inline _item_t const& Get()const noexcept { return m_Value; }
+	inline operator _item_t const&()const noexcept
+		{
+		return m_Value;
+		}
+	inline _item_t const& Get()const noexcept
+		{
+		return m_Value;
+		}
 
 	// Modification
 	inline Property& operator=(_item_t Value)
@@ -37,7 +49,8 @@ public:
 		}
 	inline Property& operator=(Property const& Property)
 		{
-		return operator=(Property.m_Value);
+		Set(Property.m_Value);
+		return *this;
 		}
 	Event<_owner_t, _item_t> Changed;
 	VOID Set(_item_t const& Value, BOOL Notify=true)

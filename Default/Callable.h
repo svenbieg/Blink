@@ -2,6 +2,11 @@
 // Callable.h
 //============
 
+// Callable object with return value.
+
+// Copyright 2026, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Default
+
 #pragma once
 
 

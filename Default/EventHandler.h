@@ -40,7 +40,10 @@ public:
 	// Common
 	virtual VOID* GetOwner()const noexcept=0;
 	virtual VOID Invalidate()noexcept=0;
-	BOOL IsRunning()const noexcept { return FlagHelper::Get(m_Flags, EventHandlerFlags::Running); }
+	BOOL IsRunning()const noexcept
+		{
+		return FlagHelper::Get(m_Flags, EventHandlerFlags::Running);
+		}
 	virtual BOOL IsValid()const noexcept=0;
 	virtual VOID Run(_sender_t* Sender, _args_t... Arguments)=0;
 
@@ -53,7 +56,10 @@ protected:
 		};
 
 	// Con-/Destructors
-	EventHandler()noexcept: m_Flags(EventHandlerFlags::None), m_Next(nullptr) {}
+	EventHandler()noexcept:
+		m_Flags(EventHandlerFlags::None),
+		m_Next(nullptr)
+		{}
 
 	// Common
 	EventHandlerFlags m_Flags;
@@ -77,9 +83,18 @@ public:
 	friend Event<_sender_t, _args_t...>;
 
 	// Common
-	VOID* GetOwner()const noexcept override { return (VOID*)m_Procedure; }
-	VOID Invalidate()noexcept override { m_Procedure=nullptr; }
-	BOOL IsValid()const noexcept override { return m_Procedure!=nullptr; }
+	VOID* GetOwner()const noexcept override
+		{
+		return (VOID*)m_Procedure;
+		}
+	VOID Invalidate()noexcept override
+		{
+		m_Procedure=nullptr;
+		}
+	BOOL IsValid()const noexcept override
+		{
+		return m_Procedure!=nullptr;
+		}
 	VOID Run(_sender_t* Sender, _args_t... Arguments)override
 		{
 		FlagHelper::Set(_base_t::m_Flags, _base_t::EventHandlerFlags::Running);
@@ -90,7 +105,9 @@ public:
 
 private:
 	// Con-/Destructors
-	EventProcedure(_proc_t Procedure)noexcept: m_Procedure(Procedure) {}
+	EventProcedure(_proc_t Procedure)noexcept:
+		m_Procedure(Procedure)
+		{}
 
 	// Common
 	_proc_t m_Procedure;
@@ -113,9 +130,18 @@ public:
 	friend Event<_sender_t, _args_t...>;
 
 	// Common
-	VOID* GetOwner()const noexcept override { return m_Procedure; }
-	VOID Invalidate()noexcept override { m_Procedure=nullptr; }
-	BOOL IsValid()const noexcept override { return m_Procedure!=nullptr; }
+	VOID* GetOwner()const noexcept override
+		{
+		return m_Procedure;
+		}
+	VOID Invalidate()noexcept override
+		{
+		m_Procedure=nullptr;
+		}
+	BOOL IsValid()const noexcept override
+		{
+		return m_Procedure!=nullptr;
+		}
 	VOID Run(_sender_t* Sender, _args_t... Arguments)override
 		{
 		FlagHelper::Set(_base_t::m_Flags, _base_t::EventHandlerFlags::Running);
@@ -126,7 +152,9 @@ public:
 
 private:
 	// Con-/Destructors
-	EventProcedureWithArgs(_proc_t Procedure)noexcept: m_Procedure(Procedure) {}
+	EventProcedureWithArgs(_proc_t Procedure)noexcept:
+		m_Procedure(Procedure)
+		{}
 
 	// Common
 	_proc_t m_Procedure;
@@ -149,9 +177,18 @@ public:
 	friend Event<_sender_t, _args_t...>;
 
 	// Common
-	VOID* GetOwner()const noexcept override { return m_Procedure; }
-	VOID Invalidate()noexcept override { m_Procedure=nullptr; }
-	BOOL IsValid()const noexcept override { return m_Procedure!=nullptr; }
+	VOID* GetOwner()const noexcept override
+		{
+		return m_Procedure;
+		}
+	VOID Invalidate()noexcept override
+		{
+		m_Procedure=nullptr;
+		}
+	BOOL IsValid()const noexcept override
+		{
+		return m_Procedure!=nullptr;
+		}
 	VOID Run(_sender_t* Sender, _args_t... Arguments)override
 		{
 		FlagHelper::Set(_base_t::m_Flags, _base_t::EventHandlerFlags::Running);
@@ -162,7 +199,9 @@ public:
 
 private:
 	// Con-/Destructors
-	EventProcedureWithSender(_proc_t Procedure)noexcept: m_Procedure(Procedure) {}
+	EventProcedureWithSender(_proc_t Procedure)noexcept:
+		m_Procedure(Procedure)
+		{}
 
 	// Common
 	_proc_t m_Procedure;
@@ -185,9 +224,18 @@ public:
 	friend Event<_sender_t, _args_t...>;
 
 	// Common
-	VOID* GetOwner()const noexcept override { return m_Owner; }
-	VOID Invalidate()noexcept override { m_Owner=nullptr; }
-	BOOL IsValid()const noexcept override { return m_Owner!=nullptr; }
+	VOID* GetOwner()const noexcept override
+		{
+		return m_Owner;
+		}
+	VOID Invalidate()noexcept override
+		{
+		m_Owner=nullptr;
+		}
+	BOOL IsValid()const noexcept override
+		{
+		return m_Owner!=nullptr;
+		}
 	VOID Run(_sender_t* Sender, _args_t... Arguments)override
 		{
 		FlagHelper::Set(_base_t::m_Flags, _base_t::EventHandlerFlags::Running);
@@ -198,7 +246,10 @@ public:
 
 private:
 	// Con-/Destructors
-	EventMemberFunction(_owner_t* Owner, _proc_t Procedure)noexcept: m_Owner(Owner), m_Procedure(Procedure) {}
+	EventMemberFunction(_owner_t* Owner, _proc_t Procedure)noexcept:
+		m_Owner(Owner),
+		m_Procedure(Procedure)
+		{}
 
 	// Common
 	_owner_t* m_Owner;
@@ -222,9 +273,18 @@ public:
 	friend Event<_sender_t, _args_t...>;
 
 	// Common
-	VOID* GetOwner()const noexcept override { return m_Owner; }
-	VOID Invalidate()noexcept override { m_Owner=nullptr; }
-	BOOL IsValid()const noexcept override { return m_Owner!=nullptr; }
+	VOID* GetOwner()const noexcept override
+		{
+		return m_Owner;
+		}
+	VOID Invalidate()noexcept override
+		{
+		m_Owner=nullptr;
+		}
+	BOOL IsValid()const noexcept override
+		{
+		return m_Owner!=nullptr;
+		}
 	VOID Run(_sender_t* Sender, _args_t... Arguments)override
 		{
 		FlagHelper::Set(_base_t::m_Flags, _base_t::EventHandlerFlags::Running);
@@ -235,7 +295,10 @@ public:
 
 private:
 	// Con-/Destructors
-	EventMemberFunctionWithArgs(_owner_t* Owner, _proc_t Procedure)noexcept: m_Owner(Owner), m_Procedure(Procedure) {}
+	EventMemberFunctionWithArgs(_owner_t* Owner, _proc_t Procedure)noexcept:
+		m_Owner(Owner),
+		m_Procedure(Procedure)
+		{}
 
 	// Common
 	_owner_t* m_Owner;
@@ -259,9 +322,18 @@ public:
 	friend Event<_sender_t, _args_t...>;
 
 	// Common
-	VOID* GetOwner()const noexcept override { return m_Owner; }
-	VOID Invalidate()noexcept override { m_Owner=nullptr; }
-	BOOL IsValid()const noexcept override { return m_Owner!=nullptr; }
+	VOID* GetOwner()const noexcept override
+		{
+		return m_Owner;
+		}
+	VOID Invalidate()noexcept override
+		{
+		m_Owner=nullptr;
+		}
+	BOOL IsValid()const noexcept override
+		{
+		return m_Owner!=nullptr;
+		}
 	VOID Run(_sender_t* Sender, _args_t... Arguments)override
 		{
 		FlagHelper::Set(_base_t::m_Flags, _base_t::EventHandlerFlags::Running);
@@ -272,7 +344,10 @@ public:
 
 private:
 	// Con-/Destructors
-	EventMemberFunctionWithSender(_owner_t* Owner, _proc_t Procedure)noexcept: m_Owner(Owner), m_Procedure(Procedure) {}
+	EventMemberFunctionWithSender(_owner_t* Owner, _proc_t Procedure)noexcept:
+		m_Owner(Owner),
+		m_Procedure(Procedure)
+		{}
 
 	// Common
 	_owner_t* m_Owner;

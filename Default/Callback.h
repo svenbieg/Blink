@@ -2,6 +2,11 @@
 // Callback.h
 //============
 
+// Calling a user-defined procedure.
+
+// Copyright 2026, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Default
+
 #pragma once
 
 
@@ -28,7 +33,10 @@ public:
 		if(m_Callback)
 			m_Callback->Call(Arguments...);
 		}
-	VOID Set(nullptr_t) { m_Callback=nullptr; }
+	VOID Set(nullptr_t)
+		{
+		m_Callback=nullptr;
+		}
 	VOID Set(VOID (*Procedure)(_args_t...))
 		{
 		m_Callback=CallableFunction<VOID, _args_t...>::Create(Procedure);

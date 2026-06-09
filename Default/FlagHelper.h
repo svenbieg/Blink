@@ -2,12 +2,15 @@
 // FlagHelper.h
 //==============
 
+// Copyright 2026, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Default
+
 #pragma once
 
 
-//========
-// Common
-//========
+//=============
+// Flag-Helper
+//=============
 
 class FlagHelper
 {
@@ -31,7 +34,7 @@ public:
 		static_assert(sizeof(_flag_t)<=4);
 		auto flags=static_cast<uint32_t>(Flags);
 		auto flag=static_cast<uint32_t>(Flag);
-		return (flags&flag)>0;
+		return (flags&flag)!=0;
 		}
 	template <class _flags_t, class _flag_t> static inline void Set(_flags_t& Flags, _flag_t Flag)noexcept
 		{

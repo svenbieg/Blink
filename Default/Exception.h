@@ -2,6 +2,9 @@
 // Exception.h
 //=============
 
+// Copyright 2026, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Default
+
 #pragma once
 
 
@@ -23,7 +26,7 @@ public:
 	Exception(Status Status=Status::Error): m_Status(Status) {}
 
 	// Common
-	Status GetStatus()const { return m_Status; }
+	inline Status GetStatus()const { return m_Status; }
 
 private:
 	// Common

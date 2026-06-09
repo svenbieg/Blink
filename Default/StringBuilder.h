@@ -2,6 +2,9 @@
 // StringBuilder.h
 //=================
 
+// Copyright 2026, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Default
+
 #pragma once
 
 

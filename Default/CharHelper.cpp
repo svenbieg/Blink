@@ -2,6 +2,9 @@
 // CharHelper.cpp
 //================
 
+// Copyright 2026, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Default
+
 #include "CharHelper.h"
 
 
@@ -130,14 +133,14 @@ WCHAR wc2=ToCharW(c2);
 return Compare(wc1, wc2, mode);
 }
 
-template <const BYTE* _compare_ids> inline INT CharCompare(WCHAR c1, WCHAR c2)noexcept
+template <const BYTE* _ids> inline INT CharCompare(WCHAR c1, WCHAR c2)noexcept
 {
 WORD w1=(WORD)c1;
 WORD w2=(WORD)c2;
 w1=TypeHelper::Min(0xFF, w1);
 w2=TypeHelper::Min(0xFF, w2);
-BYTE id1=_compare_ids[w1];
-BYTE id2=_compare_ids[w2];
+BYTE id1=_ids[w1];
+BYTE id2=_ids[w2];
 if(id1!=0xFF&&id2!=0xFF)
 	{
 	w1=id1;

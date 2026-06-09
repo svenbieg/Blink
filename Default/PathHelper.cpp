@@ -2,6 +2,9 @@
 // PathHelper.cpp
 //================
 
+// Copyright 2026, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Default
+
 #include "PathHelper.h"
 
 
@@ -113,9 +116,10 @@ for(UINT pos=len-1; pos>0; pos--)
 return String::Create(path);
 }
 
-//========
-// Common
-//========
+
+//=============
+// Path-Helper
+//=============
 
 UINT PathHelper::GetComponentLength(LPCSTR path)noexcept
 {

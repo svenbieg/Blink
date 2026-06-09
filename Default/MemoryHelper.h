@@ -2,6 +2,9 @@
 // MemoryHelper.h
 //================
 
+// Copyright 2026, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Default
+
 #pragma once
 
 
@@ -89,10 +92,22 @@ public:
 				*To++=*From++;
 			}
 		}
-	static inline VOID Zero(VOID* To, SIZE_T Size)noexcept { Fill(To, Size, 0); }
-	template <class _value_t> static inline VOID ZeroT(_value_t* To)noexcept { *To=_value_t(0); }
-	template <class _value_t> static inline VOID ZeroT(_value_t* To, SIZE_T Count)noexcept { FillT<_value_t>(To, Count, _value_t(0)); }
-	template <class _value_t> static inline VOID ZeroT(_value_t* To, _value_t* End)noexcept { FillT<_value_t>(To, End, _value_t(0)); }
+	static inline VOID Zero(VOID* To, SIZE_T Size)noexcept
+		{
+		Fill(To, Size, 0);
+		}
+	template <class _value_t> static inline VOID ZeroT(_value_t* To)noexcept
+		{
+		*To=_value_t(0);
+		}
+	template <class _value_t> static inline VOID ZeroT(_value_t* To, SIZE_T Count)noexcept
+		{
+		FillT<_value_t>(To, Count, _value_t(0));
+		}
+	template <class _value_t> static inline VOID ZeroT(_value_t* To, _value_t* End)noexcept
+		{
+		FillT<_value_t>(To, End, _value_t(0));
+		}
 };
 
 
