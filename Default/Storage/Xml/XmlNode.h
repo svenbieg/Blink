@@ -2,6 +2,9 @@
 // XmlNode.h
 //===========
 
+// Copyright 2026, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Default
+
 #pragma once
 
 
@@ -50,8 +53,14 @@ public:
 	friend XmlNodeChildIterator;
 
 	// Con-/Destructors
-	static inline Handle<XmlNode> Create(Handle<String> Tag=nullptr) { return new XmlNode(nullptr, Tag); }
-	static inline Handle<XmlNode> Create(XmlNode* Parent, Handle<String> Tag=nullptr) { return new XmlNode(Parent, Tag); }
+	static inline Handle<XmlNode> Create(Handle<String> Tag=nullptr)
+		{
+		return new XmlNode(nullptr, Tag);
+		}
+	static inline Handle<XmlNode> Create(XmlNode* Parent, Handle<String> Tag=nullptr)
+		{
+		return new XmlNode(Parent, Tag);
+		}
 
 	// Common
 	VOID AppendChild(XmlNode* Child);
@@ -74,7 +83,10 @@ public:
 	BOOL RemoveAttribute(Handle<String> Key);
 	VOID RemoveChildAt(UINT Position);
 	BOOL SetAttribute(Handle<String> Key, Handle<String> Value);
-	inline BOOL SetName(Handle<String> Name) { return SetAttribute("Name", Name); }
+	inline BOOL SetName(Handle<String> Name)
+		{
+		return SetAttribute("Name", Name);
+		}
 	BOOL SetTag(Handle<String> Tag);
 	BOOL SetValue(Handle<String> Value);
 	SIZE_T WriteToStream(OutputStream* Stream, INT Level=-1);

@@ -2,6 +2,9 @@
 // StreamWriter.cpp
 //==================
 
+// Copyright 2026, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Default
+
 #include "StreamWriter.h"
 
 

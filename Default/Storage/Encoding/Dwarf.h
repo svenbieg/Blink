@@ -2,6 +2,9 @@
 // Dwarf.h
 //=========
 
+// Copyright 2026, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Default
+
 // DWARF was orginally developed by Bell Labs and is
 // licensed under the GNU Free Documentation Standard.
 
@@ -14,6 +17,7 @@
 
 #include "Storage/Streams/InputStream.h"
 #include "Storage/Streams/OutputStream.h"
+#include "MemoryHelper.h"
 
 
 //===========
@@ -61,36 +65,66 @@ public:
 	using OutputStream=Storage::Streams::OutputStream;
 
 	// Con-/Destructors
-	Dwarf(SIZE_T Position): m_Buffer((BYTE*)Position) {}
-	Dwarf(Dwarf const& Dwarf): m_Buffer(Dwarf.m_Buffer) {}
+	Dwarf(SIZE_T Position):
+		m_Buffer((BYTE*)Position)
+		{}
+	Dwarf(Dwarf const& Dwarf):
+		m_Buffer(Dwarf.m_Buffer)
+		{}
 
 	// Common
-	inline LPCSTR Begin()const noexcept { return (LPCSTR)m_Buffer; }
+	inline LPCSTR Begin()const noexcept
+		{
+		return (LPCSTR)m_Buffer;
+		}
 	static UINT GetEncodedSize(BYTE Encoding);
-	inline SIZE_T GetPosition()const noexcept { return (SIZE_T)m_Buffer; }
-	inline UINT64 Read() { return Read((BYTE const*&)m_Buffer); }
+	inline SIZE_T GetPosition()const noexcept
+		{
+		return (SIZE_T)m_Buffer;
+		}
+	inline UINT64 Read()
+		{
+		return Read((BYTE const*&)m_Buffer);
+		}
 	static UINT64 Read(BYTE const*& Dwarf);
-	inline BYTE ReadByte()noexcept { return *m_Buffer++; }
-	static inline BYTE ReadByte(BYTE const*& Dwarf)noexcept { return *Dwarf++; }
-	inline UINT64 ReadEncoded(BYTE Encoding, SIZE_T DataRelative=0) { return ReadEncoded((BYTE const*&)m_Buffer, Encoding, DataRelative); }
+	inline BYTE ReadByte()noexcept
+		{
+		return *m_Buffer++;
+		}
+	static inline BYTE ReadByte(BYTE const*& Dwarf)noexcept
+		{
+		return *Dwarf++;
+		}
+	inline UINT64 ReadEncoded(BYTE Encoding, SIZE_T DataRelative=0)
+		{
+		return ReadEncoded((BYTE const*&)m_Buffer, Encoding, DataRelative);
+		}
 	static UINT64 ReadEncoded(BYTE const*& Dwarf, BYTE Encoding, SIZE_T DataRelative=0);
-	inline INT64 ReadSigned() { return ReadSigned((BYTE const*&)m_Buffer); }
+	inline INT64 ReadSigned()
+		{
+		return ReadSigned((BYTE const*&)m_Buffer);
+		}
 	static INT64 ReadSigned(BYTE const*& Dwarf);
 	static SIZE_T ReadSigned(InputStream* Stream, INT* Value);
 	static SIZE_T ReadSigned(InputStream* Stream, INT64* Value);
-	inline UINT64 ReadUnsigned() { return ReadUnsigned((BYTE const*&)m_Buffer); }
+	inline UINT64 ReadUnsigned()
+		{
+		return ReadUnsigned((BYTE const*&)m_Buffer);
+		}
 	static UINT64 ReadUnsigned(BYTE const*& Dwarf);
 	static SIZE_T ReadUnsigned(InputStream* Stream, UINT* Value);
 	static SIZE_T ReadUnsigned(InputStream* Stream, UINT64* Value);
 	template <typename _value_t> inline _value_t ReadValue()noexcept
 		{
-		_value_t value=*(_value_t const*)m_Buffer;
+		_value_t value;
+		MemoryHelper::Copy(&value, m_Buffer, sizeof(_value_t));
 		m_Buffer+=sizeof(_value_t);
 		return value;
 		}
 	template <typename _value_t> static inline _value_t ReadValue(BYTE const*& Dwarf)noexcept
 		{
-		_value_t value=*(_value_t const*)Dwarf;
+		_value_t value;
+		MemoryHelper::Copy(&value, Dwarf, sizeof(_value_t));
 		Dwarf+=sizeof(_value_t);
 		return value;
 		}
@@ -101,7 +135,10 @@ public:
 		Stream->Read(&value, sizeof(_value_t));
 		return value;
 		}
-	VOID SetPosition(SIZE_T Position)noexcept { m_Buffer=(BYTE*)Position; }
+	VOID SetPosition(SIZE_T Position)noexcept
+		{
+		m_Buffer=(BYTE*)Position;
+		}
 	static SIZE_T WriteSigned(OutputStream* Stream, INT64 Value);
 	static SIZE_T WriteUnsigned(OutputStream* Stream, UINT64 Value);
 

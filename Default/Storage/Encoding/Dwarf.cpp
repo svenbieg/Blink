@@ -2,6 +2,9 @@
 // Dwarf.cpp
 //===========
 
+// Copyright 2026, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Default
+
 // DWARF was orginally developed by Bell Labs,
 // licensed under the GNU Free Documentation Standard
 

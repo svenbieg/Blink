@@ -2,6 +2,9 @@
 // StreamBuffer.h
 //================
 
+// Copyright 2026, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Default
+
 #pragma once
 
 
@@ -36,7 +39,10 @@ public:
 
 	// Con-/Destructors
 	~StreamBuffer()noexcept;
-	static inline Handle<StreamBuffer> Create(SIZE_T ChunkSize=64) { return new StreamBuffer(ChunkSize); }
+	static inline Handle<StreamBuffer> Create(SIZE_T ChunkSize=64)
+		{
+		return new StreamBuffer(ChunkSize);
+		}
 
 	// Common
 	VOID Clear()noexcept;

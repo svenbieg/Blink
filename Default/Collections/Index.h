@@ -2,6 +2,12 @@
 // Index.h
 //=========
 
+// Implementation of a sorted list.
+// Items can be inserted, removed and looked-up in constant low time.
+
+// Copyright 2026, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Clusters/wiki/Index
+
 #pragma once
 
 
