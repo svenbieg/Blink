@@ -46,7 +46,6 @@ namespace Concurrency {
 
 typedef struct
 {
-SIZE_T AllocSize;
 Handle<String> Name;
 SIZE_T StackSize;
 SIZE_T StackUsed;
@@ -78,9 +77,7 @@ public:
 
 private:
 	// Common
-	static VOID Allocate(VOID* Buffer);
 	static VOID ClearInterrupt(UINT Core);
-	static VOID Free(VOID* Buffer)noexcept;
 	static VOID Initialize();
 	static VOID RemoveTask(Task* Task);
 	static VOID SetInterrupt(UINT Core);

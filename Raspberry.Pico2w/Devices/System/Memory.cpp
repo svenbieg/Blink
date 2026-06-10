@@ -11,7 +11,6 @@
 
 #include "Concurrency/ReadLock.h"
 #include "Concurrency/SpinLock.h"
-#include "Concurrency/TaskMonitor.h"
 #include "Concurrency/WriteLock.h"
 #include "Devices/Peripherals.h"
 #include "Runtime/Configuration.h"
@@ -53,14 +52,12 @@ WriteLock lock(s_Mutex);
 VOID* buf=heap_alloc((heap_t*)s_Heap, size);
 if(!buf)
 	throw OutOfMemoryException();
-TaskMonitor::Allocate(buf);
 return buf;
 }
 
 VOID Memory::Free(VOID* buf)noexcept
 {
 WriteLock lock(s_Mutex);
-TaskMonitor::Free(buf);
 heap_free((heap_t*)s_Heap, buf);
 }
 

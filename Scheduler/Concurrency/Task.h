@@ -155,7 +155,6 @@ protected:
 	static VOID Schedule(Task* Task)noexcept;
 	static VOID TaskProc(VOID* Parameter);
 	Link<Task> m_All;
-	SIZE_T m_AllocSize;
 	Link<Task> m_Create;
 	Task* m_Creator;
 	UnwindException* m_Exception;

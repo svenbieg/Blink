@@ -47,7 +47,6 @@ Task* task=Scheduler::s_All.First();
 while(task)
 	{
 	UINT64 task_time=task->m_TotalTime;
-	info[pos].AllocSize=task->m_AllocSize;
 	info[pos].Name=task->m_Name;
 	info[pos].StackSize=task->m_StackSize;
 	info[pos].StackUsed=task->m_StackUsed;
@@ -55,14 +54,12 @@ while(task)
 	total_time+=task_time;
 	if(++pos==count)
 		throw BufferOverrunException();
-	task->m_AllocSize=0;
 	task->m_TotalTime=0;
 	task=Scheduler::s_All.Next(task);
 	}
 lock.Unlock();
 if(pos>=count)
 	throw BufferOverrunException();
-info[pos].AllocSize=0;
 info[pos].Name="system";
 info[pos].StackSize=Runtime::CONFIG_STACK_SIZE;
 info[pos].StackUsed=0;
@@ -76,28 +73,12 @@ return pos+1;
 // Common Private
 //================
 
-VOID TaskMonitor::Allocate(VOID* buf)
-{
-UINT core=Cpu::GetId();
-heap_block_info_t info;
-heap_block_get_info((heap_t*)Memory::s_Heap, buf, &info);
-s_Current[core]->m_AllocSize+=info.size;
-}
-
 VOID TaskMonitor::ClearInterrupt(UINT core)
 {
 UINT64 time=SystemTimer::Microseconds();
 UINT64 irq_time=time-s_IrqStart[core];
 s_Current[core]->m_StartTime+=irq_time;
 s_TotalTime+=irq_time;
-}
-
-VOID TaskMonitor::Free(VOID* buf)noexcept
-{
-UINT core=Cpu::GetId();
-heap_block_info_t info;
-heap_block_get_info((heap_t*)Memory::s_Heap, buf, &info);
-s_Current[core]->m_AllocSize-=info.size;
 }
 
 VOID TaskMonitor::Initialize()

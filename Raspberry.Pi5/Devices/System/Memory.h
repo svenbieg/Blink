@@ -12,16 +12,6 @@
 #include "Concurrency/CriticalMutex.h"
 
 
-//======================
-// Forward-Declarations
-//======================
-
-namespace Concurrency
-{
-class TaskMonitor;
-}
-
-
 //===========
 // Namespace
 //===========
@@ -50,10 +40,6 @@ class Memory
 public:
 	// Using
 	using CriticalMutex=Concurrency::CriticalMutex;
-	using TaskMonitor=Concurrency::TaskMonitor;
-
-	// Friends
-	friend TaskMonitor;
 
 	// Common
 	static VOID* Allocate(SIZE_T Size);

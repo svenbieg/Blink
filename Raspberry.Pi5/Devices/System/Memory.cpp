@@ -50,14 +50,12 @@ WriteLock lock(s_Mutex);
 VOID* buf=heap_alloc((heap_t*)s_Heap, size);
 if(!buf)
 	throw OutOfMemoryException();
-TaskMonitor::Allocate(buf);
 return buf;
 }
 
 VOID Memory::Free(VOID* buf)
 {
 WriteLock lock(s_Mutex);
-TaskMonitor::Free(buf);
 heap_free((heap_t*)s_Heap, buf);
 }
 
