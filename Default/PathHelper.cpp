@@ -199,7 +199,7 @@ Handle<String> PathHelper::GetHostName(LPCWSTR path)noexcept
 return PathGetHostName(path);
 }
 
-Handle<String> PathHelper::GetHostName(Handle<String> const& path)noexcept
+Handle<String> PathHelper::GetHostName(Handle<String> path)noexcept
 {
 if(!path)
 	return nullptr;
@@ -216,6 +216,13 @@ LPCWSTR PathHelper::GetLastComponent(LPCWSTR path)noexcept
 return PathGetLastComponent(path);
 }
 
+LPCTSTR PathHelper::GetLastComponent(Handle<String> path)noexcept
+{
+if(!path)
+	return nullptr;
+return GetLastComponent(path->Begin());
+}
+
 Handle<String> PathHelper::GetName(LPCSTR path)noexcept
 {
 return PathGetName(path);
@@ -226,7 +233,7 @@ Handle<String> PathHelper::GetName(LPCWSTR path)noexcept
 return PathGetName(path);
 }
 
-Handle<String> PathHelper::GetName(Handle<String> const& path)noexcept
+Handle<String> PathHelper::GetName(Handle<String> path)noexcept
 {
 if(!path)
 	return nullptr;
