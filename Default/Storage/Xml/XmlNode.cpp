@@ -91,6 +91,12 @@ ReadLock lock(m_Mutex);
 return m_Attributes.get(key);
 }
 
+BOOL XmlNode::GetAttribute(Handle<String> key, Handle<String>* value_ptr)
+{
+ReadLock lock(m_Mutex);
+return m_Attributes.try_get(key, value_ptr);
+}
+
 BOOL XmlNode::GetAttribute(Handle<String> key, UINT* value_ptr)
 {
 ReadLock lock(m_Mutex);
@@ -111,7 +117,7 @@ lock.Unlock();
 return value->Scan("%u", value_ptr)==1;
 }
 
-Handle<XmlNodeAttributeIterator> XmlNode::GetAttributes()
+Handle<XmlAttributeIterator> XmlNode::GetAttributes()
 {
 return new XmlNodeAttributeIterator(this);
 }
@@ -128,18 +134,9 @@ ReadLock lock(m_Mutex);
 return m_Children.get_at(pos);
 }
 
-Handle<XmlNodeChildIterator> XmlNode::GetChildren()
+Handle<XmlChildIterator> XmlNode::GetChildren()
 {
 return new XmlNodeChildIterator(this);
-}
-
-Handle<String> XmlNode::GetName()
-{
-ReadLock lock(m_Mutex);
-Handle<String> name;
-if(!m_Attributes.try_get("Name", &name))
-	return nullptr;
-return name;
 }
 
 Handle<String> XmlNode::GetTag()
@@ -219,8 +216,8 @@ while(1)
 		}
 	m_Children.append(child);
 	child->m_Parent=this;
-	auto name=child->GetName();
-	if(!name)
+	Handle<String> name;
+	if(!child->GetAttribute("Name", &name))
 		continue;
 	if(!m_Index.add(name, child))
 		throw InvalidArgumentException();
@@ -363,8 +360,8 @@ if(m_Parent)
 VOID XmlNode::AppendChildInternal(XmlNode* child)
 {
 assert(child);
-auto name=child->GetName();
-if(name)
+Handle<String> name;
+if(child->GetAttribute("Name", &name))
 	{
 	if(m_Index.contains(name))
 		throw AlreadyExistsException();
@@ -389,10 +386,9 @@ return true;
 
 VOID XmlNode::InsertChildInternal(UINT pos, XmlNode* child)
 {
-if(!child)
-	throw InvalidArgumentException();
-auto name=child->GetName();
-if(name)
+assert(child);
+Handle<String> name;
+if(child->GetAttribute("Name", &name))
 	{
 	if(m_Index.contains(name))
 		throw AlreadyExistsException();
@@ -419,8 +415,8 @@ return m_Attributes.remove(key);
 VOID XmlNode::RemoveChildInternal(UINT pos)
 {
 auto child=m_Children.get_at(pos);
-auto name=child->GetName();
-if(name)
+Handle<String> name;
+if(child->GetAttribute("Name", &name))
 	m_Index.remove(name);
 m_Children.remove_at(pos);
 }

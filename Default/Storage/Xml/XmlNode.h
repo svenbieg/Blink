@@ -17,6 +17,7 @@
 #include "Concurrency/Mutex.h"
 #include "Storage/Streams/InputStream.h"
 #include "Storage/Streams/OutputStream.h"
+#include "Storage/Xml/Xml.h"
 #include "Event.h"
 #include "StringClass.h"
 
@@ -41,7 +42,7 @@ class XmlNodeChildIterator;
 // XML-Node
 //==========
 
-class XmlNode: public Object
+class XmlNode: public Xml
 {
 public:
 	// Using
@@ -67,28 +68,24 @@ public:
 	Event<XmlNode> Changed;
 	BOOL Clear();
 	VOID CopyFrom(XmlNode* Node);
-	Handle<String> GetAttribute(Handle<String> Key);
+	Handle<String> GetAttribute(Handle<String> Key)override;
+	BOOL GetAttribute(Handle<String> Key, Handle<String>* Value)override;
 	BOOL GetAttribute(Handle<String> Key, UINT* Value);
 	BOOL GetAttribute(Handle<String> Key, UINT64* Value);
-	Handle<XmlNodeAttributeIterator> GetAttributes();
+	Handle<XmlAttributeIterator> GetAttributes()override;
 	Handle<XmlNode> GetChild(Handle<String> Name);
 	Handle<XmlNode> GetChildAt(UINT Position);
-	Handle<XmlNodeChildIterator> GetChildren();
-	Handle<String> GetName();
-	Handle<String> GetTag();
-	Handle<String> GetValue();
-	BOOL HasAttribute(Handle<String> Key);
+	Handle<XmlChildIterator> GetChildren()override;
+	Handle<String> GetTag()override;
+	Handle<String> GetValue()override;
+	BOOL HasAttribute(Handle<String> Key)override;
 	VOID InsertChildAt(UINT Position, XmlNode* Child);
 	SIZE_T ReadFromStream(InputStream* Stream);
-	BOOL RemoveAttribute(Handle<String> Key);
+	BOOL RemoveAttribute(Handle<String> Key)override;
 	VOID RemoveChildAt(UINT Position);
-	BOOL SetAttribute(Handle<String> Key, Handle<String> Value);
-	inline BOOL SetName(Handle<String> Name)
-		{
-		return SetAttribute("Name", Name);
-		}
-	BOOL SetTag(Handle<String> Tag);
-	BOOL SetValue(Handle<String> Value);
+	BOOL SetAttribute(Handle<String> Key, Handle<String> Value)override;
+	BOOL SetTag(Handle<String> Tag)override;
+	BOOL SetValue(Handle<String> Value)override;
 	SIZE_T WriteToStream(OutputStream* Stream, INT Level=-1);
 
 protected:
@@ -121,7 +118,7 @@ protected:
 // Attribute-Iterator
 //====================
 
-class XmlNodeAttributeIterator: public Object
+class XmlNodeAttributeIterator: public XmlAttributeIterator
 {
 public:
 	// Using
@@ -131,16 +128,16 @@ public:
 	friend XmlNode;
 
 	// Access
-	inline Handle<String> GetKey()const { return m_It.get_key(); }
-	inline Handle<String> GetValue()const { return m_It.get_value(); }
-	inline BOOL HasCurrent()const { return m_It.has_current(); }
+	Handle<String> GetKey()const override { return m_It.get_key(); }
+	Handle<String> GetValue()const override { return m_It.get_value(); }
+	BOOL HasCurrent()const override { return m_It.has_current(); }
 
 	// Navigation
-	inline BOOL Begin() { return m_It.begin(); }
-	inline BOOL End() { return m_It.rbegin(); }
-	inline UINT GetPosition() { return m_It.get_position(); }
-	inline BOOL MoveNext() { return m_It.move_next(); }
-	inline BOOL MovePrevious() { return m_It.move_previous(); }
+	BOOL Begin()override { return m_It.begin(); }
+	BOOL End()override { return m_It.rbegin(); }
+	UINT GetPosition() { return m_It.get_position(); }
+	BOOL MoveNext()override { return m_It.move_next(); }
+	BOOL MovePrevious()override { return m_It.move_previous(); }
 
 private:
 	// Con-/Destructors
@@ -163,7 +160,7 @@ private:
 // Child-Iterator
 //================
 
-class XmlNodeChildIterator: public Object
+class XmlNodeChildIterator: public XmlChildIterator
 {
 public:
 	// Using
@@ -173,15 +170,15 @@ public:
 	friend XmlNode;
 
 	// Access
-	inline Handle<XmlNode> GetCurrent()const { return m_It.get_current(); }
-	inline BOOL HasCurrent()const { return m_It.has_current(); }
+	Handle<Xml> GetCurrent()const override { return m_It.get_current(); }
+	BOOL HasCurrent()const override { return m_It.has_current(); }
 
 	// Navigation
-	inline BOOL Begin() { return m_It.begin(); }
-	inline BOOL End() { return m_It.rbegin(); }
-	inline UINT GetPosition() { return m_It.get_position(); }
-	inline BOOL MoveNext() { return m_It.move_next(); }
-	inline BOOL MovePrevious() { return m_It.move_previous(); }
+	BOOL Begin()override { return m_It.begin(); }
+	BOOL End()override { return m_It.rbegin(); }
+	UINT GetPosition() { return m_It.get_position(); }
+	BOOL MoveNext()override { return m_It.move_next(); }
+	BOOL MovePrevious()override { return m_It.move_previous(); }
 
 protected:
 	// Con-/Destructors

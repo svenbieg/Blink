@@ -117,6 +117,9 @@
       <Filter>Storage\Streams</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Callback.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Xml\Xml.h">
+      <Filter>Storage\Xml</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)StringHelper.cpp" />
