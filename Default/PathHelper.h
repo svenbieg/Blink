@@ -39,4 +39,6 @@ public:
 	static Handle<String> GetName(LPCSTR Path)noexcept;
 	static Handle<String> GetName(LPCWSTR Path)noexcept;
 	static Handle<String> GetName(Handle<String> const& Path)noexcept;
+	static UINT SetExtension(LPSTR Path, UINT Size, LPCSTR Extension);
+	static UINT SetExtension(LPWSTR Path, UINT Size, LPCWSTR Extension);
 };

@@ -116,6 +116,34 @@ for(UINT pos=len-1; pos>0; pos--)
 return String::Create(path);
 }
 
+template <std::character _dst_t, std::character _src_t>
+UINT PathSetExtension(_dst_t* path, UINT size, _src_t const* ext)
+{
+UINT ext_len=0;
+if(ext)
+	{
+	if(CharHelper::Equal(ext[0], '.'))
+		ext++;
+	ext_len=StringHelper::Length(ext);
+	if(ext_len==0)
+		ext=nullptr;
+	}
+UINT pos=0;
+if(StringHelper::FindChar(path, '.', &pos))
+	{
+	if(!ext)
+		{
+		path[pos]=0;
+		return pos;
+		}
+	}
+if(pos+ext_len+2>=size)
+	throw BufferOverrunException();
+path[pos++]='.';
+pos+=StringHelper::Copy(&path[pos], size-pos, ext);
+return pos;
+}
+
 
 //=============
 // Path-Helper
@@ -203,4 +231,14 @@ Handle<String> PathHelper::GetName(Handle<String> const& path)noexcept
 if(!path)
 	return nullptr;
 return GetName(path->Begin());
+}
+
+UINT PathHelper::SetExtension(LPSTR path, UINT size, LPCSTR ext)
+{
+return PathSetExtension(path, size, ext);
+}
+
+UINT PathHelper::SetExtension(LPWSTR path, UINT size, LPCWSTR ext)
+{
+return PathSetExtension(path, size, ext);
 }
