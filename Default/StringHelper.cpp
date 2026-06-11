@@ -1665,7 +1665,7 @@ while(dst_pos<end)
 	{
 	if(src[src_pos]==0)
 		break;
-	UINT clen=CharHelper::Write(dst, end-dst_pos, src[src_pos]);
+	UINT clen=CharHelper::Write(&dst[dst_pos], end-dst_pos, src[src_pos]);
 	dst_pos+=clen;
 	src_pos++;
 	}
