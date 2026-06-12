@@ -157,6 +157,11 @@ public:
 		auto handler=new EventMemberFunctionWithSender<_sender_t, _owner_t, _args_t...>(Owner, Procedure);
 		_base_t::AddHandler(handler);
 		}
+	template <class _owner_t, class _lambda_t> inline VOID Add(_owner_t* Owner, _lambda_t&& Lambda)
+		{
+		auto handler=new EventLambda<_sender_t, _owner_t, _lambda_t>(Owner, std::forward<_lambda_t>(Lambda));
+		_base_t::AddHandler(handler);
+		}
 };
 
 
@@ -205,6 +210,11 @@ public:
 	template <class _owner_t> inline VOID Add(Handle<_owner_t> Owner, VOID (_owner_t::*Procedure)(_sender_t*))
 		{
 		auto handler=new EventMemberFunctionWithSender<_sender_t, _owner_t>(Owner, Procedure);
+		_base_t::AddHandler(handler);
+		}
+	template <class _owner_t, class _lambda_t> inline VOID Add(_owner_t* Owner, _lambda_t&& Lambda)
+		{
+		auto handler=new EventLambda<_sender_t, _owner_t, _lambda_t>(Owner, std::forward<_lambda_t>(Lambda));
 		_base_t::AddHandler(handler);
 		}
 };

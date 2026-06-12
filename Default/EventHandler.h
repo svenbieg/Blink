@@ -353,3 +353,51 @@ private:
 	_owner_t* m_Owner;
 	_proc_t m_Procedure;
 };
+
+
+//========
+// Lambda
+//========
+
+template <class _sender_t, class _owner_t, class _lambda_t, class... _args_t>
+class EventLambda: public EventHandler<_sender_t, _args_t...>
+{
+public:
+	// Using
+	using _base_t=EventHandler<_sender_t, _args_t...>;
+	typedef VOID (_owner_t::*_proc_t)();
+
+	// Friends
+	friend Event<_sender_t, _args_t...>;
+
+	// Common
+	VOID* GetOwner()const noexcept override
+		{
+		return m_Owner;
+		}
+	VOID Invalidate()noexcept override
+		{
+		m_Owner=nullptr;
+		}
+	BOOL IsValid()const noexcept override
+		{
+		return m_Owner!=nullptr;
+		}
+	VOID Run(_sender_t* Sender, _args_t... Arguments)override
+		{
+		FlagHelper::Set(_base_t::m_Flags, _base_t::EventHandlerFlags::Running);
+		m_Lambda();
+		FlagHelper::Clear(_base_t::m_Flags, _base_t::EventHandlerFlags::Running);
+		}
+
+private:
+	// Con-/Destructors
+	EventLambda(_owner_t* Owner, _lambda_t&& Lambda)noexcept:
+		m_Lambda(std::move(Lambda)),
+		m_Owner(Owner)
+		{}
+
+	// Common
+	_owner_t* m_Owner;
+	_lambda_t m_Lambda;
+};
