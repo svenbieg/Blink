@@ -1448,12 +1448,9 @@ while(*str)
 		{
 		if(StringCompare(str, find, find_len, mode...)==0)
 			{
-			UINT insert_len=StringHelper::Copy(dst, size, insert);
+			UINT insert_len=StringHelper::Copy(dst, size-pos, insert);
 			if(dst)
-				{
 				dst+=insert_len;
-				size-=insert_len;
-				}
 			pos+=insert_len;
 			if(!repeat)
 				parse=false;
