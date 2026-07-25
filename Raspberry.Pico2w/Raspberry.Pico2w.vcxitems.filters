@@ -125,9 +125,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Timers\SystemTimer.cpp">
       <Filter>Devices\Timers</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiSpi.cpp">
-      <Filter>Devices\Wifi</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiSdio.cpp">
       <Filter>Devices\Wifi</Filter>
     </ClCompile>

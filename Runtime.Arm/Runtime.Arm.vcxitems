@@ -4,6 +4,7 @@
     <HasSharedItems>true</HasSharedItems>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(MSBuildThisFileDirectory)</NMakeIncludeSearchPath>
+    <ItemsProjectGuid>{D02B9E2E-72CC-4764-BFFC-8AA0889B0162}</ItemsProjectGuid>
   </PropertyGroup>
   <ItemGroup>
     <ProjectCapability Include="SourceItemsFromImports" />
