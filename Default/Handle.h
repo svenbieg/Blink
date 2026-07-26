@@ -79,13 +79,6 @@ public:
 		}
 	template <class _convert_t> Handle<_convert_t> As()const
 		{
-		auto convert=dynamic_cast<_convert_t*>(m_Object);
-		if(!convert)
-			throw InvalidArgumentException();
-		return convert;
-		}
-	template <class _convert_t> inline Handle<_convert_t> As(std::nothrow_t)const noexcept
-		{
 		return dynamic_cast<_convert_t*>(m_Object);
 		}
 
