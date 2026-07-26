@@ -76,35 +76,37 @@ public:
 	inline BOOL TryGet(_key_t const& Key, _value_t* Value)const { return m_Map.try_get(Key, Value); }
 
 	// Modification
-	BOOL Add(_key_t const& Key, _value_t const& Value, BOOL Notify=true)
+	BOOL Add(_key_t const& Key, _value_t const& Value)
 		{
 		if(m_Map.add(Key, Value))
 			{
-			if(Notify)
-				{
-				Added(this, Key, Value);
-				Changed(this);
-				}
+			Added(this, Key, Value);
+			Changed(this);
 			return true;
 			}
 		return false;
+		}
+	inline BOOL Add(_key_t const& Key, _value_t const& Value, EventNotification Notification)
+		{
+		return m_Map.add(Key, Value);
 		}
 	Event<Map, _key_t, _value_t> Added;
 	Event<Map> Changed;
-	BOOL Clear(BOOL Notify=true)
+	BOOL Clear()
 		{
 		if(m_Map.clear())
 			{
-			if(Notify)
-				Changed(this);
+			Changed(this);
 			return true;
 			}
 		return false;
 		}
-	BOOL Remove(_key_t const& Key, BOOL Notify=true)
+	inline BOOL Clear(EventNotification Notification)
 		{
-		if(!Notify)
-			return m_Map.remove(Key);
+		return m_Map.clear();
+		}
+	BOOL Remove(_key_t const& Key)
+		{
 		auto it=m_Map.find(Key);
 		if(!it.has_current())
 			return false;
@@ -114,30 +116,38 @@ public:
 		Changed(this);
 		return true;
 		}
-	BOOL RemoveAt(_size_t Position, BOOL Notify=true)
+	inline BOOL Remove(_key_t const& Key, EventNotification Notification)
 		{
-		if(!Notify)
-			return m_Map.remove_at(Position);
+		return m_Map.remove(Key);
+		}
+	VOID RemoveAt(_size_t Position)
+		{
 		auto it=m_Map.begin(Position);
 		if(!it.has_current())
-			return false;
+			throw OutOfRangeException();
 		_key_t key=it->get_key();
 		_value_t value=it->get_value();
 		it.remove_current();
 		Removed(this, key, value);
 		Changed(this);
-		return true;
+		}
+	inline VOID RemoveAt(_size_t Position, EventNotification Notification)
+		{
+		m_Map.remove_at(Position);
 		}
 	Event<Map, _key_t, _value_t> Removed;
-	BOOL Set(_key_t const& Key, _value_t const& Value, BOOL Notify=true)
+	BOOL Set(_key_t const& Key, _value_t const& Value)
 		{
 		if(m_Map.set(Key, Value))
 			{
-			if(Notify)
-				Changed(this);
+			Changed(this);
 			return true;
 			}
 		return false;
+		}
+	inline BOOL Set(_key_t const& Key, _value_t const& Value, EventNotification Notification)
+		{
+		return m_Map.set(Key, Value);
 		}
 
 protected:

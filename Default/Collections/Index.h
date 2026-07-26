@@ -75,56 +75,62 @@ public:
 	inline _size_t GetCount()const noexcept { return m_Index.get_count(); }
 
 	// Modification
-	BOOL Add(_id_t const& Id, BOOL Notify=true)
+	BOOL Add(_id_t const& Id)
 		{
 		if(m_Index.add(Id))
 			{
-			if(Notify)
-				{
-				Added(this, Id);
-				Changed(this);
-				}
+			Added(this, Id);
+			Changed(this);
 			return true;
 			}
 		return false;
+		}
+	inline BOOL Add(_id_t const& Id, EventNotification Notification)
+		{
+		return m_Index.add(Id);
 		}
 	Event<Index, _id_t> Added;
 	Event<Index> Changed;
-	BOOL Clear(BOOL Notify=true)
+	BOOL Clear()
 		{
 		if(m_Index.clear())
 			{
-			if(Notify)
-				Changed(this);
+			Changed(this);
 			return true;
 			}
 		return false;
 		}
-	BOOL Remove(_id_t const& Id, BOOL Notify=true)
+	inline BOOL Clear(EventNotification Notification)
+		{
+		return m_Index.clear();
+		}
+	BOOL Remove(_id_t const& Id)
 		{
 		if(m_Index.remove(Id))
 			{
-			if(Notify)
-				{
-				Removed(this, Id);
-				Changed(this);
-				}
+			Removed(this, Id);
+			Changed(this);
 			return true;
 			}
 		return false;
 		}
-	BOOL Set(_id_t const& Id, BOOL Notify=true)
+	inline BOOL Remove(_id_t const& Id, EventNotification Notification)
+		{
+		return m_Index.remove(Id);
+		}
+	BOOL Set(_id_t const& Id)
 		{
 		if(m_Index.set(Id))
 			{
-			if(Notify)
-				{
-				Added(this, Id);
-				Changed(this);
-				}
+			Added(this, Id);
+			Changed(this);
 			return true;
 			}
 		return false;
+		}
+	inline BOOL Set(_id_t const& Id, EventNotification Notification)
+		{
+		return m_Index.set(Id);
 		}
 	Event<Index, _id_t> Removed;
 

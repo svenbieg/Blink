@@ -77,13 +77,16 @@ public:
 		return *this;
 		}
 	Event<_owner_t, Handle<_obj_t>> Changed;
-	VOID Set(Handle<_obj_t> const& Object, BOOL Notify=true)
+	VOID Set(Handle<_obj_t> const& Object)
 		{
 		if(m_Object==Object)
 			return;
 		m_Object=Object;
-		if(Notify)
-			Changed(m_Owner, m_Object);
+		Changed(m_Owner, m_Object);
+		}
+	inline VOID Set(Handle<_obj_t> const& Object, EventNotification Notification)
+		{
+		m_Object=Object;
 		}
 
 private:

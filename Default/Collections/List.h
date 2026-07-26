@@ -75,7 +75,7 @@ public:
 	inline BOOL IndexOf(_item_t const& Item, _size_t* Position)const { return m_List.index_of(Item, Position); }
 
 	// Modification
-	BOOL Add(_item_t const& Item, BOOL Notify=true)
+	BOOL Add(_item_t const& Item)
 		{
 		BOOL cancel=false;
 		Adding(this, Item, &cancel);
@@ -83,70 +83,74 @@ public:
 			return false;
 		if(m_List.add(Item))
 			{
-			if(Notify)
-				{
-				Added(this, Item);
-				Changed(this);
-				}
+			Added(this, Item);
+			Changed(this);
 			return true;
 			}
 		return false;
 		}
+	inline BOOL Add(_item_t const& Item, EventNotification Notification)
+		{
+		return m_List.add(Item);
+		}
 	Event<List, _item_t> Added;
 	Event<List, _item_t, BOOL*> Adding;
-	VOID Append(_item_t const& Item, BOOL Notify=true)
+	VOID Append(_item_t const& Item)
 		{
 		BOOL cancel=false;
 		Adding(this, Item, &cancel);
 		if(cancel)
 			return;
 		m_List.append(Item);
-		if(Notify)
-			{
-			Added(this, Item);
-			Changed(this);
-			}
+		Added(this, Item);
+		Changed(this);
+		}
+	inline VOID Append(_item_t const& Item, EventNotification Notification)
+		{
+		m_List.append(Item);
 		}
 	Event<List> Changed;
-	BOOL Clear(BOOL Notify=true)
+	BOOL Clear()
 		{
 		if(m_List.clear())
 			{
-			if(Notify)
-				Changed(this);
+			Changed(this);
 			return true;
 			}
 		return false;
 		}
-	BOOL InsertAt(_size_t Position, _item_t const& Item, BOOL Notify=true)
+	inline BOOL Clear(EventNotification Notification)
+		{
+		return m_List.clear();
+		}
+	BOOL InsertAt(_size_t Position, _item_t const& Item)
 		{
 		BOOL cancel=false;
 		Adding(this, Item, &cancel);
 		if(cancel)
 			return false;
-		if(m_List.insert_at(Position, Item))
+		m_List.insert_at(Position, Item);
+		Added(this, Item);
+		Changed(this);
+		return true;
+		}
+	inline VOID InsertAt(_size_t Position, _item_t const& Item, EventNotification Notification)
+		{
+		m_List.insert_at(Position, Item);
+		}
+	BOOL Remove(_item_t const& Item)
+		{
+		if(m_List.remove(Item))
 			{
-			if(Notify)
-				{
-				Added(this, Item);
-				Changed(this);
-				}
+			Removed(this, Item);
+			Changed(this);
 			return true;
 			}
 		return false;
 		}
-	BOOL Remove(_item_t const& Item, BOOL Notify=true)
+	inline BOOL Remove(_item_t const& Item, EventNotification Notification)
 		{
-		if(m_List.remove(Item))
-			{
-			if(Notify)
-				{
-				Removed(this, Item);
-				Changed(this);
-				}
-			return true;
-			}
-		return false;
+		return m_List.remove(Item);
 		}
 	VOID RemoveAll()
 		{
@@ -161,27 +165,34 @@ public:
 		if(any)
 			Changed(this);
 		}
-	BOOL RemoveAt(_size_t Position, BOOL Notify=true)
+	VOID RemoveAll(EventNotification Notification)
 		{
-		if(!Notify)
-			return m_List.remove_at(Position);
+		for(auto it=m_List.begin(); it.has_current(); )
+			{
+			_item_t item=*it;
+			it.remove_current();
+			}
+		}
+	VOID RemoveAt(_size_t Position)
+		{
 		auto it=m_List.begin(Position);
 		if(!it.has_current())
-			return false;
+			throw OutOfRangeException();
 		_item_t item=it.get_current();
 		it.remove_current();
 		Removed(this, item);
 		Changed(this);
-		return true;
+		}
+	VOID RemoveAt(_size_t Position, EventNotification Notification)
+		{
+		m_List.remove_at(Position);
 		}
 	Event<List, _item_t> Removed;
-	BOOL SetAt(_size_t Position, _item_t const& Item, BOOL Notify=true)
+	BOOL SetAt(_size_t Position, _item_t const& Item)
 		{
-		if(!Notify)
-			return m_List.set_at(Position, Item);
 		auto it=m_List.begin(Position);
 		if(!it.has_current())
-			return false;
+			throw OutOfRangeException();
 		_item_t item=it.get_current();
 		if(item==Item)
 			return false;
@@ -194,6 +205,10 @@ public:
 		Added(this, Item);
 		Changed(this);
 		return true;
+		}
+	inline BOOL SetAt(_size_t Position, _item_t const& Item, EventNotification Notification)
+		{
+		return m_List.set_at(Position, Item);
 		}
 
 protected:

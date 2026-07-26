@@ -53,13 +53,16 @@ public:
 		return *this;
 		}
 	Event<_owner_t, _item_t> Changed;
-	VOID Set(_item_t const& Value, BOOL Notify=true)
+	VOID Set(_item_t const& Value)
 		{
 		if(m_Value==Value)
 			return;
 		m_Value=Value;
-		if(Notify)
-			Changed(m_Owner, Value);
+		Changed(m_Owner, Value);
+		}
+	VOID Set(_item_t const& Value, EventNotification Notification)
+		{
+		m_Value=Value;
 		}
 
 private:
