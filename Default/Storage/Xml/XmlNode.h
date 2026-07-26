@@ -75,6 +75,7 @@ public:
 	Handle<XmlAttributeIterator> GetAttributes()override;
 	Handle<XmlNode> GetChild(Handle<String> Name);
 	Handle<XmlNode> GetChildAt(UINT Position);
+	UINT GetChildCount()override;
 	Handle<XmlChildIterator> GetChildren()override;
 	Handle<String> GetTag()override;
 	Handle<String> GetValue()override;
@@ -138,6 +139,7 @@ public:
 	UINT GetPosition() { return m_It.get_position(); }
 	BOOL MoveNext()override { return m_It.move_next(); }
 	BOOL MovePrevious()override { return m_It.move_previous(); }
+	BOOL SetPosition(UINT Position)override { return m_It.set_position(Position); }
 
 private:
 	// Con-/Destructors
@@ -179,6 +181,7 @@ public:
 	UINT GetPosition() { return m_It.get_position(); }
 	BOOL MoveNext()override { return m_It.move_next(); }
 	BOOL MovePrevious()override { return m_It.move_previous(); }
+	BOOL SetPosition(UINT Position)override { return m_It.set_position(Position); }
 
 protected:
 	// Con-/Destructors

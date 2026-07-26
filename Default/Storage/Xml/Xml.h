@@ -46,6 +46,7 @@ public:
 	virtual Handle<String> GetAttribute(Handle<String> Key)=0;
 	virtual BOOL GetAttribute(Handle<String> Key, Handle<String>* Value)=0;
 	virtual Handle<XmlAttributeIterator> GetAttributes()=0;
+	virtual UINT GetChildCount()=0;
 	virtual Handle<XmlChildIterator> GetChildren()=0;
 	virtual Handle<String> GetTag()=0;
 	virtual Handle<String> GetValue()=0;
@@ -78,6 +79,7 @@ public:
 	virtual BOOL End()=0;
 	virtual BOOL MoveNext()=0;
 	virtual BOOL MovePrevious()=0;
+	virtual BOOL SetPosition(UINT Position)=0;
 };
 
 
@@ -97,6 +99,7 @@ public:
 	virtual BOOL End()=0;
 	virtual BOOL MoveNext()=0;
 	virtual BOOL MovePrevious()=0;
+	virtual BOOL SetPosition(UINT Position)=0;
 };
 
 }}

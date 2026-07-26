@@ -134,6 +134,12 @@ ReadLock lock(m_Mutex);
 return m_Children.get_at(pos);
 }
 
+UINT XmlNode::GetChildCount()
+{
+ReadLock lock(m_Mutex);
+return m_Children.get_count();
+}
+
 Handle<XmlChildIterator> XmlNode::GetChildren()
 {
 return new XmlNodeChildIterator(this);
