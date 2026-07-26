@@ -157,6 +157,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamBuffer.cpp">
       <Filter>Storage\Streams</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)BitHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Storage">

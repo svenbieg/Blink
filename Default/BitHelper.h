@@ -15,6 +15,7 @@
 //=======
 
 #include "Devices/System/Cpu.h"
+#include "MemoryHelper.h"
 
 
 //===========
@@ -91,6 +92,12 @@ public:
 		{
 		Operand&=~(Bits.Mask<<Bits.Shift);
 		}
+	static VOID Clear(VOID* Bits, SIZE_T BitCount);
+	static VOID Clear(VOID* Bits, SIZE_T BitCount, UINT Bit);
+	template <class _item_t, SIZE_T _count> static inline VOID Clear(_item_t (&Items)[_count])
+		{
+		MemoryHelper::Zero(Items, _count*sizeof(_item_t));
+		}
 	static inline UINT CountTrailingZeros(UINT Value)
 		{
 		return Cpu::CountTrailingZeros(Value);
@@ -131,6 +138,7 @@ public:
 		{
 		return (UINT)Operand&Mask;
 		}
+	static BOOL Get(VOID const* Bits, SIZE_T BitCount, UINT Bit);
 	static constexpr VOID Set(BYTE& Operand, BYTE Mask)noexcept
 		{
 		Operand|=Mask;
@@ -186,6 +194,11 @@ public:
 		{
 		Operand&=~(Bits.Mask<<Bits.Shift);
 		Operand|=((Value&Bits.Mask)<<Bits.Shift);
+		}
+	static VOID Set(VOID* Bits, SIZE_T BitCount, UINT Bit);
+	static inline VOID Set(VOID* Bits, SIZE_T BitCount, UINT Bit, BOOL Value)
+		{
+		Value? Set(Bits, BitCount, Bit): Clear(Bits, BitCount, Bit);
 		}
 	static constexpr VOID Switch(BYTE& Operand, BYTE Mask)noexcept
 		{
