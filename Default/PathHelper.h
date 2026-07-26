@@ -23,23 +23,13 @@ class PathHelper
 {
 public:
 	// Common
-	static UINT GetComponentLength(LPCSTR Path)noexcept;
-	static UINT GetComponentLength(LPCWSTR Path)noexcept;
-	static Handle<String> GetDirectory(LPCSTR Path)noexcept;
-	static Handle<String> GetDirectory(LPCWSTR Path)noexcept;
-	static UINT GetDirectoryLength(LPCSTR Path)noexcept;
-	static UINT GetDirectoryLength(LPCWSTR Path)noexcept;
-	static LPCSTR GetExtension(LPCSTR Path)noexcept;
-	static LPCWSTR GetExtension(LPCWSTR Path)noexcept;
-	static Handle<String> GetHostName(LPCSTR Path)noexcept;
-	static Handle<String> GetHostName(LPCWSTR Path)noexcept;
-	static Handle<String> GetHostName(Handle<String> Path)noexcept;
-	static LPCSTR GetLastComponent(LPCSTR Path)noexcept;
-	static LPCWSTR GetLastComponent(LPCWSTR Path)noexcept;
-	static LPCTSTR GetLastComponent(Handle<String> Path)noexcept;
-	static Handle<String> GetName(LPCSTR Path)noexcept;
-	static Handle<String> GetName(LPCWSTR Path)noexcept;
-	static Handle<String> GetName(Handle<String> Path)noexcept;
-	static UINT SetExtension(LPSTR Path, UINT Size, LPCSTR Extension);
-	static UINT SetExtension(LPWSTR Path, UINT Size, LPCWSTR Extension);
+	static UINT GetComponentLength(LPCTSTR Path)noexcept;
+	static Handle<String> GetDirectory(LPCTSTR Path);
+	static UINT GetDirectoryLength(LPCTSTR Path)noexcept;
+	static LPCTSTR GetExtension(LPCTSTR Path)noexcept;
+	static Handle<String> GetHostName(LPCTSTR Path);
+	static LPCTSTR GetLastComponent(LPCTSTR Path)noexcept;
+	static Handle<String> GetName(LPCTSTR Path);
+	static Handle<String> GetParentDirectory(LPCTSTR Path);
+	static UINT SetExtension(LPTSTR Path, UINT Size, LPCTSTR Extension);
 };
