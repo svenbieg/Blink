@@ -80,9 +80,11 @@ mov lr, r1
 //===================
 
 globl_func irq_handler
+cpsid i
 init_irq_stack
 bl HandleInterrupt
 restore_irq_stack
+cpsie i
 bx lr
 
 
@@ -99,9 +101,11 @@ strd r6, r7, [sp, #TASK_FRAME_R6]
 strd r8, r9, [sp, #TASK_FRAME_R8]
 strd r10, r11, [sp, #TASK_FRAME_R10]
 
+cpsid i
 init_irq_stack
 bl HandleTaskSwitch
 restore_irq_stack
+cpsie i
 
 .restore_context:
 ldrd r4, r5, [sp, #TASK_FRAME_R4]

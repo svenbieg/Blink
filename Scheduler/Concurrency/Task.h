@@ -146,7 +146,7 @@ protected:
 	template <class _item_t> using Link=Collections::Link<_item_t>;
 
 	// Con-/Destructors
-	Task(BYTE* Stack, SIZE_T StackSize, Handle<String> Name)noexcept;
+	Task(SIZE_T* Stack, SIZE_T StackSize, Handle<String> Name)noexcept;
 	static Task* CreateInternal(VOID (*Procedure)(), Handle<String> Name, SIZE_T StackSize=MemoryHelper::PAGE_SIZE);
 
 	// Common
@@ -196,7 +196,7 @@ private:
 
 	// Con-/Destructors
 	friend Task;
-	TaskProcedure(BYTE* Stack, SIZE_T StackSize, _proc_t Procedure, Handle<String> Name):
+	TaskProcedure(SIZE_T* Stack, SIZE_T StackSize, _proc_t Procedure, Handle<String> Name):
 		Task(Stack, StackSize, Name),
 		m_Procedure(Procedure)
 		{}
@@ -219,7 +219,7 @@ private:
 
 	// Con-/Destructors
 	friend Task;
-	TaskMemberProcedure(BYTE* Stack, SIZE_T StackSize, _owner_t* Owner, _proc_t Procedure, Handle<String> Name):
+	TaskMemberProcedure(SIZE_T* Stack, SIZE_T StackSize, _owner_t* Owner, _proc_t Procedure, Handle<String> Name):
 		Task(Stack, StackSize, Name),
 		m_Owner(Owner),
 		m_Procedure(Procedure)
@@ -241,7 +241,7 @@ template <class _owner_t, class _lambda_t> class TaskLambda: public Task
 private:
 	// Con-/Destructors
 	friend Task;
-	TaskLambda(BYTE* Stack, SIZE_T StackSize, _owner_t* Owner, _lambda_t&& Lambda, Handle<String> Name):
+	TaskLambda(SIZE_T* Stack, SIZE_T StackSize, _owner_t* Owner, _lambda_t&& Lambda, Handle<String> Name):
 		Task(Stack, StackSize, Name),
 		m_Lambda(std::move(Lambda)),
 		m_Owner(Owner)
@@ -258,7 +258,7 @@ template <class _lambda_t> class TaskLambda<nullptr_t, _lambda_t>: public Task
 private:
 	// Con-/Destructors
 	friend Task;
-	TaskLambda(BYTE* Stack, SIZE_T StackSize, nullptr_t Owner, _lambda_t&& Lambda, Handle<String> Name):
+	TaskLambda(SIZE_T* Stack, SIZE_T StackSize, nullptr_t Owner, _lambda_t&& Lambda, Handle<String> Name):
 		Task(Stack, StackSize, Name),
 		m_Lambda(std::move(Lambda))
 		{}
@@ -279,7 +279,7 @@ assert(StackSize%sizeof(SIZE_T)==0);
 using task_t=TaskMemberProcedure<_owner_t>;
 SIZE_T task_size=TypeHelper::AlignUp(sizeof(task_t), sizeof(SIZE_T));
 auto task=(task_t*)MemoryHelper::Allocate(task_size+StackSize);
-auto stack=(BYTE*)task+task_size;
+auto stack=(SIZE_T*)((SIZE_T)task+task_size);
 new (task) task_t(stack, StackSize, Owner, Procedure, Name);
 Schedule(task);
 return task;
@@ -291,7 +291,7 @@ assert(StackSize%sizeof(SIZE_T)==0);
 using task_t=TaskLambda<_owner_t, _lambda_t>;
 SIZE_T task_size=TypeHelper::AlignUp(sizeof(task_t), sizeof(SIZE_T));
 auto task=(task_t*)MemoryHelper::Allocate(task_size+StackSize);
-auto stack=(BYTE*)task+task_size;
+auto stack=(SIZE_T*)((SIZE_T)task+task_size);
 new (task) task_t(stack, StackSize, Owner, std::forward<_lambda_t>(Lambda), Name);
 Schedule(task);
 return task;
@@ -303,7 +303,7 @@ assert(StackSize%sizeof(SIZE_T)==0);
 using task_t=TaskLambda<nullptr_t, _lambda_t>;
 SIZE_T task_size=TypeHelper::AlignUp(sizeof(task_t), sizeof(SIZE_T));
 auto task=(task_t*)MemoryHelper::Allocate(task_size+StackSize);
-auto stack=(BYTE*)task+task_size;
+auto stack=(SIZE_T*)((SIZE_T)task+task_size);
 new (task) task_t(stack, StackSize, nullptr, std::forward<_lambda_t>(Lambda), Name);
 Schedule(task);
 return task;

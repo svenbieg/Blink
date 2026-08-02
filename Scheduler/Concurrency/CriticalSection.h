@@ -30,7 +30,7 @@ class CriticalSection
 {
 public:
 	// Con-/Destructors
-	CriticalSection()=default;
+	CriticalSection(): m_Core(0) {}
 	CriticalSection(CriticalSection const&)=delete;
 
 	// Common
@@ -41,7 +41,7 @@ public:
 
 private:
 	// Common
-	volatile UINT m_Core=0;
+	volatile UINT m_Core;
 };
 
 }

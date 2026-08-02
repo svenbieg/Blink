@@ -81,20 +81,6 @@ s_Current[core]->m_StartTime+=irq_time;
 s_TotalTime+=irq_time;
 }
 
-VOID TaskMonitor::Initialize()
-{
-SpinLock lock(Scheduler::s_CriticalSection);
-UINT64 time=SystemTimer::Microseconds();
-for(UINT u=0; u<Scheduler::CPU_COUNT; u++)
-	{
-	auto current=Scheduler::s_CurrentTask[u];
-	if(!current)
-		continue;
-	current->m_StartTime=time;
-	s_Current[u]=current;
-	}
-}
-
 VOID TaskMonitor::RemoveTask(Task* task)
 {
 s_TotalTime-=task->m_TotalTime;

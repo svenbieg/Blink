@@ -44,7 +44,7 @@ Handle<Task> Task::Create(VOID (*Procedure)(), Handle<String> Name, SIZE_T Stack
 {
 SIZE_T task_size=TypeHelper::AlignUp(sizeof(TaskProcedure), sizeof(SIZE_T));
 auto task=(TaskProcedure*)MemoryHelper::Allocate(task_size+StackSize);
-auto stack=(BYTE*)task+task_size;
+auto stack=(SIZE_T*)((SIZE_T)task+task_size);
 new (task) TaskProcedure(stack, StackSize, Procedure, Name);
 Schedule(task);
 return task;
@@ -87,7 +87,7 @@ Scheduler::SuspendCurrentTask(ms);
 // Con-/Destructors Protected
 //============================
 
-Task::Task(BYTE* stack, SIZE_T stack_size, Handle<String> name)noexcept:
+Task::Task(SIZE_T* stack, SIZE_T stack_size, Handle<String> name)noexcept:
 Cancelled(false),
 Name(name->Begin()),
 m_Creator(nullptr),
@@ -173,7 +173,7 @@ Task* Task::CreateInternal(VOID (*Procedure)(), Handle<String> Name, SIZE_T Stac
 {
 SIZE_T task_size=TypeHelper::AlignUp(sizeof(TaskProcedure), sizeof(SIZE_T));
 auto task=(TaskProcedure*)MemoryHelper::Allocate(task_size+StackSize);
-auto stack=(BYTE*)task+task_size;
+auto stack=(SIZE_T*)((SIZE_T)task+task_size);
 new (task) TaskProcedure(stack, StackSize, Procedure, Name);
 return task;
 }

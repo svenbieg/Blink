@@ -78,7 +78,7 @@ private:
 	static VOID HandleTaskSwitch()noexcept;
 	static VOID IdleTask();
 	static VOID MainTask();
-	static VOID ResumeWaitingTasks(UINT Count, BOOL Suspend)noexcept;
+	static VOID ResumeWaitingTasks(UINT Count, BOOL Suspend=false)noexcept;
 	static VOID Schedule()noexcept;
 	static VOID SuspendCurrentTask(UINT MilliSeconds);
 	static VOID SuspendCurrentTask(UINT Core, Task* Current, UINT64 ResumeTime=0)noexcept;

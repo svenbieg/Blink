@@ -54,7 +54,7 @@ public:
 	friend WriteLock;
 
 	// Con-/Destructors
-	Mutex()=default;
+	Mutex(): m_Owner(nullptr), m_Waiting(nullptr) {}
 	Mutex(Mutex const&)=delete;
 	~Mutex()noexcept;
 
@@ -73,8 +73,8 @@ protected:
 	INT Unlock(Task* Current)noexcept;
 	INT Unlock(Task* Current, AccessMode)noexcept;
 	UINT WakeupWaitingTasks()noexcept;
-	Task* m_Owner=nullptr;
-	Task* m_Waiting=nullptr;
+	Task* m_Owner;
+	Task* m_Waiting;
 };
 
 }

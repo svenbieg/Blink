@@ -151,6 +151,8 @@ for(UINT u=0; u<CPU_COUNT; u++)
 	auto task=s_CurrentTask[core];
 	if(!task)
 		continue;
+	if(task->m_Next)
+		continue;
 	if(FlagHelper::Get(task->m_Flags, TaskFlags::Idle))
 		return core;
 	if(!suspend)
@@ -214,7 +216,9 @@ VOID Scheduler::ResumeWaitingTasks(UINT count, BOOL suspend)noexcept
 {
 for(UINT u=0; u<count; u++)
 	{
-	UINT core=GetNextCore(suspend);
+	auto waiting=s_Waiting.First();
+	BOOL priority=FlagHelper::Get(waiting->m_Flags, TaskFlags::Priority);
+	UINT core=GetNextCore(suspend|priority);
 	if(core==CPU_COUNT)
 		break;
 	auto current=s_CurrentTask[core];
@@ -254,7 +258,7 @@ if(sleeping)
 	}
 UINT waiting_count=s_Waiting.Count(CPU_COUNT);
 if(waiting_count)
-	ResumeWaitingTasks(waiting_count, CPU_COUNT);
+	ResumeWaitingTasks(waiting_count, true);
 }
 
 VOID Scheduler::SuspendCurrentTask(UINT ms)
@@ -283,7 +287,7 @@ if(resume_time)
 	s_Sleeping.Insert(current, [](Task* first, Task* second){ return first->m_ResumeTime<second->m_ResumeTime; });
 	}
 if(resume_count)
-	ResumeWaitingTasks(resume_count, false);
+	ResumeWaitingTasks(resume_count);
 if(!current->m_Next)
 	{
 	auto resume=s_Waiting.RemoveFirst();

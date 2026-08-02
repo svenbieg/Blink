@@ -45,7 +45,7 @@ public:
 	friend Scheduler;
 
 	// Con-/Destructors
-	Signal()=default;
+	Signal(): m_Waiting(nullptr) {}
 	Signal(Signal const&)=delete;
 	~Signal()=default;
 
@@ -60,7 +60,7 @@ public:
 private:
 	// Common
 	VOID WaitInternal(ScopedLock& Lock);
-	Task* m_Waiting=nullptr;
+	Task* m_Waiting;
 };
 
 }

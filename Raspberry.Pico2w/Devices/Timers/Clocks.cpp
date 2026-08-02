@@ -186,7 +186,7 @@ auto xosc=(XOSC_REGS*)XOSC_BASE;
 IoHelper::Write(xosc->CTRL, XOSC_CTRL_1_15MHZ);
 IoHelper::Write(xosc->STARTUP, XOSC_STARTUP_DELAY);
 IoHelper::Set(xosc->CTRL, XOSC_CTRL_EN);
-IoHelper::Retry(xosc->STATUS, XOSC_STATUS_STABLE, XOSC_STATUS_STABLE);
+IoHelper::Retry(xosc->STATUS, XOSC_STATUS_STABLE, XOSC_STATUS_STABLE, 100);
 System::Enable(ResetDevice::PllSys, 0);
 System::Enable(ResetDevice::PllUsb, 0);
 InitializePll(PLL_SYS_BASE, 1, PLL_SYS_HZ, 5, 2);

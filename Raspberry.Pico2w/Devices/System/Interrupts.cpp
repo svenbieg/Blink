@@ -26,9 +26,9 @@ namespace Devices {
 	namespace System {
 
 
-//===========
-// Registers
-//===========
+//======================
+// Interrupt Controller
+//======================
 
 typedef struct
 {
@@ -44,10 +44,26 @@ RW32 ACTIVE[2];
 UINT RES4[30];
 RW32 ITNS[2];
 UINT RES5[30];
-RW32 PRIO[16];
+RW08 PRIO[64];
 }NVIC_REGS;
 
-const UINT ICSR_BASE		=PPB_BASE+0xED04;
+
+//======================
+// System Control Block
+//======================
+
+typedef struct
+{
+RW32 CPUID;
+RW32 ICSR;
+RW32 VTOR;
+RW32 AIRCR;
+RW32 SCR;
+RW32 CCR;
+RW08 SHPR[12];
+RW32 SHCSR;
+}SCB_REGS;
+
 const UINT ICSR_PENDSVSET	=(1<<28);
 const UINT ICSR_PENDSVCLR	=(1<<27);
 
@@ -61,15 +77,15 @@ extern "C" VOID HandleInterrupt(UINT irq)
 UINT reg=irq/32;
 UINT mask=1U<<(irq%32);
 auto ic=(NVIC_REGS*)NVIC_BASE;
-IoHelper::Write(ic->CLRPEND[reg], mask);
 Interrupts::HandleInterrupt(irq);
+IoHelper::Write(ic->CLRPEND[reg], mask);
 }
 
 extern "C" VOID HandleTaskSwitch()
 {
-auto icsr=(RW32*)ICSR_BASE;
-*icsr|=ICSR_PENDSVCLR;
 Interrupts::HandleTaskSwitch();
+auto scb=(SCB_REGS*)SCB_BASE;
+IoHelper::Set(scb->ICSR, ICSR_PENDSVCLR);
 }
 
 
@@ -135,15 +151,20 @@ TaskMonitor::ClearInterrupt(core);
 VOID Interrupts::HandleTaskSwitch()noexcept
 {
 UINT core=Cpu::GetId();
+TaskMonitor::SetInterrupt(core);
 s_Active[core]=true;
 s_DisableCount[core]++;
 Scheduler::HandleTaskSwitch();
 s_Active[core]=false;
 s_DisableCount[core]--;
+TaskMonitor::ClearInterrupt(core);
 }
 
 VOID Interrupts::Initialize()noexcept
 {
+auto scb=(SCB_REGS*)SCB_BASE;
+for(UINT u=0; u<3; u++)
+	IoHelper::Write(scb->SHPR[u], 0);
 for(UINT core=0; core<Cpu::CPU_COUNT; core++)
 	s_DisableCount[core]=1;
 }
@@ -154,8 +175,8 @@ assert(irq==Irq::TaskSwitch);
 UINT current=Cpu::GetId();
 if(core==current)
 	{
-	auto icsr=(RW32*)ICSR_BASE;
-	*icsr|=ICSR_PENDSVSET;
+	auto scb=(SCB_REGS*)SCB_BASE;
+	IoHelper::Set(scb->ICSR, ICSR_PENDSVSET);
 	}
 else
 	{

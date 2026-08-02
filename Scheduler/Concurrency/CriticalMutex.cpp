@@ -37,7 +37,7 @@ assert(!Interrupts::Active());
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
-if(!current) // Accessing heap early
+if(!current)
 	return;
 // You can only hold one ReadLock at a time.
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
@@ -102,12 +102,12 @@ return true;
 VOID CriticalMutex::Unlock()noexcept
 {
 SpinLock lock(Scheduler::s_CriticalSection);
-if(!m_Owner) // Accessing heap early
+if(!m_Owner)
 	return;
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 INT resume_count=Mutex::Unlock(current);
-if(resume_count<0) // Mutex was already unlocked
+if(resume_count<0)
 	return;
 if(--current->m_PriorityCount==0)
 	{
@@ -120,7 +120,7 @@ if(--current->m_PriorityCount==0)
 		}
 	}
 if(resume_count)
-	Scheduler::ResumeWaitingTasks(resume_count, true);
+	Scheduler::ResumeWaitingTasks(resume_count);
 }
 
 VOID CriticalMutex::Unlock(AccessMode)noexcept
@@ -129,7 +129,7 @@ SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 INT resume_count=Mutex::Unlock(current, AccessMode::ReadOnly);
-if(resume_count<0) // Mutex was already unlocked
+if(resume_count<0)
 	return;
 if(--current->m_PriorityCount==0)
 	{
@@ -142,7 +142,7 @@ if(--current->m_PriorityCount==0)
 		}
 	}
 if(resume_count)
-	Scheduler::ResumeWaitingTasks(resume_count, true);
+	Scheduler::ResumeWaitingTasks(resume_count);
 }
 
 }

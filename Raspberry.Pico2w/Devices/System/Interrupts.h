@@ -24,9 +24,9 @@ namespace Devices {
 	namespace System {
 
 
-//======
-// IRQs
-//======
+//===================
+// Interrupt Request
+//===================
 
 enum class Irq
 {
@@ -80,16 +80,52 @@ TaskSwitch=-1
 };
 
 
+//==================
+// System-Exception
+//==================
+
+enum class SystemException: UINT
+{
+Reset=0,
+NMI=1,
+HardFault=2,
+MemManage=3,
+BusFault=4,
+UsageFault=5,
+SVCall=10,
+DebugMonitor=11,
+Reserved12=12,
+PendSV=13,
+SysTick=14
+};
+
+
 //============
 // IRQ-Target
 //============
 
-enum class IrqTarget
+enum class IrqTarget: UINT
 {
 All=0x3,
 Secondary=0x2,
 Core0=(1<<0),
 Core1=(1<<1)
+};
+
+
+//==========
+// Priority
+//==========
+
+enum class IrqPriority: UINT
+{
+Highest=0,
+High=1,
+Higher=2,
+Normal=3,
+Lower=5,
+Low=6,
+Lowest=7
 };
 
 

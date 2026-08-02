@@ -72,13 +72,15 @@ public:
 	friend Object;
 	friend Scheduler;
 
+	// Con-/Destructors
+	TaskMonitor()=delete;
+
 	// Common
 	static UINT GetTaskInfo(TASK_INFO* TaskInfo, UINT Count);
 
 private:
 	// Common
 	static VOID ClearInterrupt(UINT Core);
-	static VOID Initialize();
 	static VOID RemoveTask(Task* Task);
 	static VOID SetInterrupt(UINT Core);
 	static VOID SetTask(UINT Core, Task* Next);

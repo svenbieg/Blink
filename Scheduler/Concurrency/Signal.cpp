@@ -103,7 +103,7 @@ while(waiting)
 	resume_count++;
 	}
 if(resume_count)
-	Scheduler::ResumeWaitingTasks(resume_count, false);
+	Scheduler::ResumeWaitingTasks(resume_count);
 }
 
 

@@ -108,7 +108,7 @@ UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 INT resume_count=Unlock(current);
 if(resume_count>0)
-	Scheduler::ResumeWaitingTasks(resume_count, false);
+	Scheduler::ResumeWaitingTasks(resume_count);
 }
 
 VOID Mutex::Unlock(AccessMode)noexcept
@@ -118,7 +118,7 @@ UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 INT resume_count=Unlock(current, AccessMode::ReadOnly);
 if(resume_count>0)
-	Scheduler::ResumeWaitingTasks(resume_count, false);
+	Scheduler::ResumeWaitingTasks(resume_count);
 }
 
 
@@ -162,7 +162,7 @@ return false;
 
 INT Mutex::Unlock(Task* current)noexcept
 {
-if(m_Owner!=current) // Mutex was already unlocked
+if(m_Owner!=current)
 	return -1;
 Scheduler::OwnerList::RemoveFirst(&m_Owner);
 return WakeupWaitingTasks();
@@ -171,7 +171,7 @@ return WakeupWaitingTasks();
 INT Mutex::Unlock(Task* current, AccessMode)noexcept
 {
 BOOL removed=Scheduler::OwnerList::TryRemove(&m_Owner, current);
-if(!removed) // Mutex was already unlocked
+if(!removed)
 	return -1;
 FlagHelper::Clear(current->m_Flags, TaskFlags::Sharing);
 if(m_Owner)
