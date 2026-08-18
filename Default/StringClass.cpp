@@ -219,11 +219,6 @@ return str;
 // Access
 //========
 
-Handle<String> String::ToString(LanguageCode lng)
-{
-return this;
-}
-
 SIZE_T String::WriteToStream(String const* str, OutputStream* stream)
 {
 if(!str)

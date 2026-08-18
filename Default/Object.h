@@ -14,18 +14,8 @@
 // Using
 //=======
 
-#include "Culture/LanguageCode.h"
 #include "Devices/System/Cpu.h"
 #include <new>
-
-
-//======================
-// Forward-Declarations
-//======================
-
-class String;
-template <class _obj_t> class Handle;
-template <> class Handle<String>;
 
 
 //========
@@ -40,14 +30,12 @@ public:
 
 	// Using
 	using Cpu=Devices::System::Cpu;
-	using LanguageCode=Culture::LanguageCode;
 
 	// Con-/Destructors
 	virtual ~Object() {}
 
 	// Common
 	UINT GetReferenceCount()const noexcept { return m_ReferenceCount; }
-	virtual Handle<String> ToString(LanguageCode Language=LanguageCode::None);
 
 protected:
 	// Con-/Destructors

@@ -121,7 +121,6 @@ public:
 		{
 		return StringHelper::ToInt64(m_Buffer, Value);
 		}
-	Handle<String> ToString(LanguageCode Language=LanguageCode::None)override;
 	inline UINT ToUInt()
 		{
 		return StringHelper::ToUInt(m_Buffer);

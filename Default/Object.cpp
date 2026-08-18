@@ -17,16 +17,6 @@
 #include "StringClass.h"
 
 
-//========
-// Common
-//========
-
-Handle<String> Object::ToString(LanguageCode lng)
-{
-return nullptr;
-}
-
-
 //================
 // Common Private
 //================
