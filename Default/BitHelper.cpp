@@ -2,6 +2,11 @@
 // BitHelper.cpp
 //===============
 
+// Bit-operations for bit-fields and integer types.
+
+// Copyright 2026, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Default
+
 #include "BitHelper.h"
 
 

@@ -90,6 +90,41 @@ const BYTE COMPARE_NCS[]=
 	 22,  41,  43,  44,  45,  46,  47, 255, 255,  55,  56,  57,  58,  63, 255, 255, // 0xF0
 	};
 
+template <const BYTE* _ids> inline INT CharCompare(WCHAR c1, WCHAR c2)noexcept
+{
+WORD w1=(WORD)c1;
+WORD w2=(WORD)c2;
+w1=TypeHelper::Min(0xFF, w1);
+w2=TypeHelper::Min(0xFF, w2);
+BYTE id1=_ids[w1];
+BYTE id2=_ids[w2];
+if(id1!=0xFF&&id2!=0xFF)
+	{
+	w1=id1;
+	w2=id2;
+	}
+if(w1>w2)
+	return 1;
+if(w1<w2)
+	return -1;
+return 0;
+}
+
+template <std::character _char_t, class... _mode_t> inline BOOL CharEqual(_char_t c, LPCSTR chars, _mode_t... mode)noexcept
+{
+assert(chars);
+WCHAR wc1=CharHelper::ToCharW(c);
+UINT pos=0;
+while(chars[pos])
+	{
+	WCHAR wc2=0;
+	pos+=CharHelper::Read(&chars[pos], &wc2);
+	if(CharHelper::Equal(wc1, wc2, mode...))
+		return true;
+	}
+return false;
+}
+
 
 //=============
 // Char-Helper
@@ -131,26 +166,6 @@ INT CharHelper::Compare(WCHAR wc1, CHAR c2, CompareMode mode)noexcept
 {
 WCHAR wc2=ToCharW(c2);
 return Compare(wc1, wc2, mode);
-}
-
-template <const BYTE* _ids> inline INT CharCompare(WCHAR c1, WCHAR c2)noexcept
-{
-WORD w1=(WORD)c1;
-WORD w2=(WORD)c2;
-w1=TypeHelper::Min(0xFF, w1);
-w2=TypeHelper::Min(0xFF, w2);
-BYTE id1=_ids[w1];
-BYTE id2=_ids[w2];
-if(id1!=0xFF&&id2!=0xFF)
-	{
-	w1=id1;
-	w2=id2;
-	}
-if(w1>w2)
-	return 1;
-if(w1<w2)
-	return -1;
-return 0;
 }
 
 INT CharHelper::Compare(WCHAR c1, WCHAR c2)noexcept
@@ -203,21 +218,6 @@ if(wc1==wc2)
 wc1=ToCapitalW(wc1);
 wc2=ToCapitalW(wc2);
 return wc1==wc2;
-}
-
-template <std::character _char_t, class... _mode_t> inline BOOL CharEqual(_char_t c, LPCSTR chars, _mode_t... mode)noexcept
-{
-assert(chars);
-WCHAR wc1=CharHelper::ToCharW(c);
-UINT pos=0;
-while(chars[pos])
-	{
-	WCHAR wc2=0;
-	pos+=CharHelper::Read(&chars[pos], &wc2);
-	if(CharHelper::Equal(wc1, wc2, mode...))
-		return true;
-	}
-return false;
 }
 
 BOOL CharHelper::Equal(CHAR c, LPCSTR chars)noexcept

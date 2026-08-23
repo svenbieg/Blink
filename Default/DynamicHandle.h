@@ -44,13 +44,11 @@ public:
 		{
 		return m_Object;
 		}
-	_obj_t* operator->()const
+	inline _obj_t* operator->()const
 		{
-		if(!m_Object)
-			throw NullPointerException();
 		return m_Object;
 		}
-	Handle<_obj_t> Get()const noexcept 
+	Handle<_obj_t> Get()const noexcept
 		{
 		return m_Object;
 		}
