@@ -2,8 +2,8 @@
 // heap.h
 //========
 
-// Memory-manager for real-time C++ applications
-// Allocations and deletions are done in constant low time
+// Memory-manager for real-time C++ applications.
+// Allocations and deletions are done in constant low time.
 
 // Copyright 2026, Sven Bieg (svenbieg@outlook.de)
 // http://github.com/svenbieg/Heap
@@ -15,6 +15,7 @@
 // Using
 //=======
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -62,7 +63,6 @@ size_t map_free;
 }heap_t;
 
 void* heap_alloc(heap_t* heap, size_t size);
-void* heap_alloc_aligned(heap_t* heap, size_t size, size_t align);
 size_t heap_available(heap_t* heap);
 heap_t* heap_create(size_t offset, size_t size);
 void heap_free(heap_t* heap, void* buffer);
@@ -94,8 +94,7 @@ union
 	{
 	struct
 		{
-		size_t size: SIZE_BITS-2;
-		size_t aligned: 1;
+		size_t size: SIZE_BITS-1;
 		size_t free: 1;
 		};
 	size_t header;
@@ -358,7 +357,7 @@ return block_map_group_get_last_size(map->root);
 
 static inline void block_map_init(block_map_t* map)
 {
-map->root=nullptr;
+map->root=NULL;
 }
 
 bool block_map_lift_root(heap_t* heap, block_map_t* map);
