@@ -30,9 +30,15 @@ namespace Collections {
 class StringList: public List<Handle<String>>
 {
 public:
+	// Friends
+	friend Object;
+
 	// Con-/Destructors
 	static inline Handle<StringList> Create() { return new StringList(); }
-	static inline Handle<StringList> Create(Handle<String> String, CHAR Separator=';') { return new StringList(String, Separator); }
+	static inline Handle<StringList> Create(Handle<String> String, CHAR Separator=';')
+		{
+		return Object::Create<StringList>(String, Separator);
+		}
 
 private:
 	// Con-/Destructors
