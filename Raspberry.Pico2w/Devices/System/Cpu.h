@@ -80,7 +80,7 @@ public:
 		}
 	static inline VOID StoreAndRelease(volatile UINT* Address, UINT Set)noexcept
 		{
-		__asm inline volatile("stl %1, [%0]":: "r" (Address), "r" (Set));
+		__asm inline volatile("stl %1, [%0]":: "r" (Address), "r" (Set): "memory");
 		}
 	static inline VOID WaitForEvent()noexcept
 		{
@@ -90,6 +90,7 @@ public:
 		{
 		__asm inline volatile("wfi");
 		}
+	static VOID WakeupSecondary();
 };
 
 }}

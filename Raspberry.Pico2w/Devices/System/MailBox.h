@@ -28,7 +28,10 @@ class MailBox
 {
 public:
 	// Common
-	static VOID Send(UINT Value);
+	static VOID Clear();
+	static UINT Read();
+	static BOOL TryRead(UINT* Value);
+	static VOID Write(UINT Value);
 };
 
 }}

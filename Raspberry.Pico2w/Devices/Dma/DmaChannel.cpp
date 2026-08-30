@@ -223,12 +223,13 @@ if(m_Status!=Status::Success)
 
 DmaChannel::DmaChannel(UINT id):
 m_Control(0),
-m_DataSize(1),
+m_DataSize(4),
 m_Id(id),
 m_Status(Status::Success)
 {
 BitHelper::Set(m_Control, CTRL_CHAIN_TO, m_Id);
 BitHelper::Set(m_Control, CTRL_EN);
+BitHelper::Set(m_Control, CTRL_DATA_SIZE, m_DataSize);
 Irq irq=(Irq)((UINT)Irq::Dma0+m_Id);
 Interrupts::SetHandler(irq, this, &DmaChannel::OnInterrupt);
 auto dma=(DMA_REGS*)DMA_BASE;

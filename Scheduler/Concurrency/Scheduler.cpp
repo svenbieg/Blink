@@ -41,8 +41,8 @@ VOID Scheduler::Begin()
 {
 UINT core=Cpu::GetId();
 auto idle=Task::CreateInternal(IdleTask, String::Create("idle%u", core), 1024);
-s_All.Append(idle);
 FlagHelper::Set(idle->m_Flags, TaskFlags::Idle);
+s_All.Append(idle);
 if(core==0)
 	{
 	auto main=Task::CreateInternal(MainTask, "main");
@@ -56,7 +56,7 @@ if(core==0)
 	task=s_MainTask;
 s_CurrentTask[core]=task;
 TaskMonitor::SetTask(core, task);
-task->m_StackPointer=task->m_StackBottom+task->m_StackSize;
+task->m_StackPointer=task->m_StackTop;
 lock.Unlock();
 Cpu::SetContext(&Task::TaskProc, task, task->m_StackPointer);
 }

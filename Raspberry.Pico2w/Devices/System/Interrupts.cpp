@@ -11,6 +11,8 @@
 
 #include "Concurrency/Scheduler.h"
 #include "Devices/System/Cpu.h"
+#include "Devices/System/MailBox.h"
+#include "Devices/System/Sio.h"
 #include "Devices/IoHelper.h"
 #include "Devices/Peripherals.h"
 #include "Exception.h"
@@ -169,6 +171,20 @@ for(UINT core=0; core<Cpu::CPU_COUNT; core++)
 	s_DisableCount[core]=1;
 }
 
+VOID Interrupts::InitializeSecondary()noexcept
+{
+SetHandler(Irq::SioFifo, &Interrupts::HandleMailBox);
+}
+
+BOOL Interrupts::IsEnabled(Irq irq)noexcept
+{
+auto ic=(NVIC_REGS*)NVIC_BASE;
+UINT reg=(UINT)irq/32;
+UINT mask=1U<<((UINT)irq%32);
+UINT status=IoHelper::Read(ic->ITNS[reg], mask);
+return status!=0;
+}
+
 VOID Interrupts::Send(Irq irq, UINT core)
 {
 assert(irq==Irq::TaskSwitch);
@@ -180,7 +196,7 @@ if(core==current)
 	}
 else
 	{
-	throw NotImplementedException();
+	MailBox::Write(CMD_TASK_SWITCH);
 	}
 }
 
@@ -201,6 +217,21 @@ else
 //================
 // Common Private
 //================
+
+VOID Interrupts::HandleMailBox()noexcept
+{
+UINT cmd=0;
+if(MailBox::TryRead(&cmd))
+	{
+	if(cmd==CMD_TASK_SWITCH)
+		{
+		auto scb=(SCB_REGS*)SCB_BASE;
+		IoHelper::Set(scb->ICSR, ICSR_PENDSVSET);
+		}
+	}
+auto sio=(SIO_REGS*)SIO_BASE;
+IoHelper::Write(sio->FIFO_ST, 0xFF);
+}
 
 InterruptHandler* Interrupts::SetHandler(UINT irq, InterruptHandler* handler)noexcept
 {

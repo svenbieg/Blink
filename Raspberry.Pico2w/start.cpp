@@ -26,15 +26,12 @@ extern "C" VOID start()
 {
 Memory::Initialize();
 Interrupts::Initialize();
+//Cpu::WakeupSecondary();
 Scheduler::Begin();
 }
 
 extern "C" VOID start_secondary()
 {
-BOOL wait=true;
-while(wait)
-	{
-	Cpu::WaitForInterrupt();
-	}
+Interrupts::InitializeSecondary();
 Scheduler::Begin();
 }

@@ -10,6 +10,7 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Flash\SpiFlash.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Peripherals.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)cpu.inc.S" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Dma\DmaChannel.h" />
@@ -50,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Dma\DmaChannel.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Flash\SpiFlash.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Gpio\GpioHost.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Pio\SpiEmulator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Pio\StateMachine.cpp" />

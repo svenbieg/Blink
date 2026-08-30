@@ -113,22 +113,6 @@ Core1=(1<<1)
 };
 
 
-//==========
-// Priority
-//==========
-
-enum class IrqPriority: UINT
-{
-Highest=0,
-High=1,
-Higher=2,
-Normal=3,
-Lower=5,
-Low=6,
-Lowest=7
-};
-
-
 //============
 // Interrupts
 //============
@@ -155,6 +139,8 @@ public:
 	static VOID HandleInterrupt(UINT Irq)noexcept;
 	static VOID HandleTaskSwitch()noexcept;
 	static VOID Initialize()noexcept;
+	static VOID InitializeSecondary()noexcept;
+	static BOOL IsEnabled(Irq Irq)noexcept;
 	static VOID Send(Irq Irq, UINT Core);
 	static VOID SetHandler(Irq Irq, VOID (*Procedure)());
 	template <class _owner_t> static inline VOID SetHandler(Irq Irq, _owner_t* Owner, VOID (_owner_t::*Procedure)())
@@ -164,7 +150,11 @@ public:
 		}
 
 private:
+	// Mail-Box
+	static const UINT CMD_TASK_SWITCH='TASK';
+
 	// Common
+	static VOID HandleMailBox()noexcept;
 	static InterruptHandler* SetHandler(UINT Irq, InterruptHandler* Handler)noexcept;
 	static VOID SetHandlerInternal(Irq Irq, InterruptHandler* Handler)noexcept;
 	static BOOL s_Active[Cpu::CPU_COUNT];

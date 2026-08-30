@@ -98,9 +98,10 @@ while(waiting)
 		}
 	FlagHelper::Clear(waiting->m_Flags, TaskFlags::Suspended);
 	waiting->m_Status=status;
-	Scheduler::WaitingList::Remove(&m_Waiting, waiting);
+	auto next=Scheduler::WaitingList::Remove(&m_Waiting, waiting);
 	Scheduler::s_Waiting.Insert(waiting, Task::Priority);
 	resume_count++;
+	waiting=next;
 	}
 if(resume_count)
 	Scheduler::ResumeWaitingTasks(resume_count);

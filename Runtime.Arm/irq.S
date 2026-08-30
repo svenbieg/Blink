@@ -2,6 +2,13 @@
 // irq.S
 //=======
 
+.section ".text"
+
+
+//=======
+// Using
+//=======
+
 #include "Runtime/Configuration.h"
 #include "Runtime/IrqFrame.h"
 #include "Runtime/TaskFrame.h"

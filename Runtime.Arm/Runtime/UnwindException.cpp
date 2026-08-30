@@ -82,7 +82,6 @@ throw NotImplementedException();
 extern "C" UINT __aeabi_unwind_cpp_pr1(UINT flags, UnwindException* exc, UnwindContext* context)
 {
 throw NotImplementedException();
-return 0;
 }
 
 extern "C" VOID __cxa_end_cleanup()

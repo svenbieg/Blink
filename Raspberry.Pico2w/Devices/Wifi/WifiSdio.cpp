@@ -344,15 +344,7 @@ while(!task->Cancelled)
 		{
 		auto pkt=WifiPacket::ReadFromStream(this);
 		if(pkt)
-			{
 			PacketReceived.Call(pkt);
-			}
-		else
-			{
-			WriteRegister(SB_FRAME_CTRL, FRAME_CTRL_RFHALT);
-			PollRegister(SB_RFRM_CNT_1, 0xFF, 0);
-			PollRegister(SB_RFRM_CNT_0, 0xFF, 0);
-			}
 		}
 	lock.Lock();
 	}

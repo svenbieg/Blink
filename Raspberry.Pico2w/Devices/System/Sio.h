@@ -85,5 +85,6 @@ RO32 TMDS_POP_DOUBLE_L2;
 }SIO_REGS;
 
 const UINT FIFO_ST_RDY=(1<<1);
+const UINT FIFO_ST_VALID=(1<<0);
 
 }}

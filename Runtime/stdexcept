@@ -24,6 +24,12 @@ namespace std {
 // Exceptions
 //============
 
+class invalid_argument: public InvalidArgumentException
+{
+public:
+	invalid_argument(LPCSTR message) {}
+};
+
 class out_of_range: public OutOfRangeException
 {
 public:
