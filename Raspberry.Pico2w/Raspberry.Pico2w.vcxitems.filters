@@ -68,9 +68,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Spi\SpiHost.h">
       <Filter>Devices\Spi</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Flash\SpiFlash.h">
-      <Filter>Devices\Flash</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)dcp_canned.inc.S" />
@@ -138,9 +135,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\System\Cpu.cpp">
       <Filter>Devices\System</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Flash\SpiFlash.cpp">
-      <Filter>Devices\Flash</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">
@@ -175,9 +169,6 @@
     </Filter>
     <Filter Include="Runtime">
       <UniqueIdentifier>{12445055-6745-4d65-a1c3-c0b5a4fad7ac}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Devices\Flash">
-      <UniqueIdentifier>{ec325e14-57e7-40fe-a7c9-3d8a4f5efd7b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
