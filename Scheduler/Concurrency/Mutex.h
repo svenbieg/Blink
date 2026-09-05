@@ -59,20 +59,20 @@ public:
 	~Mutex()noexcept;
 
 	// Common
-	virtual VOID Lock()noexcept;
-	virtual VOID Lock(AccessMode)noexcept;
+	VOID Lock()noexcept;
+	VOID Lock(AccessMode)noexcept;
 	virtual BOOL TryLock()noexcept;
 	virtual BOOL TryLock(AccessMode)noexcept;
-	virtual VOID Unlock()noexcept;
-	virtual VOID Unlock(AccessMode)noexcept;
+	VOID Unlock()noexcept;
+	VOID Unlock(AccessMode)noexcept;
 
 protected:
 	// Common
-	BOOL Lock(UINT Core, Task* Current)noexcept;
-	BOOL Lock(UINT Core, Task* Current, AccessMode)noexcept;
-	INT Unlock(Task* Current)noexcept;
-	INT Unlock(Task* Current, AccessMode)noexcept;
-	UINT WakeupWaitingTasks()noexcept;
+	virtual VOID Lock(UINT Core, Task* Current)noexcept;
+	virtual VOID Lock(UINT Core, Task* Current, AccessMode)noexcept;
+	VOID ResumeWaitingTasks()noexcept;
+	virtual VOID Unlock(Task* Current)noexcept;
+	virtual VOID Unlock(Task* Current, AccessMode)noexcept;
 	Task* m_Owner;
 	Task* m_Waiting;
 };

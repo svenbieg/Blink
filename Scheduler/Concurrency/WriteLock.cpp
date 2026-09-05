@@ -64,11 +64,6 @@ m_Mutex->Unlock();
 // Common Private
 //================
 
-VOID WriteLock::Lock(UINT core, Task* current)noexcept
-{
-m_Mutex->Lock(core, current);
-}
-
 VOID WriteLock::Unlock(UINT core, Task* current)noexcept
 {
 m_Mutex->Unlock(current);

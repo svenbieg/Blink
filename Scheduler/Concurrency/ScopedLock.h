@@ -54,7 +54,6 @@ protected:
 
 private:
 	// Common
-	virtual VOID Lock(UINT Core, Task* Current)noexcept=0;
 	virtual VOID Unlock(UINT Core, Task* Current)noexcept=0;
 };
 

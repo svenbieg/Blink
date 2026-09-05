@@ -58,10 +58,9 @@ private:
 	static const UINT TICKS_MS=1000;
 
 	// Common
-	static VOID Begin();
 	static VOID HandleInterrupt();
 	static VOID ServiceTask();
-	static CriticalSection s_CriticalSection;
+	static VOID Start();
 	static Signal s_Signal;
 	static Handle<Task> s_ServiceTask;
 };

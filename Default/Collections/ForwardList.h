@@ -56,15 +56,14 @@ public:
 
 	// Access
 	inline operator bool()const noexcept { return m_First!=nullptr; }
-	inline UINT Count(UINT Max=0)const noexcept { return Count(m_First, Max); }
-	static UINT Count(_item_t const* First, UINT Max=0)noexcept
+	inline UINT Count()const noexcept { return Count(m_First); }
+	static UINT Count(_item_t const* First)noexcept
 		{
 		UINT count=0;
 		auto current=First;
 		while(current)
 			{
-			if(++count==Max)
-				break;
+			count++;
 			current=*MemberNext(current);
 			}
 		return count;

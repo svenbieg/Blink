@@ -51,13 +51,13 @@ class TaskMonitor;
 enum class TaskFlags: UINT
 {
 None=0,
-Done=(1<<0),
-Idle=(1<<1),
-Priority=(1<<2),
-PrioritySharing=(1<<2)|(1<<5),
-Creator=(1<<3),
-Release=(1<<4),
-Sharing=(1<<5),
+Active=(1<<0),
+Done=(1<<1),
+Idle=(1<<2),
+Priority=(1<<3),
+Creator=(1<<4),
+Release=(1<<5),
+Sharing=(1<<6),
 Suspended=(1<<7),
 Timeout=(1<<8)
 };

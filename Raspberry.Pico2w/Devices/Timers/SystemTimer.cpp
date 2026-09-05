@@ -73,18 +73,8 @@ return TypeHelper::MakeLong(lo, hi);
 // Common Private
 //================
 
-VOID SystemTimer::Begin()
-{
-s_ServiceTask=ServiceTask::Create(ServiceTask, "systimer", 1024);
-s_ServiceTask->Then(nullptr, []()
-	{
-	Interrupts::SetHandler(Irq::Timer0, nullptr);
-	});
-}
-
 VOID SystemTimer::HandleInterrupt()
 {
-SpinLock lock(s_CriticalSection);
 auto timer=(TIMER_REGS*)TIMER0_BASE;
 IoHelper::Set(timer->INTR, 1);
 s_Signal.Trigger();
@@ -95,22 +85,29 @@ VOID SystemTimer::ServiceTask()
 Clocks::Initialize();
 Interrupts::SetHandler(Irq::Timer0, HandleInterrupt);
 auto timer=(TIMER_REGS*)TIMER0_BASE;
-IoHelper::Set(timer->INTR, 1);
-IoHelper::Set(timer->INTE, 1);
-SpinLock lock(s_CriticalSection);
 UINT time=timer->TIMERAWL;
 timer->ALARM[0]=time+10*TICKS_MS;
+IoHelper::Set(timer->INTR, 1);
+IoHelper::Set(timer->INTE, 1);
 auto task=Task::Get();
 while(!task->Cancelled)
 	{
-	s_Signal.Wait(lock);
+	s_Signal.Wait();
 	Scheduler::Schedule();
 	time=timer->TIMERAWL;
 	timer->ALARM[0]=time+10*TICKS_MS;
 	}
 }
 
-CriticalSection SystemTimer::s_CriticalSection;
+VOID SystemTimer::Start()
+{
+s_ServiceTask=ServiceTask::Create(ServiceTask, "systimer", 1024);
+s_ServiceTask->Then(nullptr, []()
+	{
+	Interrupts::SetHandler(Irq::Timer0, nullptr);
+	});
+}
+
 Handle<Task> SystemTimer::s_ServiceTask;
 Signal SystemTimer::s_Signal;
 

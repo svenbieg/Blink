@@ -50,9 +50,11 @@ assert(!Interrupts::Active());
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
+if(!current)
+	return;
 // You can only hold one ReadLock at a time.
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
-Lock(core, current);
+this->Lock(core, current);
 }
 
 VOID Mutex::Lock(AccessMode)noexcept
@@ -64,7 +66,8 @@ UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 // You can only hold one ReadLock at a time.
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
-Lock(core, current, AccessMode::ReadOnly);
+FlagHelper::Set(current->m_Flags, TaskFlags::Sharing);
+this->Lock(core, current, AccessMode::ReadOnly);
 }
 
 BOOL Mutex::TryLock()noexcept
@@ -91,6 +94,8 @@ if(m_Owner)
 	{
 	if(!FlagHelper::Get(m_Owner->m_Flags, TaskFlags::Sharing))
 		return false;
+	if(m_Waiting)
+		return false;
 	}
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
@@ -106,9 +111,7 @@ VOID Mutex::Unlock()noexcept
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
-INT resume_count=Unlock(current);
-if(resume_count>0)
-	Scheduler::ResumeWaitingTasks(resume_count);
+this->Unlock(current);
 }
 
 VOID Mutex::Unlock(AccessMode)noexcept
@@ -116,9 +119,7 @@ VOID Mutex::Unlock(AccessMode)noexcept
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
-INT resume_count=Unlock(current, AccessMode::ReadOnly);
-if(resume_count>0)
-	Scheduler::ResumeWaitingTasks(resume_count);
+this->Unlock(current, AccessMode::ReadOnly);
 }
 
 
@@ -126,82 +127,73 @@ if(resume_count>0)
 // Common Protected
 //==================
 
-BOOL Mutex::Lock(UINT core, Task* current)noexcept
+VOID Mutex::Lock(UINT core, Task* current)noexcept
 {
 if(!m_Owner)
 	{
 	m_Owner=current;
-	return true;
+	return;
 	}
 assert(m_Owner!=current); // Deadlock
-Scheduler::SuspendCurrentTask(core, current);
 Scheduler::WaitingList::Append(&m_Waiting, current);
-return false;
+Scheduler::SuspendCurrentTask(core, current);
 }
 
-BOOL Mutex::Lock(UINT core, Task* current, AccessMode)noexcept
+VOID Mutex::Lock(UINT core, Task* current, AccessMode)noexcept
 {
 FlagHelper::Set(current->m_Flags, TaskFlags::Sharing);
 if(!m_Owner)
 	{
 	m_Owner=current;
-	return true;
+	return;
 	}
 if(FlagHelper::Get(m_Owner->m_Flags, TaskFlags::Sharing))
 	{
 	if(!m_Waiting)
 		{
 		Scheduler::OwnerList::Append(&m_Owner, current);
-		return true;
+		return;
 		}
 	}
-Scheduler::SuspendCurrentTask(core, current);
 Scheduler::WaitingList::Append(&m_Waiting, current);
-return false;
+Scheduler::SuspendCurrentTask(core, current);
 }
 
-INT Mutex::Unlock(Task* current)noexcept
+VOID Mutex::ResumeWaitingTasks()noexcept
+{
+assert(m_Owner==nullptr);
+auto resume=Scheduler::WaitingList::RemoveFirst(&m_Waiting);
+if(!resume)
+	return;
+m_Owner=resume;
+Scheduler::Resume(resume);
+if(!FlagHelper::Get(resume->m_Flags, TaskFlags::Sharing))
+	return;
+while(m_Waiting)
+	{
+	if(!FlagHelper::Get(m_Waiting->m_Flags, TaskFlags::Sharing))
+		break;
+	resume=Scheduler::WaitingList::RemoveFirst(&m_Waiting);
+	Scheduler::OwnerList::Append(&m_Owner, resume);
+	Scheduler::Resume(resume);
+	}
+}
+
+VOID Mutex::Unlock(Task* current)noexcept
 {
 if(m_Owner!=current)
-	return -1;
+	return;
 Scheduler::OwnerList::RemoveFirst(&m_Owner);
-return WakeupWaitingTasks();
+ResumeWaitingTasks();
 }
 
-INT Mutex::Unlock(Task* current, AccessMode)noexcept
+VOID Mutex::Unlock(Task* current, AccessMode)noexcept
 {
-BOOL removed=Scheduler::OwnerList::TryRemove(&m_Owner, current);
-if(!removed)
-	return -1;
+if(!Scheduler::OwnerList::TryRemove(&m_Owner, current))
+	return;
 FlagHelper::Clear(current->m_Flags, TaskFlags::Sharing);
-if(m_Owner)
-	return 0;
-return WakeupWaitingTasks();
-}
-
-UINT Mutex::WakeupWaitingTasks()noexcept
-{
-auto waiting=Scheduler::WaitingList::RemoveFirst(&m_Waiting);
-if(!waiting)
-	return 0;
-m_Owner=waiting;
-FlagHelper::Clear(waiting->m_Flags, TaskFlags::Suspended);
-Scheduler::s_Waiting.Insert(waiting, Task::Priority);
-UINT count=1;
-if(FlagHelper::Get(waiting->m_Flags, TaskFlags::Sharing))
-	{
-	while(m_Waiting)
-		{
-		if(!FlagHelper::Get(m_Waiting->m_Flags, TaskFlags::Sharing))
-			break;
-		auto resume=Scheduler::WaitingList::RemoveFirst(&m_Waiting);
-		Scheduler::OwnerList::Insert(&m_Owner, resume, Task::Priority);
-		FlagHelper::Clear(resume->m_Flags, TaskFlags::Suspended);
-		Scheduler::s_Waiting.Insert(waiting, Task::Priority);
-		count++;
-		}
-	}
-return count;
+if(!m_Owner)
+	ResumeWaitingTasks();
 }
 
 }

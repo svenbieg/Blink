@@ -73,38 +73,30 @@ lock.Unlock();
 if(FlagHelper::Get(current->m_Flags, TaskFlags::Timeout))
 	throw TimeoutException();
 StatusHelper::ThrowIfFailed(current->m_Status);
-lock.Lock();
-scoped_lock.Lock(core, current);
+scoped_lock.Lock();
 }
 
 VOID Signal::Trigger(Status status)noexcept
 {
 SpinLock lock(Scheduler::s_CriticalSection);
-if(!m_Waiting)
-	return;
-auto waiting=m_Waiting;
-UINT resume_count=0;
-while(waiting)
+auto resume=m_Waiting;
+while(resume)
 	{
-	if(--waiting->m_SignalCount)
+	if(--resume->m_SignalCount)
 		{
-		waiting=Scheduler::WaitingList::Next(waiting);
+		resume=Scheduler::WaitingList::Next(resume);
 		continue;
 		}
-	if(waiting->m_ResumeTime)
+	if(resume->m_ResumeTime)
 		{
-		Scheduler::s_Sleeping.Remove(waiting);
-		waiting->m_ResumeTime=0;
+		Scheduler::s_Sleeping.Remove(resume);
+		resume->m_ResumeTime=0;
 		}
-	FlagHelper::Clear(waiting->m_Flags, TaskFlags::Suspended);
-	waiting->m_Status=status;
-	auto next=Scheduler::WaitingList::Remove(&m_Waiting, waiting);
-	Scheduler::s_Waiting.Insert(waiting, Task::Priority);
-	resume_count++;
-	waiting=next;
+	resume->m_Status=status;
+	auto next=Scheduler::WaitingList::Remove(&m_Waiting, resume);
+	Scheduler::Resume(resume);
+	resume=next;
 	}
-if(resume_count)
-	Scheduler::ResumeWaitingTasks(resume_count);
 }
 
 
@@ -123,8 +115,8 @@ current->m_Signal=this;
 current->m_SignalCount=1;
 Scheduler::WaitingList::Append(&m_Waiting, current);
 Scheduler::SuspendCurrentTask(core, current);
-lock.Yield();
-scoped_lock.Lock(core, current);
+lock.Unlock();
+scoped_lock.Lock();
 }
 
 }

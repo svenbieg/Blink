@@ -24,9 +24,9 @@ namespace Devices {
 	namespace System {
 
 
-//===================
-// Interrupt Request
-//===================
+//=====
+// IRQ
+//=====
 
 enum class Irq
 {
@@ -76,7 +76,7 @@ PllSys=42,
 PllUsb=43,
 PowmanPow=44,
 PowmanTimer=45,
-TaskSwitch=-1
+TaskSwitch=51
 };
 
 
@@ -131,11 +131,18 @@ public:
 	static const UINT IRQ_COUNT=Runtime::CONFIG_IRQ_COUNT;
 
 	// Common
-	static BOOL Active()noexcept;
-	static VOID Disable()noexcept;
+	static inline BOOL Active()noexcept
+		{
+		UINT status=0;
+		__asm volatile("mrs %0, ipsr": "=r" (status):: "memory");
+		return status!=0;
+		}
+	static BOOL Disable()noexcept;
 	static VOID Disable(Irq Irq);
-	static VOID Enable()noexcept;
+	static BOOL Disabled()noexcept;
+	static BOOL Enable()noexcept;
 	static VOID Enable(Irq Irq);
+	static BOOL Enabled()noexcept;
 	static VOID HandleInterrupt(UINT Irq)noexcept;
 	static VOID HandleTaskSwitch()noexcept;
 	static VOID Initialize()noexcept;
@@ -157,7 +164,6 @@ private:
 	static VOID HandleMailBox()noexcept;
 	static InterruptHandler* SetHandler(UINT Irq, InterruptHandler* Handler)noexcept;
 	static VOID SetHandlerInternal(Irq Irq, InterruptHandler* Handler)noexcept;
-	static BOOL s_Active[Cpu::CPU_COUNT];
 	static CriticalSection s_CriticalSection;
 	static UINT s_DisableCount[Cpu::CPU_COUNT];
 	static InterruptHandler* s_IrqHandler[IRQ_COUNT];

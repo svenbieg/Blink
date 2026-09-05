@@ -107,8 +107,7 @@ bx lr":: "r" (task_proc), "r" (param), "r" (stack): "r0");
 
 VOID Cpu::WakeupSecondary()
 {
-const UINT CPU_ID=1;
-SIZE_T stack_top=(SIZE_T)&__stack_end-CPU_ID*CONFIG_STACK_SIZE;
+SIZE_T stack_top=(SIZE_T)&__stack_end-CONFIG_STACK_SIZE;
 const UINT VTOR=XIP_BASE;
 const UINT THUMB_BIT=1;
 const UINT CMD_SEQ[]={ 0, 0, 1, VTOR, stack_top, (SIZE_T)&isr_reset|THUMB_BIT };

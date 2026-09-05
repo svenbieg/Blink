@@ -95,17 +95,15 @@ IoHelper::Set(scb->ICSR, ICSR_PENDSVCLR);
 // Common
 //========
 
-BOOL Interrupts::Active()noexcept
-{
-UINT core=Cpu::GetId();
-return s_Active[core];
-}
-
-VOID Interrupts::Disable()noexcept
+BOOL Interrupts::Disable()noexcept
 {
 UINT core=Cpu::GetId();
 if(++s_DisableCount[core]==1)
+	{
 	Cpu::DisableInterrupts();
+	return true;
+	}
+return false;
 }
 
 VOID Interrupts::Disable(Irq irq)
@@ -116,13 +114,22 @@ UINT mask=1U<<((UINT)irq%32);
 IoHelper::Set(ic->CLREN[reg], mask);
 }
 
-VOID Interrupts::Enable()noexcept
+BOOL Interrupts::Disabled()noexcept
 {
 UINT core=Cpu::GetId();
-if(s_DisableCount[core]==0)
-	return;
+return s_DisableCount[core]>0;
+}
+
+BOOL Interrupts::Enable()noexcept
+{
+UINT core=Cpu::GetId();
+assert(s_DisableCount[core]>=1);
 if(--s_DisableCount[core]==0)
+	{
 	Cpu::EnableInterrupts();
+	return true;
+	}
+return false;
 }
 
 VOID Interrupts::Enable(Irq irq)
@@ -134,18 +141,22 @@ IoHelper::Write(ic->CLRPEND[reg], mask);
 IoHelper::Write(ic->SETEN[reg], mask);
 }
 
+BOOL Interrupts::Enabled()noexcept
+{
+UINT core=Cpu::GetId();
+return s_DisableCount[core]==0;
+}
+
 VOID Interrupts::HandleInterrupt(UINT irq)noexcept
 {
 UINT core=Cpu::GetId();
 TaskMonitor::SetInterrupt(core);
-s_Active[core]=true;
 s_DisableCount[core]++;
 SpinLock lock(s_CriticalSection);
 auto handler=s_IrqHandler[irq];
 lock.Unlock();
 assert(handler);
 handler->Run();
-s_Active[core]=false;
 s_DisableCount[core]--;
 TaskMonitor::ClearInterrupt(core);
 }
@@ -154,10 +165,8 @@ VOID Interrupts::HandleTaskSwitch()noexcept
 {
 UINT core=Cpu::GetId();
 TaskMonitor::SetInterrupt(core);
-s_Active[core]=true;
 s_DisableCount[core]++;
 Scheduler::HandleTaskSwitch();
-s_Active[core]=false;
 s_DisableCount[core]--;
 TaskMonitor::ClearInterrupt(core);
 }
@@ -169,11 +178,12 @@ for(UINT u=0; u<3; u++)
 	IoHelper::Write(scb->SHPR[u], 0);
 for(UINT core=0; core<Cpu::CPU_COUNT; core++)
 	s_DisableCount[core]=1;
+SetHandler(Irq::SioFifo, &Interrupts::HandleMailBox);
 }
 
 VOID Interrupts::InitializeSecondary()noexcept
 {
-SetHandler(Irq::SioFifo, &Interrupts::HandleMailBox);
+Enable(Irq::SioFifo);
 }
 
 BOOL Interrupts::IsEnabled(Irq irq)noexcept
@@ -224,10 +234,7 @@ UINT cmd=0;
 if(MailBox::TryRead(&cmd))
 	{
 	if(cmd==CMD_TASK_SWITCH)
-		{
-		auto scb=(SCB_REGS*)SCB_BASE;
-		IoHelper::Set(scb->ICSR, ICSR_PENDSVSET);
-		}
+		Scheduler::HandleTaskSwitch();
 	}
 auto sio=(SIO_REGS*)SIO_BASE;
 IoHelper::Write(sio->FIFO_ST, 0xFF);
@@ -252,7 +259,6 @@ if(handler)
 	Enable(irq);
 }
 
-BOOL Interrupts::s_Active[Cpu::CPU_COUNT]={ false };
 CriticalSection Interrupts::s_CriticalSection;
 UINT Interrupts::s_DisableCount[Cpu::CPU_COUNT]={ 0 };
 InterruptHandler* Interrupts::s_IrqHandler[Interrupts::IRQ_COUNT]={ nullptr };

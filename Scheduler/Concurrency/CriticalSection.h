@@ -22,6 +22,13 @@
 namespace Concurrency {
 
 
+//======================
+// Forward-Declarations
+//======================
+
+class SpinLock;
+
+
 //==================
 // Critical-Section
 //==================
@@ -29,6 +36,9 @@ namespace Concurrency {
 class CriticalSection
 {
 public:
+	// Friends
+	friend SpinLock;
+
 	// Con-/Destructors
 	CriticalSection(): m_Core(0) {}
 	CriticalSection(CriticalSection const&)=delete;
@@ -41,6 +51,7 @@ public:
 
 private:
 	// Common
+	VOID Unlock(UINT Core);
 	volatile UINT m_Core;
 };
 

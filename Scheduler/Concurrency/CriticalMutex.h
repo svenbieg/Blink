@@ -34,12 +34,15 @@ public:
 	CriticalMutex(CriticalMutex const&)=delete;
 
 	// Common
-	VOID Lock()noexcept override;
-	VOID Lock(AccessMode)noexcept override;
 	BOOL TryLock()noexcept override;
 	BOOL TryLock(AccessMode)noexcept override;
-	VOID Unlock()noexcept override;
-	VOID Unlock(AccessMode)noexcept override;
+
+protected:
+	// Common
+	VOID Lock(UINT Core, Task* Current)noexcept override;
+	VOID Lock(UINT Core, Task* Current, AccessMode)noexcept override;
+	VOID Unlock(Task* Current)noexcept override;
+	VOID Unlock(Task* Current, AccessMode)noexcept override;
 };
 
 }
