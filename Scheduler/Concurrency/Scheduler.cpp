@@ -41,11 +41,7 @@ VOID Scheduler::Begin()
 {
 UINT core=Cpu::GetId();
 if(core==0)
-	{
-	auto main=Task::CreateInternal(MainTask, "main");
-	s_All.Append(main);
-	s_MainTask=main;
-	}
+	s_MainTask=Task::CreateInternal(MainTask, "main");
 auto idle=Task::CreateInternal(IdleTask, String::Create("idle%u", core), 1024);
 FlagHelper::Set(idle->m_Flags, TaskFlags::Idle);
 SpinLock lock(s_CriticalSection);
