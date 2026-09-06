@@ -165,10 +165,7 @@ TaskMonitor::SetTask(core, next);
 VOID Scheduler::IdleTask()
 {
 if(Interrupts::Disabled())
-	{
-	BOOL enabled=Interrupts::Enable();
-	assert(enabled);
-	}
+	Interrupts::Enable();
 while(1)
 	{
 	Cpu::WaitForInterrupt();
@@ -177,8 +174,7 @@ while(1)
 
 VOID Scheduler::MainTask()
 {
-BOOL enabled=Interrupts::Enable();
-assert(enabled);
+Interrupts::Enable();
 auto status=Status::Success;
 try
 	{
