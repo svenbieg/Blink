@@ -94,6 +94,7 @@ public:
 	// Common
 	static BOOL Active();
 	static VOID Disable();
+	static BOOL Disabled();
 	static VOID Enable();
 	static BOOL Enabled();
 	static VOID HandleInterrupt(UINT Irq);

@@ -57,9 +57,9 @@ public:
 
 private:
 	// Common
-	static VOID Begin();
 	static VOID HandleInterrupt();
 	static VOID ServiceTask();
+	static VOID Start();
 	static CriticalSection s_CriticalSection;
 	static Handle<Task> s_ServiceTask;
 	static Signal s_Signal;

@@ -137,10 +137,10 @@ public:
 		__asm volatile("mrs %0, ipsr": "=r" (status):: "memory");
 		return status!=0;
 		}
-	static BOOL Disable()noexcept;
+	static VOID Disable()noexcept;
 	static VOID Disable(Irq Irq);
 	static BOOL Disabled()noexcept;
-	static BOOL Enable()noexcept;
+	static VOID Enable()noexcept;
 	static VOID Enable(Irq Irq);
 	static BOOL Enabled()noexcept;
 	static VOID HandleInterrupt(UINT Irq)noexcept;

@@ -57,11 +57,6 @@ return cnt_pct*MHZ/FREQ_HZ;
 // Common Private
 //================
 
-VOID SystemTimer::Begin()
-{
-s_ServiceTask=ServiceTask::Create(ServiceTask, "systimer", 1024);
-}
-
 VOID SystemTimer::HandleInterrupt()
 {
 SpinLock lock(s_CriticalSection);
@@ -81,6 +76,11 @@ while(!task->Cancelled)
 	Scheduler::Schedule();
 	__asm inline volatile("msr CNTP_TVAL_EL0, %0":: "r" (PERIOD));
 	}
+}
+
+VOID SystemTimer::Start()
+{
+s_ServiceTask=ServiceTask::Create(ServiceTask, "systimer", 1024);
 }
 
 CriticalSection SystemTimer::s_CriticalSection;

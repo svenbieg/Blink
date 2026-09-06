@@ -95,15 +95,11 @@ IoHelper::Set(scb->ICSR, ICSR_PENDSVCLR);
 // Common
 //========
 
-BOOL Interrupts::Disable()noexcept
+VOID Interrupts::Disable()noexcept
 {
 UINT core=Cpu::GetId();
 if(++s_DisableCount[core]==1)
-	{
 	Cpu::DisableInterrupts();
-	return true;
-	}
-return false;
 }
 
 VOID Interrupts::Disable(Irq irq)
@@ -120,16 +116,12 @@ UINT core=Cpu::GetId();
 return s_DisableCount[core]>0;
 }
 
-BOOL Interrupts::Enable()noexcept
+VOID Interrupts::Enable()noexcept
 {
 UINT core=Cpu::GetId();
 assert(s_DisableCount[core]>=1);
 if(--s_DisableCount[core]==0)
-	{
 	Cpu::EnableInterrupts();
-	return true;
-	}
-return false;
 }
 
 VOID Interrupts::Enable(Irq irq)

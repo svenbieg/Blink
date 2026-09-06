@@ -80,6 +80,7 @@ const UINT GICC_IAR_IRQ_MASK	=0x3FF;
 
 extern "C" VOID HandleInterrupt()
 {
+UINT core=Cpu::GetId();
 auto gicc=(GICC_REGS*)ARM_GICC_BASE;
 UINT iar=IoHelper::Read(gicc->IAR);
 UINT irq=BitHelper::Get(iar, GICC_IAR_IRQ_MASK);
@@ -105,6 +106,12 @@ VOID Interrupts::Disable()
 Cpu::DisableInterrupts();
 UINT core=Cpu::GetId();
 s_DisableCount[core]++;
+}
+
+BOOL Interrupts::Disabled()
+{
+UINT core=Cpu::GetId();
+return s_DisableCount[core]>0;
 }
 
 VOID Interrupts::Enable()
