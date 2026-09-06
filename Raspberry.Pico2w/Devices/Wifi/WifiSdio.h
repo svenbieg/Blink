@@ -52,6 +52,7 @@ public:
 	~WifiSdio();
 
 	// Common
+	VOID Listen();
 	Callback<WifiPacket*> PacketReceived;
 
 	// Input-Stream

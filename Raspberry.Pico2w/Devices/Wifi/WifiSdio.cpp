@@ -62,6 +62,17 @@ m_ServiceTask->Cancel();
 }
 
 
+//========
+// Common
+//========
+
+VOID WifiSdio::Listen()
+{
+assert(!m_ServiceTask);
+m_ServiceTask=ServiceTask::Create(this, &WifiSdio::ServiceTask, "wifi_sdio", 1024);
+}
+
+
 //==============
 // Input-Stream
 //==============
@@ -143,9 +154,7 @@ return size;
 WifiSdio::WifiSdio():
 SpiEmulator(WIFI_SPI_CONFIG),
 m_Window(0)
-{
-m_ServiceTask=ServiceTask::Create(this, &WifiSdio::ServiceTask, "wifi_sdio", 1024);
-}
+{}
 
 
 //================

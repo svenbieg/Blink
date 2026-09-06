@@ -153,6 +153,9 @@ m_RequestId(0)
 wifi_config_size=InitializeConfiguration(&wifi_config, wifi_config_size);
 m_Sdio=WifiSdio::Create();
 m_Sdio->PacketReceived.Set(this, &WifiAdapter::OnPacketReceived);
+WriteLock lock(m_Mutex);
+m_Sdio->Listen();
+m_Ready.Wait(lock, 2000);
 }
 
 
@@ -219,7 +222,8 @@ switch(type)
 	{
 	case WifiPacketType::Event:
 		{
-		Ready.Trigger();
+		WriteLock lock(m_Mutex);
+		m_Ready.Trigger();
 		break;
 		}
 	case WifiPacketType::Response:

@@ -99,7 +99,6 @@ while(!task->Cancelled)
 VOID StatusLed::ServiceTask()
 {
 m_WifiAdapter=WifiAdapter::Create();
-m_WifiAdapter->Ready.Wait(2000);
 UINT mask=(1<<0);
 UINT buf[2];
 buf[0]=mask;

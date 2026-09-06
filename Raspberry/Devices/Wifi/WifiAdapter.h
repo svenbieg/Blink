@@ -47,7 +47,6 @@ public:
 	VOID Command(WifiCommand Command, UINT Argument);
 	VOID GetVariable(LPCSTR Name, VOID* Buffer, UINT Size);
 	Callback<WifiPacket*> PacketReceived;
-	Signal Ready;
 	Handle<WifiPacket> SendAndReceive(Handle<WifiPacket> Request);
 	inline VOID SetVariable(LPCSTR Name, UINT Value) { SetVariable(Name, &Value, sizeof(UINT)); }
 	VOID SetVariable(LPCSTR Name, VOID const* Buffer, UINT Size);
@@ -66,6 +65,7 @@ private:
 	VOID ServiceTask();
 	VOID UploadRegulatory();
 	Mutex m_Mutex;
+	Signal m_Ready;
 	WifiPacket* m_Request;
 	WORD m_RequestId;
 	PacketList m_Requests;

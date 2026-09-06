@@ -21,12 +21,12 @@ using namespace Devices::Gpio;
 using namespace Devices::Sdio;
 using namespace Devices::Timers;
 
-extern "C" UINT wifi_config;
-extern "C" UINT wifi_config_size;
-extern "C" UINT wifi_firmware;
-extern "C" UINT wifi_firmware_size;
-extern "C" UINT wifi_clm;
-extern "C" UINT wifi_clm_size;
+extern UINT wifi_config;
+extern UINT wifi_config_size;
+extern UINT wifi_firmware;
+extern UINT wifi_firmware_size;
+extern UINT wifi_clm;
+extern UINT wifi_clm_size;
 
 
 //===========
@@ -77,6 +77,17 @@ WifiSdio::~WifiSdio()
 {
 GpioHelper::DigitalWrite(GpioArmPin::WifiOn, false);
 m_ServiceTask->Cancel();
+}
+
+
+//========
+// Common
+//========
+
+VOID WifiSdio::Listen()
+{
+assert(!m_ServiceTask);
+m_ServiceTask=ServiceTask::Create(this, &WifiSdio::ServiceTask);
 }
 
 
@@ -135,9 +146,7 @@ return size;
 WifiSdio::WifiSdio():
 EmmcHost(AXI_EMMC1_BASE, Irq::Wifi),
 m_Window(0)
-{
-m_ServiceTask=ServiceTask::Create(this, &WifiSdio::ServiceTask);
-}
+{}
 
 
 //================
