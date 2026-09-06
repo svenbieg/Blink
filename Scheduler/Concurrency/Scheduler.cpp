@@ -185,14 +185,9 @@ for(UINT u=0; u<CPU_COUNT; u++)
 		continue;
 	if(FlagHelper::Get(current->m_Flags, TaskFlags::Priority))
 		continue;
-	BOOL idle=FlagHelper::Get(current->m_Flags, TaskFlags::Idle);
-	BOOL priority=FlagHelper::Get(resume->m_Flags, TaskFlags::Priority);
-	if(idle||priority)
-		{
-		s_Waiting.RemoveFirst();
-		current->m_Next=resume;
-		Interrupts::Send(Irq::TaskSwitch, core);
-		}
+	s_Waiting.RemoveFirst();
+	current->m_Next=resume;
+	Interrupts::Send(Irq::TaskSwitch, core);
 	}
 }
 
