@@ -40,16 +40,18 @@ namespace Concurrency {
 VOID Scheduler::Begin()
 {
 UINT core=Cpu::GetId();
-auto idle=Task::CreateInternal(IdleTask, String::Create("idle%u", core), 1024);
-FlagHelper::Set(idle->m_Flags, TaskFlags::Idle);
-s_All.Append(idle);
 if(core==0)
 	{
 	auto main=Task::CreateInternal(MainTask, "main");
 	s_All.Append(main);
 	s_MainTask=main;
 	}
+auto idle=Task::CreateInternal(IdleTask, String::Create("idle%u", core), 1024);
+FlagHelper::Set(idle->m_Flags, TaskFlags::Idle);
 SpinLock lock(s_CriticalSection);
+if(core==0)
+	s_All.Append(s_MainTask);
+s_All.Append(idle);
 s_IdleTask[core]=idle;
 auto task=idle;
 if(core==0)
