@@ -58,6 +58,16 @@ public:
 	// Common
 	static VOID Begin();
 
+protected:
+	// Common
+	static VOID AddTask(Task* Task)noexcept;
+	static VOID CancelTask(Task* Task)noexcept;
+	static VOID ExitTask()noexcept;
+	static Task* GetCurrentTask()noexcept;
+	static VOID HandleTaskSwitch()noexcept;
+	static VOID Schedule()noexcept;
+	static VOID SuspendCurrentTask(UINT MilliSeconds);
+
 private:
 	// Using
 	static const UINT CPU_COUNT=Devices::System::Cpu::CPU_COUNT;
@@ -69,18 +79,11 @@ private:
 	using WaitingList=FORWARD_LIST(Task, m_Waiting);
 
 	// Common
-	static VOID AddTask(Task* Task)noexcept;
-	static VOID CancelTask(Task* Task)noexcept;
 	static VOID CreateTasks()noexcept;
-	static VOID ExitTask()noexcept;
-	static Task* GetCurrentTask()noexcept;
-	static VOID HandleTaskSwitch()noexcept;
 	static VOID IdleTask();
 	static VOID MainTask();
 	static VOID Resume(Task* Resume)noexcept;
-	static VOID Schedule()noexcept;
-	static VOID SuspendCurrentTask(UINT MilliSeconds);
-	static VOID SuspendCurrentTask(UINT Core, Task* Current, UINT64 ResumeTime=0)noexcept;
+	static VOID Suspend(UINT Core, Task* Suspend, UINT64 ResumeTime=0)noexcept;
 	static AllList s_All;
 	static CreateList s_Create;
 	static CriticalSection s_CriticalSection;

@@ -136,7 +136,7 @@ if(!m_Owner)
 	}
 assert(m_Owner!=current); // Deadlock
 Scheduler::WaitingList::Append(&m_Waiting, current);
-Scheduler::SuspendCurrentTask(core, current);
+Scheduler::Suspend(core, current);
 }
 
 VOID Mutex::Lock(UINT core, Task* current, AccessMode)noexcept
@@ -156,7 +156,7 @@ if(FlagHelper::Get(m_Owner->m_Flags, TaskFlags::Sharing))
 		}
 	}
 Scheduler::WaitingList::Append(&m_Waiting, current);
-Scheduler::SuspendCurrentTask(core, current);
+Scheduler::Suspend(core, current);
 }
 
 VOID Mutex::ResumeWaitingTasks()noexcept
