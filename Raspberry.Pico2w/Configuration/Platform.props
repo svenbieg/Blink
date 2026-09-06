@@ -15,6 +15,7 @@
   <PropertyGroup Condition="'$(Platform)'=='RPico2w'">
     <Architecture>Arm</Architecture>
     <Board>Pico2w</Board>
+    <IntelliSenseMode>gcc-arm</IntelliSenseMode>
     <NMakePreprocessorDefinitions>_PICO2W</NMakePreprocessorDefinitions>
     <Vendor>Raspberry</Vendor>
   </PropertyGroup>
