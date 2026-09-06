@@ -2,12 +2,14 @@
 // firmware.S
 //============
 
-.section ".data"
+.section ".rodata"
 
 
 //===============
 // Configuration
 //===============
+
+.section ".data"
 
 .globl wifi_config
 .globl wifi_config_size
@@ -28,6 +30,8 @@ wifi_config_size:
 // Firmware
 //==========
 
+.section ".rodata"
+
 .globl wifi_firmware
 .globl wifi_firmware_size
 
@@ -44,6 +48,8 @@ wifi_firmware_size:
 //============
 // Regulatory
 //============
+
+.section ".rodata"
 
 .globl wifi_clm
 .globl wifi_clm_size

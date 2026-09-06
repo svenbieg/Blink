@@ -25,8 +25,6 @@ extern UINT wifi_config;
 extern UINT wifi_config_size;
 extern UINT wifi_firmware;
 extern UINT wifi_firmware_size;
-extern UINT wifi_clm;
-extern UINT wifi_clm_size;
 
 
 //===========
