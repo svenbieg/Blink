@@ -21,7 +21,7 @@
 .globl irq_handler
 irq_handler:
 
-_save_irq_context:
+_irq_frame_save:
 sub sp, sp, #IRQ_FRAME_SIZE
 stp x0, x1, [sp, IRQ_FRAME_X0]
 stp x2, x3, [sp, IRQ_FRAME_X2]
@@ -40,7 +40,7 @@ stp x26, x27, [sp, IRQ_FRAME_X26]
 stp x28, x29, [sp, IRQ_FRAME_X28]
 str x30, [sp, IRQ_FRAME_X30]
 
-_init_irq_stack:
+_irq_stack_init:
 mov x3, sp
 cpu_id x0
 mov x1, #CONFIG_STACK_SIZE
@@ -51,14 +51,14 @@ mov sp, x2
 sub sp, sp, #IRQ_STACK_SIZE
 str x3, [sp, IRQ_STACK_SP]
 
-_handle_interrupt:
+_irq_handle:
 bl HandleInterrupt
 
-_restore_irq_stack:
+_irq_stack_restore:
 ldr x0, [sp, IRQ_STACK_SP]
 mov sp, x0
 
-_restore_irq_context:
+_irq_frame_restore:
 ldp x0, x1, [sp, IRQ_FRAME_X0]
 ldp x2, x3, [sp, IRQ_FRAME_X2]
 ldp x4, x5, [sp, IRQ_FRAME_X4]
@@ -77,5 +77,5 @@ ldp x28, x29, [sp, IRQ_FRAME_X28]
 ldr x30, [sp, IRQ_FRAME_X30]
 add sp, sp, #IRQ_FRAME_SIZE
 
-_finish_irq:
+_irq_finish:
 eret

@@ -56,11 +56,11 @@ irq_stub %irq_num
 .endr
 
 
-//=======
-// Stack
-//=======
+//===========
+// IRQ-Stack
+//===========
 
-.macro init_irq_stack
+.macro irq_stack_init
 cpu_id r1
 ldr r2, =CONFIG_STACK_SIZE
 mul r1, r1, r2
@@ -74,7 +74,7 @@ mov r1, lr
 str r1, [sp, #IRQ_STACK_LR]
 .endm
 
-.macro restore_irq_stack
+.macro irq_stack_restore
 ldr r0, [sp, #IRQ_STACK_SP]
 ldr r1, [sp, #IRQ_STACK_LR]
 mov sp, r0
@@ -88,9 +88,9 @@ mov lr, r1
 
 globl_func irq_handler
 cpsid i
-init_irq_stack
+irq_stack_init
 bl HandleInterrupt
-restore_irq_stack
+irq_stack_restore
 cpsie i
 bx lr
 
@@ -100,25 +100,9 @@ bx lr
 //=============
 
 globl_func isr_pendsv
-
-.save_context:
-sub sp, sp, #TASK_FRAME_SIZE
-strd r4, r5, [sp, #TASK_FRAME_R4]
-strd r6, r7, [sp, #TASK_FRAME_R6]
-strd r8, r9, [sp, #TASK_FRAME_R8]
-strd r10, r11, [sp, #TASK_FRAME_R10]
-
 cpsid i
-init_irq_stack
+irq_stack_init
 bl HandleTaskSwitch
-restore_irq_stack
+irq_stack_restore
 cpsie i
-
-.restore_context:
-ldrd r4, r5, [sp, #TASK_FRAME_R4]
-ldrd r6, r7, [sp, #TASK_FRAME_R6]
-ldrd r8, r9, [sp, #TASK_FRAME_R8]
-ldrd r10, r11, [sp, #TASK_FRAME_R10]
-add sp, sp, #TASK_FRAME_SIZE
-
 bx lr

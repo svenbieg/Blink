@@ -19,9 +19,9 @@
 NAMESPACE(Runtime)
 
 
-//=======
-// Stack
-//=======
+//===========
+// IRQ-Stack
+//===========
 
 STRUCT_BEGIN
 STRUCT_FIELD(SIZE_T, 4, IRQ_STACK_, SP)
@@ -29,9 +29,9 @@ STRUCT_FIELD(SIZE_T, 4, IRQ_STACK_, LR)
 STRUCT_END(IRQ_STACK)
 
 
-//=======
-// Frame
-//=======
+//===========
+// IRQ-Frame
+//===========
 
 STRUCT_BEGIN
 STRUCT_FIELD(SIZE_T, 4, IRQ_FRAME_, R0)

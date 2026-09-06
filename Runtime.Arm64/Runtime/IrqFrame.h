@@ -28,9 +28,9 @@ STRUCT_FIELD(SIZE_T, 8, IRQ_STACK_, SP)
 STRUCT_END(IRQ_STACK)
 
 
-//=======
-// Frame
-//=======
+//===========
+// IRQ-Frame
+//===========
 
 STRUCT_BEGIN
 STRUCT_FIELD(SIZE_T, 8, IRQ_FRAME_, X0)

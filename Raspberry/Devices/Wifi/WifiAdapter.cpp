@@ -16,12 +16,12 @@
 using namespace Concurrency;
 using namespace Devices::System;
 
-extern "C" UINT wifi_config;
-extern "C" UINT wifi_config_size;
-extern "C" UINT wifi_firmware;
-extern "C" UINT wifi_firmware_size;
-extern "C" UINT wifi_clm;
-extern "C" UINT wifi_clm_size;
+extern UINT wifi_config;
+extern UINT wifi_config_size;
+extern UINT wifi_firmware;
+extern UINT wifi_firmware_size;
+extern UINT wifi_clm;
+extern UINT wifi_clm_size;
 
 
 //===========
