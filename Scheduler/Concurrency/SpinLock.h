@@ -13,7 +13,6 @@
 //=======
 
 #include "Concurrency/CriticalSection.h"
-#include "Concurrency/ScopedLock.h"
 
 
 //===========
@@ -27,7 +26,7 @@ namespace Concurrency {
 // Spin-Lock
 //===========
 
-class SpinLock: public ScopedLock
+class SpinLock
 {
 public:
 	// Con-/Destructors
@@ -36,14 +35,13 @@ public:
 	~SpinLock()noexcept;
 
 	// Common
-	VOID Lock()noexcept override;
-	BOOL TryLock()noexcept override;
-	VOID Unlock()noexcept override;
+	VOID Lock()noexcept;
+	BOOL TryLock()noexcept;
+	VOID Unlock()noexcept;
 	VOID Yield()noexcept;
 
 private:
 	// Common
-	VOID Unlock(UINT Core, Task* Current)noexcept override;
 	CriticalSection* m_CriticalSection;
 };
 

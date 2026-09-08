@@ -61,16 +61,18 @@ public:
 	// Common
 	VOID Lock()noexcept;
 	VOID Lock(AccessMode)noexcept;
-	virtual BOOL TryLock()noexcept;
-	virtual BOOL TryLock(AccessMode)noexcept;
+	BOOL TryLock()noexcept;
+	BOOL TryLock(AccessMode)noexcept;
 	VOID Unlock()noexcept;
 	VOID Unlock(AccessMode)noexcept;
 
 protected:
 	// Common
-	virtual VOID Lock(UINT Core, Task* Current)noexcept;
-	virtual VOID Lock(UINT Core, Task* Current, AccessMode)noexcept;
+	virtual BOOL Lock(UINT Core, Task* Current)noexcept;
+	virtual BOOL Lock(UINT Core, Task* Current, AccessMode)noexcept;
 	VOID ResumeWaitingTasks()noexcept;
+	virtual BOOL TryLock(UINT Core, Task* Current)noexcept;
+	virtual BOOL TryLock(UINT Core, Task* Current, AccessMode)noexcept;
 	virtual VOID Unlock(Task* Current)noexcept;
 	virtual VOID Unlock(Task* Current, AccessMode)noexcept;
 	Task* m_Owner;

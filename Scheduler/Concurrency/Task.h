@@ -16,6 +16,7 @@
 #include "Collections/LinkedList.h"
 #include "Concurrency/DispatchedHandler.h"
 #include "Concurrency/Mutex.h"
+#include "Concurrency/ScopedLock.h"
 #include "Runtime/UnwindException.h"
 #include "FlagHelper.h"
 #include "MemoryHelper.h"
@@ -58,7 +59,7 @@ Priority=(1<<3),
 Creator=(1<<4),
 Release=(1<<5),
 Sharing=(1<<6),
-Suspended=(1<<7),
+Suspend=(1<<7),
 Timeout=(1<<8)
 };
 
@@ -166,6 +167,7 @@ protected:
 	UINT m_PriorityCount;
 	Link<Task> m_Release;
 	UINT64 m_ResumeTime;
+	ScopedLock* m_ScopedLock;
 	Signal* m_Signal;
 	UINT m_SignalCount;
 	Link<Task> m_Sleeping;

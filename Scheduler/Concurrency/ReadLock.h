@@ -43,6 +43,7 @@ public:
 
 private:
 	// Common
+	BOOL Lock(UINT Core, Task* Current)noexcept override;
 	VOID Unlock(UINT Core, Task* Current)noexcept override;
 	Mutex* m_Mutex;
 };

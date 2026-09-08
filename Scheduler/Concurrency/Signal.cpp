@@ -65,6 +65,7 @@ UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 scoped_lock.Unlock(core, current);
 FlagHelper::Clear(current->m_Flags, TaskFlags::Timeout);
+current->m_ScopedLock=&scoped_lock;
 current->m_Signal=this;
 current->m_SignalCount=times;
 Scheduler::WaitingList::Insert(&m_Waiting, current, Task::Priority);
@@ -73,12 +74,35 @@ lock.Unlock();
 if(FlagHelper::Get(current->m_Flags, TaskFlags::Timeout))
 	throw TimeoutException();
 StatusHelper::ThrowIfFailed(current->m_Status);
-scoped_lock.Lock();
+}
+
+VOID Signal::Count(SpinLock& spin_lock, UINT times, UINT timeout)
+{
+assert(!Interrupts::Active());
+assert(!Task::IsMainTask());
+UINT64 resume_time=0;
+if(timeout)
+	resume_time=SystemTimer::GetTickCount()+timeout;
+SpinLock lock(Scheduler::s_CriticalSection);
+spin_lock.Unlock();
+UINT core=Cpu::GetId();
+auto current=Scheduler::s_CurrentTask[core];
+FlagHelper::Clear(current->m_Flags, TaskFlags::Timeout);
+current->m_Signal=this;
+current->m_SignalCount=times;
+Scheduler::WaitingList::Insert(&m_Waiting, current, Task::Priority);
+Scheduler::Suspend(core, current, resume_time);
+lock.Unlock();
+if(FlagHelper::Get(current->m_Flags, TaskFlags::Timeout))
+	throw TimeoutException();
+StatusHelper::ThrowIfFailed(current->m_Status);
+spin_lock.Lock();
 }
 
 VOID Signal::Trigger(Status status)noexcept
 {
 SpinLock lock(Scheduler::s_CriticalSection);
+UINT core=Cpu::GetId();
 auto resume=m_Waiting;
 while(resume)
 	{
@@ -94,6 +118,13 @@ while(resume)
 		}
 	resume->m_Status=status;
 	auto next=Scheduler::WaitingList::Remove(&m_Waiting, resume);
+	auto scoped_lock=resume->m_ScopedLock;
+	if(scoped_lock)
+		{
+		resume->m_ScopedLock=nullptr;
+		if(!scoped_lock->Lock(core, resume))
+			continue;
+		}
 	Scheduler::Resume(resume);
 	resume=next;
 	}
@@ -104,19 +135,19 @@ while(resume)
 // Common Private
 //================
 
-VOID Signal::WaitInternal(ScopedLock& scoped_lock)
+VOID Signal::WaitInternal(SpinLock& spin_lock)
 {
 SpinLock lock(Scheduler::s_CriticalSection);
+spin_lock.Unlock();
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
-scoped_lock.Unlock(core, current);
 FlagHelper::Clear(current->m_Flags, TaskFlags::Timeout);
 current->m_Signal=this;
 current->m_SignalCount=1;
 Scheduler::WaitingList::Append(&m_Waiting, current);
 Scheduler::Suspend(core, current);
 lock.Unlock();
-scoped_lock.Lock();
+spin_lock.Lock();
 }
 
 }

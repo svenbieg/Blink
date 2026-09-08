@@ -59,14 +59,4 @@ VOID SpinLock::Yield()noexcept
 m_CriticalSection->Yield();
 }
 
-
-//================
-// Common Private
-//================
-
-VOID SpinLock::Unlock(UINT core, Task* current)noexcept
-{
-m_CriticalSection->Unlock(core);
-}
-
 }

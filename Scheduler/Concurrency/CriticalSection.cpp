@@ -84,18 +84,4 @@ while(!Cpu::CompareAndSet(&m_Core, 0, core))
 	}
 }
 
-
-//================
-// Common Private
-//================
-
-VOID CriticalSection::Unlock(UINT core)
-{
-assert(Cpu::GetId()==core);
-core|=LOCKED;
-assert(m_Core==core);
-Cpu::StoreAndRelease(&m_Core, 0);
-Interrupts::Enable();
-}
-
 }

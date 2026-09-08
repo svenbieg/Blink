@@ -26,67 +26,40 @@ using namespace Devices::System;
 namespace Concurrency {
 
 
-//========
-// Common
-//========
-
-BOOL CriticalMutex::TryLock()noexcept
-{
-// You can not use a Mutex in an ISR, You have to use a CriticalSection instead.
-assert(!Interrupts::Active());
-SpinLock lock(Scheduler::s_CriticalSection);
-if(m_Owner)
-	return false;
-UINT core=Cpu::GetId();
-auto current=Scheduler::s_CurrentTask[core];
-// You can only hold one ReadLock at a time.
-assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
-m_Owner=current;
-FlagHelper::Set(current->m_Flags, TaskFlags::Priority);
-current->m_PriorityCount++;
-return true;
-}
-
-BOOL CriticalMutex::TryLock(AccessMode)noexcept
-{
-// You can not use a Mutex in an ISR, You have to use a CriticalSection instead.
-assert(!Interrupts::Active());
-SpinLock lock(Scheduler::s_CriticalSection);
-if(m_Owner)
-	{
-	if(!FlagHelper::Get(m_Owner->m_Flags, TaskFlags::Sharing))
-		return false;
-	if(m_Waiting)
-		return false;
-	}
-UINT core=Cpu::GetId();
-auto current=Scheduler::s_CurrentTask[core];
-// You can only hold one ReadLock at a time.
-assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
-FlagHelper::Set(current->m_Flags, TaskFlags::Sharing);
-FlagHelper::Set(current->m_Flags, TaskFlags::Priority);
-current->m_PriorityCount++;
-Scheduler::OwnerList::Append(&m_Owner, current);
-return true;
-}
-
-
 //==================
 // Common Protected
 //==================
 
-VOID CriticalMutex::Lock(UINT core, Task* current)noexcept
+BOOL CriticalMutex::Lock(UINT core, Task* current)noexcept
 {
 FlagHelper::Set(current->m_Flags, TaskFlags::Priority);
 current->m_PriorityCount++;
-Mutex::Lock(core, current);
+return Mutex::Lock(core, current);
 }
 
-VOID CriticalMutex::Lock(UINT core, Task* current, AccessMode)noexcept
+BOOL CriticalMutex::Lock(UINT core, Task* current, AccessMode)noexcept
 {
 FlagHelper::Set(current->m_Flags, TaskFlags::Priority);
 current->m_PriorityCount++;
-Mutex::Lock(core, current, AccessMode::ReadOnly);
+return Mutex::Lock(core, current, AccessMode::ReadOnly);
+}
+
+BOOL CriticalMutex::TryLock(UINT core, Task* current)noexcept
+{
+if(!Mutex::TryLock(core, current))
+	return false;
+FlagHelper::Set(current->m_Flags, TaskFlags::Priority);
+current->m_PriorityCount++;
+return true;
+}
+
+BOOL CriticalMutex::TryLock(UINT core, Task* current, AccessMode)noexcept
+{
+if(!Mutex::TryLock(core, current, AccessMode::ReadOnly))
+	return false;
+FlagHelper::Set(current->m_Flags, TaskFlags::Priority);
+current->m_PriorityCount++;
+return true;
 }
 
 VOID CriticalMutex::Unlock(Task* current)noexcept

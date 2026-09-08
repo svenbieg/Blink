@@ -54,6 +54,7 @@ protected:
 
 private:
 	// Common
+	virtual BOOL Lock(UINT Core, Task* Current)noexcept=0;
 	virtual VOID Unlock(UINT Core, Task* Current)noexcept=0;
 };
 

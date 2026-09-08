@@ -54,7 +54,8 @@ if(!current)
 	return;
 // You can only hold one ReadLock at a time.
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
-this->Lock(core, current);
+if(!this->Lock(core, current))
+	Scheduler::Suspend(core, current);
 }
 
 VOID Mutex::Lock(AccessMode)noexcept
@@ -67,7 +68,8 @@ auto current=Scheduler::s_CurrentTask[core];
 // You can only hold one ReadLock at a time.
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
 FlagHelper::Set(current->m_Flags, TaskFlags::Sharing);
-this->Lock(core, current, AccessMode::ReadOnly);
+if(!this->Lock(core, current, AccessMode::ReadOnly))
+	Scheduler::Suspend(core, current);
 }
 
 BOOL Mutex::TryLock()noexcept
@@ -75,14 +77,11 @@ BOOL Mutex::TryLock()noexcept
 // You can not use a Mutex in an ISR, You have to use a CriticalSection instead.
 assert(!Interrupts::Active());
 SpinLock lock(Scheduler::s_CriticalSection);
-if(m_Owner)
-	return false;
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 // You can only hold one ReadLock at a time.
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
-m_Owner=current;
-return true;
+return this->TryLock(core, current);
 }
 
 BOOL Mutex::TryLock(AccessMode)noexcept
@@ -90,20 +89,11 @@ BOOL Mutex::TryLock(AccessMode)noexcept
 // You can not use a Mutex in an ISR, You have to use a CriticalSection instead.
 assert(!Interrupts::Active());
 SpinLock lock(Scheduler::s_CriticalSection);
-if(m_Owner)
-	{
-	if(!FlagHelper::Get(m_Owner->m_Flags, TaskFlags::Sharing))
-		return false;
-	if(m_Waiting)
-		return false;
-	}
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 // You can only hold one ReadLock at a time.
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
-FlagHelper::Set(current->m_Flags, TaskFlags::Sharing);
-Scheduler::OwnerList::Append(&m_Owner, current);
-return true;
+return this->TryLock(core, current, AccessMode::ReadOnly);
 }
 
 VOID Mutex::Unlock()noexcept
@@ -127,36 +117,36 @@ this->Unlock(current, AccessMode::ReadOnly);
 // Common Protected
 //==================
 
-VOID Mutex::Lock(UINT core, Task* current)noexcept
+BOOL Mutex::Lock(UINT core, Task* current)noexcept
 {
 if(!m_Owner)
 	{
 	m_Owner=current;
-	return;
+	return true;
 	}
 assert(m_Owner!=current); // Deadlock
 Scheduler::WaitingList::Append(&m_Waiting, current);
-Scheduler::Suspend(core, current);
+return false;
 }
 
-VOID Mutex::Lock(UINT core, Task* current, AccessMode)noexcept
+BOOL Mutex::Lock(UINT core, Task* current, AccessMode)noexcept
 {
 FlagHelper::Set(current->m_Flags, TaskFlags::Sharing);
 if(!m_Owner)
 	{
 	m_Owner=current;
-	return;
+	return true;
 	}
 if(FlagHelper::Get(m_Owner->m_Flags, TaskFlags::Sharing))
 	{
 	if(!m_Waiting)
 		{
 		Scheduler::OwnerList::Append(&m_Owner, current);
-		return;
+		return true;
 		}
 	}
 Scheduler::WaitingList::Append(&m_Waiting, current);
-Scheduler::Suspend(core, current);
+return false;
 }
 
 VOID Mutex::ResumeWaitingTasks()noexcept
@@ -177,6 +167,29 @@ while(m_Waiting)
 	Scheduler::OwnerList::Append(&m_Owner, resume);
 	Scheduler::Resume(resume);
 	}
+}
+
+BOOL Mutex::TryLock(UINT core, Task* current)noexcept
+{
+if(m_Owner)
+	return false;
+FlagHelper::Set(current->m_Flags, TaskFlags::Sharing);
+m_Owner=current;
+return true;
+}
+
+BOOL Mutex::TryLock(UINT core, Task* current, AccessMode)noexcept
+{
+if(m_Owner)
+	{
+	if(!FlagHelper::Get(m_Owner->m_Flags, TaskFlags::Sharing))
+		return false;
+	if(m_Waiting)
+		return false;
+	}
+FlagHelper::Set(current->m_Flags, TaskFlags::Sharing);
+Scheduler::OwnerList::Append(&m_Owner, current);
+return true;
 }
 
 VOID Mutex::Unlock(Task* current)noexcept

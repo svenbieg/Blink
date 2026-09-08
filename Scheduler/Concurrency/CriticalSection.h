@@ -51,7 +51,6 @@ public:
 
 private:
 	// Common
-	VOID Unlock(UINT Core);
 	volatile UINT m_Core;
 };
 

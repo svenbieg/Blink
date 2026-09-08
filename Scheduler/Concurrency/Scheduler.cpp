@@ -125,7 +125,7 @@ assert(current->z_StackHeader==Task::STACK_HEADER); // Stack-overflow
 auto next=current->m_Next;
 assert(next);
 current->m_Next=nullptr;
-if(FlagHelper::Get(current->m_Flags, TaskFlags::Suspended))
+if(FlagHelper::Get(current->m_Flags, TaskFlags::Suspend))
 	{
 	if(FlagHelper::Get(current->m_Flags, TaskFlags::Release))
 		s_Release.Append(current);
@@ -164,7 +164,7 @@ if(sleeping)
 		if(sleeping->m_ResumeTime>time)
 			break;
 		auto next=s_Sleeping.Remove(sleeping);
-		FlagHelper::Clear(sleeping->m_Flags, TaskFlags::Suspended);
+		FlagHelper::Clear(sleeping->m_Flags, TaskFlags::Suspend);
 		FlagHelper::Set(sleeping->m_Flags, TaskFlags::Timeout);
 		sleeping->m_ResumeTime=0;
 		s_Waiting.Insert(sleeping, Task::Priority);
@@ -253,7 +253,7 @@ System::Restart();
 
 VOID Scheduler::Resume(Task* resume)noexcept
 {
-FlagHelper::Clear(resume->m_Flags, TaskFlags::Suspended);
+FlagHelper::Clear(resume->m_Flags, TaskFlags::Suspend);
 if(FlagHelper::Get(resume->m_Flags, TaskFlags::Active))
 	return;
 for(UINT u=0; u<CPU_COUNT; u++)
@@ -281,7 +281,7 @@ s_Waiting.Insert(resume, Task::Priority);
 
 VOID Scheduler::Suspend(UINT core, Task* task, UINT64 resume_time)noexcept
 {
-FlagHelper::Set(task->m_Flags, TaskFlags::Suspended);
+FlagHelper::Set(task->m_Flags, TaskFlags::Suspend);
 if(FlagHelper::Get(task->m_Flags, TaskFlags::Creator))
 	{
 	FlagHelper::Clear(task->m_Flags, TaskFlags::Creator);
