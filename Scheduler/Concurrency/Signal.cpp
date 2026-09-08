@@ -53,29 +53,6 @@ if(FlagHelper::Get(current->m_Flags, TaskFlags::Timeout))
 StatusHelper::ThrowIfFailed(current->m_Status);
 }
 
-VOID Signal::Count(ScopedLock& scoped_lock, UINT times, UINT timeout)
-{
-assert(!Interrupts::Active());
-assert(!Task::IsMainTask());
-UINT64 resume_time=0;
-if(timeout)
-	resume_time=SystemTimer::GetTickCount()+timeout;
-SpinLock lock(Scheduler::s_CriticalSection);
-UINT core=Cpu::GetId();
-auto current=Scheduler::s_CurrentTask[core];
-scoped_lock.Unlock(core, current);
-FlagHelper::Clear(current->m_Flags, TaskFlags::Timeout);
-current->m_ScopedLock=&scoped_lock;
-current->m_Signal=this;
-current->m_SignalCount=times;
-Scheduler::WaitingList::Insert(&m_Waiting, current, Task::Priority);
-Scheduler::Suspend(core, current, resume_time);
-lock.Unlock();
-if(FlagHelper::Get(current->m_Flags, TaskFlags::Timeout))
-	throw TimeoutException();
-StatusHelper::ThrowIfFailed(current->m_Status);
-}
-
 VOID Signal::Count(SpinLock& spin_lock, UINT times, UINT timeout)
 {
 assert(!Interrupts::Active());
@@ -99,6 +76,29 @@ StatusHelper::ThrowIfFailed(current->m_Status);
 spin_lock.Lock();
 }
 
+VOID Signal::Count(WriteLock& signal_lock, UINT times, UINT timeout)
+{
+assert(!Interrupts::Active());
+assert(!Task::IsMainTask());
+UINT64 resume_time=0;
+if(timeout)
+	resume_time=SystemTimer::GetTickCount()+timeout;
+SpinLock lock(Scheduler::s_CriticalSection);
+UINT core=Cpu::GetId();
+auto current=Scheduler::s_CurrentTask[core];
+signal_lock.Unlock(core, current);
+FlagHelper::Clear(current->m_Flags, TaskFlags::Timeout);
+current->m_Signal=this;
+current->m_SignalCount=times;
+current->m_SignalLock=&signal_lock;
+Scheduler::WaitingList::Insert(&m_Waiting, current, Task::Priority);
+Scheduler::Suspend(core, current, resume_time);
+lock.Unlock();
+if(FlagHelper::Get(current->m_Flags, TaskFlags::Timeout))
+	throw TimeoutException();
+StatusHelper::ThrowIfFailed(current->m_Status);
+}
+
 VOID Signal::Trigger(Status status)noexcept
 {
 SpinLock lock(Scheduler::s_CriticalSection);
@@ -118,11 +118,11 @@ while(resume)
 		}
 	resume->m_Status=status;
 	auto next=Scheduler::WaitingList::Remove(&m_Waiting, resume);
-	auto scoped_lock=resume->m_ScopedLock;
-	if(scoped_lock)
+	auto signal_lock=resume->m_SignalLock;
+	if(signal_lock)
 		{
-		resume->m_ScopedLock=nullptr;
-		if(!scoped_lock->Lock(core, resume))
+		resume->m_SignalLock=nullptr;
+		if(!signal_lock->Lock(core, resume))
 			continue;
 		}
 	Scheduler::Resume(resume);

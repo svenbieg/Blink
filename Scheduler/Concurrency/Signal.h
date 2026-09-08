@@ -29,9 +29,9 @@ namespace Concurrency {
 
 class DispatchedQueue;
 class Scheduler;
-class ScopedLock;
 class SpinLock;
 class Task;
+class WriteLock;
 
 
 //========
@@ -53,12 +53,12 @@ public:
 	// Common
 	inline VOID Cancel()noexcept { Trigger(Status::Aborted); }
 	VOID Count(UINT Times, UINT Timeout=0);
-	VOID Count(ScopedLock& Lock, UINT Times, UINT Timeout=0);
 	VOID Count(SpinLock& Lock, UINT Times, UINT Timeout=0);
+	VOID Count(WriteLock& Lock, UINT Times, UINT Timeout=0);
 	VOID Trigger(Status Status=Status::Success)noexcept;
 	inline VOID Wait(UINT Timeout=0) { Count(1, Timeout); }
-	inline VOID Wait(ScopedLock& Lock, UINT Timeout=0) { Count(Lock, 1, Timeout); }
 	inline VOID Wait(SpinLock& Lock, UINT Timeout=0) { Count(Lock, 1, Timeout); }
+	inline VOID Wait(WriteLock& Lock, UINT Timeout=0) { Count(Lock, 1, Timeout); }
 
 private:
 	// Common

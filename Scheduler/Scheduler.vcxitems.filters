@@ -62,9 +62,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\Scheduler.h">
       <Filter>Concurrency</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\ScopedLock.h">
-      <Filter>Concurrency</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\Signal.h">
       <Filter>Concurrency</Filter>
     </ClInclude>

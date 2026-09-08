@@ -13,7 +13,6 @@
 //=======
 
 #include "Concurrency/Mutex.h"
-#include "Concurrency/ScopedLock.h"
 
 
 //===========
@@ -27,7 +26,7 @@ namespace Concurrency {
 // Read-Lock
 //===========
 
-class ReadLock: public ScopedLock
+class ReadLock
 {
 public:
 	// Con-/Destructors
@@ -36,15 +35,13 @@ public:
 	~ReadLock()noexcept;
 
 	// Common
-	VOID Lock()noexcept override;
+	VOID Lock()noexcept;
 	VOID Release()noexcept;
-	BOOL TryLock()noexcept override;
-	VOID Unlock()noexcept override;
+	BOOL TryLock()noexcept;
+	VOID Unlock()noexcept;
 
 private:
 	// Common
-	BOOL Lock(UINT Core, Task* Current)noexcept override;
-	VOID Unlock(UINT Core, Task* Current)noexcept override;
 	Mutex* m_Mutex;
 };
 

@@ -16,7 +16,7 @@
 #include "Collections/LinkedList.h"
 #include "Concurrency/DispatchedHandler.h"
 #include "Concurrency/Mutex.h"
-#include "Concurrency/ScopedLock.h"
+#include "Concurrency/WriteLock.h"
 #include "Runtime/UnwindException.h"
 #include "FlagHelper.h"
 #include "MemoryHelper.h"
@@ -167,9 +167,9 @@ protected:
 	UINT m_PriorityCount;
 	Link<Task> m_Release;
 	UINT64 m_ResumeTime;
-	ScopedLock* m_ScopedLock;
 	Signal* m_Signal;
 	UINT m_SignalCount;
+	WriteLock* m_SignalLock;
 	Link<Task> m_Sleeping;
 	SIZE_T m_StackBottom;
 	SIZE_T m_StackPointer;

@@ -13,7 +13,6 @@
 //=======
 
 #include "Concurrency/Mutex.h"
-#include "Concurrency/ScopedLock.h"
 
 
 //===========
@@ -23,28 +22,38 @@
 namespace Concurrency {
 
 
+//======================
+// Forward-Declarations
+//======================
+
+class Signal;
+
+
 //============
 // Write-Lock
 //============
 
-class WriteLock: public ScopedLock
+class WriteLock
 {
 public:
+	// Friends
+	friend Signal;
+
 	// Con-/Destructors
 	WriteLock(Mutex& Mutex)noexcept;
 	WriteLock(WriteLock const&)=delete;
 	~WriteLock()noexcept;
 
 	// Common
-	VOID Lock()noexcept override;
+	VOID Lock()noexcept;
 	VOID Release()noexcept;
-	BOOL TryLock()noexcept override;
-	VOID Unlock()noexcept override;
+	BOOL TryLock()noexcept;
+	VOID Unlock()noexcept;
 
 private:
 	// Common
-	BOOL Lock(UINT Core, Task* Current)noexcept override;
-	VOID Unlock(UINT Core, Task* Current)noexcept override;
+	BOOL Lock(UINT Core, Task* Current)noexcept;
+	VOID Unlock(UINT Core, Task* Current)noexcept;
 	Mutex* m_Mutex;
 };
 

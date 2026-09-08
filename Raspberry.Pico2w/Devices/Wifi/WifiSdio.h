@@ -44,7 +44,6 @@ public:
 
 	// Using
 	using CriticalSection=Concurrency::CriticalSection;
-	using ScopedLock=Concurrency::ScopedLock;
 	using Signal=Concurrency::Signal;
 	using Task=Concurrency::Task;
 
