@@ -123,7 +123,8 @@ UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
 assert(current->z_StackHeader==Task::STACK_HEADER); // Stack-overflow
 auto next=current->m_Next;
-assert(next);
+if(!next)
+	return;
 current->m_Next=nullptr;
 if(FlagHelper::Get(current->m_Flags, TaskFlags::Suspend))
 	{
@@ -255,7 +256,15 @@ VOID Scheduler::Resume(Task* resume)noexcept
 {
 FlagHelper::Clear(resume->m_Flags, TaskFlags::Suspend);
 if(FlagHelper::Get(resume->m_Flags, TaskFlags::Active))
+	{
+	auto next=resume->m_Next;
+	if(next)
+		{
+		if(FlagHelper::Get(next->m_Flags, TaskFlags::Idle))
+			resume->m_Next=nullptr;
+		}
 	return;
+	}
 for(UINT u=0; u<CPU_COUNT; u++)
 	{
 	UINT core=s_CurrentCore;

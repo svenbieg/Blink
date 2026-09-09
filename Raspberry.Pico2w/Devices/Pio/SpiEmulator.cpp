@@ -124,14 +124,12 @@ m_StateMachine->SetPins(0);
 
 VOID SpiEmulator::SpiRead(VOID* buf, UINT size)
 {
-m_DmaChannel->BeginRead(m_InputRequest, m_InputBuffer, buf, size);
-m_DmaChannel->Wait();
+m_DmaChannel->Read(m_InputRequest, m_InputBuffer, buf, size);
 }
 
 VOID SpiEmulator::SpiWrite(VOID const* buf, UINT size)
 {
-m_DmaChannel->BeginWrite(m_OutputRequest, m_OutputBuffer, buf, size);
-m_DmaChannel->Wait();
+m_DmaChannel->Write(m_OutputRequest, m_OutputBuffer, buf, size);
 }
 
 }}

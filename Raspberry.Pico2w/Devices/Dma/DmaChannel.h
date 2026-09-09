@@ -81,12 +81,10 @@ public:
 	~DmaChannel();
 
 	// Common
-	VOID Abort();
-	VOID BeginRead(DmaRequest Request, RO32* Register, VOID* Buffer, SIZE_T Size);
+	VOID Read(DmaRequest Request, RO32* Register, VOID* Buffer, SIZE_T Size, UINT Timeout=100);
 	VOID SetByteSwap(BOOL ByteSwap);
 	VOID SetMode(DmaMode Mode);
-	VOID BeginWrite(DmaRequest Request, RW32* Register, VOID const* Buffer, SIZE_T Size);
-	VOID Wait(UINT Timeout=100);
+	VOID Write(DmaRequest Request, RW32* Register, VOID const* Buffer, SIZE_T Size, UINT Timeout=100);
 
 private:
 	// Con-/Destructors
@@ -103,7 +101,6 @@ private:
 	UINT m_DataSize;
 	UINT m_Id;
 	Signal m_Signal;
-	Status m_Status;
 };
 
 }}

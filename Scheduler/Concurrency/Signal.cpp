@@ -123,7 +123,10 @@ while(resume)
 		{
 		resume->m_SignalLock=nullptr;
 		if(!signal_lock->Lock(core, resume))
+			{
+			resume=next;
 			continue;
+			}
 		}
 	Scheduler::Resume(resume);
 	resume=next;
