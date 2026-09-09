@@ -182,8 +182,15 @@ for(UINT u=0; u<CPU_COUNT; u++)
 	auto current=s_CurrentTask[core];
 	if(!current)
 		continue;
-	if(current->m_Next)
-		continue;
+	auto next=current->m_Next;
+	if(next)
+		{
+		if(!FlagHelper::Get(next->m_Flags, TaskFlags::Idle))
+			continue;
+		current->m_Next=resume;
+		Interrupts::Send(Irq::TaskSwitch, core);
+		return;
+		}
 	if(FlagHelper::Get(current->m_Flags, TaskFlags::Priority))
 		continue;
 	s_Waiting.RemoveFirst();
@@ -272,8 +279,15 @@ for(UINT u=0; u<CPU_COUNT; u++)
 	auto current=s_CurrentTask[core];
 	if(!current)
 		continue;
-	if(current->m_Next)
-		continue;
+	auto next=current->m_Next;
+	if(next)
+		{
+		if(!FlagHelper::Get(next->m_Flags, TaskFlags::Idle))
+			continue;
+		current->m_Next=resume;
+		Interrupts::Send(Irq::TaskSwitch, core);
+		return;
+		}
 	if(FlagHelper::Get(current->m_Flags, TaskFlags::Priority))
 		continue;
 	BOOL idle=FlagHelper::Get(current->m_Flags, TaskFlags::Idle);
