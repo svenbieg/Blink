@@ -40,27 +40,25 @@ template <typename _item_t, typename _size_t, WORD _group_size> class ListIterat
 template <typename _item_t, typename _size_t=UINT, WORD _group_size=10>
 class List: public Object
 {
-private:
-	// Using
-	using _list_t=List<_item_t, _size_t, _group_size>;
-
 public:
 	// Using
-	using Iterator=ListIterator<_item_t, _size_t, _group_size>;
+	using _list_t=List<_item_t, _size_t, _group_size>;
+	using _iterator_t=ListIterator<_item_t, _size_t, _group_size>;
 
 	// Friends
-	friend Iterator;
+	friend _iterator_t;
+	friend Object;
 
 	// Con-/Destructors
-	static inline Handle<List> Create() { return new List(); }
-	static inline Handle<List> Create(_list_t const* Copy) { return new List(Copy); }
+	static inline Handle<List> Create() { return Object::Create<List>(); }
+	static inline Handle<List> Create(_list_t const* Copy) { return Object::Create<List>(Copy); }
 
 	// Access
-	inline Handle<Iterator> Begin(_size_t Position=0) { return new Iterator(this, Position); }
+	inline Handle<_iterator_t> Begin(_size_t Position=0) { return _iterator_t::Create(this, Position); }
 	inline BOOL Contains(_item_t const& Item)const noexcept { return m_List.contains(Item); }
-	inline Handle<Iterator> End()
+	inline Handle<_iterator_t> End()
 		{
-		auto it=new Iterator(this, -2);
+		auto it=_iterator_t::Create(this, -2);
 		it->End();
 		return it;
 		}
@@ -232,13 +230,14 @@ protected:
 template <typename _item_t, typename _size_t, WORD _group_size>
 class ListIterator: public Object
 {
-private:
+public:
 	// Using
 	using _list_t=List<_item_t, _size_t, _group_size>;
+	using _iterator_t=ListIterator<_item_t, _size_t, _group_size>;
 
-public:
 	// Friends
 	friend _list_t;
+	friend Object;
 
 	// Access
 	inline _item_t& GetCurrent() { return m_It.get_current(); }
@@ -290,6 +289,10 @@ public:
 private:
 	// Con-/Destructors
 	ListIterator(_list_t* List, _size_t Position): m_It(&List->m_List, Position), m_List(List) {}
+	static inline Handle<_iterator_t> Create(_list_t* List, _size_t Position)
+		{
+		return Object::Create<_iterator_t>(List, Position);
+		}
 
 	// Common
 	typename list<_item_t, _size_t, _group_size>::iterator m_It;

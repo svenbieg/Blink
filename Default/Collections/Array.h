@@ -63,10 +63,10 @@ public:
 	static inline Handle<Array> Create(Handle<Array> const& Copy) { return Object::CreateEx<Array, Array const*>(Copy.m_Count*sizeof(_item_t), alignof(_item_t), Copy); }
 
 	// Access
-	inline Handle<Iterator> At(_size_t Position) { return new Iterator(this, Position); }
+	inline Handle<Iterator> At(_size_t Position) { return Iterator::Create(this, Position); }
 	inline _item_t* Begin() { return m_Items; }
 	inline _item_t const* Begin()const { return m_Items; }
-	inline Handle<Iterator> First() { return new Iterator(this, 0); }
+	inline Handle<Iterator> First() { return Iterator::Create(this, 0); }
 	inline _item_t& GetAt(_size_t Position) { return m_Items[Position]; }
 	inline _item_t const& GetAt(_size_t Position)const { return m_Items[Position]; }
 	inline _size_t GetCount()const { return m_Count; }
@@ -139,9 +139,11 @@ class ArrayIterator: public Object
 private:
 	// Using
 	using _array_t=Array<_item_t, _size_t>;
+	using _iterator_t=ArrayIterator<_item_t, _size_t>;
 
 	// Friends
 	friend _array_t;
+	friend Object;
 
 public:
 	// Access
@@ -167,6 +169,7 @@ public:
 private:
 	// Con-/Destructors
 	ArrayIterator(Handle<_array_t> Array, _size_t Position): m_Array(Array), m_Position(Position) {}
+	static inline Handle<_iterator_t> Create(Handle<_array_t> Array, _size_t Position) { return Object::Create<_iterator_t>(Array, Position); }
 
 	// Common
 	Handle<_array_t> m_Array;

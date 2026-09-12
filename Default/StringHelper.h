@@ -75,6 +75,10 @@ public:
 	static UINT Lowercase(LPWSTR String)noexcept;
 	static UINT Lowercase(LPSTR Destination, UINT Size, LPCSTR Source)noexcept;
 	static UINT Lowercase(LPWSTR Destination, UINT Size, LPCWSTR Source)noexcept;
+	static inline UINT Print(LPSTR Destination, UINT Size, LPCSTR Value)noexcept { return Copy(Destination, Size, Value); }
+	static inline UINT Print(LPSTR Destination, UINT Size, LPCWSTR Value)noexcept { return Copy(Destination, Size, Value); }
+	static inline UINT Print(LPWSTR Destination, UINT Size, LPCSTR Value)noexcept { return Copy(Destination, Size, Value); }
+	static inline UINT Print(LPWSTR Destination, UINT Size, LPCWSTR Value)noexcept { return Copy(Destination, Size, Value); }
 	static UINT Print(LPSTR Destination, UINT Size, LPCSTR Format, VariableArguments& Arguments)noexcept;
 	static UINT Print(LPWSTR Destination, UINT Size, LPCSTR Format, VariableArguments& Arguments)noexcept;
 	template <std::character _dst_t, class... _args_t> static inline UINT Print(_dst_t* Destination, UINT Size, LPCSTR Format, _args_t... Arguments)noexcept

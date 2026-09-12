@@ -34,7 +34,7 @@ public:
 	friend Object;
 
 	// Con-/Destructors
-	static inline Handle<StringList> Create() { return new StringList(); }
+	static inline Handle<StringList> Create() { return Object::Create<StringList>(); }
 	static inline Handle<StringList> Create(Handle<String> String, CHAR Separator=';')
 		{
 		return Object::Create<StringList>(String, Separator);
@@ -42,7 +42,7 @@ public:
 
 private:
 	// Con-/Destructors
-	StringList()=default;
+	StringList() {}
 	StringList(Handle<String> String, CHAR Separator);
 };
 

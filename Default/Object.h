@@ -39,9 +39,9 @@ public:
 
 protected:
 	// Con-/Destructors
-	Object()noexcept: m_ReferenceCount(0) {}
-	template <class _obj_t, class... _args_t> static _obj_t* Create(_args_t... Arguments);
-	template <class _obj_t, class... _args_t> static _obj_t* CreateEx(SIZE_T Extra, SIZE_T Align=sizeof(SIZE_T), _args_t... Arguments);
+	Object()noexcept: m_ReferenceCount(1) {}
+	template <class _obj_t, class... _args_t> static _obj_t* Create(_args_t&&... Arguments);
+	template <class _obj_t, class... _args_t> static _obj_t* CreateEx(SIZE_T Extra, SIZE_T Align=sizeof(SIZE_T), _args_t&&... Arguments);
 
 	// Common
 	inline VOID AddReference()noexcept
@@ -59,22 +59,23 @@ protected:
 
 #include "Handle.h"
 
-template <class _obj_t, class... _args_t> _obj_t* Object::Create(_args_t... Arguments)
+template <class _obj_t, class... _args_t> _obj_t* Object::Create(_args_t&&... Arguments)
 {
 auto obj=(_obj_t*)MemoryHelper::Allocate(sizeof(_obj_t));
 try
 	{
-	new (obj) _obj_t(Arguments...);
+	new (obj) _obj_t(std::forward<_args_t>(Arguments)...);
 	}
 catch(Exception e)
 	{
 	delete obj;
 	throw e;
 	}
+Cpu::InterlockedDecrement(&obj->m_ReferenceCount);
 return obj;
 }
 
-template <class _obj_t, class... _args_t> _obj_t* Object::CreateEx(SIZE_T Extra, SIZE_T Align, _args_t... Arguments)
+template <class _obj_t, class... _args_t> _obj_t* Object::CreateEx(SIZE_T Extra, SIZE_T Align, _args_t&&... Arguments)
 {
 assert(Extra!=0);
 assert(Align%sizeof(SIZE_T)==0);
@@ -83,12 +84,13 @@ auto buf=(SIZE_T)obj+sizeof(_obj_t);
 buf=TypeHelper::AlignUp(buf, Align);
 try
 	{
-	new (obj) _obj_t((BYTE*)buf, Extra, Arguments...);
+	new (obj) _obj_t((BYTE*)buf, Extra, std::forward<_args_t>(Arguments)...);
 	}
 catch(Exception e)
 	{
 	delete obj;
 	throw e;
 	}
+Cpu::InterlockedDecrement(&obj->m_ReferenceCount);
 return obj;
 }

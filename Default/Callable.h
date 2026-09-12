@@ -34,7 +34,7 @@ public:
 
 protected:
 	// Con-/Destructors
-	Callable()=default;
+	Callable() {}
 };
 
 
@@ -46,13 +46,16 @@ template <class _ret_t, class... _args_t>
 class CallableFunction: public Callable<_ret_t, _args_t...>
 {
 public:
+	// Friends
+	friend Object;
+
 	// Using
 	typedef _ret_t (*_func_t)(_args_t...);
 
 	// Con-/Destructors
-	static Handle<CallableFunction> Create(_func_t Function)
+	static inline Handle<CallableFunction> Create(_func_t Function)
 		{
-		return new CallableFunction(Function);
+		return Object::Create<CallableFunction>(Function);
 		}
 
 	// Common
@@ -80,13 +83,16 @@ template <class _owner_t, class _ret_t, class... _args_t>
 class CallableMemberFunction: public Callable<_ret_t, _args_t...>
 {
 public:
+	// Friends
+	friend Object;
+
 	// Using
 	typedef _ret_t (_owner_t::*_func_t)(_args_t...);
 
 	// Con-/Destructors
-	static Handle<CallableMemberFunction> Create(_owner_t* Owner, _func_t Function)
+	static inline Handle<CallableMemberFunction> Create(_owner_t* Owner, _func_t Function)
 		{
-		return new CallableMemberFunction(Owner, Function);
+		return Object::Create<CallableMemberFunction>(Owner, Function);
 		}
 
 	// Common
@@ -116,10 +122,13 @@ template <class _owner_t, class _lambda_t, class _ret_t, class... _args_t>
 class CallableLambda: public Callable<_ret_t, _args_t...>
 {
 public:
+	// Friends
+	friend Object;
+
 	// Con-/Destructors
-	static Handle<CallableLambda> Create(_owner_t* Owner, _lambda_t&& Lambda)
+	static inline Handle<CallableLambda> Create(_owner_t* Owner, _lambda_t&& Lambda)
 		{
-		return new CallableLambda(Owner, std::forward<_lambda_t>(Lambda));
+		return Object::Create<CallableLambda>(Owner, std::forward<_lambda_t>(Lambda));
 		}
 
 	// Common
@@ -144,10 +153,13 @@ template <class _lambda_t, class _ret_t, class... _args_t>
 class CallableLambda<nullptr_t, _lambda_t, _ret_t, _args_t...>: public Callable<_ret_t, _args_t...>
 {
 public:
+	// Friends
+	friend Object;
+
 	// Con-/Destructors
-	static Handle<CallableLambda> Create(_lambda_t&& Lambda)
+	static inline Handle<CallableLambda> Create(_lambda_t&& Lambda)
 		{
-		return new CallableLambda(std::forward<_lambda_t>(Lambda));
+		return Object::Create<CallableLambda>(std::forward<_lambda_t>(Lambda));
 		}
 
 	// Common

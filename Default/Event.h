@@ -38,6 +38,28 @@ public:
 	using _handler_t=EventHandler<_sender_t, _args_t...>;
 	using Task=Concurrency::Task;
 
+	// Con-/Destructors
+	~EventBase()
+		{
+		assert(Task::IsMainTask());
+		_handler_t** current_ptr=&m_Handler;
+		while(*current_ptr)
+			{
+			auto current=*current_ptr;
+			if(current->IsRunning())
+				{
+				current->Invalidate();
+				}
+			else
+				{
+				*current_ptr=current->m_Next;
+				delete current;
+				continue;
+				}
+			current_ptr=&current->m_Next;
+			}
+		}
+
 	// Common
 	VOID Remove(VOID* Owner)noexcept
 		{

@@ -37,11 +37,14 @@ public:
 	using CriticalSection=Concurrency::CriticalSection;
 	using Signal=Concurrency::Signal;
 
+	// Friends
+	friend Object;
+
 	// Con-/Destructors
 	~StreamBuffer()noexcept;
 	static inline Handle<StreamBuffer> Create(SIZE_T ChunkSize=64)
 		{
-		return new StreamBuffer(ChunkSize);
+		return Object::Create<StreamBuffer>(ChunkSize);
 		}
 
 	// Common

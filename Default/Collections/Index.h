@@ -40,34 +40,32 @@ template <typename _id_t, typename _size_t, WORD _group_size> class IndexIterato
 template <typename _id_t, typename _size_t=UINT, WORD _group_size=10>
 class Index: public Object
 {
-private:
+public:
 	// Using
 	using _index_t=Index<_id_t, _size_t, _group_size>;
-
-public:
-	// Types
+	using _iterator_t=IndexIterator<_id_t, _size_t, _group_size>;
 	using FindFunction=find_func;
-	using Iterator=IndexIterator<_id_t, _size_t, _group_size>;
 
 	// Friends
 	friend Iterator;
+	friend Object;
 
 	// Con-/Destructors
-	static inline Handle<Index> Create() { return new Index(); }
-	static inline Handle<Index> Create(_index_t const* Copy) { return new Index(Copy); }
+	static inline Handle<Index> Create() { return Object::Create<Index>(); }
+	static inline Handle<Index> Create(_index_t const* Copy) { return Object::Create<Index>(Copy); }
 
 	// Access
-	inline Handle<Iterator> Begin(_size_t Position=0) { return new Iterator(this, Position); }
+	inline Handle<_iterator_t> Begin(_size_t Position=0) { return _iterator_t::Create(this, Position); }
 	inline BOOL Contains(_id_t const& Id)const noexcept { return m_Index.contains(Id); }
-	inline Handle<Iterator> End()
+	inline Handle<_iterator_t> End()
 		{
-		auto it=new Iterator(this, -2);
+		auto it=_iterator_t::Create(this, -2);
 		it->End();
 		return it;
 		}
-	inline Handle<Iterator> Find(_id_t const& Id, FindFunction Function=FindFunction::equal)
+	inline Handle<_iterator_t> Find(_id_t const& Id, FindFunction Function=FindFunction::equal)
 		{
-		auto it=new Iterator(this, -2);
+		auto it=_iterator_t::Create(this, -2);
 		it->Find(Id, Function);
 		return it;
 		}
@@ -155,13 +153,14 @@ private:
 template <typename _id_t, typename _size_t, WORD _group_size>
 class IndexIterator: public Object
 {
-private:
+public:
 	// Using
 	using _index_t=Index<_id_t, _size_t, _group_size>;
+	using _iterator_t=IndexIterator<_id_t, _size_t, _group_size>;
 
-public:
 	// Friends
 	friend _index_t;
+	friend Object;
 
 	// Using
 	using FindFunction=find_func;
@@ -193,6 +192,10 @@ public:
 private:
 	// Con-/Destructors
 	IndexIterator(_index_t* Index, _size_t Position): m_It(&Index->m_Index, Position), m_Index(Index) {}
+	static inline Handle<_iterator_t> Create(_index_t* Index, _size_t Position)
+		{
+		return Object::Create<_iterator_t>(Index, Position);
+		}
 
 	// Common
 	typename index<_id_t, _size_t, _group_size>::iterator m_It;

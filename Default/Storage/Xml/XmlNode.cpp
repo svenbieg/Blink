@@ -119,7 +119,7 @@ return value->Scan("%u", value_ptr)==1;
 
 Handle<XmlAttributeIterator> XmlNode::GetAttributes()
 {
-return new XmlNodeAttributeIterator(this);
+return XmlNodeAttributeIterator::Create(this);
 }
 
 Handle<XmlNode> XmlNode::GetChild(Handle<String> name)
@@ -142,7 +142,7 @@ return m_Children.get_count();
 
 Handle<XmlChildIterator> XmlNode::GetChildren()
 {
-return new XmlNodeChildIterator(this);
+return XmlNodeChildIterator::Create(this);
 }
 
 Handle<String> XmlNode::GetTag()

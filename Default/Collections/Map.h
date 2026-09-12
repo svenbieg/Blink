@@ -40,34 +40,32 @@ template <typename _key_t, typename _value_t, typename _size_t, WORD _group_size
 template <typename _key_t, typename _value_t, typename _size_t=UINT, WORD _group_size=10>
 class Map: public Object
 {
-private:
-	// Using
-	using _map_t=Map<_key_t, _value_t, _size_t, _group_size>;
-
 public:
 	// Using
+	using _map_t=Map<_key_t, _value_t, _size_t, _group_size>;
+	using _iterator_t=MapIterator<_key_t, _value_t, _size_t, _group_size>;
 	using FindFunction=find_func;
-	using Iterator=MapIterator<_key_t, _value_t, _size_t, _group_size>;
 
 	// Friends
-	friend Iterator;
+	friend _iterator_t;
+	friend Object;
 
 	// Con-/Destructors
-	static inline Handle<Map> Create() { return new Map(); }
-	static inline Handle<Map> Create(_map_t const* Copy) { return new Map(Copy); }
+	static inline Handle<Map> Create() { return Object::Create<Map>(); }
+	static inline Handle<Map> Create(_map_t const* Copy) { return Object::Create<Map>(Copy); }
 
 	// Access
-	inline Handle<Iterator> Begin(_size_t Position=0) { return new Iterator(this, Position); }
+	inline Handle<_iterator_t> Begin(_size_t Position=0) { return _iterator_t::Create(this, Position); }
 	inline BOOL Contains(_key_t const& Key)const { return m_Map.contains(Key); }
-	inline Handle<Iterator> End()
+	inline Handle<_iterator_t> End()
 		{
-		auto it=new Iterator(this, -2);
+		auto it=_iterator_t::Create(this, -2);
 		it->End();
 		return it;
 		}
-	inline Handle<Iterator> Find(_key_t const& Key, FindFunction Function=FindFunction::equal)
+	inline Handle<_iterator_t> Find(_key_t const& Key, FindFunction Function=FindFunction::equal)
 		{
-		auto it=new Iterator(this, -2);
+		auto it=_iterator_t::Create(this, -2);
 		it->Find(Key, Function);
 		return it;
 		}
@@ -171,13 +169,14 @@ protected:
 template <typename _key_t, typename _value_t, typename _size_t, WORD _group_size>
 class MapIterator: public Object
 {
-private:
+public:
 	// Using
+	using _iterator_t=MapIterator<_key_t, _value_t, _size_t, _group_size>;
 	using _map_t=Map<_key_t, _value_t, _size_t, _group_size>;
 
-public:
 	// Friends
 	friend _map_t;
+	friend Object;
 
 	// Using
 	using FindFunction=find_func;
@@ -217,6 +216,10 @@ public:
 private:
 	// Con-/Destructors
 	MapIterator(_map_t* Map, _size_t Position): m_It(&Map->m_Map, Position), m_Map(Map) {}
+	static inline Handle<_iterator_t> Create(_map_t* Map, _size_t Position)
+		{
+		return Object::Create<_iterator_t>(Map, Position);
+		}
 
 	// Common
 	typename map<_key_t, _value_t, _size_t, _group_size>::iterator m_It;

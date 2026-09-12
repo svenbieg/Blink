@@ -30,8 +30,11 @@ namespace Storage {
 class StaticBuffer: public Object, public Streams::Seekable
 {
 public:
+	// Friends
+	friend Object;
+
 	// Con-/Destructors
-	static inline Handle<StaticBuffer> Create(VOID* Buffer, SIZE_T Size) { return new StaticBuffer(Buffer, Size); }
+	static inline Handle<StaticBuffer> Create(VOID* Buffer, SIZE_T Size) { return Object::Create<StaticBuffer>(Buffer, Size); }
 
 	// Common
 	inline VOID Reset()noexcept { m_Position=0; }

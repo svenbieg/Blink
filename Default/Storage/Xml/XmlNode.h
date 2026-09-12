@@ -50,17 +50,18 @@ public:
 	using OutputStream=Storage::Streams::OutputStream;
 
 	// Friends
+	friend Object;
 	friend XmlNodeAttributeIterator;
 	friend XmlNodeChildIterator;
 
 	// Con-/Destructors
 	static inline Handle<XmlNode> Create(Handle<String> Tag=nullptr)
 		{
-		return new XmlNode(nullptr, Tag);
+		return Object::Create<XmlNode>(nullptr, Tag);
 		}
 	static inline Handle<XmlNode> Create(XmlNode* Parent, Handle<String> Tag=nullptr)
 		{
-		return new XmlNode(Parent, Tag);
+		return Object::Create<XmlNode>(Parent, Tag);
 		}
 
 	// Common
@@ -126,6 +127,7 @@ public:
 	using AccessMode=Concurrency::AccessMode;
 
 	// Friends
+	friend Object;
 	friend XmlNode;
 
 	// Access
@@ -151,6 +153,10 @@ private:
 		{
 		m_Node->m_Mutex.Unlock(AccessMode::ReadOnly);
 		}
+	static inline Handle<XmlNodeAttributeIterator> Create(XmlNode* Node)
+		{
+		return Object::Create<XmlNodeAttributeIterator>(Node);
+		}
 
 	// Common
 	typename Collections::map<Handle<String>, Handle<String>, UINT>::iterator m_It;
@@ -169,6 +175,7 @@ public:
 	using AccessMode=Concurrency::AccessMode;
 
 	// Friends
+	friend Object;
 	friend XmlNode;
 
 	// Access
@@ -192,6 +199,10 @@ protected:
 	~XmlNodeChildIterator()
 		{
 		m_Node->m_Mutex.Unlock(AccessMode::ReadOnly);
+		}
+	static inline Handle<XmlNodeChildIterator> Create(XmlNode* Node)
+		{
+		return Object::Create<XmlNodeChildIterator>(Node);
 		}
 
 	// Common
