@@ -87,6 +87,51 @@ public:
 		return Read((BYTE const*&)m_Buffer);
 		}
 	static UINT64 Read(BYTE const*& Dwarf);
+	template <std::integral _int_t> static SIZE_T Read(InputStream* Stream, _int_t* Value)
+		{
+		if(!Stream)
+			throw InvalidArgumentException();
+		using _uint_t=std::make_unsigned<_int_t>::type;
+		SIZE_T size=0;
+		_uint_t value=0;
+		UINT shift=0;
+		BYTE byte=0;
+		do
+			{
+			if(size==sizeof(_uint_t))
+				throw BufferOverrunException();
+			size+=Stream->Read(&byte, 1);
+			value|=((UINT)byte&0x7F)<<shift;
+			shift+=7;
+			}
+		while(byte&0x80);
+		if(byte&0x40)
+			value|=~0UL<<shift;
+		if(Value)
+			*Value=(_int_t)value;
+		return size;
+		}
+	template <std::unsigned_integral _uint_t> static SIZE_T Read(InputStream* Stream, _uint_t* Value)
+		{
+		if(!Stream)
+			throw InvalidArgumentException();
+		SIZE_T size=0;
+		_uint_t value=0;
+		UINT shift=0;
+		BYTE byte=0;
+		do
+			{
+			if(size==sizeof(_uint_t))
+				throw BufferOverrunException();
+			size+=Stream->Read(&byte, 1);
+			value|=((_uint_t)byte&0x7F)<<shift;
+			shift+=7;
+			}
+		while(byte&0x80);
+		if(Value)
+			*Value=value;
+		return size;
+		}
 	inline BYTE ReadByte()noexcept
 		{
 		return *m_Buffer++;
@@ -105,15 +150,11 @@ public:
 		return ReadSigned((BYTE const*&)m_Buffer);
 		}
 	static INT64 ReadSigned(BYTE const*& Dwarf);
-	static SIZE_T ReadSigned(InputStream* Stream, INT* Value);
-	static SIZE_T ReadSigned(InputStream* Stream, INT64* Value);
 	inline UINT64 ReadUnsigned()
 		{
 		return ReadUnsigned((BYTE const*&)m_Buffer);
 		}
 	static UINT64 ReadUnsigned(BYTE const*& Dwarf);
-	static SIZE_T ReadUnsigned(InputStream* Stream, UINT* Value);
-	static SIZE_T ReadUnsigned(InputStream* Stream, UINT64* Value);
 	template <typename _value_t> inline _value_t ReadValue()noexcept
 		{
 		_value_t value;
@@ -139,8 +180,70 @@ public:
 		{
 		m_Buffer=(BYTE*)Position;
 		}
-	static SIZE_T WriteSigned(OutputStream* Stream, INT64 Value);
-	static SIZE_T WriteUnsigned(OutputStream* Stream, UINT64 Value);
+	template <std::integral _int_t> static SIZE_T Write(OutputStream* Stream, _int_t Value)
+		{
+		BOOL neg=false;
+		if(Value<0)
+			{
+			Value=-Value;
+			neg=true;
+			}
+		using _uint_t=std::make_unsigned<_int_t>::type;
+		_uint_t value=(_uint_t)Value;
+		SIZE_T size=0;
+		do
+			{
+			BYTE byte=(BYTE)value&0x7F;
+			value>>=7;
+			if(value)
+				{
+				byte|=0x80;
+				}
+			else if(neg)
+				{
+				if(byte&0x40)
+					{
+					value=0x80;
+					byte|=0x80;
+					}
+				else
+					{
+					byte|=0x40;
+					}
+				}
+			if(Stream)
+				{
+				size+=Stream->Write(&byte, 1);
+				}
+			else
+				{
+				size++;
+				}
+			}
+		while(value);
+		return size;
+		}
+	template <std::unsigned_integral _uint_t> static SIZE_T Write(OutputStream* Stream, _uint_t Value)
+		{
+		SIZE_T size=0;
+		do
+			{
+			BYTE byte=(BYTE)Value&0x7F;
+			Value>>=7;
+			if(Value)
+				byte|=0x80;
+			if(Stream)
+				{
+				size+=Stream->Write(&byte, 1);
+				}
+			else
+				{
+				size++;
+				}
+			}
+		while(Value);
+		return size;
+		}
 
 private:
 	// Common

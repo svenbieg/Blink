@@ -184,7 +184,7 @@ if(!stream)
 	throw InvalidArgumentException();
 SIZE_T size=0;
 UINT len=0;
-size+=Dwarf::ReadUnsigned(stream, &len);
+size+=Dwarf::Read(stream, &len);
 if(!len)
 	{
 	if(size_ptr)
@@ -222,7 +222,7 @@ return str;
 SIZE_T String::WriteToStream(String const* str, OutputStream* stream)
 {
 if(!str)
-	return Dwarf::WriteUnsigned(stream, 0U);
+	return Dwarf::Write(stream, 0U);
 auto buf=str->m_Buffer;
 SIZE_T size=0;
 #ifndef _UNICODE
@@ -232,7 +232,7 @@ while(buf[len])
 #else
 auto len=str->m_Length;
 #endif
-size+=Dwarf::WriteUnsigned(stream, len);
+size+=Dwarf::Write(stream, len);
 size+=OutputStream::Write(stream, buf, len*sizeof(TCHAR));
 return size;
 }
