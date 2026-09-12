@@ -193,6 +193,8 @@ public:
 		SIZE_T size=0;
 		do
 			{
+			if(size==sizeof(_uint_t))
+				throw BufferOverrunException();
 			BYTE byte=(BYTE)value&0x7F;
 			value>>=7;
 			if(value)
@@ -228,6 +230,8 @@ public:
 		SIZE_T size=0;
 		do
 			{
+			if(size==sizeof(_uint_t))
+				throw BufferOverrunException();
 			BYTE byte=(BYTE)Value&0x7F;
 			Value>>=7;
 			if(Value)
