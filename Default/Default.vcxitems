@@ -46,6 +46,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)MemoryHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Object.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)PathHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Pointer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Property.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Status.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StatusHelper.h" />

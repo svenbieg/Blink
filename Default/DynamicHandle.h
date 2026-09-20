@@ -40,10 +40,6 @@ public:
 		{
 		return m_Object;
 		}
-	operator Handle<_obj_t>()const noexcept
-		{
-		return m_Object;
-		}
 	inline _obj_t* operator->()const
 		{
 		return m_Object;
@@ -64,25 +60,25 @@ public:
 		Set(Object);
 		return *this;
 		}
-	inline DynamicHandle& operator=(DynamicHandle const& Handle)
-		{
-		Set(Handle.m_Object);
-		return *this;
-		}
 	inline DynamicHandle& operator=(Handle<_obj_t> const& Handle)
 		{
 		Set(Handle);
 		return *this;
 		}
+	template <class _convert_t> inline DynamicHandle& operator=(Handle<_convert_t> const& Handle)
+		{
+		Set(Handle);
+		return *this;
+		}
 	Event<_owner_t, Handle<_obj_t>> Changed;
-	VOID Set(Handle<_obj_t> const& Object)
+	VOID Set(Handle<_obj_t> Object)
 		{
 		if(m_Object==Object)
 			return;
 		m_Object=Object;
 		Changed(m_Owner, m_Object);
 		}
-	inline VOID Set(Handle<_obj_t> const& Object, EventNotification Notification)
+	inline VOID Set(_obj_t* Object, EventNotification Notification)
 		{
 		m_Object=Object;
 		}

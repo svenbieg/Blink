@@ -15,7 +15,9 @@
 //=======
 
 #include "Devices/System/Cpu.h"
+#include "MemoryHelper.h"
 #include <new>
+#include <utility>
 
 
 //========
@@ -40,8 +42,40 @@ public:
 protected:
 	// Con-/Destructors
 	Object()noexcept: m_ReferenceCount(1) {}
-	template <class _obj_t, class... _args_t> static _obj_t* Create(_args_t&&... Arguments);
-	template <class _obj_t, class... _args_t> static _obj_t* CreateEx(SIZE_T Extra, SIZE_T Align=sizeof(SIZE_T), _args_t&&... Arguments);
+	template <class _obj_t, class... _args_t> static _obj_t* Create(_args_t&&... Arguments)
+		{
+		auto obj=(_obj_t*)MemoryHelper::Allocate(sizeof(_obj_t));
+		try
+			{
+			new (obj) _obj_t(std::forward<_args_t>(Arguments)...);
+			}
+		catch(Exception e)
+			{
+			delete obj;
+			throw e;
+			}
+		Cpu::InterlockedDecrement(&obj->m_ReferenceCount);
+		return obj;
+		}
+	template <class _obj_t, class... _args_t> static _obj_t* CreateEx(SIZE_T Extra, SIZE_T Align=sizeof(SIZE_T), _args_t&&... Arguments)
+		{
+		assert(Extra!=0);
+		assert(Align%sizeof(SIZE_T)==0);
+		auto obj=(_obj_t*)MemoryHelper::Allocate(sizeof(_obj_t)+Align+Extra);
+		auto buf=(SIZE_T)obj+sizeof(_obj_t);
+		buf=TypeHelper::AlignUp(buf, Align);
+		try
+			{
+			new (obj) _obj_t((BYTE*)buf, Extra, std::forward<_args_t>(Arguments)...);
+			}
+		catch(Exception e)
+			{
+			delete obj;
+			throw e;
+			}
+		Cpu::InterlockedDecrement(&obj->m_ReferenceCount);
+		return obj;
+		}
 
 	// Common
 	inline VOID AddReference()noexcept
@@ -51,46 +85,3 @@ protected:
 	virtual UINT Release()noexcept;
 	UINT m_ReferenceCount;
 };
-
-
-//==========
-// Creation
-//==========
-
-#include "Handle.h"
-
-template <class _obj_t, class... _args_t> _obj_t* Object::Create(_args_t&&... Arguments)
-{
-auto obj=(_obj_t*)MemoryHelper::Allocate(sizeof(_obj_t));
-try
-	{
-	new (obj) _obj_t(std::forward<_args_t>(Arguments)...);
-	}
-catch(Exception e)
-	{
-	delete obj;
-	throw e;
-	}
-Cpu::InterlockedDecrement(&obj->m_ReferenceCount);
-return obj;
-}
-
-template <class _obj_t, class... _args_t> _obj_t* Object::CreateEx(SIZE_T Extra, SIZE_T Align, _args_t&&... Arguments)
-{
-assert(Extra!=0);
-assert(Align%sizeof(SIZE_T)==0);
-auto obj=(_obj_t*)MemoryHelper::Allocate(sizeof(_obj_t)+Align+Extra);
-auto buf=(SIZE_T)obj+sizeof(_obj_t);
-buf=TypeHelper::AlignUp(buf, Align);
-try
-	{
-	new (obj) _obj_t((BYTE*)buf, Extra, std::forward<_args_t>(Arguments)...);
-	}
-catch(Exception e)
-	{
-	delete obj;
-	throw e;
-	}
-Cpu::InterlockedDecrement(&obj->m_ReferenceCount);
-return obj;
-}

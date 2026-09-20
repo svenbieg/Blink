@@ -120,6 +120,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Collections\StringList.h">
       <Filter>Collections</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Pointer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)StringHelper.cpp" />
