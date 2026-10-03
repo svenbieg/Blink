@@ -215,7 +215,7 @@ dst_pos+=4;
 return dst_pos;
 }
 
-VOID WifiAdapter::OnPacketReceived(WifiPacket* pkt)
+VOID WifiAdapter::OnPacketReceived(Handle<WifiPacket> pkt)
 {
 auto type=pkt->GetType();
 switch(type)
@@ -235,7 +235,7 @@ switch(type)
 		}
 	default:
 		{
-		PacketReceived.Call(pkt);
+		DispatchedQueue::Append(this, [this, pkt](){ PacketReceived(this, pkt); });
 		break;
 		}
 	}

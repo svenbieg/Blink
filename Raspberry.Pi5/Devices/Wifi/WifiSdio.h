@@ -42,7 +42,7 @@ public:
 
 	// Common
 	VOID Listen();
-	Callback<WifiPacket*> PacketReceived;
+	Callback<Handle<WifiPacket>> PacketReceived;
 
 	// Input-Stream
 	SIZE_T Available()override;
