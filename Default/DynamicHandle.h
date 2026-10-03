@@ -32,11 +32,15 @@ public:
 	DynamicHandle(DynamicHandle&&)=delete;
 
 	// Access
-	operator bool()const noexcept
+	inline operator bool()const noexcept
 		{
 		return m_Object!=nullptr;
 		}
-	operator _obj_t*()const noexcept
+	inline operator _obj_t*()const noexcept
+		{
+		return m_Object;
+		}
+	inline operator Handle<_obj_t>()const noexcept
 		{
 		return m_Object;
 		}
