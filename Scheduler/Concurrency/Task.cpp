@@ -42,11 +42,8 @@ if(m_Exception)
 
 Handle<Task> Task::Create(VOID (*Procedure)(), Handle<String> Name, SIZE_T StackSize)
 {
-SIZE_T task_size=TypeHelper::AlignUp(sizeof(TaskProcedure), sizeof(SIZE_T));
-auto task=(TaskProcedure*)MemoryHelper::Allocate(task_size+StackSize);
-auto stack=(SIZE_T*)((SIZE_T)task+task_size);
-new (task) TaskProcedure(stack, StackSize, Procedure, Name);
-Schedule(task);
+auto task=TaskProcedure::Create(Procedure, Name, StackSize);
+Scheduler::AddTask(task);
 return task;
 }
 
@@ -87,7 +84,7 @@ Scheduler::SuspendCurrentTask(ms);
 // Con-/Destructors Protected
 //============================
 
-Task::Task(SIZE_T* stack, SIZE_T stack_size, Handle<String> name)noexcept:
+Task::Task(BYTE* stack, SIZE_T stack_size, Handle<String> name)noexcept:
 Cancelled(false),
 Name(name->Begin()),
 m_Creator(nullptr),
@@ -170,13 +167,9 @@ Scheduler::ExitTask();
 // Con-/Destructors Private
 //==========================
 
-Task* Task::CreateInternal(VOID (*Procedure)(), Handle<String> Name, SIZE_T StackSize)
+Handle<Task> Task::CreateInternal(VOID (*Procedure)(), Handle<String> Name, SIZE_T StackSize)
 {
-SIZE_T task_size=TypeHelper::AlignUp(sizeof(TaskProcedure), sizeof(SIZE_T));
-auto task=(TaskProcedure*)MemoryHelper::Allocate(task_size+StackSize);
-auto stack=(SIZE_T*)((SIZE_T)task+task_size);
-new (task) TaskProcedure(stack, StackSize, Procedure, Name);
-return task;
+return TaskProcedure::Create(Procedure, Name, StackSize);
 }
 
 }
