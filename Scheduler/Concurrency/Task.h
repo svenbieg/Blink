@@ -88,15 +88,9 @@ public:
 	~Task()noexcept;
 	static Handle<Task> Create(VOID (*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE);
 	template <class _owner_t> static Handle<Task> Create(_owner_t* Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE);
-	template <class _owner_t> static inline Handle<Task> Create(Handle<_owner_t> const& Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE)
-		{
-		return Create((_owner_t*)Owner, Procedure, Name, StackSize);
-		}
+	template <class _owner_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE);
 	template <class _owner_t, class _lambda_t> static Handle<Task> Create(_owner_t* Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE);
-	template <class _owner_t, class _lambda_t> static inline Handle<Task> Create(Handle<_owner_t> const& Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE)
-		{
-		return Create((_owner_t*)Owner, std::forward<_lambda_t>(Lambda), Name, StackSize);
-		}
+	template <class _owner_t, class _lambda_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE);
 	template <class _lambda_t> static inline Handle<Task> Create(nullptr_t Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE);
 
 	// Common
@@ -147,7 +141,7 @@ protected:
 	template <class _item_t> using Link=Collections::Link<_item_t>;
 
 	// Con-/Destructors
-	Task(BYTE* Stack, SIZE_T StackSize, Handle<String> Name)noexcept;
+	Task(BYTE* Stack, SIZE_T StackSize, Handle<String>&& Name)noexcept;
 	static Handle<Task> CreateInternal(VOID (*Procedure)(), Handle<String> Name, SIZE_T StackSize=MemoryHelper::PAGE_SIZE);
 
 	// Common
@@ -199,13 +193,13 @@ private:
 	// Con-/Destructors
 	friend Object;
 	friend Task;
-	TaskProcedure(BYTE* Stack, SIZE_T StackSize, _proc_t Procedure, Handle<String> Name):
-		Task(Stack, StackSize, Name),
+	TaskProcedure(BYTE* Stack, SIZE_T StackSize, _proc_t Procedure, Handle<String>&& Name):
+		Task(Stack, StackSize, std::forward<Handle<String>>(Name)),
 		m_Procedure(Procedure)
 		{}
-	static inline Handle<Task> Create(_proc_t Procedure, Handle<String> Name, SIZE_T StackSize)
+	static inline Handle<Task> Create(_proc_t Procedure, Handle<String>&& Name, SIZE_T StackSize)
 		{
-		return Object::CreateEx<TaskProcedure>(StackSize, sizeof(SIZE_T), Procedure, Name);
+		return Object::CreateEx<TaskProcedure, _proc_t, Handle<String>&&>(StackSize, sizeof(SIZE_T), Procedure, std::forward<Handle<String>>(Name));
 		}
 
 	// Common
@@ -228,14 +222,14 @@ private:
 	// Con-/Destructors
 	friend Object;
 	friend Task;
-	TaskMemberProcedure(BYTE* Stack, SIZE_T StackSize, _owner_t* Owner, _proc_t Procedure, Handle<String> Name):
-		Task(Stack, StackSize, Name),
+	TaskMemberProcedure(BYTE* Stack, SIZE_T StackSize, _owner_t* Owner, _proc_t Procedure, Handle<String>&& Name):
+		Task(Stack, StackSize, std::forward<Handle<String>>(Name)),
 		m_Owner(Owner),
 		m_Procedure(Procedure)
 		{}
-	static inline Handle<Task> Create(_owner_t* Owner, _proc_t Procedure, Handle<String> Name, SIZE_T StackSize)
+	static inline Handle<Task> Create(_owner_t* Owner, _proc_t Procedure, Handle<String>&& Name, SIZE_T StackSize)
 		{
-		return Object::CreateEx<TaskMemberProcedure>(StackSize, sizeof(SIZE_T), Owner, Procedure, Name);
+		return Object::CreateEx<TaskMemberProcedure>(StackSize, sizeof(SIZE_T), Owner, Procedure, std::forward<Handle<String>>(Name));
 		}
 
 	// Common
@@ -256,14 +250,14 @@ private:
 	// Con-/Destructors
 	friend Object;
 	friend Task;
-	TaskLambda(BYTE* Stack, SIZE_T StackSize, _owner_t* Owner, _lambda_t&& Lambda, Handle<String> Name):
-		Task(Stack, StackSize, Name),
+	TaskLambda(BYTE* Stack, SIZE_T StackSize, _owner_t* Owner, _lambda_t&& Lambda, Handle<String>&& Name):
+		Task(Stack, StackSize, std::forward<Handle<String>>(Name)),
 		m_Lambda(std::move(Lambda)),
 		m_Owner(Owner)
 		{}
-	static inline Handle<Task> Create(_owner_t* Owner, _lambda_t&& Lambda, Handle<String> Name, SIZE_T StackSize)
+	static inline Handle<Task> Create(_owner_t* Owner, _lambda_t&& Lambda, Handle<String>&& Name, SIZE_T StackSize)
 		{
-		return Object::CreateEx<TaskLambda, _owner_t*, _lambda_t&&, Handle<String>&&>(StackSize, sizeof(SIZE_T), Owner, Lambda, Name);
+		return Object::CreateEx<TaskLambda, _owner_t*, _lambda_t&&, Handle<String>>(StackSize, sizeof(SIZE_T), Owner, std::forward<_lambda_t>(Lambda), std::forward<Handle<String>>(Name));
 		}
 
 	// Common
@@ -279,13 +273,13 @@ private:
 	// Con-/Destructors
 	friend Object;
 	friend Task;
-	TaskLambda(SIZE_T* Stack, SIZE_T StackSize, _lambda_t&& Lambda, Handle<String> Name):
-		Task(Stack, StackSize, Name),
+	TaskLambda(SIZE_T* Stack, SIZE_T StackSize, _lambda_t&& Lambda, Handle<String>&& Name):
+		Task(Stack, StackSize, std::forward<Handle<String>>(Name)),
 		m_Lambda(std::move(Lambda))
 		{}
-	static inline Handle<Task> Create(_lambda_t&& Lambda, Handle<String> Name, SIZE_T StackSize)
+	static inline Handle<Task> Create(_lambda_t&& Lambda, Handle<String>&& Name, SIZE_T StackSize)
 		{
-		return Object::CreateEx<TaskLambda, _lambda_t&&, Handle<String>&&>(StackSize, sizeof(SIZE_T), Lambda, Name);
+		return Object::CreateEx<TaskLambda, _lambda_t&&, Handle<String>>(StackSize, sizeof(SIZE_T), std::forward<_lambda_t>(Lambda), std::forward<Handle<String>>(Name));
 		}
 
 	// Common
@@ -301,7 +295,15 @@ private:
 template <class _owner_t> Handle<Task> Task::Create(_owner_t* Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name, SIZE_T StackSize)
 {
 assert(StackSize%sizeof(SIZE_T)==0);
-auto task=TaskMemberProcedure<_owner_t>::Create(Owner, Procedure, Name, StackSize);
+auto task=TaskMemberProcedure<_owner_t>::Create(Owner, Procedure, std::forward<Handle<String>>(Name), StackSize);
+Schedule(task);
+return task;
+}
+
+template <class _owner_t> Handle<Task> Task::Create(Handle<_owner_t> const& Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name, SIZE_T StackSize)
+{
+assert(StackSize%sizeof(SIZE_T)==0);
+auto task=TaskMemberProcedure<_owner_t>::Create(Owner, Procedure, std::forward<Handle<String>>(Name), StackSize);
 Schedule(task);
 return task;
 }
@@ -309,7 +311,15 @@ return task;
 template <class _owner_t, class _lambda_t> Handle<Task> Task::Create(_owner_t* Owner, _lambda_t&& Lambda, Handle<String> Name, SIZE_T StackSize)
 {
 assert(StackSize%sizeof(SIZE_T)==0);
-auto task=TaskLambda<_owner_t, _lambda_t>::Create(Owner, Lambda, Name, StackSize);
+auto task=TaskLambda<_owner_t, _lambda_t>::Create(Owner, std::forward<_lambda_t>(Lambda), std::forward<Handle<String>>(Name), StackSize);
+Schedule(task);
+return task;
+}
+
+template <class _owner_t, class _lambda_t> Handle<Task> Task::Create(Handle<_owner_t> const& Owner, _lambda_t&& Lambda, Handle<String> Name, SIZE_T StackSize)
+{
+assert(StackSize%sizeof(SIZE_T)==0);
+auto task=TaskLambda<_owner_t, _lambda_t>::Create(Owner, std::forward<_lambda_t>(Lambda), std::forward<Handle<String>>(Name), StackSize);
 Schedule(task);
 return task;
 }
@@ -317,7 +327,7 @@ return task;
 template <class _lambda_t> Handle<Task> Task::Create(nullptr_t Owner, _lambda_t&& Lambda, Handle<String> Name, SIZE_T StackSize)
 {
 assert(StackSize%sizeof(SIZE_T)==0);
-auto task=TaskLambda<nullptr_t, _lambda_t>::Create(Lambda, Name, StackSize);
+auto task=TaskLambda<nullptr_t, _lambda_t>::Create(std::forward<_lambda_t>(Lambda), std::forward<Handle<String>>(Name), StackSize);
 Schedule(task);
 return task;
 }

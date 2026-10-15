@@ -42,7 +42,7 @@ if(m_Exception)
 
 Handle<Task> Task::Create(VOID (*Procedure)(), Handle<String> Name, SIZE_T StackSize)
 {
-auto task=TaskProcedure::Create(Procedure, Name, StackSize);
+auto task=TaskProcedure::Create(Procedure, std::forward<Handle<String>>(Name), StackSize);
 Scheduler::AddTask(task);
 return task;
 }
@@ -84,13 +84,13 @@ Scheduler::SuspendCurrentTask(ms);
 // Con-/Destructors Protected
 //============================
 
-Task::Task(BYTE* stack, SIZE_T stack_size, Handle<String> name)noexcept:
+Task::Task(BYTE* stack, SIZE_T stack_size, Handle<String>&& name)noexcept:
 Cancelled(false),
 Name(name->Begin()),
 m_Creator(nullptr),
 m_Exception(nullptr),
 m_Flags(TaskFlags::None),
-m_Name(name),
+m_Name(std::move(name)),
 m_Next(nullptr),
 m_PriorityCount(0),
 m_ResumeTime(0),
@@ -169,7 +169,7 @@ Scheduler::ExitTask();
 
 Handle<Task> Task::CreateInternal(VOID (*Procedure)(), Handle<String> Name, SIZE_T StackSize)
 {
-return TaskProcedure::Create(Procedure, Name, StackSize);
+return TaskProcedure::Create(Procedure, std::forward<Handle<String>>(Name), StackSize);
 }
 
 }
