@@ -309,7 +309,7 @@ return task;
 template <class _owner_t, class _lambda_t> Handle<Task> Task::Create(_owner_t* Owner, _lambda_t&& Lambda, Handle<String> Name, SIZE_T StackSize)
 {
 assert(StackSize%sizeof(SIZE_T)==0);
-auto task=TaskLambda<_owner_t, _lambda_t&&>::Create(Owner, Lambda, Name, StackSize);
+auto task=TaskLambda<_owner_t, _lambda_t>::Create(Owner, Lambda, Name, StackSize);
 Schedule(task);
 return task;
 }
@@ -317,7 +317,7 @@ return task;
 template <class _lambda_t> Handle<Task> Task::Create(nullptr_t Owner, _lambda_t&& Lambda, Handle<String> Name, SIZE_T StackSize)
 {
 assert(StackSize%sizeof(SIZE_T)==0);
-auto task=TaskLambda<nullptr_t, _lambda_t&&>::Create(Lambda, Name, StackSize);
+auto task=TaskLambda<nullptr_t, _lambda_t>::Create(Lambda, Name, StackSize);
 Schedule(task);
 return task;
 }
