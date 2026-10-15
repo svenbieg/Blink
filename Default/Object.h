@@ -42,7 +42,7 @@ public:
 protected:
 	// Con-/Destructors
 	Object()noexcept: m_ReferenceCount(1) {}
-	template <class _obj_t, class... _args_t> static _obj_t* Create(_args_t&&... Arguments)
+	template <class _obj_t, class... _args_t> static _obj_t* Create(_args_t... Arguments)
 		{
 		auto obj=(_obj_t*)MemoryHelper::Allocate(sizeof(_obj_t));
 		try
@@ -57,7 +57,7 @@ protected:
 		Cpu::InterlockedDecrement(&obj->m_ReferenceCount);
 		return obj;
 		}
-	template <class _obj_t, class... _args_t> static _obj_t* CreateEx(SIZE_T Extra, SIZE_T Align=sizeof(SIZE_T), _args_t&&... Arguments)
+	template <class _obj_t, class... _args_t> static _obj_t* CreateEx(SIZE_T Extra, SIZE_T Align=sizeof(SIZE_T), _args_t... Arguments)
 		{
 		assert(Extra!=0);
 		assert(Align%sizeof(SIZE_T)==0);
