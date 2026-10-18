@@ -31,17 +31,16 @@ namespace Devices {
 // Common
 //========
 
+VOID PcieHost::SetInterruptHandler(Rp1Irq irq, nullptr_t)
+{
+SetInterruptHandlerInternal(irq, nullptr);
+}
+
+
 VOID PcieHost::SetInterruptHandler(Rp1Irq irq, VOID (*proc)())
 {
-if(proc)
-	{
-	auto handler=new InterruptProcedure(proc);
-	SetInterruptHandlerInternal(irq, handler);
-	}
-else
-	{
-	SetInterruptHandlerInternal(irq, nullptr);
-	}
+auto handler=CallableFunction<VOID>::Create(proc);
+SetInterruptHandlerInternal(irq, handler);
 }
 
 
@@ -89,15 +88,17 @@ return 0;
 
 VOID PcieHost::HandleInterrupt()
 {
-SpinLock lock(m_CriticalSection);
 auto intc=(rp1_intc_regs_t*)RP1_INTC_BASE;
 UINT64 mask=IoHelper::Read(intc->INT_STAT);
 while(mask)
 	{
 	UINT irq=Cpu::CountTrailingZeros(mask);
 	UINT64 irq_mask=1ULL<<irq;
-	if(m_IrqHandlers[irq])
-		m_IrqHandlers[irq]->Run();
+	SpinLock lock(m_CriticalSection);
+	auto handler=m_IrqHandlers[irq];
+	lock.Unlock();
+	if(handler)
+		handler->Call();
 	if(!BitHelper::Get(irq_mask, RP1_IRQ_EDGE_MASK))
 		IoHelper::Write(intc->MSIX_CFG_SET[irq], MSIX_CFG_IACK);
 	BitHelper::Clear(mask, irq_mask);
@@ -205,9 +206,14 @@ throw DeviceNotReadyException();
 
 VOID PcieHost::SetInterruptHandlerInternal(Rp1Irq rp1_irq, InterruptHandler* handler)noexcept
 {
+auto intc=(rp1_intc_regs_t*)RP1_INTC_BASE;
 UINT32 id=(UINT)rp1_irq;
 UINT64 mask=1ULL<<id;
-auto intc=(rp1_intc_regs_t*)RP1_INTC_BASE;
+if(!handler)
+	{
+	IoHelper::Write(intc->MSIX_CFG_CLEAR[id], MSIX_CFG_EN);
+	IoHelper::Write(intc->MSIX_CFG_CLEAR[id], MSIX_CFG_IACK_EN);
+	}
 SpinLock lock(m_CriticalSection);
 auto old_handler=m_IrqHandlers[id];
 m_IrqHandlers[id]=handler;
@@ -223,11 +229,6 @@ if(handler)
 		IoHelper::Write(intc->MSIX_CFG_SET[id], MSIX_CFG_IACK_EN);
 		}
 	IoHelper::Write(intc->MSIX_CFG_SET[id], MSIX_CFG_EN);
-	}
-else
-	{
-	IoHelper::Write(intc->MSIX_CFG_CLEAR[id], MSIX_CFG_EN);
-	IoHelper::Write(intc->MSIX_CFG_CLEAR[id], MSIX_CFG_IACK_EN);
 	}
 }
 

@@ -60,7 +60,7 @@ protected:
 	template <class _obj_t, class... _args_t> static _obj_t* CreateEx(SIZE_T Extra, SIZE_T Align=sizeof(SIZE_T), _args_t&&... Arguments)
 		{
 		assert(Extra!=0);
-		assert(Align%sizeof(SIZE_T)==0);
+		assert(Align!=0);
 		auto obj=(_obj_t*)MemoryHelper::Allocate(sizeof(_obj_t)+Align+Extra);
 		auto buf=(SIZE_T)obj+sizeof(_obj_t);
 		buf=TypeHelper::AlignUp(buf, Align);

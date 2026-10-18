@@ -10,7 +10,6 @@
 //=======
 
 #include "Concurrency/ReadLock.h"
-#include "Concurrency/SpinLock.h"
 #include "Concurrency/WriteLock.h"
 #include "Devices/Peripherals.h"
 #include "Runtime/Configuration.h"

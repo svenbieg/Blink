@@ -28,7 +28,6 @@ class Cpu
 {
 public:
 	// Settings
-	static const UINT CACHE_LINE_SIZE=8;
 	static const UINT CPU_COUNT=Runtime::CONFIG_CPU_COUNT;
 
 	// Common

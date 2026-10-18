@@ -22,7 +22,6 @@
 #include "MemoryHelper.h"
 #include "StringClass.h"
 #include <cassert>
-#include <new>
 #include <utility>
 
 
@@ -86,12 +85,12 @@ public:
 
 	// Con-/Destructors
 	~Task()noexcept;
-	static Handle<Task> Create(VOID (*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE);
-	template <class _owner_t> static Handle<Task> Create(_owner_t* Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE);
-	template <class _owner_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE);
-	template <class _owner_t, class _lambda_t> static Handle<Task> Create(_owner_t* Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE);
-	template <class _owner_t, class _lambda_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE);
-	template <class _lambda_t> static inline Handle<Task> Create(nullptr_t Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE);
+	static Handle<Task> Create(VOID (*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=PAGE_SIZE);
+	template <class _owner_t> static Handle<Task> Create(_owner_t* Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=PAGE_SIZE);
+	template <class _owner_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=PAGE_SIZE);
+	template <class _owner_t, class _lambda_t> static Handle<Task> Create(_owner_t* Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=PAGE_SIZE);
+	template <class _owner_t, class _lambda_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=PAGE_SIZE);
+	template <class _lambda_t> static Handle<Task> Create(nullptr_t Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=PAGE_SIZE);
 
 	// Common
 	VOID Cancel()noexcept;
@@ -136,13 +135,14 @@ public:
 
 protected:
 	// Using
-	static const UINT STACK_HEADER=0xABCDEF;
+	static constexpr UINT PAGE_SIZE=MemoryHelper::PAGE_SIZE;
+	static constexpr UINT STACK_HEADER=0xABCDEF;
 	template <class _item_t> using FwdLink=Collections::FwdLink<_item_t>;
 	template <class _item_t> using Link=Collections::Link<_item_t>;
 
 	// Con-/Destructors
 	Task(BYTE* Stack, SIZE_T StackSize, Handle<String>&& Name)noexcept;
-	static Handle<Task> CreateInternal(VOID (*Procedure)(), Handle<String> Name, SIZE_T StackSize=MemoryHelper::PAGE_SIZE);
+	static Handle<Task> CreateInternal(VOID (*Procedure)(), Handle<String> Name, SIZE_T StackSize=PAGE_SIZE);
 
 	// Common
 	static bool Priority(Task* First, Task* Second)noexcept;
@@ -273,7 +273,7 @@ private:
 	// Con-/Destructors
 	friend Object;
 	friend Task;
-	TaskLambda(SIZE_T* Stack, SIZE_T StackSize, _lambda_t&& Lambda, Handle<String>&& Name):
+	TaskLambda(BYTE* Stack, SIZE_T StackSize, _lambda_t&& Lambda, Handle<String>&& Name):
 		Task(Stack, StackSize, std::forward<Handle<String>>(Name)),
 		m_Lambda(std::move(Lambda))
 		{}

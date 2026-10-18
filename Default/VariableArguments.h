@@ -34,7 +34,7 @@ class VariableArgument
 public:
 	// Con-/Destructors
 	VariableArgument(VariableArgument const&)=delete;
-	VariableArgument(Handle<String> Handle)noexcept;
+	VariableArgument(Handle<String> const& Handle)noexcept;
 	inline VariableArgument(BYTE Value)noexcept: m_Flags(VAF_UNSIGNED|VAF_INT), m_Size(sizeof(BYTE)), m_Value(Value) {}
 	inline VariableArgument(WORD Value)noexcept: m_Flags(VAF_UNSIGNED|VAF_INT), m_Size(sizeof(WORD)), m_Value(Value) {}
 	inline VariableArgument(UINT Value)noexcept: m_Flags(VAF_UNSIGNED|VAF_INT), m_Size(sizeof(UINT)), m_Value(Value) {}
@@ -232,8 +232,8 @@ public:
 			}
 		return false;
 		}
-	BOOL Set(LPCSTR Buffer, UINT Length)noexcept;
-	BOOL Set(LPCWSTR Buffer, UINT Length)noexcept;
+	BOOL Set(LPCSTR Buffer, UINT Length);
+	BOOL Set(LPCWSTR Buffer, UINT Length);
 
 private:
 	// Common

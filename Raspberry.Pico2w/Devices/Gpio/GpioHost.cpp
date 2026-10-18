@@ -221,8 +221,7 @@ IoHelper::Set(pads->IO[id], PADS_DSTRENGTH, (UINT)strength);
 // Con-/Destructors Private
 //==========================
 
-GpioHost::GpioHost():
-m_IrqHandlers({ nullptr })
+GpioHost::GpioHost()
 {
 Interrupts::SetHandler(Irq::IoBank0, this, &GpioHost::HandleInterrupt);
 }
@@ -250,8 +249,11 @@ for(UINT reg=0; reg<reg_count; reg++)
 		UINT pin_status=(status>>lsb)&0xF;
 		UINT mask=pin_status<<lsb;
 		IoHelper::Write(io_bank->INTR[reg], mask);
-		if(m_IrqHandlers[pin])
-			m_IrqHandlers[pin]->Run();
+		SpinLock lock(m_CriticalSection);
+		auto handler=m_IrqHandlers[pin];
+		lock.Unlock();
+		if(handler)
+			handler->Call();
 		BitHelper::Clear(status, mask);
 		}
 	}
@@ -261,9 +263,10 @@ VOID GpioHost::SetInterruptHandlerInternal(GpioPin pin, InterruptHandler* handle
 {
 DisableInterrupt(pin);
 UINT id=(UINT)pin;
-if(m_IrqHandlers[id])
-	delete m_IrqHandlers[id];
+SpinLock lock(m_CriticalSection);
+auto old_handler=m_IrqHandlers[id];
 m_IrqHandlers[id]=handler;
+lock.Unlock();
 if(!handler)
 	mode=GpioIrqMode::None;
 if(mode!=GpioIrqMode::None)

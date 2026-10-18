@@ -125,12 +125,12 @@ public:
 	VOID EnableInterrupt(GpioPin Pin, GpioIrqMode Mode);
 	inline VOID SetInterruptHandler(GpioPin Pin, VOID (*Procedure)(), GpioIrqMode Mode=GpioIrqMode::Edge)
 		{
-		auto handler=new Devices::System::InterruptProcedure(Procedure);
+		auto handler=CallableFunction<VOID>::Create(Procedure);
 		SetInterruptHandlerInternal(Pin, handler, Mode);
 		}
 	template <class _owner_t> inline VOID SetInterruptHandler(GpioPin Pin, _owner_t* Owner, VOID (_owner_t::*Procedure)(), GpioIrqMode Mode=GpioIrqMode::Edge)
 		{
-		auto handler=new Devices::System::InterruptMemberProcedure(Owner, Procedure);
+		auto handler=CallableMemberFunction<_owner_t, VOID>::Create(Owner, Procedure);
 		SetInterruptHandlerInternal(Pin, handler, Mode);
 		}
 	VOID SetPinMode(GpioPin Pin, GpioHysteresis Hysteresis);
@@ -152,7 +152,7 @@ private:
 		}
 	VOID SetInterruptHandlerInternal(GpioPin Pin, InterruptHandler* Handler, GpioIrqMode Mode);
 	CriticalSection m_CriticalSection;
-	InterruptHandler* m_IrqHandlers[GPIO_PIN_COUNT];
+	Handle<InterruptHandler> m_IrqHandlers[GPIO_PIN_COUNT];
 };
 
 }}

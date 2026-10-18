@@ -250,6 +250,7 @@ auto status=Status::Success;
 try
 	{
 	SystemTimer::Start();
+	Cpu::WakeupSecondary();
 	Main();
 	}
 catch(...)

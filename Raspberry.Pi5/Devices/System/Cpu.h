@@ -141,6 +141,7 @@ public:
 		{
 		__asm inline volatile("wfi");
 		}
+	static VOID WakeupSecondary();
 
 private:
 	// Common

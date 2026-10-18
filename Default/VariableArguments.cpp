@@ -20,7 +20,7 @@
 // Con-/Destructors
 //==================
 
-VariableArgument::VariableArgument(Handle<String> handle)noexcept:
+VariableArgument::VariableArgument(Handle<String> const& handle)noexcept:
 m_Flags(VAF_CHAR|VAF_PTR|VAF_CONST),
 m_Size(sizeof(TCHAR)),
 m_Value(reinterpret_cast<UINT64>(handle? handle->Begin(): nullptr))
@@ -70,7 +70,7 @@ return true;
 // Variable Arguments
 //====================
 
-template <class _char_t> BOOL SetString(VariableArgument const* args, UINT count, UINT* pos_ptr, _char_t const* str, UINT len)noexcept
+template <class _char_t> BOOL SetString(VariableArgument const* args, UINT count, UINT* pos_ptr, _char_t const* str, UINT len)
 {
 auto pos=*pos_ptr;
 if(pos>=count)
@@ -100,12 +100,12 @@ StringHelper::Copy(pw, size, str, len);
 return true;
 }
 
-BOOL VariableArguments::Set(LPCSTR str, UINT len)noexcept
+BOOL VariableArguments::Set(LPCSTR str, UINT len)
 {
 return SetString(m_Arguments, m_Count, &m_Position, str, len);
 }
 
-BOOL VariableArguments::Set(LPCWSTR str, UINT len)noexcept
+BOOL VariableArguments::Set(LPCWSTR str, UINT len)
 {
 return SetString(m_Arguments, m_Count, &m_Position, str, len);
 }

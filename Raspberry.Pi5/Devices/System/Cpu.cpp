@@ -72,4 +72,8 @@ if(status!=0)
 	throw DeviceNotReadyException();
 }
 
+VOID Cpu::WakeupSecondary()
+{
+}
+
 }}

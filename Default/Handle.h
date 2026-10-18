@@ -210,24 +210,29 @@ public:
 		Clear(&m_Object);
 		return *this;
 		}
-	inline Handle& operator=(_obj_t* Object)noexcept
+	inline Handle& operator=(_obj_t* Value)noexcept
 		{
-		Set(&m_Object, Object);
+		Set(&m_Object, Value);
 		return *this;
 		}
-	inline Handle& operator=(Handle const& Copy)noexcept
+	inline Handle& operator=(Handle const& Value)noexcept
 		{
-		Set(&m_Object, Copy.m_Object);
+		Set(&m_Object, Value.m_Object);
 		return *this;
 		}
-	template <class _convert_t> inline Handle& operator=(_convert_t* Object)noexcept
+	inline Handle& operator=(Handle&& Value)noexcept
 		{
-		Set(&m_Object, Object);
+		Move(&m_Object, &Value.m_Object);
 		return *this;
 		}
-	template <class _convert_t> inline Handle& operator=(Handle<_convert_t> const& Copy)noexcept
+	template <class _convert_t> inline Handle& operator=(_convert_t* Value)noexcept
 		{
-		Set(&m_Object, Copy.m_Object);
+		Set(&m_Object, Value);
+		return *this;
+		}
+	template <class _convert_t> inline Handle& operator=(Handle<_convert_t> const& Value)noexcept
+		{
+		Set(&m_Object, Value.m_Object);
 		return *this;
 		}
 
@@ -246,6 +251,14 @@ private:
 		if(src)
 			src->AddReference();
 		*Destination=src;
+		}
+	template <class _move_t> static VOID Move(_move_t** Destination, _move_t** Source)noexcept
+		{
+		auto dst=static_cast<Object*>(*Destination);
+		*Destination=*Source;
+		*Source=nullptr;
+		if(dst)
+			dst->Release();
 		}
 	template <class _set_t, class _convert_t> static VOID Set(_set_t** Destination, _convert_t* Source)noexcept
 		{

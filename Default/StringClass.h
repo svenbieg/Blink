@@ -42,6 +42,7 @@ public:
 
 	// Friends
 	friend Handle<String>;
+	friend Object;
 	friend StringBuilder;
 	friend StringHelper;
 
@@ -146,7 +147,7 @@ public:
 
 private:
 	// Con-/Destructors
-	String(LPTSTR Buffer)noexcept;
+	String(BYTE* Buffer, SIZE_T Size)noexcept;
 	static Handle<String> Create(UINT Length, nullptr_t);
 
 	// Common
@@ -337,6 +338,11 @@ public:
 		{
 		return operator=(Value.m_Object);
 		}
+	inline Handle& operator=(Handle<String>&& Value)noexcept
+		{
+		Handle<Object>::Move(&m_Object, &Value.m_Object);
+		return *this;
+		}
 	inline Handle& operator=(LPCSTR Value)
 		{
 		return operator=(String::Create(Value));
@@ -349,7 +355,7 @@ public:
 		{
 		SIZE_T size=0;
 		auto str=String::ReadFromStream(Stream, &size);
-		operator=(std::move(str));
+		operator=(std::forward<Handle<String>>(str));
 		return size;
 		}
 

@@ -76,18 +76,18 @@ const UINT ICSR_PENDSVCLR	=(1<<27);
 
 extern "C" VOID HandleInterrupt(UINT irq)
 {
-UINT reg=irq/32;
-UINT mask=1U<<(irq%32);
-auto ic=(NVIC_REGS*)NVIC_BASE;
+//UINT reg=irq/32;
+//UINT mask=1U<<(irq%32);
+//auto ic=(NVIC_REGS*)NVIC_BASE;
+//IoHelper::Write(ic->CLRPEND[reg], mask);
 Interrupts::HandleInterrupt(irq);
-IoHelper::Write(ic->CLRPEND[reg], mask);
 }
 
 extern "C" VOID HandleTaskSwitch()
 {
+//auto scb=(SCB_REGS*)SCB_BASE;
+//IoHelper::Set(scb->ICSR, ICSR_PENDSVCLR);
 Interrupts::HandleTaskSwitch();
-auto scb=(SCB_REGS*)SCB_BASE;
-IoHelper::Set(scb->ICSR, ICSR_PENDSVCLR);
 }
 
 
@@ -147,8 +147,8 @@ s_DisableCount[core]++;
 SpinLock lock(s_CriticalSection);
 auto handler=s_IrqHandler[irq];
 lock.Unlock();
-assert(handler);
-handler->Run();
+if(handler)
+	handler->Call();
 s_DisableCount[core]--;
 TaskMonitor::ClearInterrupt(core);
 }
@@ -183,7 +183,7 @@ BOOL Interrupts::IsEnabled(Irq irq)noexcept
 auto ic=(NVIC_REGS*)NVIC_BASE;
 UINT reg=(UINT)irq/32;
 UINT mask=1U<<((UINT)irq%32);
-UINT status=IoHelper::Read(ic->ITNS[reg], mask);
+UINT status=IoHelper::Read(ic->SETEN[reg], mask);
 return status!=0;
 }
 
@@ -202,17 +202,15 @@ else
 	}
 }
 
+VOID Interrupts::SetHandler(Irq irq, nullptr_t)
+{
+SetHandlerInternal(irq, nullptr);
+}
+
 VOID Interrupts::SetHandler(Irq irq, VOID (*proc)())
 {
-if(proc)
-	{
-	auto handler=new InterruptProcedure(proc);
-	SetHandlerInternal(irq, handler);
-	}
-else
-	{
-	SetHandlerInternal(irq, (InterruptHandler*)nullptr);
-	}
+auto handler=CallableFunction<VOID>::Create(proc);
+SetHandlerInternal(irq, handler);
 }
 
 
@@ -232,27 +230,21 @@ auto sio=(SIO_REGS*)SIO_BASE;
 IoHelper::Write(sio->FIFO_ST, 0xFF);
 }
 
-InterruptHandler* Interrupts::SetHandler(UINT irq, InterruptHandler* handler)noexcept
-{
-SpinLock lock(s_CriticalSection);
-auto old_handler=s_IrqHandler[irq];
-s_IrqHandler[irq]=handler;
-return old_handler;
-}
-
 VOID Interrupts::SetHandlerInternal(Irq irq, InterruptHandler* handler)noexcept
 {
 if(!handler)
 	Disable(irq);
-auto old_handler=SetHandler((UINT)irq, handler);
-if(old_handler)
-	delete old_handler;
+UINT id=(UINT)irq;
+SpinLock lock(s_CriticalSection);
+auto old_handler=s_IrqHandler[id];
+s_IrqHandler[id]=handler;
+lock.Unlock();
 if(handler)
 	Enable(irq);
 }
 
 CriticalSection Interrupts::s_CriticalSection;
 UINT Interrupts::s_DisableCount[Cpu::CPU_COUNT]={ 0 };
-InterruptHandler* Interrupts::s_IrqHandler[Interrupts::IRQ_COUNT]={ nullptr };
+Handle<InterruptHandler> Interrupts::s_IrqHandler[Interrupts::IRQ_COUNT];
 
 }}

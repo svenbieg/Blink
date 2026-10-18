@@ -12,7 +12,7 @@
 #include "Concurrency/CriticalSection.h"
 #include "Concurrency/TaskMonitor.h"
 #include "Devices/System/Cpu.h"
-#include "Devices/System/InterruptHandler.h"
+#include "Callable.h"
 #include "TypeHelper.h"
 
 
@@ -113,6 +113,13 @@ Core1=(1<<1)
 };
 
 
+//===================
+// Interrupt-Handler
+//===================
+
+typedef Callable<VOID> InterruptHandler;
+
+
 //============
 // Interrupts
 //============
@@ -128,7 +135,7 @@ public:
 	friend TaskMonitor;
 
 	// Settings
-	static const UINT IRQ_COUNT=Runtime::CONFIG_IRQ_COUNT;
+	static const UINT IRQ_COUNT=52;
 
 	// Common
 	static inline BOOL Active()noexcept
@@ -149,10 +156,11 @@ public:
 	static VOID InitializeSecondary()noexcept;
 	static BOOL IsEnabled(Irq Irq)noexcept;
 	static VOID Send(Irq Irq, UINT Core);
+	static VOID SetHandler(Irq Irq, nullptr_t);
 	static VOID SetHandler(Irq Irq, VOID (*Procedure)());
 	template <class _owner_t> static inline VOID SetHandler(Irq Irq, _owner_t* Owner, VOID (_owner_t::*Procedure)())
 		{
-		auto handler=new InterruptMemberProcedure(Owner, Procedure);
+		auto handler=CallableMemberFunction<_owner_t, VOID>::Create(Owner, Procedure);
 		SetHandlerInternal(Irq, handler);
 		}
 
@@ -162,11 +170,10 @@ private:
 
 	// Common
 	static VOID HandleMailBox()noexcept;
-	static InterruptHandler* SetHandler(UINT Irq, InterruptHandler* Handler)noexcept;
 	static VOID SetHandlerInternal(Irq Irq, InterruptHandler* Handler)noexcept;
 	static CriticalSection s_CriticalSection;
 	static UINT s_DisableCount[Cpu::CPU_COUNT];
-	static InterruptHandler* s_IrqHandler[IRQ_COUNT];
+	static Handle<InterruptHandler> s_IrqHandler[IRQ_COUNT];
 };
 
 }}

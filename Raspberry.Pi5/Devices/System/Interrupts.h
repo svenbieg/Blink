@@ -75,6 +75,13 @@ Core3=(1<<3)
 };
 
 
+//===================
+// Interrupt-Handler
+//===================
+
+typedef Callable<VOID> InterruptHandler;
+
+
 //============
 // Interrupts
 //============
@@ -103,11 +110,17 @@ public:
 	static VOID Route(Irq Irq, IrqTarget Target);
 	static inline VOID Send(Irq Irq, UINT Core) { Send(Irq, (IrqTarget)(1<<Core)); }
 	static VOID Send(Irq Irq, IrqTarget Target);
+	static VOID SetHandler(Irq Irq, nullptr_t);
 	static VOID SetHandler(Irq Irq, VOID (*Procedure)());
 	template <class _owner_t> static inline VOID SetHandler(Irq Irq, _owner_t* Owner, VOID (_owner_t::*Procedure)())
 		{
-		auto handler=new InterruptMemberProcedure(Owner, Procedure);
+		auto handler=CallableMemberFunction<_owner_t, VOID>::Create(Owner, Procedure);
 		SetHandlerInternal(Irq, handler);
+		}
+	static inline VOID SetHandler(Rp1Irq Irq, nullptr_t)
+		{
+		auto pcie=PcieHost::Create();
+		pcie->SetInterruptHandler(Irq, nullptr);
 		}
 	static inline VOID SetHandler(Rp1Irq Irq, VOID (*Procedure)())
 		{
@@ -128,11 +141,11 @@ private:
 	static VOID Disable(UINT Irq);
 	static VOID Enable(UINT Irq);
 	static VOID HandleTaskSwitch()noexcept;
-	static VOID SetHandlerInternal(Irq Irq, InterruptHandler* Handler)noexcept;
+	static VOID SetHandlerInternal(Irq Irq, InterruptHandler* Handler);
 	static BOOL s_Active[CPU_COUNT];
 	static CriticalSection s_CriticalSection;
 	static UINT s_DisableCount[CPU_COUNT];
-	static InterruptHandler* s_IrqHandlers[IRQ_COUNT];
+	static Handle<InterruptHandler> s_IrqHandlers[IRQ_COUNT];
 };
 
 }}

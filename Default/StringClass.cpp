@@ -271,8 +271,8 @@ return str;
 // Con-/Destructors Private
 //==========================
 
-String::String(LPTSTR Buffer)noexcept:
-m_Buffer(Buffer),
+String::String(BYTE* buf, SIZE_T size)noexcept:
+m_Buffer((LPTSTR)buf),
 m_Hash(0),
 m_Length(0)
 {
@@ -281,9 +281,6 @@ m_Buffer[0]=0;
 
 Handle<String> String::Create(UINT Length, nullptr_t)
 {
-UINT size=sizeof(String)+(Length+1)*sizeof(TCHAR);
-auto str=(String*)MemoryHelper::Allocate(size);
-LPTSTR buf=(LPTSTR)((SIZE_T)str+sizeof(String));
-new (str) String(buf);
-return str;
+SIZE_T size=(Length+1)*sizeof(TCHAR);
+return Object::CreateEx<String>(size, sizeof(TCHAR));
 }

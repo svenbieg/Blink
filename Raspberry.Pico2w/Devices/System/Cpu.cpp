@@ -9,12 +9,14 @@
 // Using
 //=======
 
+#include "Concurrency/SpinLock.h"
 #include "Devices/System/Interrupts.h"
 #include "Devices/System/MailBox.h"
 #include "Devices/System/Sio.h"
 #include "Devices/Peripherals.h"
 #include "Runtime/Configuration.h"
 
+using namespace Concurrency;
 using namespace Runtime;
 
 extern SIZE_T __stack_end;
@@ -107,6 +109,8 @@ bx lr":: "r" (task_proc), "r" (param), "r" (stack): "r0");
 
 VOID Cpu::WakeupSecondary()
 {
+CriticalSection critical;
+SpinLock lock(critical);
 const UINT CPU_ID=1;
 SIZE_T stack_top=(SIZE_T)&__stack_end-CPU_ID*CONFIG_STACK_SIZE;
 const UINT VTOR=XIP_BASE;

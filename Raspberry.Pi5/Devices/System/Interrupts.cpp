@@ -138,8 +138,8 @@ s_DisableCount[core]++;
 SpinLock lock(s_CriticalSection);
 auto handler=s_IrqHandlers[irq];
 lock.Unlock();
-assert(handler);
-handler->Run();
+if(handler)
+	handler->Call();
 s_Active[core]=false;
 s_DisableCount[core]--;
 TaskMonitor::ClearInterrupt(core);
@@ -198,17 +198,15 @@ BitHelper::Set(value, (UINT)irq);
 IoHelper::Write(gicd->SGIR, value);
 }
 
+VOID Interrupts::SetHandler(Irq irq, nullptr_t)
+{
+SetHandlerInternal(irq, nullptr);
+}
+
 VOID Interrupts::SetHandler(Irq irq, VOID (*proc)())
 {
-if(proc)
-	{
-	auto handler=new InterruptProcedure(proc);
-	SetHandlerInternal(irq, handler);
-	}
-else
-	{
-	SetHandlerInternal(irq, nullptr);
-	}
+auto handler=CallableFunction<VOID>::Create(proc);
+SetHandlerInternal(irq, handler);
 }
 
 
@@ -237,7 +235,7 @@ VOID Interrupts::HandleTaskSwitch()noexcept
 Scheduler::HandleTaskSwitch();
 }
 
-VOID Interrupts::SetHandlerInternal(Irq irq, InterruptHandler* handler)noexcept
+VOID Interrupts::SetHandlerInternal(Irq irq, InterruptHandler* handler)
 {
 UINT id=(UINT)irq;
 if(!handler)
@@ -246,8 +244,6 @@ SpinLock lock(s_CriticalSection);
 auto old_handler=s_IrqHandlers[id];
 s_IrqHandlers[id]=handler;
 lock.Unlock();
-if(old_handler)
-	delete old_handler;
 if(handler)
 	Enable(id);
 }
@@ -255,6 +251,6 @@ if(handler)
 BOOL Interrupts::s_Active[CPU_COUNT]={ false };
 CriticalSection Interrupts::s_CriticalSection;
 UINT Interrupts::s_DisableCount[CPU_COUNT]={ 0 };
-InterruptHandler* Interrupts::s_IrqHandlers[IRQ_COUNT]={ nullptr };
+Handle<InterruptHandler> Interrupts::s_IrqHandlers[IRQ_COUNT];
 
 }}
