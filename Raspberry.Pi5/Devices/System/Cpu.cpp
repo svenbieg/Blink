@@ -39,6 +39,21 @@ while(addr<end)
 	}
 }
 
+BOOL Cpu::CompareAndSet(volatile UINT* value_ptr, UINT cmp, UINT set)noexcept
+{
+UINT read=0;
+UINT result=1;
+__asm inline volatile("\
+prfm pstl1keep, [%1]\n\
+ldaxr %w4, [%1]\n\
+cmp %w4, %w2\n\
+bne done%=\n\
+stxr %w0, %w3, [%1]\n\
+done%=:\n\
+": "+&r" (result): "r" (value_ptr), "r" (cmp), "r" (set), "r" (read): "cc", "memory");
+return result==0;
+}
+
 VOID Cpu::Delay(UINT us)
 {
 UINT64 end=SystemTimer::Microseconds64()+us;

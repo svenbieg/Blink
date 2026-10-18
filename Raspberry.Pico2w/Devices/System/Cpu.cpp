@@ -41,15 +41,15 @@ BOOL Cpu::CompareAndSet(volatile UINT* value_ptr, UINT cmp, UINT set)noexcept
 UINT read=0;
 UINT result=1;
 __asm inline volatile("\
-ldaex %0, [%2]\n\
-cmp %0, %3\n\
+ldaex %4, [%1]\n\
+cmp %4, %2\n\
 bne failed%=\n\
-stlex %1, %4, [%2]\n\
+stlex %0, %3, [%1]\n\
 b done%=\n\
 failed%=:\n\
 clrex\n\
 done%=:\n\
-": "=&r" (read), "+&r" (result): "r" (value_ptr), "r" (cmp), "r" (set): "cc", "memory");
+": "+&r" (result): "r" (value_ptr), "r" (cmp), "r" (set), "r" (read): "cc", "memory");
 return result==0;
 }
 

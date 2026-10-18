@@ -47,20 +47,7 @@ public:
 		__asm inline volatile("brk #0");
 		}
 	static VOID CleanDataCache(SIZE_T Address, SIZE_T Size)noexcept;
-	static inline BOOL CompareAndSet(volatile UINT* Value, UINT Compare, UINT Set)noexcept
-		{
-		UINT read;
-		UINT result=1;
-		__asm inline volatile("\
-			prfm pstl1keep, [%1]\n\
-			ldaxr %w4, [%1]\n\
-			cmp %w4, %w2\n\
-			bne 1f\n\
-			stxr %w0, %w3, [%1]\n\
-			dmb ish\n\
-			1:": "=&r" (result): "r" (Value), "r" (Compare), "r" (Set), "r" (read): "cc", "memory");
-		return result==0;
-		}
+	static BOOL CompareAndSet(volatile UINT* Value, UINT Compare, UINT Set)noexcept;
 	static inline UINT CountLeadingZeros(SIZE_T Value)
 		{
 		__asm inline volatile("clz %0, %0": "+r" (Value));
