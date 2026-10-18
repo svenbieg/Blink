@@ -19,7 +19,8 @@ namespace Concurrency {
 // Con-/Destructors
 //==================
 
-WriteLock::WriteLock(Mutex& mutex)noexcept:
+WriteLock::WriteLock(Mutex& mutex):
+m_Locked(true),
 m_Mutex(&mutex)
 {
 m_Mutex->Lock();
@@ -27,9 +28,10 @@ m_Mutex->Lock();
 
 WriteLock::~WriteLock()noexcept
 {
-if(m_Mutex)
+if(m_Locked)
 	{
 	m_Mutex->Unlock();
+	m_Locked=false;
 	m_Mutex=nullptr;
 	}
 }
@@ -39,24 +41,35 @@ if(m_Mutex)
 // Common
 //========
 
-VOID WriteLock::Lock()noexcept
+VOID WriteLock::Lock()
 {
+assert(!m_Locked);
 m_Mutex->Lock();
+m_Locked=true;
 }
 
 VOID WriteLock::Release()noexcept
 {
+m_Locked=false;
 m_Mutex=nullptr;
 }
 
 BOOL WriteLock::TryLock()noexcept
 {
-return m_Mutex->TryLock();
+assert(!m_Locked);
+if(m_Mutex->TryLock())
+	{
+	m_Locked=true;
+	return true;
+	}
+return false;
 }
 
 VOID WriteLock::Unlock()noexcept
 {
+assert(m_Locked);
 m_Mutex->Unlock();
+m_Locked=false;
 }
 
 
@@ -66,11 +79,15 @@ m_Mutex->Unlock();
 
 BOOL WriteLock::Lock(UINT core, Task* current)noexcept
 {
+assert(!m_Locked);
+m_Locked=true;
 return m_Mutex->Lock(core, current);
 }
 
 VOID WriteLock::Unlock(UINT core, Task* current)noexcept
 {
+assert(m_Locked);
+m_Locked=false;
 m_Mutex->Unlock(current);
 }
 

@@ -39,25 +39,27 @@ namespace Concurrency {
 
 VOID Scheduler::Begin()
 {
+s_CriticalSection.Lock();
 UINT core=Cpu::GetId();
-if(core==0)
-	s_MainTask=Task::CreateInternal(MainTask, "main");
-auto idle=Task::CreateInternal(IdleTask, String::Create("idle%u", core), 1024);
-FlagHelper::Set(idle->m_Flags, TaskFlags::Idle);
-SpinLock lock(s_CriticalSection);
-if(core==0)
-	s_All.Append(s_MainTask);
-s_All.Append(idle);
-s_IdleTask[core]=idle;
-auto task=idle;
-if(core==0)
-	task=s_MainTask;
+auto task=s_IdleTask[core];
 s_CurrentTask[core]=task;
 FlagHelper::Set(task->m_Flags, TaskFlags::Active);
 task->m_StackPointer=task->m_StackTop;
 TaskMonitor::SetTask(core, task);
-lock.Unlock();
 Cpu::SetContext(&Task::TaskProc, task, task->m_StackPointer);
+}
+
+VOID Scheduler::Initialize()
+{
+s_MainTask=Task::CreateInternal(MainTask, "main");
+s_All.Append(s_MainTask);
+for(UINT core=0; core<CPU_COUNT; core++)
+	{
+	auto idle=Task::CreateInternal(IdleTask, String::Create("idle%u", core), 1024);
+	FlagHelper::Set(idle->m_Flags, TaskFlags::Idle);
+	s_All.Append(idle);
+	s_IdleTask[core]=idle;
+	}
 }
 
 
@@ -79,6 +81,8 @@ s_Create.Append(task);
 VOID Scheduler::CancelTask(Task* task)noexcept
 {
 SpinLock lock(s_CriticalSection);
+task->Cancelled=true;
+task->m_Status=Status::Aborted;
 BOOL resume=false;
 if(task->m_ResumeTime)
 	{
@@ -86,11 +90,27 @@ if(task->m_ResumeTime)
 	task->m_ResumeTime=0;
 	resume=true;
 	}
+auto owner=task->m_Owner;
+if(owner)
+	{
+	WaitingList::Remove(&owner->m_Waiting, task);
+	if(FlagHelper::Get(task->m_OwnerFlags, TaskFlags::Priority))
+		{
+		if(--task->m_PriorityCount==0)
+			FlagHelper::Clear(task->m_Flags, TaskFlags::Priority);
+		}
+	FlagHelper::Clear(task->m_Flags, TaskFlags::Sharing);
+	task->m_Owner=nullptr;
+	task->m_OwnerFlags=TaskFlags::None;
+	resume=true;
+	}
 auto signal=task->m_Signal;
 if(signal)
 	{
 	WaitingList::Remove(&signal->m_Waiting, task);
 	task->m_Signal=nullptr;
+	task->m_SignalCount=0;
+	task->m_SignalLock=nullptr;
 	resume=true;
 	}
 if(resume)
@@ -168,6 +188,14 @@ if(sleeping)
 		FlagHelper::Clear(sleeping->m_Flags, TaskFlags::Suspend);
 		FlagHelper::Set(sleeping->m_Flags, TaskFlags::Timeout);
 		sleeping->m_ResumeTime=0;
+		auto signal=sleeping->m_Signal;
+		if(signal)
+			{
+			WaitingList::Remove(&signal->m_Waiting, sleeping);
+			sleeping->m_Signal=nullptr;
+			sleeping->m_SignalCount=0;
+			sleeping->m_SignalLock=nullptr;
+			}
 		s_Waiting.Insert(sleeping, Task::Priority);
 		sleeping=next;
 		}
@@ -187,9 +215,9 @@ for(UINT u=0; u<CPU_COUNT; u++)
 		{
 		if(!FlagHelper::Get(next->m_Flags, TaskFlags::Idle))
 			continue;
+		s_Waiting.RemoveFirst();
 		current->m_Next=resume;
-		Interrupts::Send(Irq::TaskSwitch, core);
-		return;
+		continue;
 		}
 	if(FlagHelper::Get(current->m_Flags, TaskFlags::Priority))
 		continue;
@@ -235,8 +263,11 @@ while(create)
 
 VOID Scheduler::IdleTask()
 {
-if(Interrupts::Disabled())
-	Interrupts::Enable();
+UINT core=Cpu::GetId();
+if(core==0)
+	Resume(s_MainTask);
+s_CriticalSection.Unlock();
+Interrupts::Enable();
 while(1)
 	{
 	Cpu::WaitForInterrupt();
@@ -245,12 +276,10 @@ while(1)
 
 VOID Scheduler::MainTask()
 {
-Interrupts::Enable();
 auto status=Status::Success;
 try
 	{
 	SystemTimer::Start();
-	Cpu::WakeupSecondary();
 	Main();
 	}
 catch(...)

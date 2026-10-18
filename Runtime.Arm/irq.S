@@ -101,8 +101,18 @@ bx lr
 
 globl_func isr_pendsv
 cpsid i
+sub sp, sp, #TASK_FRAME_SIZE
+strd r4, r5, [sp, #TASK_FRAME_R4]
+strd r6, r7, [sp, #TASK_FRAME_R6]
+strd r8, r9, [sp, #TASK_FRAME_R8]
+strd r10, r11, [sp, #TASK_FRAME_R10]
 irq_stack_init
 bl HandleTaskSwitch
 irq_stack_restore
+ldrd r4, r5, [sp, #TASK_FRAME_R4]
+ldrd r6, r7, [sp, #TASK_FRAME_R6]
+ldrd r8, r9, [sp, #TASK_FRAME_R8]
+ldrd r10, r11, [sp, #TASK_FRAME_R10]
+add sp, sp, #TASK_FRAME_SIZE
 cpsie i
 bx lr

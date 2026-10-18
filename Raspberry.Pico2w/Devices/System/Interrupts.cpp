@@ -76,17 +76,11 @@ const UINT ICSR_PENDSVCLR	=(1<<27);
 
 extern "C" VOID HandleInterrupt(UINT irq)
 {
-//UINT reg=irq/32;
-//UINT mask=1U<<(irq%32);
-//auto ic=(NVIC_REGS*)NVIC_BASE;
-//IoHelper::Write(ic->CLRPEND[reg], mask);
 Interrupts::HandleInterrupt(irq);
 }
 
 extern "C" VOID HandleTaskSwitch()
 {
-//auto scb=(SCB_REGS*)SCB_BASE;
-//IoHelper::Set(scb->ICSR, ICSR_PENDSVCLR);
 Interrupts::HandleTaskSwitch();
 }
 
@@ -97,9 +91,9 @@ Interrupts::HandleTaskSwitch();
 
 VOID Interrupts::Disable()noexcept
 {
+Cpu::DisableInterrupts();
 UINT core=Cpu::GetId();
-if(++s_DisableCount[core]==1)
-	Cpu::DisableInterrupts();
+s_DisableCount[core]++;
 }
 
 VOID Interrupts::Disable(Irq irq)
@@ -143,31 +137,35 @@ VOID Interrupts::HandleInterrupt(UINT irq)noexcept
 {
 UINT core=Cpu::GetId();
 TaskMonitor::SetInterrupt(core);
+assert(s_DisableCount[core]==0);
 s_DisableCount[core]++;
 SpinLock lock(s_CriticalSection);
 auto handler=s_IrqHandler[irq];
 lock.Unlock();
 if(handler)
 	handler->Call();
-s_DisableCount[core]--;
 TaskMonitor::ClearInterrupt(core);
+assert(Cpu::GetId()==core);
+s_DisableCount[core]--;
+assert(s_DisableCount[core]==0);
 }
 
 VOID Interrupts::HandleTaskSwitch()noexcept
 {
 UINT core=Cpu::GetId();
 TaskMonitor::SetInterrupt(core);
+assert(s_DisableCount[core]==0);
 s_DisableCount[core]++;
 Scheduler::HandleTaskSwitch();
-s_DisableCount[core]--;
 TaskMonitor::ClearInterrupt(core);
+assert(Cpu::GetId()==core);
+s_DisableCount[core]--;
+assert(s_DisableCount[core]==0);
 }
 
 VOID Interrupts::Initialize()noexcept
 {
-auto scb=(SCB_REGS*)SCB_BASE;
-for(UINT u=0; u<3; u++)
-	IoHelper::Write(scb->SHPR[u], 0);
+SetInterruptPriority();
 for(UINT core=0; core<Cpu::CPU_COUNT; core++)
 	s_DisableCount[core]=1;
 SetHandler(Irq::SioFifo, &Interrupts::HandleMailBox);
@@ -175,6 +173,7 @@ SetHandler(Irq::SioFifo, &Interrupts::HandleMailBox);
 
 VOID Interrupts::InitializeSecondary()noexcept
 {
+SetInterruptPriority();
 Enable(Irq::SioFifo);
 }
 
@@ -224,7 +223,10 @@ UINT cmd=0;
 if(MailBox::TryRead(&cmd))
 	{
 	if(cmd==CMD_TASK_SWITCH)
-		Scheduler::HandleTaskSwitch();
+		{
+		auto scb=(SCB_REGS*)SCB_BASE;
+		IoHelper::Set(scb->ICSR, ICSR_PENDSVSET);
+		}
 	}
 auto sio=(SIO_REGS*)SIO_BASE;
 IoHelper::Write(sio->FIFO_ST, 0xFF);
@@ -241,6 +243,17 @@ s_IrqHandler[id]=handler;
 lock.Unlock();
 if(handler)
 	Enable(irq);
+}
+
+VOID Interrupts::SetInterruptPriority()
+{
+auto scb=(SCB_REGS*)SCB_BASE;
+static constexpr UINT PEND_SV=(UINT)SystemException::PendSV-3;
+static constexpr BYTE LOWEST_PRIORITY=0xF0;
+IoHelper::Write(scb->SHPR[PEND_SV], LOWEST_PRIORITY);
+auto ic=(NVIC_REGS*)NVIC_BASE;
+for(UINT u=0; u<IRQ_COUNT; u++)
+	IoHelper::Write(ic->PRIO[u], LOWEST_PRIORITY);
 }
 
 CriticalSection Interrupts::s_CriticalSection;

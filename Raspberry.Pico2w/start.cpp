@@ -26,6 +26,8 @@ extern "C" VOID start()
 {
 Memory::Initialize();
 Interrupts::Initialize();
+Scheduler::Initialize();
+Cpu::WakeupSecondary();
 Scheduler::Begin();
 }
 

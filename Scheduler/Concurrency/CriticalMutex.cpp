@@ -13,7 +13,6 @@
 //=======
 
 #include "Concurrency/Scheduler.h"
-#include "Devices/System/Interrupts.h"
 #include "FlagHelper.h"
 
 using namespace Devices::System;
@@ -34,14 +33,20 @@ BOOL CriticalMutex::Lock(UINT core, Task* current)noexcept
 {
 FlagHelper::Set(current->m_Flags, TaskFlags::Priority);
 current->m_PriorityCount++;
-return Mutex::Lock(core, current);
+if(Mutex::Lock(core, current))
+	return true;
+FlagHelper::Set(current->m_OwnerFlags, TaskFlags::Priority);
+return false;
 }
 
 BOOL CriticalMutex::Lock(UINT core, Task* current, AccessMode)noexcept
 {
 FlagHelper::Set(current->m_Flags, TaskFlags::Priority);
 current->m_PriorityCount++;
-return Mutex::Lock(core, current, AccessMode::ReadOnly);
+if(Mutex::Lock(core, current, AccessMode::ReadOnly))
+	return true;
+FlagHelper::Set(current->m_OwnerFlags, TaskFlags::Priority);
+return false;
 }
 
 BOOL CriticalMutex::TryLock(UINT core, Task* current)noexcept
@@ -64,8 +69,7 @@ return true;
 
 VOID CriticalMutex::Unlock(Task* current)noexcept
 {
-if(m_Owner!=current)
-	return;
+assert(m_Owner==current);
 if(--current->m_PriorityCount==0)
 	FlagHelper::Clear(current->m_Flags, TaskFlags::Priority);
 Scheduler::OwnerList::RemoveFirst(&m_Owner);
@@ -74,8 +78,7 @@ Mutex::ResumeWaitingTasks();
 
 VOID CriticalMutex::Unlock(Task* current, AccessMode)noexcept
 {
-if(!Scheduler::OwnerList::TryRemove(&m_Owner, current))
-	return;
+Scheduler::OwnerList::Remove(&m_Owner, current);
 if(--current->m_PriorityCount==0)
 	FlagHelper::Clear(current->m_Flags, TaskFlags::Priority);
 FlagHelper::Clear(current->m_Flags, TaskFlags::Sharing);

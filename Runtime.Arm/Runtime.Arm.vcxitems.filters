@@ -13,7 +13,6 @@
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.targets">
       <Filter>Configuration</Filter>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)task.S" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.cpp">

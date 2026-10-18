@@ -63,25 +63,9 @@ return false;
 
 VOID CriticalSection::Unlock()noexcept
 {
-UINT core=Cpu::GetId()|LOCKED;
-if(m_Core!=core)
-	return;
+assert(m_Core==Cpu::GetId()|LOCKED);
 Cpu::StoreAndRelease(&m_Core, 0);
 Interrupts::Enable();
-}
-
-VOID CriticalSection::Yield()noexcept
-{
-UINT core=Cpu::GetId()|LOCKED;
-assert(m_Core==core);
-Cpu::StoreAndRelease(&m_Core, 0);
-Interrupts::Enable();
-Interrupts::Disable();
-while(!Cpu::CompareAndSet(&m_Core, 0, core))
-	{
-	Interrupts::Enable();
-	Interrupts::Disable();
-	}
 }
 
 }

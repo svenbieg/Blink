@@ -38,11 +38,11 @@ public:
 	VOID Lock()noexcept;
 	BOOL TryLock()noexcept;
 	VOID Unlock()noexcept;
-	VOID Yield()noexcept;
 
 private:
 	// Common
 	CriticalSection* m_CriticalSection;
+	BOOL m_Locked;
 };
 
 }

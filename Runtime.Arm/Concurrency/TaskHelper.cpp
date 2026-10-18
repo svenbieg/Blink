@@ -17,11 +17,7 @@
 
 using namespace Runtime;
 
-extern "C" {
-BYTE __stack_end;
-SIZE_T task_restore_context(SIZE_T StackPointer);
-SIZE_T task_save_context(SIZE_T StackPointer);
-}
+extern "C" BYTE __stack_end;
 
 
 //===========
@@ -51,9 +47,9 @@ VOID TaskHelper::Switch(UINT core, Task* current, Task* next)noexcept
 {
 SIZE_T stack_end=(SIZE_T)&__stack_end;
 auto irq_stack=(IRQ_STACK*)(stack_end-core*CONFIG_STACK_SIZE-sizeof(IRQ_STACK));
-assert(irq_stack->SP-sizeof(TASK_FRAME)>=current->m_StackBottom); // Stack-Overflow
-current->m_StackPointer=task_save_context(irq_stack->SP);
-irq_stack->SP=task_restore_context(next->m_StackPointer);
+assert(irq_stack->SP>=current->m_StackBottom); // Stack-Overflow
+current->m_StackPointer=irq_stack->SP;
+irq_stack->SP=next->m_StackPointer;
 }
 
 }

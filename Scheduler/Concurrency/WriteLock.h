@@ -40,12 +40,12 @@ public:
 	friend Signal;
 
 	// Con-/Destructors
-	WriteLock(Mutex& Mutex)noexcept;
+	WriteLock(Mutex& Mutex);
 	WriteLock(WriteLock const&)=delete;
 	~WriteLock()noexcept;
 
 	// Common
-	VOID Lock()noexcept;
+	VOID Lock();
 	VOID Release()noexcept;
 	BOOL TryLock()noexcept;
 	VOID Unlock()noexcept;
@@ -54,6 +54,7 @@ private:
 	// Common
 	BOOL Lock(UINT Core, Task* Current)noexcept;
 	VOID Unlock(UINT Core, Task* Current)noexcept;
+	BOOL m_Locked;
 	Mutex* m_Mutex;
 };
 

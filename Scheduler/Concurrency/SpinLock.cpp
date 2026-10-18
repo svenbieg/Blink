@@ -20,18 +20,20 @@ namespace Concurrency {
 //==================
 
 SpinLock::SpinLock(CriticalSection& critical)noexcept:
-m_CriticalSection(&critical)
+m_CriticalSection(&critical),
+m_Locked(true)
 {
 m_CriticalSection->Lock();
 }
 
 SpinLock::~SpinLock()noexcept
 {
-if(m_CriticalSection)
+if(m_Locked)
 	{
 	m_CriticalSection->Unlock();
-	m_CriticalSection=nullptr;
+	m_Locked=false;
 	}
+m_CriticalSection=nullptr;
 }
 
 
@@ -41,22 +43,27 @@ if(m_CriticalSection)
 
 VOID SpinLock::Lock()noexcept
 {
+assert(!m_Locked);
 m_CriticalSection->Lock();
+m_Locked=true;
 }
 
 BOOL SpinLock::TryLock()noexcept
 {
-return m_CriticalSection->TryLock();
+assert(!m_Locked);
+if(m_CriticalSection->TryLock())
+	{
+	m_Locked=true;
+	return true;
+	}
+return false;
 }
 
 VOID SpinLock::Unlock()noexcept
 {
+assert(m_Locked);
 m_CriticalSection->Unlock();
-}
-
-VOID SpinLock::Yield()noexcept
-{
-m_CriticalSection->Yield();
+m_Locked=false;
 }
 
 }

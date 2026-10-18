@@ -49,7 +49,7 @@ b done%=\n\
 failed%=:\n\
 clrex\n\
 done%=:\n\
-": "=&r" (read), "=&r" (result): "r" (value_ptr), "r" (cmp), "r" (set): "memory");
+": "=&r" (read), "+&r" (result): "r" (value_ptr), "r" (cmp), "r" (set): "cc", "memory");
 return result==0;
 }
 
@@ -79,7 +79,7 @@ sub %0, %0, #1\n\
 stlex %1, %0, [%2]\n\
 cmp %1, #0\n\
 bne %=b\n\
-": "=&r" (value), "=&r" (result): "r" (value_ptr): "memory");
+": "=&r" (value), "=&r" (result): "r" (value_ptr): "cc", "memory");
 return value;
 }
 
@@ -94,7 +94,7 @@ add %0, %0, #1\n\
 stlex %1, %0, [%2]\n\
 cmp %1, #0\n\
 bne %=b\n\
-": "=&r" (value), "=&r" (result): "r" (value_ptr): "memory");
+": "=&r" (value), "=&r" (result): "r" (value_ptr): "cc", "memory");
 return value;
 }
 

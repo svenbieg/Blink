@@ -41,7 +41,7 @@ for(UINT core=0; core<Scheduler::CPU_COUNT; core++)
 		continue;
 	SetTask(core, s_Current[core]);
 	}
-UINT64 total_time=0;
+UINT64 tasks_time=0;
 UINT pos=0;
 Task* task=Scheduler::s_All.First();
 while(task)
@@ -51,20 +51,21 @@ while(task)
 	info[pos].StackSize=task->m_StackSize;
 	info[pos].StackUsed=task->m_StackUsed;
 	info[pos].TotalTime=task_time;
-	total_time+=task_time;
+	tasks_time+=task_time;
 	if(++pos==count)
 		throw BufferOverrunException();
 	task->m_TotalTime=0;
 	task=Scheduler::s_All.Next(task);
 	}
+UINT64 total_time=s_TotalTime;
+s_TotalTime=0;
 lock.Unlock();
 if(pos>=count)
 	throw BufferOverrunException();
 info[pos].Name="system";
 info[pos].StackSize=Runtime::CONFIG_STACK_SIZE;
 info[pos].StackUsed=0;
-info[pos].TotalTime=s_TotalTime-total_time;
-s_TotalTime=0;
+info[pos].TotalTime=total_time-tasks_time;
 return pos+1;
 }
 
@@ -75,6 +76,7 @@ return pos+1;
 
 VOID TaskMonitor::ClearInterrupt(UINT core)
 {
+SpinLock lock(Scheduler::s_CriticalSection);
 UINT64 time=SystemTimer::Microseconds();
 UINT64 irq_time=time-s_IrqStart[core];
 s_Current[core]->m_StartTime+=irq_time;

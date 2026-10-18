@@ -57,6 +57,7 @@ public:
 
 	// Common
 	static VOID Begin();
+	static VOID Initialize();
 
 protected:
 	// Common

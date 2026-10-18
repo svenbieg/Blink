@@ -157,6 +157,8 @@ protected:
 	Mutex m_Mutex;
 	Handle<String> m_Name;
 	Task* m_Next;
+	Mutex* m_Owner;
+	TaskFlags m_OwnerFlags;
 	FwdLink<Task> m_Owners;
 	UINT m_PriorityCount;
 	Link<Task> m_Release;

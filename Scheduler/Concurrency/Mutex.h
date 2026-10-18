@@ -27,7 +27,7 @@ namespace Concurrency {
 //======================
 
 class ReadLock;
-class SpinLock;
+class Scheduler;
 class Task;
 class WriteLock;
 
@@ -51,6 +51,7 @@ class Mutex
 public:
 	// Friends
 	friend ReadLock;
+	friend Scheduler;
 	friend WriteLock;
 
 	// Con-/Destructors
@@ -59,8 +60,8 @@ public:
 	~Mutex()noexcept;
 
 	// Common
-	VOID Lock()noexcept;
-	VOID Lock(AccessMode)noexcept;
+	VOID Lock();
+	VOID Lock(AccessMode);
 	BOOL TryLock()noexcept;
 	BOOL TryLock(AccessMode)noexcept;
 	VOID Unlock()noexcept;

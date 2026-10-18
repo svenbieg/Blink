@@ -15,9 +15,6 @@
 #include "Concurrency/DispatchedQueue.h"
 #include "Concurrency/Scheduler.h"
 #include "Concurrency/TaskHelper.h"
-#include <new>
-
-using namespace Concurrency;
 
 
 //===========
@@ -57,8 +54,6 @@ VOID Task::Cancel()noexcept
 WriteLock lock(m_Mutex);
 if(FlagHelper::Get(m_Flags, TaskFlags::Done))
 	return;
-Cancelled=true;
-m_Status=Status::Aborted;
 Scheduler::CancelTask(this);
 }
 
@@ -92,6 +87,8 @@ m_Exception(nullptr),
 m_Flags(TaskFlags::None),
 m_Name(std::move(name)),
 m_Next(nullptr),
+m_Owner(nullptr),
+m_OwnerFlags(TaskFlags::None),
 m_PriorityCount(0),
 m_ResumeTime(0),
 m_Signal(nullptr),

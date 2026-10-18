@@ -171,6 +171,7 @@ private:
 	// Common
 	static VOID HandleMailBox()noexcept;
 	static VOID SetHandlerInternal(Irq Irq, InterruptHandler* Handler)noexcept;
+	static VOID SetInterruptPriority();
 	static CriticalSection s_CriticalSection;
 	static UINT s_DisableCount[Cpu::CPU_COUNT];
 	static Handle<InterruptHandler> s_IrqHandler[IRQ_COUNT];

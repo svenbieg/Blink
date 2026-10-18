@@ -15,7 +15,6 @@
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.targets" />
     <None Include="$(MSBuildThisFileDirectory)except.S" />
     <None Include="$(MSBuildThisFileDirectory)irq.S" />
-    <None Include="$(MSBuildThisFileDirectory)task.S" />
     <None Include="$(MSBuildThisFileDirectory)vectors.S" />
   </ItemGroup>
   <ItemGroup>
