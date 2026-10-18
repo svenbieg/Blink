@@ -116,8 +116,9 @@ while(resume)
 		Scheduler::s_Sleeping.Remove(resume);
 		resume->m_ResumeTime=0;
 		}
-	resume->m_Status=status;
 	auto next=Scheduler::WaitingList::Remove(&m_Waiting, resume);
+	resume->m_Signal=nullptr;
+	resume->m_Status=status;
 	auto signal_lock=resume->m_SignalLock;
 	if(signal_lock)
 		{

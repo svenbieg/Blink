@@ -32,17 +32,22 @@ SpinLock lock(s_CriticalSection);
 s_Waiting=true;
 while(s_Waiting)
 	{
-	s_Signal.WaitInternal(lock);
 	while(s_First)
 		{
 		auto handler=s_First;
-		s_First=handler->m_Next;
-		if(!s_First)
-			s_Last=nullptr;
+		s_First=nullptr;
+		s_Last=nullptr;
 		lock.Unlock();
-		handler->Run();
+		while(handler)
+			{
+			auto next=handler->m_Next;
+			handler->Run();
+			delete handler;
+			handler=next;
+			}
 		lock.Lock();
 		}
+	s_Signal.WaitInternal(lock);
 	}
 }
 
@@ -74,8 +79,8 @@ else
 s_Signal.Trigger();
 }
 
-Handle<DispatchedHandler> DispatchedQueue::s_First;
-Handle<DispatchedHandler> DispatchedQueue::s_Last;
+DispatchedHandler* DispatchedQueue::s_First=nullptr;
+DispatchedHandler* DispatchedQueue::s_Last=nullptr;
 CriticalSection DispatchedQueue::s_CriticalSection;
 Signal DispatchedQueue::s_Signal;
 volatile BOOL DispatchedQueue::s_Waiting=false;

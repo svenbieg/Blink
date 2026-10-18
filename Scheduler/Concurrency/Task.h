@@ -172,7 +172,7 @@ protected:
 	SIZE_T m_StackTop;
 	UINT64 m_StartTime;
 	Status m_Status;
-	Handle<DispatchedHandler> m_Then;
+	DispatchedHandler* m_Then;
 	Handle<Task> m_This;
 	UINT64 m_TotalTime;
 	FwdLink<Task> m_Waiting;
