@@ -133,7 +133,7 @@ if(!m_Owner)
 	}
 assert(m_Owner!=current); // Deadlock
 Scheduler::WaitingList::Append(&m_Waiting, current);
-current->m_Owner=this;
+current->m_Owner=&m_Waiting;
 return false;
 }
 
@@ -154,31 +154,24 @@ if(FlagHelper::Get(m_Owner->m_Flags, TaskFlags::Sharing))
 		}
 	}
 Scheduler::WaitingList::Append(&m_Waiting, current);
-current->m_Owner=this;
+current->m_Owner=&m_Waiting;
 return false;
 }
 
 VOID Mutex::ResumeWaitingTasks()noexcept
 {
 assert(m_Owner==nullptr);
-auto resume=Scheduler::WaitingList::RemoveFirst(&m_Waiting);
-if(!resume)
-	return;
-resume->m_Owner=nullptr;
-resume->m_OwnerFlags=TaskFlags::None;
-m_Owner=resume;
-Scheduler::Resume(resume);
-if(!FlagHelper::Get(resume->m_Flags, TaskFlags::Sharing))
-	return;
 while(m_Waiting)
 	{
-	if(!FlagHelper::Get(m_Waiting->m_Flags, TaskFlags::Sharing))
-		break;
-	resume=Scheduler::WaitingList::RemoveFirst(&m_Waiting);
+	auto resume=Scheduler::WaitingList::RemoveFirst(&m_Waiting);
 	resume->m_Owner=nullptr;
 	resume->m_OwnerFlags=TaskFlags::None;
 	Scheduler::OwnerList::Append(&m_Owner, resume);
 	Scheduler::Resume(resume);
+	if(!FlagHelper::Get(resume->m_Flags, TaskFlags::Sharing))
+		break;
+	if(!FlagHelper::Get(m_Waiting->m_Flags, TaskFlags::Sharing))
+		break;
 	}
 }
 

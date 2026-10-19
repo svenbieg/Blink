@@ -93,7 +93,7 @@ if(task->m_ResumeTime)
 auto owner=task->m_Owner;
 if(owner)
 	{
-	WaitingList::Remove(&owner->m_Waiting, task);
+	WaitingList::Remove(owner, task);
 	if(FlagHelper::Get(task->m_OwnerFlags, TaskFlags::Priority))
 		{
 		if(--task->m_PriorityCount==0)
@@ -102,13 +102,6 @@ if(owner)
 	FlagHelper::Clear(task->m_Flags, TaskFlags::Sharing);
 	task->m_Owner=nullptr;
 	task->m_OwnerFlags=TaskFlags::None;
-	resume=true;
-	}
-auto signal=task->m_Signal;
-if(signal)
-	{
-	WaitingList::Remove(&signal->m_Waiting, task);
-	task->m_Signal=nullptr;
 	task->m_SignalCount=0;
 	task->m_SignalLock=nullptr;
 	resume=true;
@@ -188,11 +181,11 @@ if(sleeping)
 		FlagHelper::Clear(sleeping->m_Flags, TaskFlags::Suspend);
 		FlagHelper::Set(sleeping->m_Flags, TaskFlags::Timeout);
 		sleeping->m_ResumeTime=0;
-		auto signal=sleeping->m_Signal;
-		if(signal)
+		auto owner=sleeping->m_Owner;
+		if(owner)
 			{
-			WaitingList::Remove(&signal->m_Waiting, sleeping);
-			sleeping->m_Signal=nullptr;
+			WaitingList::Remove(owner, sleeping);
+			sleeping->m_Owner=nullptr;
 			sleeping->m_SignalCount=0;
 			sleeping->m_SignalLock=nullptr;
 			}

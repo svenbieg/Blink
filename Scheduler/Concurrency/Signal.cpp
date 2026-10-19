@@ -43,9 +43,9 @@ SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 FlagHelper::Clear(current->m_Flags, TaskFlags::Timeout);
-current->m_Signal=this;
-current->m_SignalCount=times;
 Scheduler::WaitingList::Insert(&m_Waiting, current, Task::Priority);
+current->m_Owner=&m_Waiting;
+current->m_SignalCount=times;
 Scheduler::Suspend(core, current, resume_time);
 lock.Unlock();
 if(FlagHelper::Get(current->m_Flags, TaskFlags::Timeout))
@@ -65,9 +65,9 @@ spin_lock.Unlock();
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 FlagHelper::Clear(current->m_Flags, TaskFlags::Timeout);
-current->m_Signal=this;
-current->m_SignalCount=times;
 Scheduler::WaitingList::Insert(&m_Waiting, current, Task::Priority);
+current->m_Owner=&m_Waiting;
+current->m_SignalCount=times;
 Scheduler::Suspend(core, current, resume_time);
 lock.Unlock();
 if(FlagHelper::Get(current->m_Flags, TaskFlags::Timeout))
@@ -88,10 +88,10 @@ UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 signal_lock.Unlock(core, current);
 FlagHelper::Clear(current->m_Flags, TaskFlags::Timeout);
-current->m_Signal=this;
+Scheduler::WaitingList::Insert(&m_Waiting, current, Task::Priority);
+current->m_Owner=&m_Waiting;
 current->m_SignalCount=times;
 current->m_SignalLock=&signal_lock;
-Scheduler::WaitingList::Insert(&m_Waiting, current, Task::Priority);
 Scheduler::Suspend(core, current, resume_time);
 lock.Unlock();
 if(FlagHelper::Get(current->m_Flags, TaskFlags::Timeout))
@@ -117,7 +117,7 @@ while(resume)
 		resume->m_ResumeTime=0;
 		}
 	auto next=Scheduler::WaitingList::Remove(&m_Waiting, resume);
-	resume->m_Signal=nullptr;
+	resume->m_Owner=nullptr;
 	resume->m_Status=status;
 	auto signal_lock=resume->m_SignalLock;
 	if(signal_lock)
@@ -146,9 +146,9 @@ spin_lock.Unlock();
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 FlagHelper::Clear(current->m_Flags, TaskFlags::Timeout);
-current->m_Signal=this;
-current->m_SignalCount=1;
 Scheduler::WaitingList::Append(&m_Waiting, current);
+current->m_Owner=&m_Waiting;
+current->m_SignalCount=1;
 Scheduler::Suspend(core, current);
 lock.Unlock();
 spin_lock.Lock();
