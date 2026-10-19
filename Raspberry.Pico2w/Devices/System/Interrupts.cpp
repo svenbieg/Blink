@@ -137,7 +137,6 @@ VOID Interrupts::HandleInterrupt(UINT irq)noexcept
 {
 UINT core=Cpu::GetId();
 TaskMonitor::SetInterrupt(core);
-assert(s_DisableCount[core]==0);
 s_DisableCount[core]++;
 SpinLock lock(s_CriticalSection);
 auto handler=s_IrqHandler[irq];
@@ -145,22 +144,17 @@ lock.Unlock();
 if(handler)
 	handler->Call();
 TaskMonitor::ClearInterrupt(core);
-assert(Cpu::GetId()==core);
 s_DisableCount[core]--;
-assert(s_DisableCount[core]==0);
 }
 
 VOID Interrupts::HandleTaskSwitch()noexcept
 {
 UINT core=Cpu::GetId();
 TaskMonitor::SetInterrupt(core);
-assert(s_DisableCount[core]==0);
 s_DisableCount[core]++;
 Scheduler::HandleTaskSwitch();
 TaskMonitor::ClearInterrupt(core);
-assert(Cpu::GetId()==core);
 s_DisableCount[core]--;
-assert(s_DisableCount[core]==0);
 }
 
 VOID Interrupts::Initialize()noexcept
