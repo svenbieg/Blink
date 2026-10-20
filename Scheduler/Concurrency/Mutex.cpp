@@ -168,9 +168,9 @@ while(m_Waiting)
 	resume->m_OwnerFlags=TaskFlags::None;
 	Scheduler::OwnerList::Append(&m_Owner, resume);
 	Scheduler::Resume(resume);
-	if(!FlagHelper::Get(resume->m_Flags, TaskFlags::Sharing))
-		break;
 	if(!m_Waiting)
+		break;
+	if(!FlagHelper::Get(resume->m_Flags, TaskFlags::Sharing))
 		break;
 	if(!FlagHelper::Get(m_Waiting->m_Flags, TaskFlags::Sharing))
 		break;
