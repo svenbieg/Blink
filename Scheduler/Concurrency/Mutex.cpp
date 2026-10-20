@@ -170,6 +170,8 @@ while(m_Waiting)
 	Scheduler::Resume(resume);
 	if(!FlagHelper::Get(resume->m_Flags, TaskFlags::Sharing))
 		break;
+	if(!m_Waiting)
+		break;
 	if(!FlagHelper::Get(m_Waiting->m_Flags, TaskFlags::Sharing))
 		break;
 	}
