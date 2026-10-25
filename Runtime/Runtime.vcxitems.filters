@@ -7,13 +7,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mutex" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mutex" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stdexcept" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\RingBuffer.h">
-      <Filter>Storage</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)heap.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\IoHelper.h">
-      <Filter>Devices</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)new" />
   </ItemGroup>
   <ItemGroup>
@@ -49,25 +43,13 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)stdlib.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TypeInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)new.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\RingBuffer.cpp">
-      <Filter>Storage</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)heap.c" />
     <ClCompile Include="$(MSBuildThisFileDirectory)string.c" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\IoHelper.cpp">
-      <Filter>Devices</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)cxxabi.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Configuration">
       <UniqueIdentifier>{5805ee56-b3cf-456e-b0b7-1b0b424bc3d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Storage">
-      <UniqueIdentifier>{b8394696-fb9d-47bf-8d7a-0b2054f61620}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Devices">
-      <UniqueIdentifier>{7409c0a8-a473-40b4-8a2d-85d77a29c54c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

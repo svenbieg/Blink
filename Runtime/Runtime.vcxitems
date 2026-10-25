@@ -22,23 +22,19 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)asm.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\IoHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)heap.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mutex" />
     <ClInclude Include="$(MSBuildThisFileDirectory)new" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mutex" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stdexcept" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\RingBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TypeInfo.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)cxxabi.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\IoHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)heap.c" />
     <ClCompile Include="$(MSBuildThisFileDirectory)new.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)stdlib.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\RingBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)string.c" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TypeInfo.cpp" />
   </ItemGroup>

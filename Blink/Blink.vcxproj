@@ -18,7 +18,7 @@
     <Import Project="..\Default\Default.vcxitems" Label="Shared" />
     <Import Project="..\Scheduler\Scheduler.vcxitems" Label="Shared" />
     <Import Project="..\Database\Database.vcxitems" Label="Shared" />
-    <Import Project="..\Shell\Shell.vcxitems" Label="Shared" />
+    <Import Project="..\Embedded\Embedded.vcxitems" Label="Shared" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />

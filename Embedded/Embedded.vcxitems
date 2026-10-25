@@ -2,7 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <HasSharedItems>true</HasSharedItems>
-    <ItemsProjectGuid>{BFEA0976-EADD-4FEE-ADB4-6A20E5A5B5FE}</ItemsProjectGuid>
+    <ItemsProjectGuid>{1E54433B-0530-4476-99DE-5F612612BCB1}</ItemsProjectGuid>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(MSBuildThisFileDirectory)</NMakeIncludeSearchPath>
   </PropertyGroup>
@@ -10,9 +10,13 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\IoHelper.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\RingBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)UI\Console.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\IoHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\RingBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)UI\Console.h" />
   </ItemGroup>
 </Project>
