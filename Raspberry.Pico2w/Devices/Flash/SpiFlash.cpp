@@ -215,10 +215,8 @@ m_FlashProgram=(flash_program_fn)LookupRomFunction(FLASH_PROGRAM_FN);
 // Common Private
 //================
 
-__iram VOID SpiFlash::DoErase(UINT offset, SIZE_T size)noexcept
+__ISR VOID SpiFlash::DoErase(UINT offset, SIZE_T size)noexcept
 {
-static const UINT FLASH_BLOCK_SIZE=65536;
-//static const BYTE CMD_ERASE_BLOCK=0xD8;
 static const BYTE CMD_ERASE_SECTOR=0x20;
 auto qmi=(QMI_REGS*)XIP_QMI_BASE;
 UINT qmi1_timing=qmi->WND[1].TIMING;
@@ -240,7 +238,7 @@ for(UINT u=0; u<PADS_QSPI_COUNT; u++)
 	pads->IO[u]=pad_state[u];
 }
 
-__iram VOID SpiFlash::DoWrite(UINT offset, VOID const* buf, SIZE_T size)noexcept
+__ISR VOID SpiFlash::DoWrite(UINT offset, VOID const* buf, SIZE_T size)noexcept
 {
 auto qmi=(QMI_REGS*)XIP_QMI_BASE;
 UINT qmi1_timing=qmi->WND[1].TIMING;

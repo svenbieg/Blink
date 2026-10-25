@@ -14,11 +14,12 @@
 #endif
 
 #define __force_inline __attribute__((always_inline)) inline
-#define __iram __attribute__((section(".data.iram")))
 
 #ifndef __isense_t
 #define __isense_t unsigned int
 #endif
+
+#define __ISR __attribute__((section(".data.isr")))
 
 #ifndef __long
 #define __long long
