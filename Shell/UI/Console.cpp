@@ -38,6 +38,20 @@ WriteLock lock(m_Mutex);
 m_Commands.add(cmd, handler);
 }
 
+VOID Console::Command(Handle<String> cmd)
+{
+if(!cmd)
+	return;
+if(Task::IsMainTask())
+	{
+	HandleCommand(cmd);
+	}
+else
+	{
+	DispatchedQueue::Append(this, [this, cmd](){ HandleCommand(cmd); });
+	}
+}
+
 VOID Console::Print(LPCSTR text)
 {
 if(!text)

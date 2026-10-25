@@ -24,7 +24,10 @@ using namespace UI;
 
 VOID Main()
 {
-auto app=Application::Create();
+Task::Create(nullptr, [](){
+	auto app=Application::Create();
+	app->Run();
+	}, "app");
 DispatchedQueue::Enter();
 }
 
@@ -36,50 +39,62 @@ DispatchedQueue::Enter();
 namespace Blink {
 
 
+//========
+// Common
+//========
+
+VOID Application::Blink()
+{
+if(m_StatusLed->IsBlinking())
+	{
+	m_Console->Print("Already blinking\n");
+	return;
+	}
+m_Console->Print("Starting to blink...\n");
+m_StatusLed->Blink(500);
+}
+
+VOID Application::Off()
+{
+m_Console->Print("Led off\n");
+m_StatusLed->Set(false);
+}
+
+VOID Application::On()
+{
+m_Console->Print("Led on\n");
+m_StatusLed->Set(true);
+}
+
+VOID Application::Run()
+{
+Blink();
+}
+
+VOID Application::Stop()
+{
+if(!m_StatusLed->IsBlinking())
+	{
+	m_Console->Print("Not blinking\n");
+	return;
+	}
+m_Console->Print("Stop\n");
+m_StatusLed->Stop();
+}
+
+
 //==========================
 // Con-/Destructors Private
 //==========================
 
 Application::Application()
 {
+m_Console=Console::Create();
 m_StatusLed=StatusLed::Create();
-auto console=Console::Create();
-console->AddCommand("off", this, [this]()
-	{
-	Console::Print("Led off\n");
-	m_StatusLed->Set(false);
-	});
-console->AddCommand("on", this, [this]()
-	{
-	Console::Print("Led on\n");
-	m_StatusLed->Set(true);
-	});
-console->AddCommand("restart", nullptr, []()
-	{
-	Console::Print("Restarting...\n");
-	System::Restart();
-	});
-console->AddCommand("start", this, [this]()
-	{
-	if(m_StatusLed->IsBlinking())
-		{
-		Console::Print("Already blinking\n");
-		return;
-		}
-	Console::Print("Starting to blink...\n");
-	m_StatusLed->Blink(500);
-	});
-console->AddCommand("stop", this, [this]()
-	{
-	if(!m_StatusLed->IsBlinking())
-		{
-		Console::Print("Not blinking\n");
-		return;
-		}
-	Console::Print("Stop\n");
-	m_StatusLed->Stop();
-	});
-console->Command("start");
+m_Console->AddCommand("blink", this, &Application::Blink);
+m_Console->AddCommand("off", this, &Application::Off);
+m_Console->AddCommand("on", this, &Application::On);
+m_Console->AddCommand("stop", this, &Application::Stop);
 }
 
 }
