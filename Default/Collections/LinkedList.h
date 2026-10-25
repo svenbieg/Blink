@@ -153,7 +153,7 @@ public:
 		if(prev)
 			{
 			auto prev_next=MemberNext(prev);
-			*prev_next=Item;
+			*prev_next=next;
 			}
 		else
 			{
