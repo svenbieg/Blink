@@ -76,7 +76,8 @@ PllSys=42,
 PllUsb=43,
 PowmanPow=44,
 PowmanTimer=45,
-TaskSwitch=51
+TaskSwitch=51,
+SuspendCore=52
 };
 
 
@@ -138,7 +139,7 @@ public:
 	static const UINT IRQ_COUNT=52;
 
 	// Common
-	static inline BOOL Active()noexcept
+	static __force_inline BOOL Active()noexcept
 		{
 		UINT status=0;
 		__asm volatile("mrs %0, ipsr": "=r" (status):: "memory");
@@ -158,16 +159,13 @@ public:
 	static VOID Send(Irq Irq, UINT Core);
 	static VOID SetHandler(Irq Irq, nullptr_t);
 	static VOID SetHandler(Irq Irq, VOID (*Procedure)());
-	template <class _owner_t> static inline VOID SetHandler(Irq Irq, _owner_t* Owner, VOID (_owner_t::*Procedure)())
+	template <class _owner_t> static __force_inline VOID SetHandler(Irq Irq, _owner_t* Owner, VOID (_owner_t::*Procedure)())
 		{
 		auto handler=CallableMemberFunction<_owner_t, VOID>::Create(Owner, Procedure);
 		SetHandlerInternal(Irq, handler);
 		}
 
 private:
-	// Mail-Box
-	static const UINT CMD_TASK_SWITCH='TASK';
-
 	// Common
 	static VOID HandleMailBox()noexcept;
 	static VOID SetHandlerInternal(Irq Irq, InterruptHandler* Handler)noexcept;

@@ -14,6 +14,7 @@
 #include "Storage/Streams/StreamReader.h"
 #include "Storage/Streams/StreamWriter.h"
 
+using namespace Collections;
 using namespace Concurrency;
 using namespace Devices::System;
 using namespace Storage::Streams;
@@ -59,6 +60,37 @@ writer.Print(text);
 writer.Flush();
 }
 
+VOID Console::TaskInfo()
+{
+WriteLock lock(m_Mutex);
+StreamWriter writer(m_SerialPort);
+TASK_INFO info[16];
+UINT count=TaskMonitor::GetTaskInfo(info, 16);
+map<Handle<String>, TASK_INFO*> info_map;
+UINT64 total_time=0;
+for(UINT u=0; u<count; u++)
+	{
+	info_map.add(info[u].Name, &info[u]);
+	total_time+=info[u].TotalTime;
+	}
+for(auto const& it: info_map)
+	{
+	auto name=it.get_key();
+	auto info=it.get_value();
+	SIZE_T stack_size=info->StackSize;
+	SIZE_T stack_used=info->StackUsed;
+	UINT64 time=info->TotalTime;
+	UINT percent=time*100/total_time;
+	writer.Print("%3u%% %-16s %4u/%-4u bytes\n", percent, name, stack_used, stack_size);
+	}
+writer.Print("\n");
+MEMORY_INFO memory;
+Memory::GetInfo(&memory);
+SIZE_T used=memory.Total-memory.Available;
+writer.Print("%u/%u | %u bytes available\n\n", used, memory.Total, memory.Available);
+writer.Flush();
+}
+
 
 //===============
 // Output-Stream
@@ -84,6 +116,7 @@ m_This(this)
 {
 m_SerialPort=SerialPort::Create();
 m_ConsoleTask=Task::Create(this, &Console::ConsoleTask, "console", 2048);
+AddCommand("tasks", this, &Console::TaskInfo);
 }
 
 

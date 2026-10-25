@@ -43,6 +43,14 @@ protected:
 		s_Global=Object::Create<_obj_t>(std::forward<_args_t>(Arguments)...);
 		return s_Global;
 		}
+	template <class... _args_t> static _obj_t* CreateEx(SIZE_T Extra, SIZE_T Align=sizeof(SIZE_T), _args_t&&... Arguments)
+		{
+		WriteLock lock(s_Mutex);
+		if(s_Global)
+			return s_Global;
+		s_Global=Object::CreateEx<_obj_t>(Extra, Align, std::forward<_args_t>(Arguments)...);
+		return s_Global;
+		}
 	virtual UINT Release()noexcept override
 		{
 		WriteLock lock(s_Mutex);

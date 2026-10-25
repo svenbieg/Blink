@@ -39,6 +39,9 @@ public:
 	using SerialPort=Devices::Serial::SerialPort;
 	using Task=Concurrency::Task;
 
+	// Friends
+	friend Object;
+
 	// Con-/Destructors
 	static inline Handle<Console> Create() { return Global::Create(); }
 
@@ -71,6 +74,7 @@ public:
 		auto str=String::Create(Format, Arguments...);
 		Print(str);
 		}
+	VOID TaskInfo();
 
 	// Output-Stream
 	VOID Flush()override;
@@ -78,7 +82,6 @@ public:
 
 private:
 	// Con-/Destructors
-	friend Object;
 	Console();
 
 	// Common

@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{BFEA0976-EADD-4FEE-ADB4-6A20E5A5B5FE}</ItemsProjectGuid>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(MSBuildThisFileDirectory)</NMakeIncludeSearchPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)UI\Console.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)UI\Console.h" />
+  </ItemGroup>
+</Project>

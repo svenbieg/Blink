@@ -117,6 +117,6 @@ public:
 
 struct COPY_T
 {
-COPY_T(SIZE_T Init) { MemoryHelper::FillT<SIZE_T>(Value, __COPY_MAX, Init); }
-SIZE_T Value[__COPY_MAX];
+COPY_T(SIZE_T Init) { MemoryHelper::FillT<SIZE_T>(Value, COPY_MAX, Init); }
+SIZE_T Value[COPY_MAX];
 };

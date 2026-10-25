@@ -23,7 +23,6 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)AsmHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\IoHelper.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\System\InterruptHandler.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)heap.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mutex" />
@@ -32,7 +31,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)stdexcept" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\RingBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TypeInfo.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)UI\Console.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)cxxabi.cpp" />
@@ -43,6 +41,5 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Storage\RingBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)string.c" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TypeInfo.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)UI\Console.cpp" />
   </ItemGroup>
 </Project>

@@ -9,22 +9,22 @@
 // Forward-Declarations
 //======================
 
-#ifndef __ADDR_T
-#define __ADDR_T unsigned long int
+#ifndef __addr_t
+#define __addr_t unsigned long int
 #endif
 
-#ifndef __COPY_MAX
-#define __COPY_MAX 2
+#define __force_inline __attribute__((always_inline)) inline
+
+#ifndef __isense_t
+#define __isense_t unsigned long int
 #endif
 
-#ifndef __ISENSE_T
-#define __ISENSE_T unsigned long int
+#ifndef __long
+#define __long
 #endif
 
-#ifndef __LONG
-#define __LONG
+#ifndef __long_long
+#define __long_long long
 #endif
 
-#ifndef __LONG_LONG
-#define __LONG_LONG long
-#endif
+#define COPY_MAX 2

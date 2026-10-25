@@ -26,12 +26,12 @@ struct nothrow_t { nothrow_t()=default; };
 // Operator New
 //==============
 
-void* operator new(__ISENSE_T size);
-void* operator new(__ISENSE_T size, std::nothrow_t const&)noexcept;
-void* operator new[](__ISENSE_T size);
-void* operator new[](__ISENSE_T size, std::nothrow_t const&)noexcept;
+void* operator new(__isense_t size);
+void* operator new(__isense_t size, std::nothrow_t const&)noexcept;
+void* operator new[](__isense_t size);
+void* operator new[](__isense_t size, std::nothrow_t const&)noexcept;
 void operator delete(void* buf)noexcept;
-void operator delete(void* buf, __ISENSE_T size)noexcept;
+void operator delete(void* buf, __isense_t size)noexcept;
 void operator delete[](void* buf)noexcept;
 
 
@@ -39,4 +39,4 @@ void operator delete[](void* buf)noexcept;
 // Placement New
 //===============
 
-inline void* operator new(__ISENSE_T size, void* obj) { return obj; }
+inline void* operator new(__isense_t size, void* obj) { return obj; }

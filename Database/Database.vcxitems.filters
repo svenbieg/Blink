@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Storage">
+      <UniqueIdentifier>{f6daf683-e51e-43fc-9c49-1e1cbe7b3559}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Storage\Database">
+      <UniqueIdentifier>{4a1e7458-5028-48af-868b-8d39fe9f4960}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Storage\Database\Updates">
+      <UniqueIdentifier>{33b1ff58-079f-483b-b708-8c18df568e45}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Database\Database.cpp">
+      <Filter>Storage\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Database\Editor.cpp">
+      <Filter>Storage\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Database\Node.cpp">
+      <Filter>Storage\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Database\Entry.cpp">
+      <Filter>Storage\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Database\Updates\NodeUpdate.cpp">
+      <Filter>Storage\Database\Updates</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Database\Updates\EntryUpdate.cpp">
+      <Filter>Storage\Database\Updates</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Block.cpp">
+      <Filter>Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Page.cpp">
+      <Filter>Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\SkipBits.cpp">
+      <Filter>Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\ErrorCorrection.cpp">
+      <Filter>Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Redirection.cpp">
+      <Filter>Storage</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Database\Database.h">
+      <Filter>Storage\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Database\Node.h">
+      <Filter>Storage\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Database\Editor.h">
+      <Filter>Storage\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\ReversedVolume.h">
+      <Filter>Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Database\Map.h">
+      <Filter>Storage\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Database\Entry.h">
+      <Filter>Storage\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Database\Updates\NodeUpdate.h">
+      <Filter>Storage\Database\Updates</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Database\Updates\MapUpdate.h">
+      <Filter>Storage\Database\Updates</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Database\Updates\EntryUpdate.h">
+      <Filter>Storage\Database\Updates</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Page.h">
+      <Filter>Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Block.h">
+      <Filter>Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Volume.h">
+      <Filter>Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\SkipBits.h">
+      <Filter>Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\ErrorCorrection.h">
+      <Filter>Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Redirection.h">
+      <Filter>Storage</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

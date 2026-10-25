@@ -31,9 +31,9 @@ typedef decltype(nullptr) nullptr_t;
 
 typedef unsigned char BYTE;
 typedef unsigned short int WORD;
-typedef unsigned __LONG int DWORD;
-typedef unsigned __LONG_LONG int QWORD;
-typedef __ADDR_T SIZE_T;
+typedef unsigned __long int DWORD;
+typedef unsigned __long_long int QWORD;
+typedef __addr_t SIZE_T;
 
 typedef int BOOL;
 typedef short int SHORT;
@@ -42,8 +42,8 @@ typedef unsigned int UINT;
 typedef unsigned char UINT8;
 typedef unsigned short UINT16;
 typedef UINT UINT32;
-typedef __LONG_LONG int INT64;
-typedef unsigned __LONG_LONG int UINT64;
+typedef __long_long int INT64;
+typedef unsigned __long_long int UINT64;
 
 typedef float FLOAT;
 typedef double DOUBLE;

@@ -182,16 +182,28 @@ return status!=0;
 
 VOID Interrupts::Send(Irq irq, UINT core)
 {
-assert(irq==Irq::TaskSwitch);
 UINT current=Cpu::GetId();
-if(core==current)
+switch(irq)
 	{
-	auto scb=(SCB_REGS*)SCB_BASE;
-	IoHelper::Set(scb->ICSR, ICSR_PENDSVSET);
-	}
-else
-	{
-	MailBox::Write(CMD_TASK_SWITCH);
+	case Irq::SuspendCore:
+		{
+		assert(core!=current);
+		MailBox::Write((UINT)irq);
+		break;
+		}
+	case Irq::TaskSwitch:
+		{
+		if(core==current)
+			{
+			auto scb=(SCB_REGS*)SCB_BASE;
+			IoHelper::Set(scb->ICSR, ICSR_PENDSVSET);
+			}
+		else
+			{
+			MailBox::Write((UINT)irq);
+			}
+		break;
+		}
 	}
 }
 
@@ -216,10 +228,20 @@ VOID Interrupts::HandleMailBox()noexcept
 UINT cmd=0;
 if(MailBox::TryRead(&cmd))
 	{
-	if(cmd==CMD_TASK_SWITCH)
+	Irq irq=(Irq)cmd;
+	switch(irq)
 		{
-		auto scb=(SCB_REGS*)SCB_BASE;
-		IoHelper::Set(scb->ICSR, ICSR_PENDSVSET);
+		case Irq::SuspendCore:
+			{
+			Cpu::Suspend();
+			break;
+			}
+		case Irq::TaskSwitch:
+			{
+			auto scb=(SCB_REGS*)SCB_BASE;
+			IoHelper::Set(scb->ICSR, ICSR_PENDSVSET);
+			break;
+			}
 		}
 	}
 auto sio=(SIO_REGS*)SIO_BASE;

@@ -98,6 +98,14 @@ bne %=b\n\
 return value;
 }
 
+VOID Cpu::ResumeAll()noexcept
+{
+UINT id=GetId();
+UINT other=id? 0: 1;
+s_Suspension[other]=Suspension::None;
+Cpu::SetEvent();
+}
+
 VOID Cpu::SetContext(VOID (*task_proc)(VOID*), VOID* param, SIZE_T stack)noexcept
 {
 __asm inline volatile("\
@@ -105,6 +113,24 @@ mov lr, %0\n\
 mov r0, %1\n\
 mov sp, %2\n\
 bx lr":: "r" (task_proc), "r" (param), "r" (stack): "r0");
+}
+
+VOID Cpu::Suspend()noexcept
+{
+UINT id=GetId();
+s_Suspension[id]=Suspension::Suspended;
+Cpu::SetEvent();
+while(s_Suspension[id]==Suspension::Suspended)
+	Cpu::WaitForEvent();
+}
+
+VOID Cpu::SuspendAll()noexcept
+{
+UINT id=GetId();
+UINT other=id? 0: 1;
+Interrupts::Send(Irq::SuspendCore, other);
+while(s_Suspension[other]!=Suspension::Suspended)
+	Cpu::WaitForEvent();
 }
 
 VOID Cpu::WakeupSecondary()
@@ -126,5 +152,12 @@ for(UINT u=0; u<CMD_COUNT; u++)
 		throw DeviceNotReadyException();
 	}
 }
+
+
+//====================
+// Suspension Private
+//====================
+
+volatile Cpu::Suspension Cpu::s_Suspension[CPU_COUNT]={ Suspension::None };
 
 }}

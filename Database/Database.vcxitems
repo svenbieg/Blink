@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{A97C200E-F7B7-4D50-BC65-D6CC1AAF00AF}</ItemsProjectGuid>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(MSBuildThisFileDirectory)</NMakeIncludeSearchPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Block.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Database\Database.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Database\Editor.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Database\Entry.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Database\Node.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Database\Updates\EntryUpdate.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Database\Updates\NodeUpdate.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\ErrorCorrection.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Page.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\Redirection.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Storage\SkipBits.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Block.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Database\Database.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Database\Editor.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Database\Entry.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Database\Map.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Database\Node.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Database\Updates\EntryUpdate.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Database\Updates\MapUpdate.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Database\Updates\NodeUpdate.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\ErrorCorrection.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Page.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Redirection.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\ReversedVolume.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\SkipBits.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Volume.h" />
+  </ItemGroup>
+</Project>
