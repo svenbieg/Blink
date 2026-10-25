@@ -5,7 +5,7 @@
 .section ".reset"
 
 #include "Devices/Peripherals.h"
-#include "Runtime/Configuration.h"
+#include "config.h"
 #include "cpu.inc.S"
 
 

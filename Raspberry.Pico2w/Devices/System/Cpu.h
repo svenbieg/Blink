@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Runtime/Configuration.h"
+#include "TypeHelper.h"
 
 
 //===========
@@ -28,7 +28,7 @@ class Cpu
 {
 public:
 	// Settings
-	static const UINT CPU_COUNT=Runtime::CONFIG_CPU_COUNT;
+	static const UINT CPU_COUNT=2;
 
 	// Common
 	static __force_inline void Breakpoint()noexcept

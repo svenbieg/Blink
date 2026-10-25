@@ -4,7 +4,7 @@
 
 .syntax unified
 
-#include "AsmHelper.h"
+#include "asm.h"
 #include "dcp_instr.inc.S"
 #include "dcp_canned.inc.S"
 

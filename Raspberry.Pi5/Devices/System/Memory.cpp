@@ -14,8 +14,8 @@
 #include "Concurrency/TaskMonitor.h"
 #include "Concurrency/WriteLock.h"
 #include "Devices/Peripherals.h"
-#include "Runtime/Configuration.h"
 #include "MemoryHelper.h"
+#include <config.h>
 #include <heap.h>
 
 using namespace Concurrency;

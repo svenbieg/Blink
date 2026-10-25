@@ -12,7 +12,7 @@
 #include "Concurrency/Scheduler.h"
 #include "Devices/System/Memory.h"
 #include "Devices/Timers/SystemTimer.h"
-#include "Runtime/Configuration.h"
+#include <config.h>
 #include <heap.h>
 
 using namespace Devices::Timers;
@@ -63,7 +63,7 @@ lock.Unlock();
 if(pos>=count)
 	throw BufferOverrunException();
 info[pos].Name="system";
-info[pos].StackSize=Runtime::CONFIG_STACK_SIZE;
+info[pos].StackSize=CONFIG_STACK_SIZE;
 info[pos].StackUsed=0;
 info[pos].TotalTime=total_time-tasks_time;
 return pos+1;

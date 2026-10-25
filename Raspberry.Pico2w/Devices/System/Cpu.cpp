@@ -14,7 +14,7 @@
 #include "Devices/System/MailBox.h"
 #include "Devices/System/Sio.h"
 #include "Devices/Peripherals.h"
-#include "Runtime/Configuration.h"
+#include <config.h>
 
 using namespace Concurrency;
 using namespace Runtime;

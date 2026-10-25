@@ -10,10 +10,10 @@
 //=======
 
 #include "Concurrency/Task.h"
-#include "Runtime/Configuration.h"
 #include "Runtime/IrqFrame.h"
 #include "Runtime/TaskFrame.h"
 #include <assert.h>
+#include <config.h>
 
 using namespace Runtime;
 

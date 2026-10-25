@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)TypeInfo.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)AsmHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)asm.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mutex" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shared_mutex" />
