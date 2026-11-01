@@ -83,21 +83,25 @@ ventry invalid_handler
 //====================
 
 sync_handler:
+hlt #0
 mov x0, #SYNC_EXCEPTION
 mrs x1, elr_el1
 b err_hang
 
 fiq_handler:
+hlt #0
 mov x0, #FIQ_EXCEPTION
 mrs x1, elr_el1
 b err_hang
 
 error_handler:
+hlt #0
 mov x0, #ERROR_EXCEPTION
 mrs x1, elr_el1
 b err_hang
 
 invalid_handler:
+hlt #0
 mov x0, #INVALID_EXCEPTION
 mrs x1, elr_el1
 b err_hang
