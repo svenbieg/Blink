@@ -34,7 +34,7 @@ m_Period=period;
 if(m_Period)
 	{
 	if(!m_Task)
-		m_Task=Task::Create(this, &StatusLed::BlinkTask);
+		m_Task=Task::Create(this, &StatusLed::BlinkTask, "blink");
 	}
 else
 	{
