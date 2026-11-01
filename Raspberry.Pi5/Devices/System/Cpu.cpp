@@ -14,7 +14,7 @@
 
 using namespace Devices::Timers;
 
-extern "C" VOID _start();
+extern "C" VOID init();
 
 
 //===========
@@ -70,25 +70,29 @@ while(addr<end)
 	}
 }
 
+VOID Cpu::WakeupSecondary()
+{
+for(UINT core=1; core<CPU_COUNT; core++)
+	PowerOn(core);
+}
+
+
+//================
+// Common Private
+//================
+
 VOID Cpu::PowerOn(UINT core)
 {
 const UINT64 PSCI_CPU_ON=0xC4000003;
-UINT64 mpidr=(core<<8);
-INT status=0;
+register UINT64 x0 asm("x0")=PSCI_CPU_ON;
+register UINT64 x1 asm("x1")=(core<<8);
+register UINT64 x2 asm("x2")=(SIZE_T)&init;
+register UINT64 x3 asm("x3")=0;
 __asm volatile("\
-mov x0, %1\n\
-mov x1, %2\n\
-mov x2, %3\n\
-mov x3, #1\n\
-mov x4, xzr\n\
-smc #0\n\
-mov %w0, w0": "=r" (status): "r" (PSCI_CPU_ON), "r" (mpidr), "r" (&_start));
-if(status!=0)
+dsb sy\n\
+smc #0": "+&r" (x0), "+&r" (x1), "+&r" (x2), "+&r" (x3):: "x4", "x5", "x6", "x7", "x8", "x9", "x10", "x11", "x12", "x13", "x14", "x15", "x16", "x17", "x30", "memory", "cc");
+if(x0!=0)
 	throw DeviceNotReadyException();
-}
-
-VOID Cpu::WakeupSecondary()
-{
 }
 
 }}

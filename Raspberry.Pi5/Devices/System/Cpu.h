@@ -44,7 +44,7 @@ public:
 	// Common
 	static __force_inline VOID Breakpoint()
 		{
-		__asm inline volatile("brk #0");
+		__asm inline volatile("hlt #0");
 		}
 	static VOID CleanDataCache(SIZE_T Address, SIZE_T Size)noexcept;
 	static BOOL CompareAndSet(volatile UINT* Value, UINT Compare, UINT Set)noexcept;
@@ -101,7 +101,6 @@ public:
 		return value;
 		}
 	static VOID InvalidateDataCache(SIZE_T Address, SIZE_T Size)noexcept;
-	static VOID PowerOn(UINT Core);
 	static __force_inline VOID SetContext(VOID (*TaskProc)(VOID*), VOID* Parameter, SIZE_T StackPointer)noexcept
 		{
 		__asm inline volatile("\
@@ -140,6 +139,7 @@ private:
 		{
 		__asm inline volatile("msr daifclr, #2");
 		}
+	static VOID PowerOn(UINT Core);
 };
 
 }}
