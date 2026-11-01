@@ -85,25 +85,14 @@ sub x2, x2, x1
 mov sp, x2
 
 
-//=================
-// Stall Secondary
-//=================
-
-_stall_secondary:
-cpu_id x0
-cbz x0, _create_page_table
-1:
-wfe
-b _enable_mmu
-
-
 //===================
 // Create Page Table
 //===================
 
 _create_page_table:
+cpu_id x0
+cbnz x0, _enable_mmu
 bl mmu_create_page_table
-sev
 
 
 //============
