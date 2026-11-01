@@ -33,6 +33,7 @@
 #define __extension__
 #define __typeof__(x) decltype(x)
 
+#define asm(...)
 #define typeof(x) (TypeInfo const*)nullptr
 
 
