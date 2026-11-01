@@ -127,12 +127,17 @@ enum class WifiCommand: UINT
 Up						=2,
 SetPromisc				=10,
 SetInfra				=20,
+SetAuth					=22,
+SetSsid					=26,
 SetPassiveScan			=49,
+SetWSec					=134,
+SetWpaAuth				=165,
 SetScanChannelTime		=185,
 SetScanUnassocTime		=187,
 SetScanPassiveTime		=258,
 GetVariable				=262,
-SetVariable				=263
+SetVariable				=263,
+SetWSecPmk				=268
 };
 
 enum class WifiCmdFlags: WORD
@@ -181,5 +186,84 @@ for(auto id: WIFI_DISABLED_EVENTS)
 	flags[id/8]&=~(1<<(id%8));
 return flags;
 }();
+
+
+//=========
+// Payload
+//=========
+
+typedef struct
+{
+BYTE Flags;
+BYTE Priority;
+BYTE Flags2;
+BYTE DataOffset;
+}WIFI_BDC_HEADER;
+
+typedef struct
+{
+BYTE Destination[6];
+BYTE Source[6];
+WORD EtherType;
+}WIFI_ETHERNET_HEADER;
+
+const WORD WIFI_ETHER_TYPE=0x886C;
+
+typedef struct
+{
+WORD Subtype;
+WORD Length;
+BYTE Version;
+BYTE Oui[3];
+WORD UserSubtype;
+}WIFI_BCM_EVENT_HEADER;
+
+typedef struct
+{
+WORD Version;
+WORD Flags;
+UINT EventType;
+UINT Status;
+UINT Reason;
+UINT AuthType;
+UINT DataLength;
+BYTE Address[6];
+CHAR InterfaceName[16];
+BYTE InterfaceIndex;
+BYTE BssConfigIndex;
+}WIFI_EVENT_MESSAGE;
+
+typedef struct
+{
+WIFI_ETHERNET_HEADER Ethernet;
+WIFI_BCM_EVENT_HEADER Broadcom;
+WIFI_EVENT_MESSAGE Event;
+}WIFI_EVENT_FRAME;
+
+
+//=========
+// Network
+//=========
+
+typedef struct
+{
+UINT Length;
+CHAR Value[32];
+}WIFI_SSID;
+
+
+//==========
+// Security
+//==========
+
+typedef struct
+{
+WORD Length;
+WORD Flags;
+CHAR Key[64];
+}WIFI_WSEC_PMK;
+
+const BYTE WIFI_WPA2_AUTH_PSK=0x80;
+
 
 }}

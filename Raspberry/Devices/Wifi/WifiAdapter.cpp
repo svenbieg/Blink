@@ -63,17 +63,17 @@ const WORD CLMF_FIRST		=(1<<1);
 // Common
 //========
 
-VOID WifiAdapter::Command(WifiCommand id, UINT arg)
+VOID WifiAdapter::Command(WifiCommand id, VOID* buf, SIZE_T size)
 {
-UINT cmd_size=sizeof(WIFI_CMD)+sizeof(UINT);
+UINT cmd_size=sizeof(WIFI_CMD)+size;
 auto request=WifiPacket::Create(cmd_size);
 auto cmd=request->Write<WIFI_CMD>();
 MemoryHelper::Zero(cmd, sizeof(WIFI_CMD));
 cmd->Command=id;
 cmd->Id=m_RequestId++;
 cmd->Flags=WifiCmdFlags::Write;
-cmd->Length=sizeof(UINT);
-request->Write(&arg, sizeof(UINT));
+cmd->Length=size;
+request->Write(buf, size);
 auto response=SendAndReceive(request);
 cmd=response->Read<WIFI_CMD>();
 if(FlagHelper::Get(cmd->Flags, WifiCmdFlags::Error))
@@ -105,19 +105,12 @@ response->Read(buf, copy);
 Handle<WifiPacket> WifiAdapter::SendAndReceive(Handle<WifiPacket> request)
 {
 WriteLock lock(m_Mutex);
-if(m_Request)
-	{
-	m_Requests.Append(request);
-	}
-else
-	{
-	m_Request=request;
-	m_Request->WriteToStream(m_Sdio);
-	}
+while(m_Request)
+	m_ResponseReceived.Wait(lock, WIFI_TIMEOUT);
+m_Request=request;
+m_Request->WriteToStream(m_Sdio);
 m_ResponseReceived.Wait(lock, WIFI_TIMEOUT);
-m_Request=m_Requests.RemoveFirst();
-if(m_Request)
-	m_Request->WriteToStream(m_Sdio);
+m_Request=nullptr;
 return request->m_Response;
 }
 
@@ -223,12 +216,18 @@ switch(type)
 	case WifiPacketType::Event:
 		{
 		WriteLock lock(m_Mutex);
-		m_Ready.Trigger();
+		auto event=ParseEvent(pkt);
+		if(!event)
+			{
+			m_Ready.Trigger();
+			break;
+			}
 		break;
 		}
 	case WifiPacketType::Response:
 		{
 		WriteLock lock(m_Mutex);
+		assert(m_Request);
 		m_Request->m_Response=pkt;
 		m_ResponseReceived.Trigger();
 		break;
@@ -239,6 +238,28 @@ switch(type)
 		break;
 		}
 	}
+}
+
+WIFI_EVENT_MESSAGE* WifiAdapter::ParseEvent(WifiPacket* pkt)
+{
+auto buf=pkt->Begin();
+auto wifi_header=(WIFI_HEADER*)buf;
+UINT pos=wifi_header->DataOffset;
+auto bdc_header=(WIFI_BDC_HEADER*)&buf[pos];
+pos+=sizeof(WIFI_BDC_HEADER);
+UINT frame_offset=pos+bdc_header->DataOffset*4;
+UINT size=pkt->GetSize();
+if(frame_offset>=size)
+	return nullptr;
+pos=frame_offset;
+auto frame=(WIFI_EVENT_FRAME*)&buf[pos];
+if(frame->Ethernet.EtherType!=WIFI_ETHER_TYPE)
+	return nullptr;
+auto oui=frame->Broadcom.Oui;
+UINT bcm_id=TypeHelper::MakeLong(oui[0], oui[1], oui[2], 0);
+if(bcm_id!=0x181000)
+	return nullptr;
+return &frame->Event;
 }
 
 VOID WifiAdapter::UploadRegulatory()
