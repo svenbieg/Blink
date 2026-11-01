@@ -76,8 +76,7 @@ public:
 
 	// Con-/Destructors
 	static Handle<WifiPacket> Create(UINT Size);
-	static Handle<WifiPacket> Create(WIFI_HEADER const& Header);
-	static Handle<WifiPacket> ReadFromStream(InputStream* Stream);
+	static Handle<WifiPacket> Create(nullptr_t, UINT Size);
 
 	// Common
 	inline UINT AvailableForWrite()const noexcept { return m_Size-m_Written; }

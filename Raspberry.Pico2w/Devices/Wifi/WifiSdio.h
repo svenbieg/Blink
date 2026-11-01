@@ -9,6 +9,7 @@
 // Using
 //=======
 
+#include "Concurrency/CriticalMutex.h"
 #include "Devices/Wifi/WifiPacket.h"
 #include "Devices/Wifi/WifiSpi.h"
 #include "Devices/Pio/SpiEmulator.h"
@@ -43,6 +44,7 @@ public:
 	friend WifiAdapter;
 
 	// Using
+	using CriticalMutex=Concurrency::CriticalMutex;
 	using CriticalSection=Concurrency::CriticalSection;
 	using Signal=Concurrency::Signal;
 	using Task=Concurrency::Task;
@@ -74,6 +76,7 @@ private:
 	UINT Read16x2(FN0_32 const& Register);
 	UINT ReadBackplane(UINT Address);
 	VOID ReadBackplane(UINT Address, VOID* Buffer, UINT Size);
+	SIZE_T ReadData(VOID* Buffer, SIZE_T Size);
 	UINT ReadRegister(SDIO_REG const& Register);
 	VOID ResetDevice(UINT Address, UINT Flags);
 	VOID ServiceTask();
@@ -82,9 +85,11 @@ private:
 	VOID Write16x2(FN0_32 const& Register, UINT Value);
 	VOID WriteBackplane(UINT Address, UINT Value);
 	VOID WriteBackplane(UINT Address, VOID const* Buffer, UINT Size);
+	SIZE_T WriteData(VOID const* Buffer, SIZE_T Size);
 	VOID WriteRegister(SDIO_REG const& Register, UINT Value);
 	CriticalSection m_CriticalSection;
 	Signal m_InterruptPending;
+	CriticalMutex m_Mutex;
 	Handle<Task> m_ServiceTask;
 	UINT m_Window;
 };

@@ -88,25 +88,8 @@ assert(buf);
 assert((SIZE_T)buf%sizeof(UINT)==0);
 assert(size);
 assert(size%sizeof(UINT)==0);
-auto dst=(BYTE*)buf;
-UINT cmd=CMD_INCR;
-BitHelper::Set(cmd, CMD_FN, FN2);
-UINT read=size;
-while(read)
-	{
-	UINT copy=TypeHelper::Min(read, WIFI_BLOCK_SIZE);
-	BitHelper::Set(cmd, CMD_SIZE, copy);
-	m_GpioHost->SetPinMode(PIN_DATA, m_PinMode);
-	m_StateMachine->SetPinDirection(PIN_DATA, PioPinDirection::Output);
-	SpiBegin(sizeof(UINT), copy);
-	SpiWrite(&cmd, sizeof(UINT));
-	SpiRead(dst, copy);
-	SpiEnd();
-	dst+=copy;
-	read-=copy;
-	}
-m_GpioHost->SetPinMode(PIN_DATA, GpioPinMode::Input, GpioPullMode::PullDown);
-return size;
+WriteLock lock(m_Mutex);
+return ReadData(buf, size);
 }
 
 
@@ -125,25 +108,8 @@ assert(buf);
 assert((SIZE_T)buf%sizeof(UINT)==0);
 assert(size);
 assert(size%sizeof(UINT)==0);
-auto src=(BYTE const*)buf;
-UINT cmd=CMD_WRITE|CMD_INCR;
-BitHelper::Set(cmd, CMD_FN, FN2);
-UINT write=size;
-while(write)
-	{
-	UINT copy=TypeHelper::Min(write, WIFI_BLOCK_SIZE);
-	BitHelper::Set(cmd, CMD_SIZE, copy);
-	m_GpioHost->SetPinMode(PIN_DATA, m_PinMode);
-	m_StateMachine->SetPinDirection(PIN_DATA, PioPinDirection::Output);
-	SpiBegin(sizeof(UINT)+copy, 0);
-	SpiWrite(&cmd, sizeof(UINT));
-	SpiWrite(src, copy);
-	SpiEnd();
-	src+=copy;
-	write-=copy;
-	}
-m_GpioHost->SetPinMode(PIN_DATA, GpioPinMode::Input, GpioPullMode::PullDown);
-return size;
+WriteLock lock(m_Mutex);
+return WriteData(buf, size);
 }
 
 
@@ -234,6 +200,29 @@ m_GpioHost->SetPinMode(PIN_DATA, GpioPinMode::Input, GpioPullMode::PullDown);
 return value;
 }
 
+SIZE_T WifiSdio::ReadData(VOID* buf, SIZE_T size)
+{
+auto dst=(BYTE*)buf;
+UINT cmd=CMD_INCR;
+BitHelper::Set(cmd, CMD_FN, FN2);
+UINT read=size;
+while(read)
+	{
+	UINT copy=TypeHelper::Min(read, WIFI_BLOCK_SIZE);
+	BitHelper::Set(cmd, CMD_SIZE, copy);
+	m_GpioHost->SetPinMode(PIN_DATA, m_PinMode);
+	m_StateMachine->SetPinDirection(PIN_DATA, PioPinDirection::Output);
+	SpiBegin(sizeof(UINT), copy);
+	SpiWrite(&cmd, sizeof(UINT));
+	SpiRead(dst, copy);
+	SpiEnd();
+	dst+=copy;
+	read-=copy;
+	}
+m_GpioHost->SetPinMode(PIN_DATA, GpioPinMode::Input, GpioPullMode::PullDown);
+return size;
+}
+
 VOID WifiSdio::ReadBackplane(UINT addr, VOID* buf, UINT size)
 {
 assert(buf);
@@ -306,6 +295,7 @@ WriteBackplane(addr+COM_IOCTRL, &ioctrl, 1);
 
 VOID WifiSdio::ServiceTask()
 {
+WriteLock lock(m_Mutex);
 m_GpioHost->SetPinMode(PIN_POWER, GpioPinMode::Output);
 m_GpioHost->DigitalWrite(PIN_POWER, true);
 Task::Sleep(250);
@@ -337,23 +327,35 @@ WriteRegister(SB_FN2_WATERMARK, FN2_SPI_WATERMARK);
 PollRegister(SPI_STATUS, SPI_STATUS_F2_RX_READY, SPI_STATUS_F2_RX_READY);
 m_GpioHost->SetPinMode(PIN_DATA, GpioPinMode::Input, GpioPullMode::PullDown);
 m_GpioHost->SetInterruptHandler(PIN_DATA, this, &WifiSdio::HandleInterrupt, GpioIrqMode::None);
+lock.Unlock();
 auto task=Task::Get();
-SpinLock lock(m_CriticalSection);
+SpinLock spin_lock(m_CriticalSection);
 while(!task->Cancelled)
 	{
 	m_GpioHost->EnableInterrupt(PIN_DATA, GpioIrqMode::High);
-	m_InterruptPending.Wait(lock);
-	lock.Unlock();
+	m_InterruptPending.Wait(spin_lock);
+	spin_lock.Unlock();
+	lock.Lock();
 	WORD spi_ints=(WORD)ReadRegister(SPI_INTS);
 	WriteRegister(SPI_INTS, spi_ints);
 	UINT status=ReadRegister(SPI_STATUS);
+	Handle<WifiPacket> pkt;
 	if(BitHelper::Get(status, SPI_STATUS_F2_PKT_AVAIL))
 		{
-		auto pkt=WifiPacket::ReadFromStream(this);
-		if(pkt)
-			PacketReceived.Call(pkt);
+		UINT pkt_len=BitHelper::Get(status, SPI_STATUS_F2_PKT_LEN);
+		pkt=WifiPacket::Create(nullptr, pkt_len);
+		auto buf=pkt->Begin();
+		ReadData(buf, pkt_len);
+		auto header=(WIFI_HEADER*)buf;
+		if(header->Length!=pkt_len)
+			throw InvalidArgumentException();
+		if(header->LengthChk!=(header->Length^0xFFFF))
+			throw InvalidArgumentException();
 		}
-	lock.Lock();
+	lock.Unlock();
+	if(pkt)
+		PacketReceived.Call(pkt);
+	spin_lock.Lock();
 	}
 }
 
@@ -406,6 +408,29 @@ SpiWrite(&cmd, sizeof(UINT));
 SpiWrite(&value, sizeof(UINT));
 SpiEnd();
 m_GpioHost->SetPinMode(PIN_DATA, GpioPinMode::Input, GpioPullMode::PullDown);
+}
+
+SIZE_T WifiSdio::WriteData(VOID const* buf, SIZE_T size)
+{
+auto src=(BYTE const*)buf;
+UINT cmd=CMD_WRITE|CMD_INCR;
+BitHelper::Set(cmd, CMD_FN, FN2);
+UINT write=size;
+while(write)
+	{
+	UINT copy=TypeHelper::Min(write, WIFI_BLOCK_SIZE);
+	BitHelper::Set(cmd, CMD_SIZE, copy);
+	m_GpioHost->SetPinMode(PIN_DATA, m_PinMode);
+	m_StateMachine->SetPinDirection(PIN_DATA, PioPinDirection::Output);
+	SpiBegin(sizeof(UINT)+copy, 0);
+	SpiWrite(&cmd, sizeof(UINT));
+	SpiWrite(src, copy);
+	SpiEnd();
+	src+=copy;
+	write-=copy;
+	}
+m_GpioHost->SetPinMode(PIN_DATA, GpioPinMode::Input, GpioPullMode::PullDown);
+return size;
 }
 
 VOID WifiSdio::WriteBackplane(UINT addr, VOID const* buf, UINT size)

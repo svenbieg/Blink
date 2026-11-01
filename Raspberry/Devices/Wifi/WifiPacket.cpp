@@ -28,41 +28,13 @@ header->Length=pkt_size;
 header->LengthChk=~pkt_size;
 header->Sequence=s_SequenceId++;
 header->DataOffset=sizeof(WIFI_HEADER);
-pkt->m_Read=sizeof(WIFI_HEADER);
 return pkt;
 }
 
-Handle<WifiPacket> WifiPacket::Create(WIFI_HEADER const& init)
+Handle<WifiPacket> WifiPacket::Create(nullptr_t, UINT pkt_size)
 {
-UINT pkt_size=TypeHelper::AlignUp(init.Length, 4U);
 assert(pkt_size<=WIFI_PACKET_MAX);
-auto pkt=Object::CreateEx<WifiPacket>(pkt_size);
-auto header=pkt->Write<WIFI_HEADER>();
-MemoryHelper::Copy(header, &init, sizeof(WIFI_HEADER));
-pkt->m_Read=sizeof(WIFI_HEADER);
-return pkt;
-}
-
-Handle<WifiPacket> WifiPacket::ReadFromStream(InputStream* stream)
-{
-static_assert(alignof(WIFI_HEADER)==4);
-static_assert(sizeof(WIFI_HEADER)%sizeof(UINT)==0);
-WIFI_HEADER header;
-stream->Read(&header, sizeof(WIFI_HEADER));
-UINT len=header.Length;
-if(!len||len<sizeof(WIFI_HEADER)||len>WIFI_PACKET_MAX)
-	return nullptr;
-if(header.LengthChk!=(len^0xFFFF))
-	return nullptr;
-auto type=(WifiPacketType)BitHelper::Get(header.Flags, WIFI_HEADER_FLAGS_TYPE);
-auto pkt=WifiPacket::Create(header);
-if(len>sizeof(WIFI_HEADER))
-	{
-	UINT copy=TypeHelper::AlignUp(len-sizeof(WIFI_HEADER), sizeof(UINT));
-	auto data=pkt->Write<BYTE>(copy);
-	stream->Read(data, copy);
-	}
-return pkt;
+return Object::CreateEx<WifiPacket>(pkt_size);
 }
 
 
@@ -135,7 +107,7 @@ return copy;
 
 WifiPacket::WifiPacket(BYTE* buf, SIZE_T size):
 m_Buffer(buf),
-m_Read(0),
+m_Read(sizeof(WIFI_HEADER)),
 m_Size(size),
 m_Written(0)
 {}

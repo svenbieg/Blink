@@ -102,16 +102,8 @@ throw NotImplementedException();
 
 SIZE_T WifiSdio::Read(VOID* buf, SIZE_T size)
 {
-auto dst=(BYTE*)buf;
-UINT read=size;
-while(read)
-	{
-	UINT copy=TypeHelper::Min(read, WIFI_PACKET_MAX);
-	IoRwExtended(FN2, IO_RW_READ, 0, dst, copy);
-	dst+=copy;
-	read-=copy;
-	}
-return size;
+WriteLock lock(m_Mutex);
+return ReadData(buf, size);
 }
 
 
@@ -126,16 +118,8 @@ throw NotImplementedException();
 
 SIZE_T WifiSdio::Write(VOID const* buf, SIZE_T size)
 {
-auto src=(BYTE*)buf;
-UINT write=size;
-while(write)
-	{
-	UINT copy=TypeHelper::Min(write, WIFI_PACKET_MAX);
-	IoRwExtended(FN2, IO_RW_WRITE, 0, src, copy);
-	src+=copy;
-	write-=copy;
-	}
-return size;
+WriteLock lock(m_Mutex);
+return WriteData(buf, size);
 }
 
 
@@ -260,6 +244,20 @@ while(size)
 	}
 }
 
+SIZE_T WifiSdio::ReadData(VOID* buf, SIZE_T size)
+{
+auto dst=(BYTE*)buf;
+UINT read=size;
+while(read)
+	{
+	UINT copy=TypeHelper::Min(read, WIFI_PACKET_MAX);
+	IoRwExtended(FN2, IO_RW_READ, 0, dst, copy);
+	dst+=copy;
+	read-=copy;
+	}
+return size;
+}
+
 BYTE WifiSdio::ReadRegister(SDIO_REG const& reg)
 {
 UINT arg=IO_RW_READ;
@@ -288,6 +286,7 @@ WriteBackplane(addr+COM_IOCTRL, &ioctrl, 1);
 
 VOID WifiSdio::ServiceTask()
 {
+WriteLock lock(m_Mutex);
 GpioHelper::SetPinMode(GpioArmPin::WifiOn, GpioArmPinMode::Output);
 GpioHelper::DigitalWrite(GpioArmPin::WifiOn, true);
 Task::Sleep(150);
@@ -335,22 +334,25 @@ WriteRegister(CCCR_BLKSIZE_FN2_1, (BYTE)(block_size>>8));
 WriteRegister(CCCR_INT_EN, FN2_BIT|FN1_BIT|FN0_BIT);
 SetRegister(CCCR_IOENABLE, FN2_BIT);
 PollRegister(CCCR_IOREADY, FN2_BIT, FN2_BIT);
+lock.Unlock();
 auto task=Task::Get();
-SpinLock lock(m_CriticalSection);
+SpinLock spin_lock(m_CriticalSection);
 IoHelper::Set(m_Device->IRQ_MASK, IRQF_CARD);
 while(!task->Cancelled)
 	{
 	IoHelper::Set(m_Device->IRQ_EN, IRQF_CARD);
-	m_CardIrq.Wait(lock);
-	lock.Unlock();
+	m_CardIrq.Wait(spin_lock);
+	spin_lock.Unlock();
+	lock.Lock();
 	UINT pending=ReadRegister(CCCR_INT_PENDING);
 	if(!pending)
 		{
-		lock.Lock();
+		spin_lock.Lock();
 		continue;
 		}
 	UINT int_status=ReadBackplane(SDIO_INT_STATUS);
 	WriteBackplane(SDIO_INT_STATUS, int_status);
+	Handle<WifiPacket> pkt;
 	UINT host_flags=BitHelper::Get(int_status, INT_HOST);
 	while(host_flags)
 		{
@@ -361,23 +363,29 @@ while(!task->Cancelled)
 			{
 			case INT_FRAME:
 				{
-				auto pkt=WifiPacket::ReadFromStream(this);
-				if(pkt)
-					{
-					PacketReceived.Call(pkt);
-					}
-				else
-					{
-					throw DeviceNotReadyException();
-					WriteRegister(SB_FRAME_CTRL, FRAME_CTRL_RFHALT);
-					PollRegister(SB_RFRM_CNT_1, 0xFF, 0);
-					PollRegister(SB_RFRM_CNT_0, 0xFF, 0);
-					}
+				BYTE size_lo=ReadRegister(SB_RFRM_CNT_0);
+				BYTE size_hi=ReadRegister(SB_RFRM_CNT_1);
+				UINT size=TypeHelper::MakeLong(size_lo, size_hi, 0, 0);
+				pkt=WifiPacket::Create(nullptr, size);
+				auto buf=pkt->Begin();
+				ReadData(buf, size);
+				auto header=(WIFI_HEADER*)buf;
+				if(header->Length!=size)
+					throw InvalidArgumentException();
+				if(header->LengthChk!=(header->Length^0xFFFF))
+					throw InvalidArgumentException();
+				//throw DeviceNotReadyException();
+				//WriteRegister(SB_FRAME_CTRL, FRAME_CTRL_RFHALT);
+				//PollRegister(SB_RFRM_CNT_1, 0xFF, 0);
+				//PollRegister(SB_RFRM_CNT_0, 0xFF, 0);
 				break;
 				}
 			}
 		}
-	lock.Lock();
+	lock.Unlock();
+	if(pkt)
+		PacketReceived.Call(pkt);
+	spin_lock.Lock();
 	}
 }
 
@@ -425,6 +433,20 @@ while(size)
 	src+=copy;
 	size-=copy;
 	}
+}
+
+SIZE_T WifiSdio::WriteData(VOID const* buf, SIZE_T size)
+{
+auto src=(BYTE*)buf;
+UINT write=size;
+while(write)
+	{
+	UINT copy=TypeHelper::Min(write, WIFI_PACKET_MAX);
+	IoRwExtended(FN2, IO_RW_WRITE, 0, src, copy);
+	src+=copy;
+	write-=copy;
+	}
+return size;
 }
 
 VOID WifiSdio::WriteRegister(SDIO_REG const& reg, BYTE value)

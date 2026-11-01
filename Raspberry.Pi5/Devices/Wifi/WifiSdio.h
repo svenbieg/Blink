@@ -9,7 +9,8 @@
 // Using
 //=======
 
-#include "Concurrency/Task.h"
+#include "Concurrency/CriticalMutex.h"
+//#include "Concurrency/Task.h"
 #include "Devices/Emmc/EmmcHost.h"
 #include "Devices/Wifi/Wifi.h"
 #include "Callback.h"
@@ -34,6 +35,7 @@ public:
 	friend Object;
 
 	// Using
+	using CriticalMutex=Concurrency::CriticalMutex;
 	using Task=Concurrency::Task;
 
 	// Con-/Destructors
@@ -62,6 +64,7 @@ private:
 	VOID PollRegister(SDIO_REG const& Register, BYTE Mask, BYTE Value, UINT Timeout=100);
 	UINT ReadBackplane(UINT Address);
 	VOID ReadBackplane(UINT Address, UINT* Buffer, UINT Size);
+	SIZE_T ReadData(VOID* Buffer, SIZE_T Size);
 	BYTE ReadRegister(SDIO_REG const& Register);
 	VOID ResetDevice(UINT Address, UINT Flags);
 	VOID ServiceTask();
@@ -70,7 +73,9 @@ private:
 	VOID SetRegister(SDIO_REG const& Register, BYTE Mask, BYTE Value);
 	VOID WriteBackplane(UINT Address, UINT Value);
 	VOID WriteBackplane(UINT Address, UINT const* Buffer, UINT Size);
+	SIZE_T WriteData(VOID const* Buffer, SIZE_T Size);
 	VOID WriteRegister(SDIO_REG const& Register, BYTE Value);
+	CriticalMutex m_Mutex;
 	Handle<Task> m_ServiceTask;
 	UINT m_Window;
 };
