@@ -88,6 +88,6 @@ for(CTOR_PTR* ctor=&__init_array_start; ctor!=&__init_array_end; ctor++)
 //================
 
 VOID* Memory::s_Heap=nullptr;
-CriticalMutex Memory::s_Mutex;
+ServiceMutex Memory::s_Mutex;
 
 }}

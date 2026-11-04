@@ -93,6 +93,6 @@ return (VOID*)((SIZE_T)buf+UNCACHED_BASE);
 //================
 
 VOID* Memory::s_Heap=nullptr;
-CriticalMutex Memory::s_Mutex;
+ServiceMutex Memory::s_Mutex;
 
 }}

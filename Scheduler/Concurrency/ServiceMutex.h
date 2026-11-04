@@ -1,6 +1,8 @@
-//=================
-// CriticalMutex.h
-//=================
+//================
+// ServiceMutex.h
+//================
+
+// Mutex raising priority to prevent suspension.
 
 // Copyright 2026, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#dynamic-prioritization
@@ -26,12 +28,12 @@ namespace Concurrency {
 // Critical-Mutex
 //================
 
-class CriticalMutex: public Mutex
+class ServiceMutex: public Mutex
 {
 public:
 	// Con-/Destructors
-	CriticalMutex()=default;
-	CriticalMutex(CriticalMutex const&)=delete;
+	ServiceMutex()=default;
+	ServiceMutex(ServiceMutex const&)=delete;
 
 protected:
 	// Common

@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Concurrency/CriticalMutex.h"
+#include "Concurrency/ServiceMutex.h"
 
 
 //===========
@@ -39,7 +39,7 @@ class Memory
 {
 public:
 	// Using
-	using CriticalMutex=Concurrency::CriticalMutex;
+	using ServiceMutex=Concurrency::ServiceMutex;
 
 	// Common
 	static VOID* Allocate(SIZE_T Size);
@@ -52,7 +52,7 @@ public:
 private:
 	// Common
 	static VOID* s_Heap;
-	static CriticalMutex s_Mutex;
+	static ServiceMutex s_Mutex;
 };
 
 }}

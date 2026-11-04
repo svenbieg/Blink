@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Concurrency/CriticalMutex.h"
+#include "Concurrency/ServiceMutex.h"
 //#include "Concurrency/Task.h"
 #include "Devices/Emmc/EmmcHost.h"
 #include "Devices/Wifi/Wifi.h"
@@ -35,7 +35,7 @@ public:
 	friend Object;
 
 	// Using
-	using CriticalMutex=Concurrency::CriticalMutex;
+	using ServiceMutex=Concurrency::ServiceMutex;
 	using Task=Concurrency::Task;
 
 	// Con-/Destructors
@@ -75,7 +75,7 @@ private:
 	VOID WriteBackplane(UINT Address, UINT const* Buffer, UINT Size);
 	SIZE_T WriteData(VOID const* Buffer, SIZE_T Size);
 	VOID WriteRegister(SDIO_REG const& Register, BYTE Value);
-	CriticalMutex m_Mutex;
+	ServiceMutex m_Mutex;
 	Handle<Task> m_ServiceTask;
 	UINT m_Window;
 };

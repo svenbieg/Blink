@@ -9,7 +9,7 @@
 // Using
 //=======
 
-#include "Concurrency/CriticalMutex.h"
+#include "Concurrency/ServiceMutex.h"
 #include "Devices/Wifi/WifiPacket.h"
 #include "Devices/Wifi/WifiSpi.h"
 #include "Devices/Pio/SpiEmulator.h"
@@ -44,8 +44,8 @@ public:
 	friend WifiAdapter;
 
 	// Using
-	using CriticalMutex=Concurrency::CriticalMutex;
 	using CriticalSection=Concurrency::CriticalSection;
+	using ServiceMutex=Concurrency::ServiceMutex;
 	using Signal=Concurrency::Signal;
 	using Task=Concurrency::Task;
 
@@ -89,7 +89,7 @@ private:
 	VOID WriteRegister(SDIO_REG const& Register, UINT Value);
 	CriticalSection m_CriticalSection;
 	Signal m_InterruptPending;
-	CriticalMutex m_Mutex;
+	ServiceMutex m_Mutex;
 	Handle<Task> m_ServiceTask;
 	UINT m_Window;
 };
