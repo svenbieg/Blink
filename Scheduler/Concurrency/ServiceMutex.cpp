@@ -17,8 +17,6 @@
 #include "Concurrency/Scheduler.h"
 #include "FlagHelper.h"
 
-using namespace Devices::System;
-
 
 //===========
 // Namespace
