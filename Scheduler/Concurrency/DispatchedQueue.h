@@ -2,6 +2,8 @@
 // DispatchedQueue.h
 //===================
 
+// Queue of dispatched functions to the main-task.
+
 // Copyright 2026, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#main-task
 

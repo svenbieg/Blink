@@ -2,6 +2,8 @@
 // Scheduler.cpp
 //===============
 
+// Task-management for real-time C++ applications.
+
 // Copyright 2026, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler
 

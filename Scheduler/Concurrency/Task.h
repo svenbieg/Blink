@@ -2,6 +2,8 @@
 // Task.h
 //========
 
+// Separate execution context for multi-threading.
+
 // Copyright 2026, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#task-creation
 
@@ -36,8 +38,8 @@ namespace Concurrency {
 // Forward-Declarations
 //======================
 
-class CriticalMutex;
 class Scheduler;
+class ServiceMutex;
 class ServiceTask;
 class Signal;
 class TaskHelper;
@@ -74,9 +76,9 @@ public:
 	using UnwindException=Runtime::UnwindException;
 
 	// Friends
-	friend CriticalMutex;
 	friend Mutex;
 	friend Scheduler;
+	friend ServiceMutex;
 	friend ServiceTask;
 	friend Signal;
 	friend TaskHelper;

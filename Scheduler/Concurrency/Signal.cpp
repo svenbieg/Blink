@@ -2,6 +2,8 @@
 // Signal.cpp
 //============
 
+// Task-synchronisation primitive.
+
 // Copyright 2026, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#signal
 

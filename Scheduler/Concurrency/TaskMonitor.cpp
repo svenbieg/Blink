@@ -2,6 +2,11 @@
 // TaskMonitor.cpp
 //=================
 
+// Monitoring task execution time.
+
+// Copyright 2026, Sven Bieg (svenbieg@outlook.de)
+// https://github.com/svenbieg/Scheduler/wiki#task-creation
+
 #include "TaskMonitor.h"
 
 

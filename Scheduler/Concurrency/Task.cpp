@@ -2,6 +2,8 @@
 // Task.cpp
 //==========
 
+// Separate execution context for multi-threading.
+
 // Copyright 2026, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#task-creation
 
@@ -127,7 +129,7 @@ Scheduler::AddTask(task);
 
 VOID Task::TaskProc(VOID* param)
 {
-Handle<Task> task=(Task*)param;
+auto task=(Task*)param;
 Status status=Status::Success;
 try
 	{
@@ -154,7 +156,6 @@ if(task->m_Then)
 	task->m_Then=nullptr;
 	}
 lock.Unlock();
-task=nullptr;
 Scheduler::ExitTask();
 }
 

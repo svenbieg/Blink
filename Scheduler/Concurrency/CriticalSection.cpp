@@ -2,6 +2,8 @@
 // CriticalSection.cpp
 //=====================
 
+// Interlocked variable with disabled interrupts and cache-invalidation.
+
 // Copyright 2026, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#critical-section
 

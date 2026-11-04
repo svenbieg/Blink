@@ -2,6 +2,8 @@
 // Scheduler.h
 //=============
 
+// Task-management for real-time C++ applications.
+
 // Copyright 2026, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler
 
@@ -12,9 +14,9 @@
 // Using
 //=======
 
-#include "Concurrency/CriticalMutex.h"
 #include "Concurrency/DispatchedQueue.h"
 #include "Concurrency/ReadLock.h"
+#include "Concurrency/ServiceMutex.h"
 #include "Concurrency/ServiceTask.h"
 #include "Concurrency/Signal.h"
 #include "Concurrency/SpinLock.h"
@@ -45,7 +47,7 @@ public:
 
 	// Friends
 	friend Devices::System::Interrupts;
-	friend CriticalMutex;
+	friend ServiceMutex;
 	friend Mutex;
 	friend Signal;
 	friend SystemTimer;

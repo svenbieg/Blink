@@ -2,6 +2,8 @@
 // ReadLock.h
 //============
 
+// Read-only lock allowing multiple tasks to read simultaniously.
+
 // Copyright 2026, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#mutex
 

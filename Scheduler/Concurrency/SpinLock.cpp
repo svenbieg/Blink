@@ -2,6 +2,8 @@
 // SpinLock.cpp
 //==============
 
+// Lock for the CriticalSection keeping cores spinning.
+
 // Copyright 2026, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#critical-section
 

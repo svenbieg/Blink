@@ -2,6 +2,8 @@
 // WriteLock.h
 //=============
 
+// Exclusive lock suspending other tasks.
+
 // Copyright 2026, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#mutex
 
