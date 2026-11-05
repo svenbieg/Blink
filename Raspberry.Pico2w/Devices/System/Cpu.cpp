@@ -135,8 +135,6 @@ while(s_Suspension[other]!=Suspension::Suspended)
 
 VOID Cpu::WakeupSecondary()
 {
-CriticalSection critical;
-SpinLock lock(critical);
 const UINT CPU_ID=1;
 SIZE_T stack_top=(SIZE_T)&__stack_end-CPU_ID*CONFIG_STACK_SIZE;
 const UINT VTOR=XIP_BASE;
