@@ -90,7 +90,6 @@ m_Flags(TaskFlags::None),
 m_Name(std::move(name)),
 m_Next(nullptr),
 m_Owner(nullptr),
-m_OwnerFlags(TaskFlags::None),
 m_PriorityCount(0),
 m_ResumeTime(0),
 m_SignalCount(0),
@@ -134,6 +133,10 @@ Status status=Status::Success;
 try
 	{
 	task->Run();
+	}
+catch(Cancellation)
+	{
+	status=Status::Aborted;
 	}
 catch(Exception e)
 	{

@@ -84,7 +84,6 @@ VOID Scheduler::CancelTask(Task* task)noexcept
 {
 SpinLock lock(s_CriticalSection);
 task->Cancelled=true;
-task->m_Status=Status::Aborted;
 BOOL resume=false;
 if(task->m_ResumeTime)
 	{
@@ -96,14 +95,8 @@ auto owner=task->m_Owner;
 if(owner)
 	{
 	WaitingList::Remove(owner, task);
-	if(FlagHelper::Get(task->m_OwnerFlags, TaskFlags::Priority))
-		{
-		if(--task->m_PriorityCount==0)
-			FlagHelper::Clear(task->m_Flags, TaskFlags::Priority);
-		}
 	FlagHelper::Clear(task->m_Flags, TaskFlags::Sharing);
 	task->m_Owner=nullptr;
-	task->m_OwnerFlags=TaskFlags::None;
 	task->m_SignalCount=0;
 	task->m_SignalLock=nullptr;
 	resume=true;
@@ -230,7 +223,8 @@ UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
 Suspend(core, current, resume_time);
 lock.Unlock();
-StatusHelper::ThrowIfFailed(current->m_Status);
+if(current->Cancelled)
+	throw Task::Cancellation();
 }
 
 

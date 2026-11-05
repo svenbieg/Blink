@@ -146,6 +146,9 @@ protected:
 	Task(BYTE* Stack, SIZE_T StackSize, Handle<String>&& Name)noexcept;
 	static Handle<Task> CreateInternal(VOID (*Procedure)(), Handle<String> Name, SIZE_T StackSize=PAGE_SIZE);
 
+	// Cancellation
+	class Cancellation {};
+
 	// Common
 	static bool Priority(Task* First, Task* Second)noexcept;
 	virtual VOID Run()=0;
@@ -160,7 +163,6 @@ protected:
 	Handle<String> m_Name;
 	Task* m_Next;
 	Task** m_Owner;
-	TaskFlags m_OwnerFlags;
 	FwdLink<Task> m_Owners;
 	UINT m_PriorityCount;
 	Link<Task> m_Release;

@@ -2,7 +2,7 @@
 // ServiceMutex.cpp
 //==================
 
-// Mutex raising priority to prevent suspension.
+// A Mutex raising priority to prevent suspension.
 
 // Copyright 2026, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#dynamic-prioritization
@@ -33,20 +33,14 @@ BOOL ServiceMutex::Lock(UINT core, Task* current)noexcept
 {
 FlagHelper::Set(current->m_Flags, TaskFlags::Priority);
 current->m_PriorityCount++;
-if(Mutex::Lock(core, current))
-	return true;
-FlagHelper::Set(current->m_OwnerFlags, TaskFlags::Priority);
-return false;
+return Mutex::Lock(core, current);
 }
 
 BOOL ServiceMutex::Lock(UINT core, Task* current, AccessMode)noexcept
 {
 FlagHelper::Set(current->m_Flags, TaskFlags::Priority);
 current->m_PriorityCount++;
-if(Mutex::Lock(core, current, AccessMode::ReadOnly))
-	return true;
-FlagHelper::Set(current->m_OwnerFlags, TaskFlags::Priority);
-return false;
+return Mutex::Lock(core, current, AccessMode::ReadOnly);
 }
 
 BOOL ServiceMutex::TryLock(UINT core, Task* current)noexcept

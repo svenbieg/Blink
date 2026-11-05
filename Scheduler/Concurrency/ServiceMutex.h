@@ -2,7 +2,7 @@
 // ServiceMutex.h
 //================
 
-// Mutex raising priority to prevent suspension.
+// A Mutex raising priority to prevent suspension.
 
 // Copyright 2026, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#dynamic-prioritization

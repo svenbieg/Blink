@@ -60,7 +60,8 @@ if(this->Lock(core, current))
 	return;
 Scheduler::Suspend(core, current);
 lock.Unlock();
-StatusHelper::ThrowIfFailed(current->m_Status);
+if(current->Cancelled)
+	throw Task::Cancellation();
 }
 
 VOID Mutex::Lock(AccessMode)
@@ -76,7 +77,8 @@ if(this->Lock(core, current, AccessMode::ReadOnly))
 	return;
 Scheduler::Suspend(core, current);
 lock.Unlock();
-StatusHelper::ThrowIfFailed(current->m_Status);
+if(current->Cancelled)
+	throw Task::Cancellation();
 }
 
 BOOL Mutex::TryLock()noexcept
@@ -167,7 +169,6 @@ while(m_Waiting)
 	{
 	auto resume=Scheduler::WaitingList::RemoveFirst(&m_Waiting);
 	resume->m_Owner=nullptr;
-	resume->m_OwnerFlags=TaskFlags::None;
 	Scheduler::OwnerList::Append(&m_Owner, resume);
 	Scheduler::Resume(resume);
 	if(!m_Waiting)
