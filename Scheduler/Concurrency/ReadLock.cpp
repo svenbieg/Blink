@@ -56,17 +56,6 @@ m_Locked=false;
 m_Mutex=nullptr;
 }
 
-BOOL ReadLock::TryLock()noexcept
-{
-assert(!m_Locked);
-if(m_Mutex->TryLock(AccessMode::ReadOnly))
-	{
-	m_Locked=true;
-	return true;
-	}
-return false;
-}
-
 VOID ReadLock::Unlock()noexcept
 {
 assert(m_Locked);

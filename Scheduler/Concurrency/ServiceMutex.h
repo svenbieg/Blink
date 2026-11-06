@@ -2,7 +2,7 @@
 // ServiceMutex.h
 //================
 
-// A Mutex raising priority to prevent suspension.
+// A mutex raising priority to prevent suspension.
 
 // Copyright 2026, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#dynamic-prioritization
@@ -39,8 +39,6 @@ protected:
 	// Common
 	BOOL Lock(UINT Core, Task* Current)noexcept override;
 	BOOL Lock(UINT Core, Task* Current, AccessMode)noexcept override;
-	BOOL TryLock(UINT Core, Task* Current)noexcept override;
-	BOOL TryLock(UINT Core, Task* Current, AccessMode)noexcept override;
 	VOID Unlock(Task* Current)noexcept override;
 	VOID Unlock(Task* Current, AccessMode)noexcept override;
 };

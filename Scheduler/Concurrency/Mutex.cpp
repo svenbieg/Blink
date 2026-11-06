@@ -81,30 +81,6 @@ if(current->Cancelled)
 	throw Task::Cancellation();
 }
 
-BOOL Mutex::TryLock()noexcept
-{
-// You can not use a Mutex in an ISR, You have to use a CriticalSection instead.
-assert(!Interrupts::Active());
-SpinLock lock(Scheduler::s_CriticalSection);
-UINT core=Cpu::GetId();
-auto current=Scheduler::s_CurrentTask[core];
-// You can only hold one ReadLock at a time.
-assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
-return this->TryLock(core, current);
-}
-
-BOOL Mutex::TryLock(AccessMode)noexcept
-{
-// You can not use a Mutex in an ISR, You have to use a CriticalSection instead.
-assert(!Interrupts::Active());
-SpinLock lock(Scheduler::s_CriticalSection);
-UINT core=Cpu::GetId();
-auto current=Scheduler::s_CurrentTask[core];
-// You can only hold one ReadLock at a time.
-assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
-return this->TryLock(core, current, AccessMode::ReadOnly);
-}
-
 VOID Mutex::Unlock()noexcept
 {
 SpinLock lock(Scheduler::s_CriticalSection);
@@ -178,28 +154,6 @@ while(m_Waiting)
 	if(!FlagHelper::Get(m_Waiting->m_Flags, TaskFlags::Sharing))
 		break;
 	}
-}
-
-BOOL Mutex::TryLock(UINT core, Task* current)noexcept
-{
-if(m_Owner)
-	return false;
-m_Owner=current;
-return true;
-}
-
-BOOL Mutex::TryLock(UINT core, Task* current, AccessMode)noexcept
-{
-if(m_Owner)
-	{
-	if(!FlagHelper::Get(m_Owner->m_Flags, TaskFlags::Sharing))
-		return false;
-	if(m_Waiting)
-		return false;
-	}
-FlagHelper::Set(current->m_Flags, TaskFlags::Sharing);
-Scheduler::OwnerList::Append(&m_Owner, current);
-return true;
 }
 
 VOID Mutex::Unlock(Task* current)noexcept

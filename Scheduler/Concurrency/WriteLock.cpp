@@ -56,17 +56,6 @@ m_Locked=false;
 m_Mutex=nullptr;
 }
 
-BOOL WriteLock::TryLock()noexcept
-{
-assert(!m_Locked);
-if(m_Mutex->TryLock())
-	{
-	m_Locked=true;
-	return true;
-	}
-return false;
-}
-
 VOID WriteLock::Unlock()noexcept
 {
 assert(m_Locked);

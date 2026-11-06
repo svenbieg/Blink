@@ -2,7 +2,7 @@
 // SpinLock.h
 //============
 
-// Lock for the CriticalSection keeping cores spinning.
+// Lock for the CriticalSection keeping other cores spinning.
 
 // Copyright 2026, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#critical-section
@@ -38,7 +38,6 @@ public:
 
 	// Common
 	VOID Lock()noexcept;
-	BOOL TryLock()noexcept;
 	VOID Unlock()noexcept;
 
 private:

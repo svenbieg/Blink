@@ -49,7 +49,6 @@ public:
 	// Common
 	VOID Lock();
 	VOID Release()noexcept;
-	BOOL TryLock()noexcept;
 	VOID Unlock()noexcept;
 
 private:
