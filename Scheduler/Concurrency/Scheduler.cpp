@@ -222,6 +222,7 @@ UINT64 resume_time=SystemTimer::GetTickCount()+ms;
 SpinLock lock(s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
+Task::ThrowIfCancelled(current, lock);
 Suspend(core, current, resume_time);
 lock.Unlock();
 Task::ThrowIfCancelled(current);

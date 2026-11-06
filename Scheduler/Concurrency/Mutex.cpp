@@ -54,6 +54,7 @@ UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 if(!current)
 	return;
+Task::ThrowIfCancelled(current, lock);
 // You can only hold one ReadLock at a time.
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
 if(this->Lock(core, current))
@@ -70,6 +71,7 @@ assert(!Interrupts::Active());
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
+Task::ThrowIfCancelled(current, lock);
 // You can only hold one ReadLock at a time.
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
 if(this->Lock(core, current, AccessMode::ReadOnly))
@@ -87,6 +89,7 @@ auto current=Scheduler::s_CurrentTask[core];
 if(!current)
 	return;
 this->Unlock(current);
+Task::ThrowIfCancelled(current, lock);
 }
 
 VOID Mutex::Unlock(AccessMode)noexcept
@@ -95,6 +98,7 @@ SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 this->Unlock(current, AccessMode::ReadOnly);
+Task::ThrowIfCancelled(current, lock);
 }
 
 

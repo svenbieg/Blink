@@ -18,6 +18,7 @@
 #include "Collections/LinkedList.h"
 #include "Concurrency/DispatchedHandler.h"
 #include "Concurrency/Mutex.h"
+#include "Concurrency/SpinLock.h"
 #include "Concurrency/WriteLock.h"
 #include "Runtime/UnwindException.h"
 #include "FlagHelper.h"
@@ -155,6 +156,7 @@ protected:
 	static VOID Schedule(Task* Task)noexcept;
 	static VOID TaskProc(VOID* Parameter);
 	static VOID ThrowIfCancelled(Task* Task);
+	static VOID ThrowIfCancelled(Task* Task, SpinLock& SchedulerLock);
 	Link<Task> m_All;
 	Link<Task> m_Create;
 	Task* m_Creator;

@@ -133,10 +133,14 @@ Status status=Status::Success;
 try
 	{
 	task->Run();
+	if(task->Cancelled)
+		{
+		*const_cast<volatile BOOL*>(&task->Cancelled)=false;
+		status=Status::Aborted;
+		}
 	}
 catch(Cancellation)
 	{
-	*const_cast<volatile BOOL*>(&task->Cancelled)=true;
 	status=Status::Aborted;
 	}
 catch(Exception e)
@@ -168,6 +172,16 @@ VOID Task::ThrowIfCancelled(Task* task)
 if(task->Cancelled)
 	{
 	*const_cast<volatile BOOL*>(&task->Cancelled)=false;
+	throw Cancellation();
+	}
+}
+
+VOID Task::ThrowIfCancelled(Task* task, SpinLock& sched_lock)
+{
+if(task->Cancelled)
+	{
+	*const_cast<volatile BOOL*>(&task->Cancelled)=false;
+	sched_lock.Unlock();
 	throw Cancellation();
 	}
 }
