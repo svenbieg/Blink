@@ -65,7 +65,7 @@ protected:
 	// Common
 	static VOID AddTask(Task* Task)noexcept;
 	static VOID CancelTask(Task* Task)noexcept;
-	static VOID ExitTask()noexcept;
+	static VOID ExitTask(Status Status)noexcept;
 	static Task* GetCurrentTask()noexcept;
 	static VOID HandleTaskSwitch()noexcept;
 	static VOID Schedule()noexcept;

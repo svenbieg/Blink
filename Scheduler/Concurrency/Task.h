@@ -55,14 +55,13 @@ enum class TaskFlags: UINT
 {
 None=0,
 Active=(1<<0),
-Done=(1<<1),
-Idle=(1<<2),
-Priority=(1<<3),
-Creator=(1<<4),
-Release=(1<<5),
-Sharing=(1<<6),
-Suspend=(1<<7),
-Timeout=(1<<8)
+Idle=(1<<1),
+Priority=(1<<2),
+Creator=(1<<3),
+Release=(1<<4),
+Sharing=(1<<5),
+Suspend=(1<<6),
+Timeout=(1<<7)
 };
 
 
@@ -162,7 +161,6 @@ protected:
 	Task* m_Creator;
 	UnwindException* m_Exception;
 	TaskFlags m_Flags;
-	Mutex m_Mutex;
 	Handle<String> m_Name;
 	Task* m_Next;
 	Task** m_Owner;

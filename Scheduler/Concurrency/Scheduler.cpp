@@ -84,6 +84,10 @@ VOID Scheduler::CancelTask(Task* task)noexcept
 {
 assert(task!=s_MainTask);
 SpinLock lock(s_CriticalSection);
+if(task->Cancelled)
+	return;
+if(FlagHelper::Get(task->m_Flags, TaskFlags::Release))
+	return;
 *const_cast<volatile BOOL*>(&task->Cancelled)=true;
 BOOL resume=false;
 if(task->m_ResumeTime)
@@ -106,12 +110,13 @@ if(resume)
 	Resume(task);
 }
 
-VOID Scheduler::ExitTask()noexcept
+VOID Scheduler::ExitTask(Status status)noexcept
 {
 SpinLock lock(s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
 FlagHelper::Set(current->m_Flags, TaskFlags::Release);
+current->m_Status=status;
 Suspend(core, current);
 lock.Unlock();
 while(1)

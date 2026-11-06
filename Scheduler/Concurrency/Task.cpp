@@ -53,9 +53,6 @@ return task;
 
 VOID Task::Cancel()noexcept
 {
-WriteLock lock(m_Mutex);
-if(FlagHelper::Get(m_Flags, TaskFlags::Done))
-	return;
 Scheduler::CancelTask(this);
 }
 
@@ -155,16 +152,12 @@ catch(...)
 	{
 	status=Status::Error;
 	}
-WriteLock lock(task->m_Mutex);
-FlagHelper::Set(task->m_Flags, TaskFlags::Done);
-task->m_Status=status;
 if(task->m_Then)
 	{
 	DispatchedQueue::Append(task->m_Then);
 	task->m_Then=nullptr;
 	}
-lock.Unlock();
-Scheduler::ExitTask();
+Scheduler::ExitTask(status);
 }
 
 VOID Task::ThrowIfCancelled(Task* task)
