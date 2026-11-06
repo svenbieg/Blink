@@ -30,8 +30,8 @@ public:
 	// Common
 	VOID Call(_args_t... Arguments)
 		{
-		if(m_Callback)
-			m_Callback->Call(Arguments...);
+		assert(m_Callback);
+		m_Callback->Call(Arguments...);
 		}
 	VOID Set(nullptr_t)
 		{
