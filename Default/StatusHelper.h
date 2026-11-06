@@ -25,17 +25,13 @@ class StatusHelper
 {
 public:
 	// Common
-	static inline bool Failed(Status Status)noexcept
+	static inline BOOL Failed(Status Status)noexcept
 		{
 		return FlagHelper::Get(Status, Status::Error);
 		}
-	static inline bool Succeeded(Status Status)noexcept
+	static inline BOOL Succeeded(Status Status)noexcept
 		{
 		return !FlagHelper::Get(Status, Status::Error);
 		}
-	static void ThrowIfFailed(Status Status)
-		{
-		if(Failed(Status))
-			throw Exception(Status);
-		}
+	static VOID ThrowIfFailed(Status Status);
 };
