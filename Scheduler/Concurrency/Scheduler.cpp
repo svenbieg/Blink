@@ -82,8 +82,9 @@ s_Create.Append(task);
 
 VOID Scheduler::CancelTask(Task* task)noexcept
 {
+assert(task!=s_MainTask);
 SpinLock lock(s_CriticalSection);
-task->Cancelled=true;
+*const_cast<volatile BOOL*>(&task->Cancelled)=true;
 BOOL resume=false;
 if(task->m_ResumeTime)
 	{

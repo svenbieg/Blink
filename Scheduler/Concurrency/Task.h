@@ -96,7 +96,7 @@ public:
 
 	// Common
 	VOID Cancel()noexcept;
-	volatile BOOL Cancelled;
+	volatile const BOOL Cancelled;
 	static Handle<Task> Get()noexcept;
 	inline Handle<String> GetName()const noexcept { return m_Name; }
 	inline Status GetStatus()const noexcept { return m_Status; }

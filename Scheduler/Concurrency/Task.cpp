@@ -136,6 +136,7 @@ try
 	}
 catch(Cancellation)
 	{
+	*const_cast<volatile BOOL*>(&task->Cancelled)=true;
 	status=Status::Aborted;
 	}
 catch(Exception e)
