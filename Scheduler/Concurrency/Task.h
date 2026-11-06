@@ -154,6 +154,7 @@ protected:
 	virtual VOID Run()=0;
 	static VOID Schedule(Task* Task)noexcept;
 	static VOID TaskProc(VOID* Parameter);
+	static VOID ThrowIfCancelled(Task* Task);
 	Link<Task> m_All;
 	Link<Task> m_Create;
 	Task* m_Creator;

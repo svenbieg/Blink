@@ -163,6 +163,15 @@ lock.Unlock();
 Scheduler::ExitTask();
 }
 
+VOID Task::ThrowIfCancelled(Task* task)
+{
+if(task->Cancelled)
+	{
+	*const_cast<volatile BOOL*>(&task->Cancelled)=false;
+	throw Cancellation();
+	}
+}
+
 
 //==========================
 // Con-/Destructors Private

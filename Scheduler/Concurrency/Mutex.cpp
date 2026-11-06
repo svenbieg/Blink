@@ -60,8 +60,7 @@ if(this->Lock(core, current))
 	return;
 Scheduler::Suspend(core, current);
 lock.Unlock();
-if(current->Cancelled)
-	throw Task::Cancellation();
+Task::ThrowIfCancelled(current);
 }
 
 VOID Mutex::Lock(AccessMode)
@@ -77,8 +76,7 @@ if(this->Lock(core, current, AccessMode::ReadOnly))
 	return;
 Scheduler::Suspend(core, current);
 lock.Unlock();
-if(current->Cancelled)
-	throw Task::Cancellation();
+Task::ThrowIfCancelled(current);
 }
 
 VOID Mutex::Unlock()noexcept

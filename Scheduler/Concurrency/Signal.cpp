@@ -50,8 +50,7 @@ current->m_Owner=&m_Waiting;
 current->m_SignalCount=times;
 Scheduler::Suspend(core, current, resume_time);
 lock.Unlock();
-if(current->Cancelled)
-	throw Task::Cancellation();
+Task::ThrowIfCancelled(current);
 if(FlagHelper::Get(current->m_Flags, TaskFlags::Timeout))
 	throw TimeoutException();
 StatusHelper::ThrowIfFailed(current->m_Status);
@@ -74,8 +73,7 @@ current->m_Owner=&m_Waiting;
 current->m_SignalCount=times;
 Scheduler::Suspend(core, current, resume_time);
 lock.Unlock();
-if(current->Cancelled)
-	throw Task::Cancellation();
+Task::ThrowIfCancelled(current);
 if(FlagHelper::Get(current->m_Flags, TaskFlags::Timeout))
 	throw TimeoutException();
 StatusHelper::ThrowIfFailed(current->m_Status);
@@ -100,8 +98,7 @@ current->m_SignalCount=times;
 current->m_SignalLock=&signal_lock;
 Scheduler::Suspend(core, current, resume_time);
 lock.Unlock();
-if(current->Cancelled)
-	throw Task::Cancellation();
+Task::ThrowIfCancelled(current);
 if(FlagHelper::Get(current->m_Flags, TaskFlags::Timeout))
 	throw TimeoutException();
 StatusHelper::ThrowIfFailed(current->m_Status);
