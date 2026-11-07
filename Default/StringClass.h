@@ -230,10 +230,6 @@ public:
 		{
 		return !operator bool();
 		}
-	inline bool operator==(Handle<String> const& Value)const noexcept
-		{
-		return StringHelper::Compare(m_Object, Value)==0;
-		}
 	inline bool operator==(LPCSTR Value)const noexcept
 		{
 		return StringHelper::Compare(m_Object, Value)==0;
@@ -242,13 +238,13 @@ public:
 		{
 		return StringHelper::Compare(m_Object, Value)==0;
 		}
+	inline bool operator==(Handle<String> const& Value)const noexcept
+		{
+		return StringHelper::Compare(m_Object, Value)==0;
+		}
 	inline bool operator!=(nullptr_t)const noexcept
 		{
 		return operator bool();
-		}
-	inline bool operator!=(Handle<String> const& Value)const noexcept
-		{
-		return StringHelper::Compare(m_Object, Value)!=0;
 		}
 	inline bool operator!=(LPCSTR Value)const noexcept
 		{
@@ -258,13 +254,13 @@ public:
 		{
 		return StringHelper::Compare(m_Object, Value)!=0;
 		}
+	inline bool operator!=(Handle<String> const& Value)const noexcept
+		{
+		return StringHelper::Compare(m_Object, Value)!=0;
+		}
 	inline bool operator>(nullptr_t)const noexcept
 		{
 		return operator bool();
-		}
-	inline bool operator>(Handle<String> const& Value)const noexcept
-		{
-		return StringHelper::Compare(m_Object, Value)>0;
 		}
 	inline bool operator>(LPCSTR Value)const noexcept
 		{
@@ -274,13 +270,13 @@ public:
 		{
 		return StringHelper::Compare(m_Object, Value)>0;
 		}
+	inline bool operator>(Handle<String> const& Value)const noexcept
+		{
+		return StringHelper::Compare(m_Object, Value)>0;
+		}
 	inline bool operator>=(nullptr_t)const noexcept
 		{
 		return true;
-		}
-	inline bool operator>=(Handle<String> const& Value)const noexcept
-		{
-		return StringHelper::Compare(m_Object, Value)>=0;
 		}
 	inline bool operator>=(LPCSTR Value)const noexcept
 		{
@@ -290,13 +286,13 @@ public:
 		{
 		return StringHelper::Compare(m_Object, Value)>=0;
 		}
+	inline bool operator>=(Handle<String> const& Value)const noexcept
+		{
+		return StringHelper::Compare(m_Object, Value)>=0;
+		}
 	inline bool operator<(nullptr_t)const noexcept
 		{
 		return false;
-		}
-	inline bool operator<(Handle<String> const& Value)const noexcept
-		{
-		return StringHelper::Compare(m_Object, Value)<0;
 		}
 	inline bool operator<(LPCSTR Value)const noexcept
 		{
@@ -306,13 +302,13 @@ public:
 		{
 		return StringHelper::Compare(m_Object, Value)<0;
 		}
+	inline bool operator<(Handle<String> const& Value)const noexcept
+		{
+		return StringHelper::Compare(m_Object, Value)<0;
+		}
 	inline bool operator<=(nullptr_t)const noexcept
 		{
 		return !operator bool();
-		}
-	inline bool operator<=(Handle<String> const& Value)const noexcept
-		{
-		return StringHelper::Compare(m_Object, Value)<=0;
 		}
 	inline bool operator<=(LPCSTR Value)const noexcept
 		{
@@ -322,12 +318,24 @@ public:
 		{
 		return StringHelper::Compare(m_Object, Value)<=0;
 		}
+	inline bool operator<=(Handle<String> const& Value)const noexcept
+		{
+		return StringHelper::Compare(m_Object, Value)<=0;
+		}
 
 	// Assignment
 	inline Handle& operator=(nullptr_t)noexcept
 		{
 		Handle<Object>::Clear(&m_Object);
 		return *this;
+		}
+	inline Handle& operator=(LPCSTR Value)
+		{
+		return operator=(String::Create(Value));
+		}
+	inline Handle& operator=(LPCWSTR Value)
+		{
+		return operator=(String::Create(Value));
 		}
 	inline Handle& operator=(String* Value)noexcept
 		{
@@ -343,14 +351,6 @@ public:
 		Handle<Object>::Move(&m_Object, &Value.m_Object);
 		return *this;
 		}
-	inline Handle& operator=(LPCSTR Value)
-		{
-		return operator=(String::Create(Value));
-		}
-	inline Handle& operator=(LPCWSTR Value)
-		{
-		return operator=(String::Create(Value));
-		}
 	SIZE_T ReadFromStream(InputStream* Stream)
 		{
 		SIZE_T size=0;
@@ -360,6 +360,22 @@ public:
 		}
 
 	// Operators
+	Handle& operator+=(LPCSTR Append)
+		{
+		LPCTSTR value=m_Object? m_Object->Begin(): nullptr;
+		return operator=(String::Create("%s%s", value, Append));
+		}
+	Handle& operator+=(LPCWSTR Append)
+		{
+		LPCTSTR value=m_Object? m_Object->Begin(): nullptr;
+		return operator=(String::Create("%s%s", value, Append));
+		}
+	Handle& operator+=(Handle<String> const& Append)
+		{
+		LPCTSTR value=m_Object? m_Object->Begin(): nullptr;
+		LPCTSTR append=Append? Append->Begin(): nullptr;
+		return operator=(String::Create("%s%s", value, append));
+		}
 	Handle<String> operator+(LPCSTR Append)
 		{
 		if(!m_Object)
@@ -372,7 +388,7 @@ public:
 			return String::Create(Append);
 		return String::Create("%s%s", m_Object->Begin(), Append);
 		}
-	Handle<String> operator+(String* Append)
+	Handle<String> operator+(Handle<String> const& Append)
 		{
 		if(!m_Object)
 			return Append;

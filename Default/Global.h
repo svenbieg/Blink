@@ -30,6 +30,13 @@ public:
 	using Mutex=Concurrency::Mutex;
 	using WriteLock=Concurrency::WriteLock;
 
+	// Common
+	static _obj_t* Get()
+		{
+		WriteLock lock(s_Mutex);
+		return s_Global;
+		}
+
 protected:
 	// Con-/Destructors
 	Global()=default;
