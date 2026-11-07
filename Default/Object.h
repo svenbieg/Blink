@@ -49,10 +49,10 @@ protected:
 			{
 			new (obj) _obj_t(std::forward<_args_t>(Arguments)...);
 			}
-		catch(Exception e)
+		catch(...)
 			{
-			delete obj;
-			throw e;
+			MemoryHelper::Free(obj);
+			throw;
 			}
 		Cpu::InterlockedDecrement(&obj->m_ReferenceCount);
 		return obj;
@@ -68,10 +68,10 @@ protected:
 			{
 			new (obj) _obj_t((BYTE*)buf, Extra, std::forward<_args_t>(Arguments)...);
 			}
-		catch(Exception e)
+		catch(...)
 			{
-			delete obj;
-			throw e;
+			MemoryHelper::Free(obj);
+			throw;
 			}
 		Cpu::InterlockedDecrement(&obj->m_ReferenceCount);
 		return obj;

@@ -57,6 +57,7 @@ public:
 	[[noreturn]] VOID Catch(SIZE_T LandingPad, UINT TypeId, TypeInfo const* Type, VOID* Thrown);
 	[[noreturn]] VOID Cleanup(SIZE_T LandingPad);
 	[[noreturn]] static VOID EndCleanup();
+	static UnwindException* Get();
 	VOID* GetThrownException(TypeInfo const** Type=nullptr);
 	union
 		{

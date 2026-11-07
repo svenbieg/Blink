@@ -72,6 +72,14 @@ VOID __cxa_pure_virtual()
 throw InvalidContextException();
 }
 
+VOID __cxa_rethrow()
+{
+auto exc=UnwindException::Get();
+exc_save_context(&exc->Frame);
+exc->Raise();
+System::Restart();
+}
+
 VOID __cxa_throw(VOID* thrown, VOID* type, VOID (*destr)(VOID*))
 {
 auto exc=(UnwindException*)((SIZE_T)thrown-sizeof(UnwindException));

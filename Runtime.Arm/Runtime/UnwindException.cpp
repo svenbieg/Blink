@@ -150,6 +150,12 @@ exc_resume(&exc->Frame, (SIZE_T)_Unwind_Resume, exc);
 System::Restart();
 }
 
+UnwindException* UnwindException::Get()
+{
+auto task=Task::Get();
+return task->m_Exception;
+}
+
 VOID* UnwindException::GetThrownException(TypeInfo const** type)
 {
 if(type)
