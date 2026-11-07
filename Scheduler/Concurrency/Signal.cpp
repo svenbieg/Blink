@@ -92,7 +92,7 @@ if(timeout)
 SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
-signal_lock.Unlock(core, current);
+signal_lock.Unlock(current);
 Task::ThrowIfCancelled(current, lock);
 FlagHelper::Clear(current->m_Flags, TaskFlags::Timeout);
 Scheduler::WaitingList::Insert(&m_Waiting, current, Task::Priority);
@@ -131,7 +131,7 @@ while(resume)
 	if(signal_lock)
 		{
 		resume->m_SignalLock=nullptr;
-		if(!signal_lock->Lock(core, resume))
+		if(!signal_lock->Lock(resume))
 			{
 			resume=next;
 			continue;

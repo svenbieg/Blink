@@ -28,6 +28,7 @@ namespace Concurrency {
 // Forward-Declarations
 //======================
 
+class Scheduler;
 class Signal;
 
 
@@ -39,6 +40,7 @@ class WriteLock
 {
 public:
 	// Friends
+	friend Scheduler;
 	friend Signal;
 
 	// Con-/Destructors
@@ -53,8 +55,8 @@ public:
 
 private:
 	// Common
-	BOOL Lock(UINT Core, Task* Current)noexcept;
-	VOID Unlock(UINT Core, Task* Current)noexcept;
+	BOOL Lock(Task* Current)noexcept;
+	VOID Unlock(Task* Current)noexcept;
 	BOOL m_Locked;
 	Mutex* m_Mutex;
 };

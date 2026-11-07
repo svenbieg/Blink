@@ -69,8 +69,8 @@ public:
 
 protected:
 	// Common
-	virtual BOOL Lock(UINT Core, Task* Current)noexcept;
-	virtual BOOL Lock(UINT Core, Task* Current, AccessMode)noexcept;
+	virtual BOOL Lock(Task* Current)noexcept;
+	virtual BOOL Lock(Task* Current, AccessMode)noexcept;
 	VOID ResumeWaitingTasks()noexcept;
 	virtual VOID Unlock(Task* Current)noexcept;
 	virtual VOID Unlock(Task* Current, AccessMode)noexcept;

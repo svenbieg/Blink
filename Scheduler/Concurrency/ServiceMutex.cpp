@@ -29,18 +29,18 @@ namespace Concurrency {
 // Common Protected
 //==================
 
-BOOL ServiceMutex::Lock(UINT core, Task* current)noexcept
+BOOL ServiceMutex::Lock(Task* current)noexcept
 {
 FlagHelper::Set(current->m_Flags, TaskFlags::Priority);
 current->m_PriorityCount++;
-return Mutex::Lock(core, current);
+return Mutex::Lock(current);
 }
 
-BOOL ServiceMutex::Lock(UINT core, Task* current, AccessMode)noexcept
+BOOL ServiceMutex::Lock(Task* current, AccessMode)noexcept
 {
 FlagHelper::Set(current->m_Flags, TaskFlags::Priority);
 current->m_PriorityCount++;
-return Mutex::Lock(core, current, AccessMode::ReadOnly);
+return Mutex::Lock(current, AccessMode::ReadOnly);
 }
 
 VOID ServiceMutex::Unlock(Task* current)noexcept

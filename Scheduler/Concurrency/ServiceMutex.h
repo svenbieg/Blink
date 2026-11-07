@@ -37,8 +37,8 @@ public:
 
 protected:
 	// Common
-	BOOL Lock(UINT Core, Task* Current)noexcept override;
-	BOOL Lock(UINT Core, Task* Current, AccessMode)noexcept override;
+	BOOL Lock(Task* Current)noexcept override;
+	BOOL Lock(Task* Current, AccessMode)noexcept override;
 	VOID Unlock(Task* Current)noexcept override;
 	VOID Unlock(Task* Current, AccessMode)noexcept override;
 };

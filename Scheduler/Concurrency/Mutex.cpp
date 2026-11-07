@@ -57,7 +57,7 @@ if(!current)
 Task::ThrowIfCancelled(current, lock);
 // You can only hold one ReadLock at a time.
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
-if(this->Lock(core, current))
+if(this->Lock(current))
 	return;
 Scheduler::Suspend(core, current);
 lock.Unlock();
@@ -74,7 +74,7 @@ auto current=Scheduler::s_CurrentTask[core];
 Task::ThrowIfCancelled(current, lock);
 // You can only hold one ReadLock at a time.
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
-if(this->Lock(core, current, AccessMode::ReadOnly))
+if(this->Lock(current, AccessMode::ReadOnly))
 	return;
 Scheduler::Suspend(core, current);
 lock.Unlock();
@@ -104,7 +104,7 @@ this->Unlock(current, AccessMode::ReadOnly);
 // Common Protected
 //==================
 
-BOOL Mutex::Lock(UINT core, Task* current)noexcept
+BOOL Mutex::Lock(Task* current)noexcept
 {
 if(!m_Owner)
 	{
@@ -117,7 +117,7 @@ current->m_Owner=&m_Waiting;
 return false;
 }
 
-BOOL Mutex::Lock(UINT core, Task* current, AccessMode)noexcept
+BOOL Mutex::Lock(Task* current, AccessMode)noexcept
 {
 FlagHelper::Set(current->m_Flags, TaskFlags::Sharing);
 if(!m_Owner)

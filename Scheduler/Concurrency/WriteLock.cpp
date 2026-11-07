@@ -68,14 +68,14 @@ m_Locked=false;
 // Common Private
 //================
 
-BOOL WriteLock::Lock(UINT core, Task* current)noexcept
+BOOL WriteLock::Lock(Task* current)noexcept
 {
 assert(!m_Locked);
 m_Locked=true;
-return m_Mutex->Lock(core, current);
+return m_Mutex->Lock(current);
 }
 
-VOID WriteLock::Unlock(UINT core, Task* current)noexcept
+VOID WriteLock::Unlock(Task* current)noexcept
 {
 assert(m_Locked);
 m_Locked=false;
