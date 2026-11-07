@@ -34,7 +34,7 @@ public:
 
 	// Common
 	void lock() { Lock(); }
-	bool try_lock() { return TryLock(); }
+	bool try_lock() { throw NotImplementedException(); }
 	void unlock() { Unlock(); }
 };
 
