@@ -131,10 +131,7 @@ try
 	{
 	task->Run();
 	if(task->Cancelled)
-		{
-		*const_cast<volatile BOOL*>(&task->Cancelled)=false;
 		status=Status::Aborted;
-		}
 	}
 catch(Cancellation)
 	{
@@ -162,18 +159,18 @@ Scheduler::ExitTask(status);
 
 VOID Task::ThrowIfCancelled(Task* task)
 {
-if(task->Cancelled)
+if(FlagHelper::Get(task->m_Flags, TaskFlags::Cancel))
 	{
-	*const_cast<volatile BOOL*>(&task->Cancelled)=false;
+	FlagHelper::Clear(task->m_Flags, TaskFlags::Cancel);
 	throw Cancellation();
 	}
 }
 
 VOID Task::ThrowIfCancelled(Task* task, SpinLock& sched_lock)
 {
-if(task->Cancelled)
+if(FlagHelper::Get(task->m_Flags, TaskFlags::Cancel))
 	{
-	*const_cast<volatile BOOL*>(&task->Cancelled)=false;
+	FlagHelper::Clear(task->m_Flags, TaskFlags::Cancel);
 	sched_lock.Unlock();
 	throw Cancellation();
 	}

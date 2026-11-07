@@ -55,13 +55,14 @@ enum class TaskFlags: UINT
 {
 None=0,
 Active=(1<<0),
-Idle=(1<<1),
-Priority=(1<<2),
-Creator=(1<<3),
-Release=(1<<4),
-Sharing=(1<<5),
-Suspend=(1<<6),
-Timeout=(1<<7)
+Cancel=(1<<1),
+Creator=(1<<2),
+Idle=(1<<3),
+Priority=(1<<4),
+Release=(1<<5),
+Sharing=(1<<6),
+Suspend=(1<<7),
+Timeout=(1<<8)
 };
 
 

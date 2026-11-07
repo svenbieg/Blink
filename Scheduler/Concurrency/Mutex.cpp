@@ -2,7 +2,7 @@
 // Mutex.cpp
 //===========
 
-// Mutual exclusion causing task-suspension.
+// Mutual exclusion for shared resources.
 
 // Copyright 2026, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#mutex
@@ -89,7 +89,6 @@ auto current=Scheduler::s_CurrentTask[core];
 if(!current)
 	return;
 this->Unlock(current);
-Task::ThrowIfCancelled(current, lock);
 }
 
 VOID Mutex::Unlock(AccessMode)noexcept
@@ -98,7 +97,6 @@ SpinLock lock(Scheduler::s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 this->Unlock(current, AccessMode::ReadOnly);
-Task::ThrowIfCancelled(current, lock);
 }
 
 

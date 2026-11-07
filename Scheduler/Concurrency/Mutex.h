@@ -2,7 +2,7 @@
 // Mutex.h
 //=========
 
-// Mutual exclusion causing task-suspension.
+// Mutual exclusion for shared resources.
 
 // Copyright 2026, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#mutex

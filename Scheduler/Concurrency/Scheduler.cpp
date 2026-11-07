@@ -86,9 +86,8 @@ assert(task!=s_MainTask);
 SpinLock lock(s_CriticalSection);
 if(task->Cancelled)
 	return;
-if(FlagHelper::Get(task->m_Flags, TaskFlags::Release))
-	return;
 *const_cast<volatile BOOL*>(&task->Cancelled)=true;
+FlagHelper::Set(task->m_Flags, TaskFlags::Cancel);
 BOOL resume=false;
 if(task->m_ResumeTime)
 	{
