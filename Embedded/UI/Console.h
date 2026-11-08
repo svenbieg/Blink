@@ -85,12 +85,12 @@ private:
 	Console();
 
 	// Common
-	VOID ConsoleTask();
 	VOID HandleCommand(Handle<String> Command);
+	VOID ServiceTask();
 	CommandMap m_Commands;
-	Handle<Task> m_ConsoleTask;
 	Mutex m_Mutex;
 	Handle<SerialPort> m_SerialPort;
+	Handle<Task> m_ServiceTask;
 	StringBuilder m_StringBuilder;
 	Handle<Console> m_This;
 };

@@ -129,7 +129,7 @@ Console::Console():
 m_This(this)
 {
 m_SerialPort=SerialPort::Create();
-m_ConsoleTask=Task::Create(this, &Console::ConsoleTask, "console", 2048);
+m_ServiceTask=Task::Create(this, &Console::ServiceTask, "console", 2048);
 AddCommand("tasks", this, &Console::TaskInfo);
 }
 
@@ -138,7 +138,23 @@ AddCommand("tasks", this, &Console::TaskInfo);
 // Common Private
 //================
 
-VOID Console::ConsoleTask()
+VOID Console::HandleCommand(Handle<String> cmd)
+{
+ReadLock lock(m_Mutex);
+Handle<ConsoleHandler> handler;
+BOOL found=m_Commands.try_get(cmd, &handler);
+lock.Unlock();
+if(found)
+	{
+	handler->Call();
+	}
+else
+	{
+	CommandReceived(this, cmd);
+	}
+}
+
+VOID Console::ServiceTask()
 {
 StreamReader reader(m_SerialPort);
 auto task=Task::Get();
@@ -154,22 +170,6 @@ while(!task->Cancelled)
 		continue;
 		}
 	m_StringBuilder.Append(c);
-	}
-}
-
-VOID Console::HandleCommand(Handle<String> cmd)
-{
-ReadLock lock(m_Mutex);
-Handle<ConsoleHandler> handler;
-BOOL found=m_Commands.try_get(cmd, &handler);
-lock.Unlock();
-if(found)
-	{
-	handler->Call();
-	}
-else
-	{
-	CommandReceived(this, cmd);
 	}
 }
 
