@@ -9,9 +9,9 @@
 // Using
 //=======
 
-#include "Runtime/Configuration.h"
 #include "Runtime/IrqFrame.h"
 #include "Runtime/TaskFrame.h"
+#include "config.h"
 #include "cpu.inc.S"
 
 

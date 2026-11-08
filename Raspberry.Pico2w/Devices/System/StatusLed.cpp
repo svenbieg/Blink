@@ -77,6 +77,7 @@ StatusLed::StatusLed():
 m_On(false),
 m_Period(0)
 {
+m_Wifi=WifiAdapter::Create();
 m_ServiceTask=ServiceTask::Create(this, &StatusLed::ServiceTask, "status_led", 1024);
 }
 
@@ -98,7 +99,7 @@ while(!task->Cancelled)
 
 VOID StatusLed::ServiceTask()
 {
-m_WifiAdapter=WifiAdapter::Create();
+m_Wifi->Enable();
 UINT mask=(1<<0);
 UINT buf[2];
 buf[0]=mask;
@@ -107,7 +108,7 @@ auto task=Task::Get();
 while(!task->Cancelled)
 	{
 	buf[1]=m_On? mask: 0;
-	m_WifiAdapter->SetVariable("gpioout", buf, 2*sizeof(UINT));
+	m_Wifi->SetVariable("gpioout", buf, 2*sizeof(UINT));
 	m_Signal.Wait(lock);
 	}
 }

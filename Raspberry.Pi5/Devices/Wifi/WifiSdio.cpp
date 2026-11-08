@@ -80,57 +80,32 @@ m_ServiceTask->Cancel();
 }
 
 
-//========
-// Common
-//========
-
-VOID WifiSdio::Listen()
-{
-assert(!m_ServiceTask);
-m_ServiceTask=ServiceTask::Create(this, &WifiSdio::ServiceTask);
-}
-
-
-//==============
-// Input-Stream
-//==============
-
-SIZE_T WifiSdio::Available()
-{
-throw NotImplementedException();
-}
-
-SIZE_T WifiSdio::Read(VOID* buf, SIZE_T size)
-{
-WriteLock lock(m_Mutex);
-return ReadData(buf, size);
-}
-
-
-//===============
-// Output-Stream
-//===============
-
-VOID WifiSdio::Flush()
-{
-throw NotImplementedException();
-}
-
-SIZE_T WifiSdio::Write(VOID const* buf, SIZE_T size)
-{
-WriteLock lock(m_Mutex);
-return WriteData(buf, size);
-}
-
-
-//==========================
-// Con-/Destructors Private
-//==========================
+//============================
+// Con-/Destructors Protected
+//============================
 
 WifiSdio::WifiSdio():
 EmmcHost(AXI_EMMC1_BASE, Irq::Wifi),
 m_Window(0)
 {}
+
+
+//==================
+// Common Protected
+//==================
+
+VOID WifiSdio::EnableSdio()
+{
+m_ServiceTask=ServiceTask::Create(this, &WifiSdio::ServiceTask, "wifi");
+}
+
+VOID WifiSdio::WritePacket(WifiPacket* pkt)
+{
+WriteLock lock(m_SdioMutex);
+auto buf=pkt->Begin();
+UINT size=pkt->GetSize();
+WriteData(buf, size);
+}
 
 
 //================
@@ -286,7 +261,7 @@ WriteBackplane(addr+COM_IOCTRL, &ioctrl, 1);
 
 VOID WifiSdio::ServiceTask()
 {
-WriteLock lock(m_Mutex);
+WriteLock lock(m_SdioMutex);
 GpioHelper::SetPinMode(GpioArmPin::WifiOn, GpioArmPinMode::Output);
 GpioHelper::DigitalWrite(GpioArmPin::WifiOn, true);
 Task::Sleep(150);
@@ -326,7 +301,7 @@ ResetDevice(WIFI_ARM_BASE, 0);
 PollRegister(SB_CLK_CSR, CLK_CSR_HT_AVAIL, CLK_CSR_HT_AVAIL);
 WriteRegister(SB_CLK_CSR, CLK_CSR_HT_FORCE);
 WriteBackplane(SDIO_MBOX_DATA_OUT, MBOX_DATA_VER);
-WriteBackplane(SDIO_INT_MASK, INT_HOST);
+WriteBackplane(SDIO_INT_MASK, SDIO_INT_HOST_MASK);
 WriteBackplane(SDIO_INT_STATUS, ~0U);
 UINT block_size=EMMC_BLOCK_SIZE[FN2];
 WriteRegister(CCCR_BLKSIZE_FN2_0, (BYTE)block_size);
@@ -347,13 +322,13 @@ while(!task->Cancelled)
 	UINT pending=ReadRegister(CCCR_INT_PENDING);
 	if(!pending)
 		{
+		lock.Unlock();
 		spin_lock.Lock();
 		continue;
 		}
 	UINT int_status=ReadBackplane(SDIO_INT_STATUS);
 	WriteBackplane(SDIO_INT_STATUS, int_status);
-	Handle<WifiPacket> pkt;
-	UINT host_flags=BitHelper::Get(int_status, INT_HOST);
+	UINT host_flags=BitHelper::Get(int_status, SDIO_INT_HOST_MASK);
 	while(host_flags)
 		{
 		UINT lsb=Cpu::CountTrailingZeros(host_flags);
@@ -361,19 +336,21 @@ while(!task->Cancelled)
 		BitHelper::Clear(host_flags, host_flag);
 		switch(host_flag)
 			{
-			case INT_FRAME:
+			case SDIO_INT_FRAME:
 				{
-				BYTE size_lo=ReadRegister(SB_RFRM_CNT_0);
-				BYTE size_hi=ReadRegister(SB_RFRM_CNT_1);
-				UINT size=TypeHelper::MakeLong(size_lo, size_hi, 0, 0);
-				pkt=WifiPacket::Create(nullptr, size);
-				auto buf=pkt->Begin();
-				ReadData(buf, size);
-				auto header=(WIFI_HEADER*)buf;
-				if(header->Length!=size)
-					throw InvalidArgumentException();
-				if(header->LengthChk!=(header->Length^0xFFFF))
-					throw InvalidArgumentException();
+				WIFI_HEADER header;
+				ReadData(&header, sizeof(WIFI_HEADER));
+				UINT len=header.Length;
+				UINT len_chk=header.LengthChk;
+				if(!len)
+					break;
+				if(len_chk!=(len^0xFFFF))
+					break;
+				auto pkt=WifiPacket::Create(&header);
+				auto data=pkt->Data();
+				UINT writable=pkt->Writable();
+				ReadData(data, writable);
+				OnPacketReceived(pkt);
 				//throw DeviceNotReadyException();
 				//WriteRegister(SB_FRAME_CTRL, FRAME_CTRL_RFHALT);
 				//PollRegister(SB_RFRM_CNT_1, 0xFF, 0);
@@ -383,8 +360,6 @@ while(!task->Cancelled)
 			}
 		}
 	lock.Unlock();
-	if(pkt)
-		PacketReceived.Call(pkt);
 	spin_lock.Lock();
 	}
 }

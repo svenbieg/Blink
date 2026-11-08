@@ -50,7 +50,7 @@ GpioPin PinTx;
 // SPI-Emulator
 //==============
 
-class SpiEmulator: public Spi::SpiHost
+class SpiEmulator: public virtual Object, public Spi::SpiHost
 {
 public:
 	// Using
@@ -67,7 +67,7 @@ public:
 	// Con-/Destructors
 	static inline Handle<SpiEmulator> Create(SPI_CONFIG const& Configuration)
 		{
-		return new SpiEmulator(Configuration);
+		return Object::Create<SpiEmulator>(Configuration);
 		}
 
 	// Common

@@ -24,7 +24,7 @@ namespace Devices {
 // SPI-Host
 //==========
 
-class SpiHost: public Object
+class SpiHost
 {
 public:
 	// Common

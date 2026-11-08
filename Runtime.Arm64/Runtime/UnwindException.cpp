@@ -132,6 +132,12 @@ exc_resume(&Frame, landing_pad, this);
 System::Restart();
 }
 
+UnwindException* UnwindException::Get()
+{
+auto task=Task::Get();
+return task->m_Exception;
+}
+
 VOID* UnwindException::GetThrownException(TypeInfo const** type)
 {
 if(type)

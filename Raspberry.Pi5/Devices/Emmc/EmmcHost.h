@@ -26,7 +26,7 @@ namespace Devices {
 // Host
 //======
 
-class EmmcHost: public Object
+class EmmcHost: public virtual Object
 {
 public:
 	// Using

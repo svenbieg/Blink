@@ -59,7 +59,7 @@ private:
 	UINT m_Period;
 	Handle<Task> m_ServiceTask;
 	Signal m_Signal;
-	Handle<WifiAdapter> m_WifiAdapter;
+	Handle<WifiAdapter> m_Wifi;
 };
 
 }}

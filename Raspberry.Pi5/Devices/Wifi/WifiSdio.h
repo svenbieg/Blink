@@ -10,10 +10,9 @@
 //=======
 
 #include "Concurrency/ServiceMutex.h"
-//#include "Concurrency/Task.h"
 #include "Devices/Emmc/EmmcHost.h"
-#include "Devices/Wifi/Wifi.h"
-#include "Callback.h"
+#include "Devices/Wifi/WifiPacket.h"
+#include "Storage/Streams/RandomAccessStream.h"
 
 
 //===========
@@ -28,38 +27,29 @@ namespace Devices {
 // Wifi-Sdio
 //===========
 
-class WifiSdio: public Emmc::EmmcHost, public Storage::Streams::RandomAccessStream
+class WifiSdio: public Emmc::EmmcHost
 {
 public:
-	// Friends
-	friend Object;
-
 	// Using
 	using ServiceMutex=Concurrency::ServiceMutex;
 	using Task=Concurrency::Task;
 
 	// Con-/Destructors
-	static inline Handle<WifiSdio> Create() { return Object::Create<WifiSdio>(); }
 	~WifiSdio();
 
-	// Common
-	VOID Listen();
-	Callback<Handle<WifiPacket>> PacketReceived;
-
-	// Input-Stream
-	SIZE_T Available()override;
-	SIZE_T Read(VOID* Buffer, SIZE_T Size)override;
-
-	// Output-Stream
-	VOID Flush()override;
-	SIZE_T Write(VOID const* Buffer, SIZE_T Size)override;
-
-private:
+protected:
 	// Con-/Destructors
 	WifiSdio();
 
 	// Common
+	VOID EnableSdio();
+	VOID WritePacket(WifiPacket* Packet);
+	ServiceMutex m_SdioMutex;
+
+private:
+	// Common
 	UINT IoRwExtended(UINT Function, UINT Flags, UINT Address, BYTE* Buffer, UINT Size);
+	virtual VOID OnPacketReceived(Handle<WifiPacket> Packet)=0;
 	VOID PollBackplane(UINT Address, UINT Mask, UINT Value, UINT Timeout=100);
 	VOID PollRegister(SDIO_REG const& Register, BYTE Mask, BYTE Value, UINT Timeout=100);
 	UINT ReadBackplane(UINT Address);
@@ -75,7 +65,6 @@ private:
 	VOID WriteBackplane(UINT Address, UINT const* Buffer, UINT Size);
 	SIZE_T WriteData(VOID const* Buffer, SIZE_T Size);
 	VOID WriteRegister(SDIO_REG const& Register, BYTE Value);
-	ServiceMutex m_Mutex;
 	Handle<Task> m_ServiceTask;
 	UINT m_Window;
 };

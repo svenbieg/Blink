@@ -10,6 +10,7 @@
 //=======
 
 #include "Collections/LinkedList.h"
+#include "Devices/Wifi/Wifi.h"
 #include "Storage/Streams/RandomAccessStream.h"
 #include "BitHelper.h"
 #include "Handle.h"
@@ -37,24 +38,9 @@ static const UINT WIFI_PACKET_MAX=2048;
 class WifiAdapter;
 
 
-//========
-// Header
-//========
-
-typedef struct alignas(UINT)
-{
-WORD Length;
-WORD LengthChk;
-BYTE Sequence;
-BYTE Flags;
-BYTE NextLength;
-BYTE DataOffset;
-BYTE FlowControl;
-BYTE Window;
-WORD Reserved;
-}WIFI_HEADER;
-
-static const BITS8 WIFI_HEADER_FLAGS_TYPE={ 0xF, 0 };
+//======
+// Type
+//======
 
 enum class WifiPacketType
 {
@@ -75,15 +61,18 @@ public:
 	friend WifiAdapter;
 
 	// Con-/Destructors
-	static Handle<WifiPacket> Create(UINT Size);
+	static Handle<WifiPacket> Create(UINT Payload);
 	static Handle<WifiPacket> Create(nullptr_t, UINT Size);
+	static Handle<WifiPacket> Create(WIFI_HEADER* Header);
 
 	// Common
-	inline UINT AvailableForWrite()const noexcept { return m_Size-m_Written; }
 	inline BYTE* Begin()const noexcept { return m_Buffer; }
+	BYTE* Data()const noexcept;
 	BYTE GetSequenceId()const;
-	inline UINT GetSize()const noexcept { return m_Size; }
+	UINT GetSize()const;
 	WifiPacketType GetType()const;
+	BOOL TryValidate();
+	inline UINT Writable()const noexcept { return m_Size-m_Written; }
 	SIZE_T WriteToStream(OutputStream* Stream);
 
 	// Input-Stream

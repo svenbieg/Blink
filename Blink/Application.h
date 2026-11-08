@@ -31,14 +31,19 @@ public:
 	using Console=UI::Console;
 	using StatusLed=Devices::System::StatusLed;
 
+	// Friends
+	friend Object;
+
 	// Con-/Destructors
-	static inline Handle<Application> Create() { return new Application(); }
+	static inline Handle<Application> Create()
+		{
+		return Object::Create<Application>();
+		}
 
 	// Common
 	VOID Blink();
 	VOID Off();
 	VOID On();
-	VOID Run();
 	VOID Stop();
 
 private:

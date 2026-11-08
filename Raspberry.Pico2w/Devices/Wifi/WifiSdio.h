@@ -13,8 +13,6 @@
 #include "Devices/Wifi/WifiPacket.h"
 #include "Devices/Wifi/WifiSpi.h"
 #include "Devices/Pio/SpiEmulator.h"
-#include "Storage/Streams/RandomAccessStream.h"
-#include "Callback.h"
 
 
 //===========
@@ -36,11 +34,10 @@ class WifiAdapter;
 // Wifi-Sdio
 //===========
 
-class WifiSdio: public Pio::SpiEmulator, public Storage::Streams::RandomAccessStream
+class WifiSdio: public Pio::SpiEmulator
 {
 public:
 	// Friends
-	friend Object;
 	friend WifiAdapter;
 
 	// Using
@@ -52,31 +49,26 @@ public:
 	// Con-/Destructors
 	~WifiSdio();
 
-	// Common
-	VOID Listen();
-	Callback<Handle<WifiPacket>> PacketReceived;
-
-	// Input-Stream
-	SIZE_T Available()override;
-	SIZE_T Read(VOID* Buffer, SIZE_T Size)override;
-
-	// Output-Stream
-	VOID Flush()override;
-	SIZE_T Write(VOID const* Buffer, SIZE_T Size)override;
-
-private:
+protected:
 	// Con-/Destructors
 	WifiSdio();
-	static inline Handle<WifiSdio> Create() { return Object::Create<WifiSdio>(); }
 
 	// Common
+	VOID EnableSdio();
+	VOID WritePacket(WifiPacket* Packet);
+	ServiceMutex m_SdioMutex;
+
+private:
+	// Common
 	VOID HandleInterrupt();
+	virtual VOID OnPacketReceived(Handle<WifiPacket> Packet)=0;
 	VOID PollBackplane(UINT Address, UINT Mask, UINT Value, UINT Timeout=100);
 	VOID PollRegister(SDIO_REG const& Register, UINT Mask, UINT Value, UINT Timeout=100);
 	UINT Read16x2(FN0_32 const& Register);
 	UINT ReadBackplane(UINT Address);
 	VOID ReadBackplane(UINT Address, VOID* Buffer, UINT Size);
 	SIZE_T ReadData(VOID* Buffer, SIZE_T Size);
+	VOID ReadPackets();
 	UINT ReadRegister(SDIO_REG const& Register);
 	VOID ResetDevice(UINT Address, UINT Flags);
 	VOID ServiceTask();
@@ -89,7 +81,6 @@ private:
 	VOID WriteRegister(SDIO_REG const& Register, UINT Value);
 	CriticalSection m_CriticalSection;
 	Signal m_InterruptPending;
-	ServiceMutex m_Mutex;
 	Handle<Task> m_ServiceTask;
 	UINT m_Window;
 };

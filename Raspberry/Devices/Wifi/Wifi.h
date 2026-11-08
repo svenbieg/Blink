@@ -11,7 +11,7 @@
 
 #include "Devices/Sdio/Sdio.h"
 #include "Devices/Wifi/WifiConfig.h"
-#include "Devices/Wifi/WifiPacket.h"
+#include "Network/Ethernet/Ethernet.h"
 #include <array>
 
 
@@ -99,11 +99,11 @@ const UINT SDIO_MBOX			=WIFI_SDIO_BASE+0x40;
 const UINT SDIO_MBOX_DATA_OUT	=WIFI_SDIO_BASE+0x48;
 const UINT SDIO_MBOX_DATA_IN	=WIFI_SDIO_BASE+0x4C;
 
-const UINT INT_MAILBOX			=(1<<7);
-const UINT INT_FRAME			=(1<<6);
-const UINT INT_FCCHANGE			=(1<<5);
-const UINT INT_FCSTATE			=(1<<4);
-const UINT INT_HOST				=INT_MAILBOX|INT_FRAME|INT_FCCHANGE|INT_FCSTATE;
+const UINT SDIO_INT_MAILBOX		=(1<<7);
+const UINT SDIO_INT_FRAME		=(1<<6);
+const UINT SDIO_INT_FCCHANGE	=(1<<5);
+const UINT SDIO_INT_FCSTATE		=(1<<4);
+const UINT SDIO_INT_HOST_MASK	=SDIO_INT_MAILBOX|SDIO_INT_FRAME|SDIO_INT_FCCHANGE|SDIO_INT_FCSTATE;
 
 const UINT MBOX_DATA_VER		=(4<<16);
 const UINT MBOX_DATA_HALT		=(1<<4);
@@ -118,6 +118,42 @@ const UINT SRAM_BANKX_INDEX		=WIFI_SRAM_BASE+0x10;
 const UINT SRAM_BANKX_PDA		=WIFI_SRAM_BASE+0x44;
 
 
+//===========
+// Interface
+//===========
+
+const UINT WIFI_AP=1;
+const UINT WIFI_STA=0;
+
+
+//========
+// Header
+//========
+
+typedef struct alignas(UINT)
+{
+WORD Length;
+WORD LengthChk;
+BYTE Sequence;
+BYTE Flags;
+BYTE NextLength;
+BYTE DataOffset;
+BYTE FlowControl;
+BYTE Window;
+WORD Reserved;
+}WIFI_HEADER;
+
+static const BITS8 WIFI_HEADER_FLAGS_TYPE={ 0xF, 0 };
+
+typedef struct
+{
+BYTE Flags;
+BYTE Priority;
+BYTE Flags2;
+BYTE DataOffset;
+}WIFI_BDC_HEADER;
+
+
 //==========
 // Commands
 //==========
@@ -129,7 +165,11 @@ SetPromisc				=10,
 SetInfra				=20,
 SetAuth					=22,
 SetSsid					=26,
+SetChannel				=30,
 SetPassiveScan			=49,
+SetAntDiv				=64,
+SetDtimPeriod			=78,
+SetGMode				=110,
 SetWSec					=134,
 SetWpaAuth				=165,
 SetScanChannelTime		=185,
@@ -142,17 +182,19 @@ SetWSecPmk				=268
 
 enum class WifiCmdFlags: WORD
 {
-Error	=(1<<0),
-Read	=(0<<1),
-Write	=(1<<1)
+Error			=(1<<0),
+Read			=(0<<1),
+Write			=(1<<1)
 };
+
+const UINT WIFI_CMD_INTERFACE_SHIFT=12;
 
 typedef struct
 {
 WifiCommand Command;
 UINT Length;
-WORD Id;
 WifiCmdFlags Flags;
+WORD Id;
 UINT Status;
 }WIFI_CMD;
 
@@ -161,53 +203,52 @@ UINT Status;
 // Events
 //========
 
-const UINT WIFI_EVENT_TX_FAIL			=20;
-const UINT WIFI_EVENT_RADIO				=40;
-const UINT WIFI_EVENT_PROBREQ_MSG		=44;
-const UINT WIFI_EVENT_IF				=54;
-const UINT WIFI_EVENT_PROBRESP_MSG		=71;
-const UINT WIFI_EVENT_CCA_CHAN_QUAL		=124;
-
-const UINT WIFI_DISABLED_EVENTS[]=
+enum class WifiEventType: UINT
 {
-WIFI_EVENT_TX_FAIL,
-WIFI_EVENT_RADIO,
-WIFI_EVENT_PROBREQ_MSG,
-WIFI_EVENT_IF,
-WIFI_EVENT_PROBRESP_MSG,
-WIFI_EVENT_CCA_CHAN_QUAL
+SetSsid=0,
+Join=1,
+Auth=3,
+Deauth=5,
+DeauthInd=6,
+Disassoc=12,
+Link=16,
+PskSup=46,
+EscanResult=69,
+CsaCompleteInd=80
 };
 
-const auto WIFI_EVENT_MASK=[]()
+const UINT WIFI_ENABLED_EVENTS[]=
 {
-std::array<BYTE, 16> flags;
-flags.fill(0xFF);
-for(auto id: WIFI_DISABLED_EVENTS)
-	flags[id/8]&=~(1<<(id%8));
+static_cast<UINT>(WifiEventType::SetSsid),
+//static_cast<UINT>(WifiEventType::Join),
+static_cast<UINT>(WifiEventType::Auth),
+static_cast<UINT>(WifiEventType::Deauth),
+static_cast<UINT>(WifiEventType::DeauthInd),
+static_cast<UINT>(WifiEventType::Disassoc),
+static_cast<UINT>(WifiEventType::Link),
+static_cast<UINT>(WifiEventType::PskSup),
+static_cast<UINT>(WifiEventType::EscanResult),
+static_cast<UINT>(WifiEventType::CsaCompleteInd)
+};
+
+typedef struct
+{
+UINT Bss;
+std::array<BYTE, 19> Flags;
+}WIFI_EVENT_MASK;
+
+const UINT WIFI_EVENT_MASK_SIZE=23;
+
+const auto WIFI_EVENT_FLAGS=[]()
+{
+std::array<BYTE, 19> flags={ 0 };
+for(auto id: WIFI_ENABLED_EVENTS)
+	flags[id/8]|=static_cast<BYTE>(1U<<(id%8));
 return flags;
 }();
 
-
-//=========
-// Payload
-//=========
-
-typedef struct
-{
-BYTE Flags;
-BYTE Priority;
-BYTE Flags2;
-BYTE DataOffset;
-}WIFI_BDC_HEADER;
-
-typedef struct
-{
-BYTE Destination[6];
-BYTE Source[6];
-WORD EtherType;
-}WIFI_ETHERNET_HEADER;
-
-const WORD WIFI_ETHER_TYPE=0x886C;
+const WIFI_EVENT_MASK WIFI_EVENT_MASK_AP={ WIFI_AP, WIFI_EVENT_FLAGS };
+const WIFI_EVENT_MASK WIFI_EVENT_MASK_STA={ WIFI_STA, WIFI_EVENT_FLAGS };
 
 typedef struct
 {
@@ -216,13 +257,13 @@ WORD Length;
 BYTE Version;
 BYTE Oui[3];
 WORD UserSubtype;
-}WIFI_BCM_EVENT_HEADER;
+}WIFI_EVENT_HEADER;
 
 typedef struct
 {
 WORD Version;
 WORD Flags;
-UINT EventType;
+WifiEventType EventType;
 UINT Status;
 UINT Reason;
 UINT AuthType;
@@ -235,21 +276,36 @@ BYTE BssConfigIndex;
 
 typedef struct
 {
-WIFI_ETHERNET_HEADER Ethernet;
-WIFI_BCM_EVENT_HEADER Broadcom;
+Network::Ethernet::ETHERNET_HEADER Ethernet;
+WIFI_EVENT_HEADER Broadcom;
 WIFI_EVENT_MESSAGE Event;
 }WIFI_EVENT_FRAME;
 
 
 //=========
-// Network
+// Country
 //=========
 
 typedef struct
 {
-UINT Length;
-CHAR Value[32];
-}WIFI_SSID;
+CHAR Abbreviation[4];
+INT Revision;
+CHAR Code[4];
+}WIFI_COUNTRY;
+
+consteval auto WIFI_COUNTRY_CODE(LPCSTR Code)
+{
+WIFI_COUNTRY country={ 0 };
+country.Revision=-1;
+for(UINT u=0; Code[u]; u++)
+	{
+	country.Abbreviation[u]=Code[u];
+	country.Code[u]=Code[u];
+	}
+return country;
+}
+
+const WIFI_COUNTRY WIFI_COUNTRY_DE=WIFI_COUNTRY_CODE("DE");
 
 
 //==========
@@ -263,7 +319,6 @@ WORD Flags;
 CHAR Key[64];
 }WIFI_WSEC_PMK;
 
-const BYTE WIFI_WPA2_AUTH_PSK=0x80;
-
+const UINT WIFI_AUTH_WPA2_AES_PSK=0x40004;
 
 }}

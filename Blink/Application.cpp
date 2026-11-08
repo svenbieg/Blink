@@ -24,9 +24,10 @@ using namespace UI;
 
 VOID Main()
 {
-Task::Create(nullptr, [](){
+Task::Create(nullptr, []()
+	{
 	auto app=Application::Create();
-	app->Run();
+	app->Blink();
 	}, "app");
 DispatchedQueue::Enter();
 }
@@ -66,11 +67,6 @@ m_Console->Print("Led on\n");
 m_StatusLed->Set(true);
 }
 
-VOID Application::Run()
-{
-Blink();
-}
-
 VOID Application::Stop()
 {
 if(!m_StatusLed->IsBlinking())
@@ -90,11 +86,11 @@ m_StatusLed->Stop();
 Application::Application()
 {
 m_Console=Console::Create();
-m_StatusLed=StatusLed::Create();
 m_Console->AddCommand("blink", this, &Application::Blink);
 m_Console->AddCommand("off", this, &Application::Off);
 m_Console->AddCommand("on", this, &Application::On);
 m_Console->AddCommand("stop", this, &Application::Stop);
+m_StatusLed=StatusLed::Create();
 }
 
 }
