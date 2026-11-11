@@ -14,7 +14,7 @@
 // Using
 //=======
 
-#include "Concurrency/Scheduler.h"
+#include "Concurrency/Task.h"
 #include "FlagHelper.h"
 
 
@@ -45,21 +45,16 @@ return Mutex::Lock(current, AccessMode::ReadOnly);
 
 VOID ServiceMutex::Unlock(Task* current)noexcept
 {
-assert(m_Owner==current);
 if(--current->m_PriorityCount==0)
 	FlagHelper::Clear(current->m_Flags, TaskFlags::Priority);
-Scheduler::OwnerList::RemoveFirst(&m_Owner);
-Mutex::ResumeWaitingTasks();
+Mutex::Unlock(current);
 }
 
 VOID ServiceMutex::Unlock(Task* current, AccessMode)noexcept
 {
-Scheduler::OwnerList::Remove(&m_Owner, current);
 if(--current->m_PriorityCount==0)
 	FlagHelper::Clear(current->m_Flags, TaskFlags::Priority);
-FlagHelper::Clear(current->m_Flags, TaskFlags::Sharing);
-if(!m_Owner)
-	Mutex::ResumeWaitingTasks();
+Mutex::Unlock(current, AccessMode::ReadOnly);
 }
 
 }
