@@ -54,6 +54,7 @@ UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 if(!current)
 	return;
+assert(m_Owner!=current); // Deadlock
 Task::ThrowIfCancelled(current, lock);
 // You can only hold one ReadLock at a time.
 assert(!FlagHelper::Get(current->m_Flags, TaskFlags::Sharing));
@@ -88,6 +89,7 @@ UINT core=Cpu::GetId();
 auto current=Scheduler::s_CurrentTask[core];
 if(!current)
 	return;
+assert(m_Owner==current);
 Unlock(current);
 }
 
@@ -111,7 +113,6 @@ if(!m_Owner)
 	m_Owner=current;
 	return true;
 	}
-assert(m_Owner!=current); // Deadlock
 Scheduler::WaitingList::Append(&m_Waiting, current);
 current->m_Owner=&m_Waiting;
 return false;
@@ -158,7 +159,6 @@ while(m_Waiting)
 
 VOID Mutex::Unlock(Task* current)noexcept
 {
-assert(m_Owner==current);
 Scheduler::OwnerList::RemoveFirst(&m_Owner);
 ResumeWaitingTasks();
 }
