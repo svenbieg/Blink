@@ -21,6 +21,7 @@
 #ifdef __ASSEMBLER__
 
 #define CONST(Type, Name, Value) Name = Value;
+#define CONSTEXPR(Type, Name, Value) Name = Value;
 
 #define ENUM_CLASS(Name)
 #define ENUM(Prefix, Name, Value) Prefix##Name = Value;
@@ -54,6 +55,7 @@
 #else
 
 #define CONST(Type, Name, Value) const Type Name=Value;
+#define CONSTEXPR(Type, Name, Value) constexpr Type Name=Value;
 
 #define ENUM_CLASS(Name) enum class Name {
 #define ENUM(Prefix, Name, Value) Name=Value,
