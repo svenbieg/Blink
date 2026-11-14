@@ -46,11 +46,14 @@ public:
 	static VOID Free(VOID* Buffer);
 	static VOID GetInfo(MEMORY_INFO* Info);
 	static VOID Initialize();
+	static VOID InitializeSecondary();
 	static VOID* Uncached(VOID* Buffer);
 	template <class _buf_t> inline static _buf_t* Uncached(_buf_t* Buffer) { return (_buf_t*)Uncached(Buffer); }
 
 private:
 	// Common
+	static VOID CreatePageTable();
+	static VOID EnableMmu();
 	static VOID* s_Heap;
 	static ServiceMutex s_Mutex;
 };

@@ -89,7 +89,6 @@ register UINT64 x1 asm("x1")=(core<<8);
 register UINT64 x2 asm("x2")=(SIZE_T)&init_secondary;
 register UINT64 x3 asm("x3")=0;
 __asm volatile("\
-dsb sy\n\
 smc #0": "+&r" (x0), "+&r" (x1), "+&r" (x2), "+&r" (x3):: "x4", "x5", "x6", "x7", "x8", "x9", "x10", "x11", "x12", "x13", "x14", "x15", "x16", "x17", "x30", "memory", "cc");
 if(x0!=0)
 	throw DeviceNotReadyException();

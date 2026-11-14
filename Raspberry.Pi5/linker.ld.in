@@ -27,6 +27,10 @@ SECTIONS
 
 .nodata (NOLOAD) :
 	{
+	. = ALIGN(4096);
+	__page_table_start = .;
+	. += 4096;
+	__page_table_end = .;
 	. = ALIGN(CONFIG_STACK_SIZE);
 	__stack_start = .;
 	. += CONFIG_CPU_COUNT * CONFIG_STACK_SIZE;
@@ -36,9 +40,6 @@ SECTIONS
 
 .data :
 	{
-	. = ALIGN(4096);
-	__page_table = .;
-	KEEP(*(.page_table))
 	__init_array_start = .;
 	KEEP(*(.init_array .init_array.*))
 	__init_array_end = .;

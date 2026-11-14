@@ -52,16 +52,6 @@ adr x0, 1f
 msr ELR_EL2, x0
 eret
 1:
-
-
-//==================
-// Wakeup secondary
-//==================
-
-_wakeup_secondary:
-//cpu_on 1
-//cpu_on 2
-//cpu_on 3
 b _init_exceptions_el1
 
 
@@ -82,43 +72,6 @@ b init_secondary
 _init_exceptions_el1:
 ldr x0, =_vectors_el1
 msr VBAR_EL1, x0
-
-
-//========
-// Memory
-//========
-
-_enable_mmu:
-ldr x0, =__page_table
-msr TTBR0_EL1, x0
-#define MAIR_ATT_CACHED (0xFF<<(MMU_ATT_CACHED*8))
-#define MAIR_ATT_UNCACHED (0x44<<(MMU_ATT_UNCACHED*8))
-#define MAIR_ATT_DEVICE (0x04<<(MMU_ATT_DEVICE*8))
-ldr x0, =(MAIR_ATT_CACHED|MAIR_ATT_UNCACHED|MAIR_ATT_DEVICE)
-msr MAIR_EL1, x0
-#define TCR_IPS_4GB (0ULL<<32)
-#define TCR_IPS_1TB (2ULL<<32)
-#define TCR_EPD1 (1<<23)
-#define TCR_TG0_4KB (0<<14)
-#define TCR_TG0_64KB (1<<14)
-#define TCR_SH0_INNER (3<<12)
-#define TCR_ORGN0_WB_WA (1<<10)
-#define TCR_IRGN0_WB_WA (1<<8)
-#define TCR_T0SZ_128GB (27<<0)
-ldr x0, =(TCR_IPS_1TB|TCR_EPD1|TCR_TG0_4KB|TCR_SH0_INNER|TCR_ORGN0_WB_WA|TCR_IRGN0_WB_WA|TCR_T0SZ_128GB)
-msr TCR_EL1, x0
-isb
-tlbi vmalle1
-dsb sy
-isb
-#define SCTLR_I (1<<12)
-#define SCTLR_C (1<<2)
-#define SCTLR_M (1<<0)
-mrs x0, SCTLR_EL1
-ldr x1, =(SCTLR_I|SCTLR_C|SCTLR_M)
-orr x0, x0, x1
-msr SCTLR_EL1, x0
-isb
 
 
 //===============

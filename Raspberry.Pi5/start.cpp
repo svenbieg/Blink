@@ -34,12 +34,13 @@ VOID start()
 Memory::Initialize();
 Interrupts::Initialize();
 Scheduler::Initialize();
-//Cpu::WakeupSecondary();
+Cpu::WakeupSecondary();
 Scheduler::Begin();
 }
 
 VOID start_secondary()
 {
+Memory::InitializeSecondary();
 Interrupts::InitializeSecondary();
 Scheduler::Begin();
 }
