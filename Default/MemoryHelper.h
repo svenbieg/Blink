@@ -34,7 +34,7 @@ public:
 		return Memory::Allocate(Size);
 		}
 	static INT Compare(VOID const* Buffer1, VOID const* Buffer2, SIZE_T Size)noexcept;
-	template <class _value_t> static INT CompareT(_value_t const* Values1, _value_t const* Values2, SIZE_T Count)noexcept
+	template <class _value_t> static constexpr INT CompareT(_value_t const* Values1, _value_t const* Values2, SIZE_T Count)noexcept
 		{
 		for(SIZE_T u=0; u<Count; u++)
 			{
@@ -46,23 +46,23 @@ public:
 		return 0;
 		}
 	static VOID Copy(VOID* To, VOID const* From, SIZE_T Size)noexcept;
-	template <class _value_t> static inline VOID CopyT(_value_t* To, _value_t const* From, SIZE_T Count)noexcept
+	template <class _value_t> static constexpr inline VOID CopyT(_value_t* To, _value_t const* From, SIZE_T Count)noexcept
 		{
 		while(Count--)
 			*To++=*From++;
 		}
-	template <class _value_t> static inline VOID CopyT(_value_t* To, _value_t const* From, _value_t* End)noexcept
+	template <class _value_t> static constexpr inline VOID CopyT(_value_t* To, _value_t const* From, _value_t* End)noexcept
 		{
 		while(To<End)
 			*To++=*From++;
 		}
 	static VOID Fill(VOID* To, SIZE_T Size, BYTE Value)noexcept;
-	template <class _value_t> static inline VOID FillT(_value_t* To, SIZE_T Count, _value_t Value)noexcept
+	template <class _value_t> static constexpr inline VOID FillT(_value_t* To, SIZE_T Count, const _value_t Value)noexcept
 		{
 		while(Count--)
 			*To++=Value;
 		}
-	template <class _value_t> static inline VOID FillT(_value_t* To, _value_t* End, _value_t Value)noexcept
+	template <class _value_t> static constexpr inline VOID FillT(_value_t* To, _value_t* End, const _value_t Value)noexcept
 		{
 		while(To<End)
 			*To++=Value;
@@ -92,19 +92,19 @@ public:
 				*To++=*From++;
 			}
 		}
-	static inline VOID Zero(VOID* To, SIZE_T Size)noexcept
+	static constexpr inline VOID Zero(VOID* To, SIZE_T Size)noexcept
 		{
 		Fill(To, Size, 0);
 		}
-	template <class _value_t> static inline VOID ZeroT(_value_t* To)noexcept
+	template <class _value_t> static constexpr inline VOID ZeroT(_value_t* To)noexcept
 		{
 		*To=_value_t(0);
 		}
-	template <class _value_t> static inline VOID ZeroT(_value_t* To, SIZE_T Count)noexcept
+	template <class _value_t> static constexpr inline VOID ZeroT(_value_t* To, SIZE_T Count)noexcept
 		{
 		FillT<_value_t>(To, Count, _value_t(0));
 		}
-	template <class _value_t> static inline VOID ZeroT(_value_t* To, _value_t* End)noexcept
+	template <class _value_t> static constexpr inline VOID ZeroT(_value_t* To, _value_t* End)noexcept
 		{
 		FillT<_value_t>(To, End, _value_t(0));
 		}
@@ -117,6 +117,6 @@ public:
 
 struct COPY_T
 {
-COPY_T(SIZE_T Init) { MemoryHelper::FillT<SIZE_T>(Value, COPY_MAX, Init); }
+constexpr COPY_T(SIZE_T Init) { MemoryHelper::FillT<SIZE_T>(Value, COPY_MAX, Init); }
 SIZE_T Value[COPY_MAX];
 };
