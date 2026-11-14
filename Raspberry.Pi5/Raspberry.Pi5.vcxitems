@@ -54,6 +54,9 @@
     <None Include="$(MSBuildThisFileDirectory)Configuration\Platform.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.targets" />
     <None Include="$(MSBuildThisFileDirectory)Devices\Wifi\firmware.S" />
+    <None Include="$(MSBuildThisFileDirectory)cpu.inc.S" />
+    <None Include="$(MSBuildThisFileDirectory)init.S" />
+    <None Include="$(MSBuildThisFileDirectory)linker.ld.in" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="$(MSBuildThisFileDirectory)Devices\Wifi\cyfmac43455-sdio.txt" />

@@ -153,6 +153,9 @@
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props">
       <Filter>Configuration</Filter>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)cpu.inc.S" />
+    <None Include="$(MSBuildThisFileDirectory)init.S" />
+    <None Include="$(MSBuildThisFileDirectory)linker.ld.in" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="$(MSBuildThisFileDirectory)Devices\Wifi\cyfmac43455-sdio.txt">

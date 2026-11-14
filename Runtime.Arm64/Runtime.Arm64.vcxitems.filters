@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)cpu.inc.S" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IntelliSense.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Platform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.h">
@@ -22,10 +21,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)except.S" />
-    <None Include="$(MSBuildThisFileDirectory)init.S" />
     <None Include="$(MSBuildThisFileDirectory)irq.S" />
-    <None Include="$(MSBuildThisFileDirectory)linker.ld.in" />
-    <None Include="$(MSBuildThisFileDirectory)mmu.S" />
     <None Include="$(MSBuildThisFileDirectory)task.S" />
     <None Include="$(MSBuildThisFileDirectory)vectors.S" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props">
