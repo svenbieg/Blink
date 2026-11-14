@@ -14,7 +14,7 @@
 
 using namespace Devices::Timers;
 
-extern "C" VOID init();
+extern "C" VOID init_secondary();
 
 
 //===========
@@ -86,7 +86,7 @@ VOID Cpu::PowerOn(UINT core)
 const UINT64 PSCI_CPU_ON=0xC4000003;
 register UINT64 x0 asm("x0")=PSCI_CPU_ON;
 register UINT64 x1 asm("x1")=(core<<8);
-register UINT64 x2 asm("x2")=(SIZE_T)&init;
+register UINT64 x2 asm("x2")=(SIZE_T)&init_secondary;
 register UINT64 x3 asm("x3")=0;
 __asm volatile("\
 dsb sy\n\

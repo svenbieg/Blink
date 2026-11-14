@@ -34,7 +34,7 @@ VOID start()
 Memory::Initialize();
 Interrupts::Initialize();
 Scheduler::Initialize();
-Cpu::WakeupSecondary();
+//Cpu::WakeupSecondary();
 Scheduler::Begin();
 }
 
