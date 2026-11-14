@@ -23,7 +23,7 @@ b \label
 
 
 //=======================
-// Exception Vectors EL2
+// Exception-Vectors EL2
 //=======================
 
 .align 11
@@ -51,7 +51,7 @@ ventry invalid_handler
 
 
 //=======================
-// Exception Vectors EL1
+// Exception-Vectors EL1
 //=======================
 
 .align 11
@@ -79,7 +79,7 @@ ventry invalid_handler
 
 
 //====================
-// Exception Handlers
+// Exception-Handlers
 //====================
 
 sync_handler:
