@@ -59,22 +59,19 @@ return cnt_pct*MHZ/FREQ_HZ;
 
 VOID SystemTimer::HandleInterrupt()
 {
-SpinLock lock(s_CriticalSection);
+__asm inline volatile("msr CNTP_TVAL_EL0, %0":: "r" (PERIOD));
 s_Signal.Trigger();
 }
 
 VOID SystemTimer::ServiceTask()
 {
 Interrupts::SetHandler(Irq::SystemTimer, HandleInterrupt);
-auto task=Task::Get();
-SpinLock lock(s_CriticalSection);
 __asm inline volatile("msr CNTP_TVAL_EL0, %0":: "r" (PERIOD));
 __asm inline volatile("msr CNTP_CTL_EL0, %0":: "r" (1UL));
-while(!task->Cancelled)
+while(1)
 	{
-	s_Signal.Wait(lock);
+	s_Signal.Wait();
 	Scheduler::Schedule();
-	__asm inline volatile("msr CNTP_TVAL_EL0, %0":: "r" (PERIOD));
 	}
 }
 
@@ -83,7 +80,6 @@ VOID SystemTimer::Start()
 s_ServiceTask=ServiceTask::Create(ServiceTask, "systimer", 1024);
 }
 
-CriticalSection SystemTimer::s_CriticalSection;
 Handle<Task> SystemTimer::s_ServiceTask;
 Signal SystemTimer::s_Signal;
 
