@@ -21,11 +21,24 @@
 init:
 
 
+//===================
+// Exception Level 2
+//===================
+
+_check_el1:
+#define EL1 0x4
+#define EL2 0x8
+#define EL3 0xC
+mrs x0, CurrentEL
+cmp x0, #EL1
+beq _init_exceptions_el1
+
+
 //=======
 // Timer
 //=======
 
-_init_timer:
+_init_timer_el2:
 #define CNTHCTL_EL1PCEN (1<<1)
 #define CNTHCTL_EL1PCTEN (1<<0)
 mov x0, #(CNTHCTL_EL1PCEN|CNTHCTL_EL1PCTEN) // Enable EL1 access
@@ -52,17 +65,6 @@ adr x0, 1f
 msr ELR_EL2, x0
 eret
 1:
-b _init_exceptions_el1
-
-
-//===========
-// Secondary
-//===========
-
-.globl init_secondary
-init_secondary:
-wfe
-b init_secondary
 
 
 //============
@@ -101,23 +103,9 @@ mov sp, x2
 // Start
 //=======
 
-_start_cpp:
+_start:
 cpu_id x0
-cbz x0, 1f
-bl start_secondary
-b _shutdown
-1:
-bl start
-
-
-//==========
-// Shutdown
-//==========
-
-_shutdown:
-#define PSCI_SHUTDOWN 0xC4000008
-ldr x0, =PSCI_SHUTDOWN
-smc #0
-1:
-wfe
-b 1b
+cbnz x0, _start_secondary
+b start
+_start_secondary:
+b start_secondary
