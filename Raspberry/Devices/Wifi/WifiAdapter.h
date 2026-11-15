@@ -46,7 +46,6 @@ public:
 
 	// Using
 	using DispatchedQueue=Concurrency::DispatchedQueue;
-	using MAC_ADDR=Network::Ethernet::MAC_ADDR;
 	using Mutex=Concurrency::Mutex;
 	using Signal=Concurrency::Signal;
 	using Task=Concurrency::Task;

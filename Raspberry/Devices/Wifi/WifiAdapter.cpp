@@ -15,7 +15,6 @@
 
 using namespace Concurrency;
 using namespace Devices::System;
-using namespace Network::Ethernet;
 
 extern BYTE wifi_config[];
 extern UINT wifi_config_size;
@@ -347,7 +346,7 @@ if(frame_offset>=size)
 	return nullptr;
 pos=frame_offset;
 auto frame=(WIFI_EVENT_FRAME*)&buf[pos];
-if(frame->Ethernet.Protocol!=EthernetProtocol::Brcm)
+if(frame->EtherType!=ETHERTYPE_BRCM)
 	return nullptr;
 auto oui=frame->Broadcom.Oui;
 UINT bcm_id=TypeHelper::MakeLong(oui[0], oui[1], oui[2], 0);

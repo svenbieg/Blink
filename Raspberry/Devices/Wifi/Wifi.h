@@ -11,7 +11,6 @@
 
 #include "Devices/Sdio/Sdio.h"
 #include "Devices/Wifi/WifiConfig.h"
-#include "Network/Ethernet/Ethernet.h"
 #include <array>
 
 
@@ -276,10 +275,14 @@ BYTE BssConfigIndex;
 
 typedef struct
 {
-Network::Ethernet::ETHERNET_HEADER Ethernet;
+BYTE MacSender[6];
+BYTE MacReceiver[6];
+WORD EtherType;
 WIFI_EVENT_HEADER Broadcom;
 WIFI_EVENT_MESSAGE Event;
 }WIFI_EVENT_FRAME;
+
+const WORD ETHERTYPE_BRCM=0x886C;
 
 
 //=========
