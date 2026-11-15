@@ -55,14 +55,12 @@ enum class TaskFlags: UINT
 {
 None=0,
 Active=(1<<0),
-Cancel=(1<<1),
-Creator=(1<<2),
-Idle=(1<<3),
-Priority=(1<<4),
-Release=(1<<5),
-Sharing=(1<<6),
-Suspend=(1<<7),
-Timeout=(1<<8)
+Creator=(1<<1),
+Idle=(1<<2),
+Priority=(1<<3),
+Release=(1<<4),
+Sharing=(1<<5),
+Suspend=(1<<6)
 };
 
 
@@ -88,16 +86,16 @@ public:
 
 	// Con-/Destructors
 	~Task()noexcept;
-	static Handle<Task> Create(VOID (*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=PAGE_SIZE);
-	template <class _owner_t> static Handle<Task> Create(_owner_t* Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=PAGE_SIZE);
-	template <class _owner_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=PAGE_SIZE);
-	template <class _owner_t, class _lambda_t> static Handle<Task> Create(_owner_t* Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=PAGE_SIZE);
-	template <class _owner_t, class _lambda_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=PAGE_SIZE);
-	template <class _lambda_t> static Handle<Task> Create(nullptr_t Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=PAGE_SIZE);
+	static Handle<Task> Create(VOID (*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=STACK_SIZE);
+	template <class _owner_t> static Handle<Task> Create(_owner_t* Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=STACK_SIZE);
+	template <class _owner_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=STACK_SIZE);
+	template <class _owner_t, class _lambda_t> static Handle<Task> Create(_owner_t* Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=STACK_SIZE);
+	template <class _owner_t, class _lambda_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=STACK_SIZE);
+	template <class _lambda_t> static Handle<Task> Create(nullptr_t Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=STACK_SIZE);
 
 	// Common
 	VOID Cancel()noexcept;
-	volatile const BOOL Cancelled;
+	BOOL Cancelled();
 	static Handle<Task> Get()noexcept;
 	inline Handle<String> GetName()const noexcept { return m_Name; }
 	inline Status GetStatus()const noexcept { return m_Status; }
@@ -144,25 +142,22 @@ public:
 
 protected:
 	// Using
-	static constexpr UINT PAGE_SIZE=MemoryHelper::PAGE_SIZE;
+	static constexpr UINT STACK_SIZE=512*sizeof(SIZE_T);
 	static constexpr UINT STACK_HEADER=0xABCDEF;
 	template <class _item_t> using FwdLink=Collections::FwdLink<_item_t>;
 	template <class _item_t> using Link=Collections::Link<_item_t>;
 
 	// Con-/Destructors
 	Task(BYTE* Stack, SIZE_T StackSize, Handle<String>&& Name)noexcept;
-	static Handle<Task> CreateInternal(VOID (*Procedure)(), Handle<String> Name, SIZE_T StackSize=PAGE_SIZE);
-
-	// Cancellation
-	class Cancellation {};
+	static Handle<Task> CreateInternal(VOID (*Procedure)(), Handle<String> Name, SIZE_T StackSize=STACK_SIZE);
 
 	// Common
 	static bool Priority(Task* First, Task* Second)noexcept;
 	virtual VOID Run()=0;
 	static VOID Schedule(Task* Task)noexcept;
 	static VOID TaskProc(VOID* Parameter);
-	static VOID ThrowIfCancelled(Task* Task);
-	static VOID ThrowIfCancelled(Task* Task, SpinLock& SchedulerLock);
+	static VOID ThrowIfFailed(Task* Task);
+	static VOID ThrowIfFailed(Task* Task, SpinLock& SchedulerLock);
 	Link<Task> m_All;
 	Link<Task> m_Create;
 	Task* m_Creator;
