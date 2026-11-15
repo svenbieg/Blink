@@ -38,6 +38,7 @@
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Debug.cfg" />
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Debug.targets" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Platform.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.targets" />
     <None Include="$(MSBuildThisFileDirectory)dcp_canned.inc.S" />

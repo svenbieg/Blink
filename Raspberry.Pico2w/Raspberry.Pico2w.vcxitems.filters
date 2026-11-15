@@ -93,6 +93,9 @@
       <Filter>Devices\Wifi</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)long.S" />
+    <None Include="$(MSBuildThisFileDirectory)Configuration\Debug.targets">
+      <Filter>Configuration</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)start.cpp" />

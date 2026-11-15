@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="VsCodeDebugSetup" DependsOnTargets="VsCodeSetup">
+    <ItemGroup>
+      <LaunchLines Include="{" />
+      <LaunchLines Include="%22version%22: %220.2.0%22," />
+      <LaunchLines Include="%22configurations%22: [" />
+      <LaunchLines Include="%09{" />
+      <LaunchLines Include="%09%22configFiles%22: [ %22${workspaceRoot}/.vscode/openocd.cfg%22 ]," />
+      <LaunchLines Include="%09%22cwd%22: %22${workspaceRoot}%22," />
+      <LaunchLines Include="%09%22executable%22: %22$(ElfFile)%22," />
+      <LaunchLines Include="%09%22name%22: %22Debug $(Platform)%22," />
+      <LaunchLines Include="%09%22overrideLaunchCommands%22: [%22monitor halt%22, %22load%22, %22set $pc=init%22]," />
+      <LaunchLines Include="%09%22overrideResetCommands%22: [%22monitor halt%22, %22load%22, %22set $pc=init%22]," />
+      <LaunchLines Include="%09%22overrideRestartCommands%22: [%22monitor halt%22, %22load%22, %22set $pc=init%22]," />
+      <LaunchLines Include="%09%22request%22: %22launch%22," />
+      <LaunchLines Include="%09%22runToEntryPoint%22: %22start%22," />
+      <LaunchLines Include="%09%22serverArgs%22: [ %22-s%22, %22$(OpenOcdSearchPath)%22 ]," />
+      <LaunchLines Include="%09%22servertype%22: %22openocd%22," />
+      <LaunchLines Include="%09%22showDevDebugOutput%22: %22none%22," />
+      <LaunchLines Include="%09%22type%22: %22cortex-debug%22" />
+      <LaunchLines Include="%09}]" />
+      <LaunchLines Include="}" />
+    </ItemGroup>
+    <WriteLinesToFile File="$(SolutionDir)\.vscode\launch.json" Lines="@(LaunchLines)" Overwrite="true" />
+  </Target>
+
+</Project>
