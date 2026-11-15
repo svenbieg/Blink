@@ -2,13 +2,6 @@
 // cpu.inc.S
 //===========
 
-#pragma once
-
-
-//=======
-// Using
-//=======
-
 #include "Devices/Peripherals.h"
 
 
