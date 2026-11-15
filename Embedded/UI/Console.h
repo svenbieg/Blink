@@ -74,6 +74,7 @@ public:
 		auto str=String::Create(Format, Arguments...);
 		Print(str);
 		}
+	VOID RemoveCommand(Handle<String> Command);
 	VOID TaskInfo();
 
 	// Output-Stream

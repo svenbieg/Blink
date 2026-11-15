@@ -74,6 +74,12 @@ writer.Print(text);
 writer.Flush();
 }
 
+VOID Console::RemoveCommand(Handle<String> cmd)
+{
+WriteLock lock(m_Mutex);
+m_Commands.remove(cmd);
+}
+
 VOID Console::TaskInfo()
 {
 WriteLock lock(m_Mutex);
@@ -129,7 +135,7 @@ Console::Console():
 m_This(this)
 {
 m_SerialPort=SerialPort::Create();
-m_ServiceTask=Task::Create(this, &Console::ServiceTask, "console", 2048);
+m_ServiceTask=Task::Create(this, &Console::ServiceTask, "console");
 AddCommand("tasks", this, &Console::TaskInfo);
 }
 
@@ -157,8 +163,7 @@ else
 VOID Console::ServiceTask()
 {
 StreamReader reader(m_SerialPort);
-auto task=Task::Get();
-while(!task->Cancelled)
+while(1)
 	{
 	TCHAR c=0;
 	reader.ReadChar(&c);
