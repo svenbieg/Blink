@@ -328,9 +328,8 @@ PollRegister(SPI_STATUS, SPI_STATUS_F2_RX_READY, SPI_STATUS_F2_RX_READY);
 m_GpioHost->SetPinMode(PIN_DATA, GpioPinMode::Input, GpioPullMode::PullDown);
 m_GpioHost->SetInterruptHandler(PIN_DATA, this, &WifiSdio::HandleInterrupt, GpioIrqMode::None);
 lock.Unlock();
-auto task=Task::Get();
 SpinLock spin_lock(m_CriticalSection);
-while(!task->Cancelled)
+while(1)
 	{
 	m_GpioHost->EnableInterrupt(PIN_DATA, GpioIrqMode::High);
 	m_InterruptPending.Wait(spin_lock);

@@ -310,10 +310,9 @@ WriteRegister(CCCR_INT_EN, FN2_BIT|FN1_BIT|FN0_BIT);
 SetRegister(CCCR_IOENABLE, FN2_BIT);
 PollRegister(CCCR_IOREADY, FN2_BIT, FN2_BIT);
 lock.Unlock();
-auto task=Task::Get();
 SpinLock spin_lock(m_CriticalSection);
 IoHelper::Set(m_Device->IRQ_MASK, IRQF_CARD);
-while(!task->Cancelled)
+while(1)
 	{
 	IoHelper::Set(m_Device->IRQ_EN, IRQF_CARD);
 	m_CardIrq.Wait(spin_lock);

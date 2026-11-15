@@ -89,8 +89,7 @@ UINT time=timer->TIMERAWL;
 timer->ALARM[0]=time+10*TICKS_MS;
 IoHelper::Set(timer->INTR, 1);
 IoHelper::Set(timer->INTE, 1);
-auto task=Task::Get();
-while(!task->Cancelled)
+while(1)
 	{
 	s_Signal.Wait();
 	Scheduler::Schedule();

@@ -248,9 +248,8 @@ BitHelper::Set(ifls, IFLS_TXIFSEL, IFLS_IFSEL_1_4);
 IoHelper::Write(uart->IFLS, ifls);
 IoHelper::Write(uart->IMSC, IMSC_INT_OE|IMSC_INT_RT|IMSC_INT_TX|IMSC_INT_RX);
 IoHelper::Set(uart->CTRL, CTRL_RX_ENABLE|CTRL_TX_ENABLE|CTRL_ENABLE);
-auto task=Task::Get();
 SpinLock lock(m_CriticalSection);
-while(!task->Cancelled)
+while(1)
 	{
 	if(m_InputBuffer->Available())
 		m_InputSignal.Trigger();

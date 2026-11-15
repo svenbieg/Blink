@@ -88,8 +88,7 @@ m_ServiceTask=ServiceTask::Create(this, &StatusLed::ServiceTask, "status_led", 1
 
 VOID StatusLed::BlinkTask()
 {
-auto task=Task::Get();
-while(!task->Cancelled)
+while(1)
 	{
 	Task::Sleep(m_Period);
 	m_On=!m_On;
@@ -104,8 +103,7 @@ UINT mask=(1<<0);
 UINT buf[2];
 buf[0]=mask;
 WriteLock lock(m_Mutex);
-auto task=Task::Get();
-while(!task->Cancelled)
+while(1)
 	{
 	buf[1]=m_On? mask: 0;
 	m_Wifi->SetVariable("gpioout", buf, 2*sizeof(UINT));

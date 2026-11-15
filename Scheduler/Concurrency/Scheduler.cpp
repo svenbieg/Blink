@@ -84,10 +84,9 @@ VOID Scheduler::CancelTask(Task* task)noexcept
 {
 assert(task!=s_MainTask);
 SpinLock lock(s_CriticalSection);
-if(task->Cancelled)
+if(StatusHelper::Failed(task->m_Status))
 	return;
-*const_cast<volatile BOOL*>(&task->Cancelled)=true;
-FlagHelper::Set(task->m_Flags, TaskFlags::Cancel);
+task->m_Status=Status::Aborted;
 BOOL resume=false;
 if(task->m_ResumeTime)
 	{
@@ -179,8 +178,8 @@ if(sleeping)
 			break;
 		auto next=s_Sleeping.Remove(sleeping);
 		FlagHelper::Clear(sleeping->m_Flags, TaskFlags::Suspend);
-		FlagHelper::Set(sleeping->m_Flags, TaskFlags::Timeout);
 		sleeping->m_ResumeTime=0;
+		sleeping->m_Status=Status::Timeout;
 		auto owner=sleeping->m_Owner;
 		if(owner)
 			{
@@ -238,10 +237,12 @@ UINT64 resume_time=SystemTimer::GetTickCount()+ms;
 SpinLock lock(s_CriticalSection);
 UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
-Task::ThrowIfCancelled(current, lock);
+Task::ThrowIfFailed(current, lock);
 Suspend(core, current, resume_time);
 lock.Unlock();
-Task::ThrowIfCancelled(current);
+if(current->m_Status==Status::Timeout)
+	current->m_Status=Status::Success;
+Task::ThrowIfFailed(current);
 }
 
 

@@ -17,6 +17,7 @@
 #include "Concurrency/DispatchedQueue.h"
 #include "Concurrency/Scheduler.h"
 #include "Concurrency/TaskHelper.h"
+#include "StatusHelper.h"
 
 
 //===========
@@ -56,6 +57,12 @@ VOID Task::Cancel()noexcept
 Scheduler::CancelTask(this);
 }
 
+BOOL Task::Cancelled()
+{
+SpinLock lock(Scheduler::s_CriticalSection);
+return StatusHelper::Failed(m_Status);
+}
+
 Handle<Task> Task::Get()noexcept
 {
 return Scheduler::GetCurrentTask();
@@ -79,7 +86,6 @@ Scheduler::SuspendCurrentTask(ms);
 //============================
 
 Task::Task(BYTE* stack, SIZE_T stack_size, Handle<String>&& name)noexcept:
-Cancelled(false),
 Name(name->Begin()),
 m_Creator(nullptr),
 m_Exception(nullptr),
@@ -130,12 +136,7 @@ Status status=Status::Success;
 try
 	{
 	task->Run();
-	if(task->Cancelled)
-		status=Status::Aborted;
-	}
-catch(Cancellation)
-	{
-	status=Status::Aborted;
+	status=task->m_Status;
 	}
 catch(Exception e)
 	{
@@ -157,22 +158,24 @@ if(task->m_Then)
 Scheduler::ExitTask(status);
 }
 
-VOID Task::ThrowIfCancelled(Task* task)
+VOID Task::ThrowIfFailed(Task* task)
 {
-if(FlagHelper::Get(task->m_Flags, TaskFlags::Cancel))
+auto status=task->m_Status;
+if(StatusHelper::Failed(status))
 	{
-	FlagHelper::Clear(task->m_Flags, TaskFlags::Cancel);
-	throw Cancellation();
+	task->m_Status=Status::Success;
+	StatusHelper::ThrowIfFailed(status);
 	}
 }
 
-VOID Task::ThrowIfCancelled(Task* task, SpinLock& sched_lock)
+VOID Task::ThrowIfFailed(Task* task, SpinLock& sched_lock)
 {
-if(FlagHelper::Get(task->m_Flags, TaskFlags::Cancel))
+auto status=task->m_Status;
+if(StatusHelper::Failed(status))
 	{
-	FlagHelper::Clear(task->m_Flags, TaskFlags::Cancel);
+	task->m_Status=Status::Success;
 	sched_lock.Unlock();
-	throw Cancellation();
+	StatusHelper::ThrowIfFailed(status);
 	}
 }
 
