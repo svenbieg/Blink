@@ -25,6 +25,6 @@
 
   <Target Name="Rebuild" DependsOnTargets="Clean;Build" />
 
-  <Target Name="NinjaBuild" DependsOnTargets="VsCodeSetup;NinjaCompile" />
+  <Target Name="NinjaBuild" DependsOnTargets="VsCodeDebugSetup;NinjaCompile" />
 
 </Project>

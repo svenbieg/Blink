@@ -60,25 +60,6 @@
     </ItemGroup>
     <WriteLinesToFile File="$(SolutionDir)\.vscode\c_cpp_properties.json" Lines="@(CppPropLines)" Overwrite="true" />
     <ItemGroup>
-      <LaunchLines Include="{" />
-      <LaunchLines Include="%22version%22: %220.2.0%22," />
-      <LaunchLines Include="%22configurations%22: [" />
-      <LaunchLines Include="%09{" />
-      <LaunchLines Include="%09%22cwd%22: %22${workspaceRoot}%22," />
-      <LaunchLines Include="%09%22executable%22: %22$(ElfFile)%22," />
-      <LaunchLines Include="%09%22name%22: %22Debug $(Platform)%22," />
-      <LaunchLines Include="%09%22request%22: %22launch%22," />
-      <LaunchLines Include="%09%22type%22: %22cortex-debug%22," />
-      <LaunchLines Include="%09%22servertype%22: %22openocd%22," />
-      <LaunchLines Include="%09%22serverArgs%22: [ %22-s%22, %22$(OpenOcdSearchPath)%22 ]," />
-      <LaunchLines Include="%09%22configFiles%22: [ %22${workspaceRoot}/.vscode/openocd.cfg%22 ]," />
-      <LaunchLines Include="%09%22runToEntryPoint%22: %22start%22," />
-      <LaunchLines Include="%09%22showDevDebugOutput%22: %22none%22" />
-      <LaunchLines Include="%09}]" />
-      <LaunchLines Include="}" />
-    </ItemGroup>
-    <WriteLinesToFile File="$(SolutionDir)\.vscode\launch.json" Lines="@(LaunchLines)" Overwrite="true" />
-    <ItemGroup>
       <SettingsLines Include="{" />
       <SettingsLines Include="%22cortex-debug.openocdPath%22: %22$(OpenOcdExePath)%22," />
       <SettingsLines Include="%22cortex-debug.gdbPath%22: %22$(GdbExe)%22," />
