@@ -74,8 +74,7 @@ GpioHelper::DigitalWrite(GpioArmPin::ActivityLed, false);
 
 VOID StatusLed::BlinkTask()
 {
-auto task=Task::Get();
-while(!task->Cancelled)
+while(1)
 	{
 	Task::Sleep(m_Period);
 	Set(!m_On);
