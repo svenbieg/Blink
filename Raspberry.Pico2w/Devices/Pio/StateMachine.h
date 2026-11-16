@@ -71,6 +71,9 @@ public:
 	using Mutex=Concurrency::Mutex;
 	using ResetDevice=Devices::System::ResetDevice;
 
+	// Friends
+	friend Object;
+
 	// Con-/Destructors
 	~StateMachine();
 	static Handle<StateMachine> Create(PIO_PROGRAM const& Program);

@@ -15,7 +15,6 @@
 #include "Storage/Encoding/Dwarf.h"
 #include "MemoryHelper.h"
 #include "StringBuilder.h"
-#include <new>
 
 using namespace Storage::Encoding;
 using namespace Storage::Streams;

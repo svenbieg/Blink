@@ -35,9 +35,15 @@ public:
 	using Signal=Concurrency::Signal;
 	using SpinLock=Concurrency::SpinLock;
 
+	// Friends
+	friend Object;
+
 	// Con-/Destructors
 	~EmmcHost();
-	static inline Handle<EmmcHost> Create(SIZE_T Address, Irq Irq) { return new EmmcHost(Address, Irq); }
+	static inline Handle<EmmcHost> Create(SIZE_T Address, Irq Irq)
+		{
+		return Object::Create<EmmcHost>(Address, Irq);
+		}
 
 	// Common
 	UINT Command(EmmcCmd Command, UINT Argument=0);

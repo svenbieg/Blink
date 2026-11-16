@@ -65,7 +65,7 @@ for(INT pio_id=PIO_COUNT-1; pio_id>=0; pio_id--)
 		UploadProgram(pio_id, offset, program);
 		g_InstructionsUsed[pio_id]|=used_mask;
 		UINT sm=GetStateMachine(pio_id);
-		return new StateMachine(pio_id, sm, used_mask);
+		return Object::Create<StateMachine>(pio_id, sm, used_mask);
 		}
 	}
 throw DeviceNotReadyException();
