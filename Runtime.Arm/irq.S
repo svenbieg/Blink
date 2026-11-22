@@ -45,8 +45,7 @@ isr_stub isr_invalid
 .thumb_func
 isr_irq\irq_num:
 mov r0, #\irq_num
-ldr r1, =irq_handler
-bx r1
+b irq_handler
 .endm
 
 .set irq_num, 0
