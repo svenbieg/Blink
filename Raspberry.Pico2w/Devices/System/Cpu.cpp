@@ -36,21 +36,22 @@ namespace Devices {
 // Common
 //========
 
-BOOL Cpu::CompareAndSet(volatile UINT* value_ptr, UINT cmp, UINT set)noexcept
+BOOL Cpu::CompareAndSet(volatile UINT* value_ptr, UINT cmp, UINT set) noexcept
 {
-UINT read=0;
-UINT result=1;
-__asm inline volatile("\
-ldaex %4, [%1]\n\
-cmp %4, %2\n\
-bne failed%=\n\
-stlex %0, %3, [%1]\n\
-b done%=\n\
-failed%=:\n\
-clrex\n\
-done%=:\n\
-": "+&r" (result): "r" (value_ptr), "r" (cmp), "r" (set), "r" (read): "cc", "memory");
-return result==0;
+auto sio=(SIO_REGS*)SIO_BASE;
+SIZE_T addr=(SIZE_T)value_ptr;
+UINT lock=(UINT)(addr%32);
+while(IoHelper::Read(sio->SPINLOCK[lock])==0);
+DataMemoryBarrier();
+BOOL success=false;
+if(*value_ptr==cmp)
+	{
+	*value_ptr=set;
+	success=true;
+	}
+DataMemoryBarrier();
+IoHelper::Write(sio->SPINLOCK[lock], 1);
+return success;
 }
 
 VOID Cpu::Delay(UINT cycles)noexcept
@@ -70,31 +71,31 @@ return sio->CPUID;
 
 UINT Cpu::InterlockedDecrement(volatile UINT* value_ptr)noexcept
 {
-UINT value=0;
-UINT result=0;
-__asm inline volatile("\
-%=:\n\
-ldaex %0, [%2]\n\
-sub %0, %0, #1\n\
-stlex %1, %0, [%2]\n\
-cmp %1, #0\n\
-bne %=b\n\
-": "=&r" (value), "=&r" (result): "r" (value_ptr): "cc", "memory");
+auto sio=(SIO_REGS*)SIO_BASE;
+SIZE_T addr=(SIZE_T)value_ptr;
+UINT lock=(UINT)(addr%32);
+while(IoHelper::Read(sio->SPINLOCK[lock])==0);
+DataMemoryBarrier();
+UINT value=*value_ptr;
+value--;
+*value_ptr=value;
+DataMemoryBarrier();
+IoHelper::Write(sio->SPINLOCK[lock], 1);
 return value;
 }
 
 UINT Cpu::InterlockedIncrement(volatile UINT* value_ptr)noexcept
 {
-UINT value=0;
-UINT result=0;
-__asm inline volatile("\
-%=:\n\
-ldaex %0, [%2]\n\
-add %0, %0, #1\n\
-stlex %1, %0, [%2]\n\
-cmp %1, #0\n\
-bne %=b\n\
-": "=&r" (value), "=&r" (result): "r" (value_ptr): "cc", "memory");
+auto sio=(SIO_REGS*)SIO_BASE;
+SIZE_T addr=(SIZE_T)value_ptr;
+UINT lock=(UINT)(addr%32);
+while(IoHelper::Read(sio->SPINLOCK[lock])==0);
+DataMemoryBarrier();
+UINT value=*value_ptr;
+value++;
+*value_ptr=value;
+DataMemoryBarrier();
+IoHelper::Write(sio->SPINLOCK[lock], 1);
 return value;
 }
 

@@ -20,6 +20,13 @@ namespace Devices {
 	namespace System {
 
 
+//======================
+// Forward-Declarations
+//======================
+
+class Interrupts;
+
+
 //=====
 // Cpu
 //=====
@@ -27,6 +34,9 @@ namespace Devices {
 class Cpu
 {
 public:
+	// Friends
+	friend Interrupts;
+
 	// Settings
 	static const UINT CPU_COUNT=2;
 
@@ -57,14 +67,6 @@ public:
 		__asm inline volatile("dsb sy"::: "memory");
 		}
 	static VOID Delay(UINT Cycles)noexcept;
-	static __force_inline VOID DisableInterrupts()noexcept
-		{
-		__asm inline volatile("cpsid i"::: "memory");
-		}
-	static __force_inline VOID EnableInterrupts()noexcept
-		{
-		__asm inline volatile("cpsie i"::: "memory");
-		}
 	static UINT GetId()noexcept;
 	static __force_inline VOID InstructionSyncBarrier()noexcept
 		{
@@ -95,6 +97,16 @@ public:
 	static VOID WakeupSecondary();
 
 private:
+	// Common
+	static __force_inline VOID DisableInterrupts()noexcept
+		{
+		__asm inline volatile("cpsid i\nisb"::: "memory");
+		}
+	static __force_inline VOID EnableInterrupts()noexcept
+		{
+		__asm inline volatile("cpsie i\nisb"::: "memory");
+		}
+
 	// Supension
 	enum class Suspension
 		{
