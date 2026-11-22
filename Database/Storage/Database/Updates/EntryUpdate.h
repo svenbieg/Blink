@@ -62,8 +62,8 @@ protected:
 	static EntryUpdate** AppendUpdate(Entry* Entry);
 	static EntryUpdate** GetNext(EntryUpdate* Update);
 	static EntryUpdate** GetUpdate(Entry* Entry);
-	EntryUpdate* m_Next;
 	Entry* m_Entry;
+	EntryUpdate* m_Next;
 };
 
 }}}

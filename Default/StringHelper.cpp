@@ -1473,7 +1473,6 @@ return pos;
 template <std::character _str_t>
 _str_t const* StringTruncate(_str_t const* str, LPCSTR chars)
 {
-UINT len=StringHelper::Length(chars);
 while(*str)
 	{
 	bool trunc=false;

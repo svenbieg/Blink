@@ -39,7 +39,6 @@ UINT TaskMonitor::GetTaskInfo(TASK_INFO* info, UINT count)
 if(!info||!count)
 	throw InvalidArgumentException();
 SpinLock lock(Scheduler::s_CriticalSection);
-UINT64 time=SystemTimer::Microseconds();
 for(UINT core=0; core<Scheduler::CPU_COUNT; core++)
 	{
 	if(!s_Current[core])

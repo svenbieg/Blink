@@ -204,6 +204,10 @@ switch(irq)
 			}
 		break;
 		}
+	default:
+		{
+		throw InvalidArgumentException();
+		}
 	}
 }
 
@@ -240,6 +244,10 @@ if(MailBox::TryRead(&cmd))
 			{
 			auto scb=(SCB_REGS*)SCB_BASE;
 			IoHelper::Set(scb->ICSR, ICSR_PENDSVSET);
+			break;
+			}
+		default:
+			{
 			break;
 			}
 		}

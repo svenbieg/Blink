@@ -53,6 +53,7 @@ SECTIONS
 	{
 	. = ALIGN(8);
 	__data_start = .;
+	*(.text.isr .text.isr.*)
 	*(.data .data.*)
 	. = ALIGN(8);
 	__data_end = .;

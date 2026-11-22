@@ -48,7 +48,6 @@ public:
 	static VOID Initialize();
 	static VOID InitializeSecondary();
 	static VOID* Uncached(VOID* Buffer);
-	template <class _buf_t> inline static _buf_t* Uncached(_buf_t* Buffer) { return (_buf_t*)Uncached(Buffer); }
 
 private:
 	// Common

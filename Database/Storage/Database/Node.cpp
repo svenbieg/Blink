@@ -66,7 +66,7 @@ for(UINT pos=0; pos<child_count; pos++)
 	editor->Free(child->m_Id);
 	}
 m_Value=nullptr;
-if(m_Id!=-1)
+if(m_Id!=ENTRY_ID_INVALID)
 	NodeUpdateClear::Create(this);
 Invalidate(editor);
 return true;
@@ -156,7 +156,7 @@ BOOL Node::RemoveAttribute(Editor* editor, Handle<String> key)
 WriteLock lock(m_Mutex);
 if(!m_Attributes.remove(key))
 	return false;
-if(m_Id!=-1)
+if(m_Id!=ENTRY_ID_INVALID)
 	NodeUpdateAttributeRemove::Create(this, key);
 Invalidate(editor);
 return true;
@@ -174,7 +174,7 @@ VOID Node::RemoveChild(Editor* editor, Handle<Node> child)
 WriteLock lock(m_Mutex);
 if(!m_Children.remove(child))
 	throw NotFoundException();
-if(m_Id!=-1)
+if(m_Id!=ENTRY_ID_INVALID)
 	NodeUpdateChildRemove::Create(this, child);
 Invalidate(editor);
 }
@@ -193,7 +193,7 @@ BOOL Node::SetAttribute(Editor* editor, Handle<String> key, Handle<String> value
 WriteLock lock(m_Mutex);
 if(!m_Attributes.set(key, value))
 	return false;
-if(m_Id!=-1)
+if(m_Id!=ENTRY_ID_INVALID)
 	NodeUpdateAttributeSet::Create(this, key, value);
 Invalidate(editor);
 return true;
@@ -214,7 +214,7 @@ WriteLock lock(m_Mutex);
 if(m_Tag==tag)
 	return false;
 m_Tag=tag;
-if(m_Id!=-1)
+if(m_Id!=ENTRY_ID_INVALID)
 	NodeUpdateTagSet::Create(this, tag);
 Invalidate(editor);
 return true;
@@ -235,7 +235,7 @@ WriteLock lock(m_Mutex);
 if(m_Value==value)
 	return false;
 m_Value=value;
-if(m_Id!=-1)
+if(m_Id!=ENTRY_ID_INVALID)
 	NodeUpdateValueSet::Create(this, value);
 Invalidate(editor);
 return true;
@@ -279,12 +279,12 @@ m_Size=block->GetPosition();
 }
 
 Node::Node(Database* database, Handle<String> tag):
-Entry(database, -1, NODE_TYPE),
+Entry(database, ENTRY_ID_INVALID, NODE_TYPE),
 m_Tag(tag)
 {}
 
 Node::Node(Node* parent, Handle<String> tag):
-Entry(parent->m_Database, -1, NODE_TYPE),
+Entry(parent->m_Database, ENTRY_ID_INVALID, NODE_TYPE),
 m_Tag(tag)
 {
 throw NotImplementedException();

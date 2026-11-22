@@ -47,6 +47,10 @@ switch(create)
 			throw NotFoundException();
 		break;
 		}
+	default:
+		{
+		break;
+		}
 	}
 switch(create)
 	{

@@ -61,6 +61,7 @@ public:
 	using Mutex=Concurrency::Mutex;
 	using OutputStream=Storage::Streams::OutputStream;
 	using WriteLock=Concurrency::WriteLock;
+	static const UINT ENTRY_ID_INVALID=(UINT)-1;
 
 	// Friends
 	friend Database;

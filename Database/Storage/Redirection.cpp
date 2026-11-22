@@ -55,7 +55,7 @@ while(stream->Available())
 	{
 	UINT id=0;
 	stream->Read(&id, sizeof(UINT));
-	if(id==-1)
+	if(id==-1U)
 		break;
 	size+=sizeof(UINT);
 	if(id!='RIDR')

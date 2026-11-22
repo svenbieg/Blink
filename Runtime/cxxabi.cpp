@@ -98,7 +98,6 @@ VOID __gxx_personality_v0(UINT flags, UnwindException* exc, UnwindContext* conte
 {
 Dwarf lsda(context->LanguageData);
 SIZE_T frame_start=context->FrameStart;
-SIZE_T frame_end=context->FrameEnd;
 SIZE_T lp_start=lsda.Read();
 if(lp_start==0)
 	lp_start=frame_start;

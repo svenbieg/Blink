@@ -19,7 +19,7 @@
 #define __isense_t unsigned int
 #endif
 
-#define __ISR __attribute__((section(".data.isr")))
+#define __ISR __attribute__((section(".text.isr")))
 
 #ifndef __long
 #define __long long

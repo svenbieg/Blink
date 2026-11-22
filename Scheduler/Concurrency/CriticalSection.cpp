@@ -17,7 +17,6 @@
 #include "Concurrency/SpinLock.h"
 #include "Devices/System/Cpu.h"
 #include "Devices/System/Interrupts.h"
-#include <assert.h>
 
 using namespace Devices::System;
 
@@ -65,7 +64,7 @@ return false;
 
 VOID CriticalSection::Unlock()noexcept
 {
-assert(m_Core==Cpu::GetId()|LOCKED);
+assert(m_Core==(Cpu::GetId()|LOCKED));
 Cpu::StoreAndRelease(&m_Core, 0);
 Interrupts::Enable();
 }

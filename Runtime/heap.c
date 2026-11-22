@@ -56,8 +56,6 @@ void heap_free(heap_t* heap, void* buf)
 assert(heap!=NULL);
 if(!buf)
 	return;
-size_t offset=(size_t)buf;
-heap_block_info_t* info=(heap_block_info_t*)(offset-sizeof(heap_block_info_t));
 heap_free_to_map(heap, buf);
 heap_free_cache(heap);
 }
@@ -1026,7 +1024,6 @@ if(!exists)
 	return 0;
 	}
 block_map_item_t* item=&group->items[pos];
-bool added=false;
 if(item->single)
 	{
 	offset_index_t index={ NULL };

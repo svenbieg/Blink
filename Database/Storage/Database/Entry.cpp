@@ -64,7 +64,7 @@ return m_Database->m_Volume;
 
 VOID Entry::Invalidate(Editor* editor)
 {
-if(m_Id!=-1)
+if(m_Id!=ENTRY_ID_INVALID)
 	editor->m_ChangedEntries.add(this);
 }
 
@@ -85,7 +85,7 @@ WriteLock lock(m_Database->m_EntriesMutex);
 UINT ref_count=Cpu::InterlockedDecrement(&m_ReferenceCount);
 if(ref_count>0)
 	return ref_count;
-if(m_Id!=-1)
+if(m_Id!=ENTRY_ID_INVALID)
 	m_Database->m_Entries.remove(m_Id);
 delete this;
 return 0;

@@ -47,7 +47,7 @@ return m_Size-m_Position;
 
 SIZE_T Page::Read(VOID* buf, SIZE_T size)
 {
-WORD copy=TypeHelper::Min(size, m_Size-m_Position);
+WORD copy=TypeHelper::Min((WORD)(m_Size-m_Position), size);
 MemoryHelper::Copy(buf, &m_Buffer[m_Position], copy);
 m_Position+=copy;
 return copy;
@@ -64,7 +64,7 @@ VOID Page::Flush()
 
 SIZE_T Page::Write(VOID const* buf, SIZE_T size)
 {
-WORD copy=TypeHelper::Min(size, m_Size-m_Position);
+WORD copy=TypeHelper::Min((WORD)(m_Size-m_Position), size);
 MemoryHelper::Copy(&m_Buffer[m_Position], buf, copy);
 m_Position+=copy;
 return copy;

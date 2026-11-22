@@ -2,5 +2,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <CompilerFlags>$(CompilerFlags) -mcpu=cortex-a76</CompilerFlags>
+    <CompilerFlags>$(CompilerFlags) -Wall</CompilerFlags>
   </PropertyGroup>
 </Project>

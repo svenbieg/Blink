@@ -31,7 +31,7 @@ auto update_ptr=&entry->m_Update;
 while(*update_ptr)
 	{
 	auto update=*update_ptr;
-	auto update_ptr=&update->m_Next;
+	update_ptr=&update->m_Next;
 	}
 return update_ptr;
 }

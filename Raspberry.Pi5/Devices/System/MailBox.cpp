@@ -100,7 +100,7 @@ BOOL MailBox::GetProperty(PropertyTag tag, VOID* prop, UINT prop_size)
 {
 UINT buf_size=sizeof(PROP_HEADER)+prop_size+sizeof(UINT);
 assert(buf_size<=sizeof(PROP_BUF));
-auto buf=Memory::Uncached(&g_PropertyBuffer);
+auto buf=(PROP_BUF*)Memory::Uncached(&g_PropertyBuffer);
 buf->Header.Size=buf_size;
 buf->Header.Code=PROPERTY_REQUEST;
 buf->Header.Tag=tag;

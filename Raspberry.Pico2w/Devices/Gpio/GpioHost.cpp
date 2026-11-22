@@ -193,6 +193,10 @@ switch(pull_mode)
 		BitHelper::Set(pad_ctrl, PADS_PULLUP);
 		break;
 		}
+	default:
+		{
+		break;
+		}
 	}
 IoHelper::Write(pads->IO[id], pad_ctrl);
 auto gpio=(IO_BANK_REGS*)IO_BANK0_BASE;

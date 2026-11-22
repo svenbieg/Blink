@@ -113,7 +113,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Streams\StreamBuffer.h">
       <Filter>Storage\Streams</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Callback.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Storage\Xml\Xml.h">
       <Filter>Storage\Xml</Filter>
     </ClInclude>

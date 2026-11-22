@@ -186,39 +186,39 @@ assert(version==1);
 BYTE eh_frame_ptr_enc=header.ReadByte();
 BYTE entry_count_enc=header.ReadByte();
 BYTE table_enc=header.ReadByte();
-SIZE_T eh_frame=header.ReadEncoded(eh_frame_ptr_enc);
+[[maybe_unused]] SIZE_T eh_frame=header.ReadEncoded(eh_frame_ptr_enc);
 UINT entry_count=0;
 if(entry_count_enc!=DW_OMIT)
 	entry_count=(UINT)header.ReadEncoded(entry_count_enc);
 assert(entry_count>0);
-    auto table_pos=header.GetPosition();
- UINT entry_size=header.GetEncodedSize(table_enc)*2;
-	UINT entry_first=0;
-	UINT entry_last=entry_count;
-	while(entry_first<entry_last)
-		{
-		UINT entry_id=entry_first+(entry_last-entry_first)/2;
-		Dwarf entry(table_pos+entry_id*entry_size);
-		SIZE_T frame_start=entry.ReadEncoded(table_enc, eh_frame_hdr);
-		if(frame_start>instr_ptr)
-			{
-			entry_last=entry_id;
-			continue;
-			}
-		if(frame_start<instr_ptr)
-			{
-			entry_first=entry_id+1;
-			continue;
-			}
-		break;
-		}
-	assert(entry_first>0);
-	UINT entry_id=entry_first-1;
+auto table_pos=header.GetPosition();
+UINT entry_size=header.GetEncodedSize(table_enc)*2;
+UINT entry_first=0;
+UINT entry_last=entry_count;
+while(entry_first<entry_last)
+	{
+	UINT entry_id=entry_first+(entry_last-entry_first)/2;
 	Dwarf entry(table_pos+entry_id*entry_size);
 	SIZE_T frame_start=entry.ReadEncoded(table_enc, eh_frame_hdr);
-	SIZE_T fde=entry.ReadEncoded(table_enc, eh_frame_hdr);
-	ParseFrameDescriptor(fde, context);
-	assert(context->FrameStart==frame_start);
+	if(frame_start>instr_ptr)
+		{
+		entry_last=entry_id;
+		continue;
+		}
+	if(frame_start<instr_ptr)
+		{
+		entry_first=entry_id+1;
+		continue;
+		}
+	break;
+	}
+assert(entry_first>0);
+UINT entry_id=entry_first-1;
+Dwarf entry(table_pos+entry_id*entry_size);
+SIZE_T frame_start=entry.ReadEncoded(table_enc, eh_frame_hdr);
+SIZE_T fde=entry.ReadEncoded(table_enc, eh_frame_hdr);
+ParseFrameDescriptor(fde, context);
+assert(context->FrameStart==frame_start);
 }
 
 VOID UnwindException::ParseCommonInformation(SIZE_T cie_pos, UnwindContext* context)

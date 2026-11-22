@@ -80,7 +80,7 @@ private:
 		SkipPage=4
 		};
 	static_assert((UINT)BlockMode::File==(UINT)0);
-	static_assert((UINT)BlockMode::Entry==(UINT)BlockFlags::ErrorCorrection|(UINT)BlockFlags::SkipBits);
+	static_assert((UINT)BlockMode::Entry==((UINT)BlockFlags::ErrorCorrection|(UINT)BlockFlags::SkipBits));
 
 	// Con-/Destructors
 	Block(Volume* Volume, UINT Id, BlockMode Mode);
