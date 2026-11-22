@@ -51,7 +51,6 @@ mov sp, x2
 sub sp, sp, #IRQ_STACK_SIZE
 str x3, [sp, IRQ_STACK_SP]
 
-_irq_handle:
 bl HandleInterrupt
 
 _irq_stack_restore:
