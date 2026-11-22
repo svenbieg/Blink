@@ -196,7 +196,7 @@ switch(irq)
 		if(core==current)
 			{
 			auto scb=(SCB_REGS*)SCB_BASE;
-			IoHelper::Set(scb->ICSR, ICSR_PENDSVSET);
+			IoHelper::Write(scb->ICSR, ICSR_PENDSVSET);
 			}
 		else
 			{
@@ -273,11 +273,14 @@ VOID Interrupts::SetInterruptPriority()
 {
 auto scb=(SCB_REGS*)SCB_BASE;
 static constexpr UINT PEND_SV=(UINT)SystemException::PendSV-3;
-static constexpr BYTE LOWEST_PRIORITY=0xF0;
-IoHelper::Write(scb->SHPR[PEND_SV], LOWEST_PRIORITY);
+static constexpr UINT SYS_TICK=(UINT)SystemException::SysTick-3;
+static constexpr BYTE PRIORITY_LOWEST=0xF0;
+static constexpr BYTE PRIORITY_NORMAL=0x80;
+IoHelper::Write(scb->SHPR[PEND_SV], PRIORITY_LOWEST);
+IoHelper::Write(scb->SHPR[SYS_TICK], PRIORITY_NORMAL);
 auto ic=(NVIC_REGS*)NVIC_BASE;
 for(UINT u=0; u<IRQ_COUNT; u++)
-	IoHelper::Write(ic->PRIO[u], LOWEST_PRIORITY);
+	IoHelper::Write(ic->PRIO[u], PRIORITY_NORMAL);
 }
 
 CriticalSection Interrupts::s_CriticalSection;
