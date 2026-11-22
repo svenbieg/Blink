@@ -13,7 +13,6 @@
 #include "Devices/Gpio/GpioHelper.h"
 #include "Devices/Timers/SystemTimer.h"
 #include "Devices/Wifi/Wifi.h"
-#include "Devices/Peripherals.h"
 
 using namespace Concurrency;
 using namespace Devices::Emmc;
@@ -85,7 +84,7 @@ m_ServiceTask->Cancel();
 //============================
 
 WifiSdio::WifiSdio():
-EmmcHost(AXI_EMMC1_BASE, Irq::Wifi),
+EmmcHost(EmmcDevice::Wifi),
 m_Window(0)
 {
 m_ServiceTask=ServiceTask::Create(this, &WifiSdio::ServiceTask, "wifi_sdio");
