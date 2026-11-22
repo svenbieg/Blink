@@ -4,9 +4,9 @@
   <PropertyGroup>
     <CompilerName>arm-none-eabi</CompilerName>
     <CompilerPrefix>arm-none-eabi-</CompilerPrefix>
-    <CompilerTag>15.2.rel1</CompilerTag>
-    <CompilerVersion>15.2.1</CompilerVersion>
-    <CompilerPath>$(HomePath)GCC\arm-gnu-toolchain-15.2.rel1-mingw-w64-i686-arm-none-eabi\</CompilerPath>
+    <CompilerTag>15.3.rel2</CompilerTag>
+    <CompilerVersion>15.3.1</CompilerVersion>
+    <CompilerPath>$(HomePath)GCC\arm-gnu-toolchain-$(CompilerTag)-mingw-w64-x86_64-$(CompilerName)\</CompilerPath>
   </PropertyGroup>
 
 </Project>

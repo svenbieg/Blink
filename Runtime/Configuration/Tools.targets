@@ -10,6 +10,12 @@
     </PropertyGroup>
   </Target>
 
+  <Target Name="InstallCompiler" Condition="!Exists('$(CompilerPath)')">
+    <Message Text="Installing Compiler..." Importance="High" />
+    <DownloadFile SourceUrl="https://gitlab.arm.com/api/v4/projects/tooling%252Fgnu-toolchains-for-arm/packages/generic/gnu-toolchain/$(CompilerTag)/arm-gnu-toolchain-$(CompilerTag)-mingw-w64-x86_64-$(CompilerName).zip" DestinationFolder="$(TEMP)" Condition="!Exists('$(TEMP)\arm-gnu-toolchain-$(CompilerTag)-mingw-w64-x86_64-$(CompilerName).zip')" />
+    <Unzip SourceFiles="$(TEMP)\arm-gnu-toolchain-$(CompilerTag)-mingw-w64-x86_64-$(CompilerName).zip" DestinationFolder="$(CompilerPath)" />
+  </Target>
+
   <Target Name="InstallGit" Condition="!Exists('$(GitExe)')">
     <Message Text="Installing Git..." Importance="High" />
     <Exec Command="winget install --id Git.Git -e --source winget" />
@@ -24,11 +30,6 @@
     <Message Text="Installing OpenOCD..." Importance="High" />
     <MakeDir Directories="$(OpenOcdPath)" />
     <Exec Command="tar -x -f $(TEMP)\openocd-0.12.0+dev-x64-win.zip" WorkingDirectory="$(OpenOcdPath)" />
-  </Target>
-
-  <Target Name="InstallPython" Condition="!Exists('$(PythonExe)')">
-    <Message Text="Installing Python..." Importance="High" />
-    <Exec Command="winget install --id Python.Python.3.8 -e --source winget" />
   </Target>
 
   <Import Project="$(SolutionDir)Runtime.$(Architecture)\Configuration\Tools.targets" Condition="Exists('$(SolutionDir)Runtime.$(Architecture)\Configuration\Tools.targets')" />

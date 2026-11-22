@@ -4,9 +4,9 @@
   <PropertyGroup>
     <CompilerName>aarch64-none-elf</CompilerName>
     <CompilerPrefix>aarch64-none-elf-</CompilerPrefix>
-    <CompilerTag>14.3.rel1</CompilerTag>
-    <CompilerVersion>14.3.1</CompilerVersion>
-    <CompilerPath>$(HomePath)GCC\arm-gnu-toolchain-$(CompilerTag)-mingw-w64-i686-$(CompilerName)\</CompilerPath>
+    <CompilerTag>15.3.rel2</CompilerTag>
+    <CompilerVersion>15.3.1</CompilerVersion>
+    <CompilerPath>$(HomePath)GCC\arm-gnu-toolchain-$(CompilerTag)-mingw-w64-x86_64-$(CompilerName)\</CompilerPath>
   </PropertyGroup>
 
 </Project>

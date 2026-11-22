@@ -21,7 +21,6 @@
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Configuration\Compiler.props" />
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.props" />
-    <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.targets" />
     <None Include="$(MSBuildThisFileDirectory)except.S" />
     <None Include="$(MSBuildThisFileDirectory)irq.S" />
     <None Include="$(MSBuildThisFileDirectory)task.S" />

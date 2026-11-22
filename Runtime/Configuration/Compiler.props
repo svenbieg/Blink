@@ -16,6 +16,7 @@
     <IncludePath>$(IncludePath);$(CompilerPath)lib\gcc\$(CompilerName)\$(CompilerVersion)\include\</IncludePath>
     <LinkerFlags>$(LinkerFlags) --gc-sections --nostdlib</LinkerFlags>
     <LinkerFlags>$(LinkerFlags) -L$(CompilerPath)$(CompilerName)\lib\</LinkerFlags>
+    <LinkerFlags>$(LinkerFlags) -L$(CompilerPath)$(CompilerName)\lib\gcc\$(CompilerName)\$(CompilerVersion)\</LinkerFlags>
     <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath);$(SolutionDir);$(ProjectDir)</NMakeIncludeSearchPath>
   </PropertyGroup>
 

@@ -10,9 +10,6 @@
     <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.props">
       <Filter>Configuration</Filter>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)Configuration\Tools.targets">
-      <Filter>Configuration</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Concurrency\TaskHelper.cpp">
