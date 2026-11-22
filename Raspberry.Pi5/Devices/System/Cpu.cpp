@@ -40,16 +40,19 @@ DataSyncBarrier();
 
 BOOL Cpu::CompareAndSet(volatile UINT* value_ptr, UINT cmp, UINT set)noexcept
 {
-UINT read=0;
+UINT read;
 UINT result=1;
 __asm inline volatile("\
-prfm pstl1keep, [%1]\n\
-ldaxr %w4, [%1]\n\
-cmp %w4, %w2\n\
-bne done%=\n\
-stxr %w0, %w3, [%1]\n\
+prfm pstl1keep, [%[addr]]\n\
+ldaxr %w[read], [%[addr]]\n\
+cmp %w[read], %w[cmp]\n\
+bne failed%=\n\
+stlxr %w[res], %w[set], [%[addr]]\n\
+b done%=\n\
+failed%=:\n\
+clrex\n\
 done%=:\n\
-": "+&r" (result): "r" (value_ptr), "r" (cmp), "r" (set), "r" (read): "cc", "memory");
+": [res] "+&r" (result), [read] "=&r" (read): [addr] "r" (value_ptr), [cmp] "r" (cmp), [set] "r" (set): "cc", "memory");
 return result==0;
 }
 

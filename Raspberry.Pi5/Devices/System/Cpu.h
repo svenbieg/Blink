@@ -115,9 +115,7 @@ public:
 		}
 	static __force_inline VOID StoreAndRelease(volatile UINT* Address, UINT Set)noexcept
 		{
-		__asm inline volatile("\
-			stlr %w1, [%0]\n\
-			dmb ish":: "r" (Address), "r" (Set));
+		__asm inline volatile("stlr %w1, [%0]\ndmb ish":: "r" (Address), "r" (Set): "memory");
 		}
 	static __force_inline VOID WaitForEvent()noexcept
 		{
