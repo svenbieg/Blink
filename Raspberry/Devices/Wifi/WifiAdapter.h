@@ -61,6 +61,13 @@ public:
 	VOID SetVariable(LPCSTR Name, VOID const* Buffer, UINT Size, WifiInterface Interface=WifiInterface::Station);
 
 private:
+	// Flags
+	enum class WifiFlags
+		{
+		None=0,
+		Enabled=(1<<0)
+		};
+
 	// Con-/Destructors
 	WifiAdapter();
 
@@ -77,6 +84,7 @@ private:
 	VOID SetVariable(WriteLock const& Lock, LPCSTR Name, VOID const* Buffer, UINT Size, WifiInterface Interface=WifiInterface::Station);
 	WIFI_EVENT_MESSAGE* ParseEvent(WifiPacket* Packet);
 	Handle<WifiPacket> Transfer(WifiPacket* Request);
+	WifiFlags m_Flags;
 	Mutex m_Mutex;
 	WifiPacket* m_Request;
 	WORD m_RequestId;

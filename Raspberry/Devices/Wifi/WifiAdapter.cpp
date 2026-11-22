@@ -44,6 +44,8 @@ Command(lock, id, buf, size, interface);
 VOID WifiAdapter::EnableWifi()
 {
 WriteLock lock(m_Mutex);
+if(FlagHelper::Get(m_Flags, WifiFlags::Enabled))
+	return;
 WifiFirmware::UploadRegulatory(this);
 SetVariable(lock, "country", &WIFI_COUNTRY_DE, sizeof(WIFI_COUNTRY));
 Task::Sleep(50);
@@ -69,6 +71,7 @@ Task::Sleep(50);
 //Command(lock, WifiCommand::SetPromisc, 0);
 Command(lock, WifiCommand::Up, 1);
 Task::Sleep(50);
+FlagHelper::Set(m_Flags, WifiFlags::Enabled);
 }
 
 VOID WifiAdapter::GetVariable(LPCSTR name, VOID* buf, UINT size, WifiInterface interface)
@@ -95,6 +98,7 @@ SetVariable(lock, name, buf, size, interface);
 //==========================
 
 WifiAdapter::WifiAdapter():
+m_Flags(WifiFlags::None),
 m_Request(nullptr),
 m_RequestId(0)
 {}
