@@ -115,7 +115,7 @@ UINT core=Cpu::GetId();
 auto current=s_CurrentTask[core];
 FlagHelper::Set(current->m_Flags, TaskFlags::Release);
 current->m_Status=status;
-Suspend(core, current);
+Suspend(core, current, 0);
 lock.Unlock();
 while(1)
 	Cpu::WaitForInterrupt();
@@ -151,8 +151,8 @@ else
 s_CurrentTask[core]=next;
 FlagHelper::Clear(current->m_Flags, TaskFlags::Active);
 FlagHelper::Set(next->m_Flags, TaskFlags::Active);
-TaskHelper::Switch(core, current, next);
 TaskMonitor::SetTask(core, next);
+TaskHelper::Switch(core, current, next);
 }
 
 VOID Scheduler::Schedule()noexcept
