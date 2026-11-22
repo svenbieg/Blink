@@ -32,6 +32,16 @@ class Scheduler;
 class Signal;
 
 
+//===========
+// Lock-Mode
+//===========
+
+enum class WriteLockMode
+{
+Owner
+};
+
+
 //============
 // Write-Lock
 //============
@@ -43,14 +53,19 @@ public:
 	friend Scheduler;
 	friend Signal;
 
+	// Locked
+	class Locked {};
+
 	// Con-/Destructors
 	WriteLock(Mutex& Mutex);
+	WriteLock(Mutex& Mutex, WriteLockMode);
 	WriteLock(WriteLock const&)=delete;
 	~WriteLock()noexcept;
 
 	// Common
 	VOID Lock();
 	VOID Release()noexcept;
+	VOID SetLocked(BOOL Locked);
 	VOID Unlock()noexcept;
 
 private:

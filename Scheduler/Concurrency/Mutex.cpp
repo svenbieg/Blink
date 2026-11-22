@@ -82,6 +82,13 @@ lock.Unlock();
 Task::ThrowIfFailed(current);
 }
 
+VOID Mutex::SetOwner(Task* owner)
+{
+SpinLock lock(Scheduler::s_CriticalSection);
+assert(!m_Owner);
+Lock(owner);
+}
+
 VOID Mutex::Unlock()noexcept
 {
 SpinLock lock(Scheduler::s_CriticalSection);

@@ -27,6 +27,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Serial\SerialPort.cpp">
       <Filter>Devices\Serial</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiFirmware.cpp">
+      <Filter>Devices\Wifi</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiAdapter.h">
@@ -46,6 +49,9 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Spi\PL022.h">
       <Filter>Devices\Spi</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Devices\Wifi\WifiFirmware.h">
+      <Filter>Devices\Wifi</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

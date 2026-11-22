@@ -105,6 +105,7 @@ s_ServiceTask->Then(nullptr, []()
 	{
 	Interrupts::SetHandler(Irq::Timer0, nullptr);
 	});
+s_ServiceTask->Run();
 }
 
 Handle<Task> SystemTimer::s_ServiceTask;

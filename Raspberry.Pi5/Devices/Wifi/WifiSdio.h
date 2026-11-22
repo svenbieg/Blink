@@ -32,7 +32,9 @@ class WifiSdio: public Emmc::EmmcHost
 public:
 	// Using
 	using ServiceMutex=Concurrency::ServiceMutex;
+	using Signal=Concurrency::Signal;
 	using Task=Concurrency::Task;
+	using WriteLock=Concurrency::WriteLock;
 
 	// Con-/Destructors
 	~WifiSdio();
@@ -42,9 +44,8 @@ protected:
 	WifiSdio();
 
 	// Common
-	VOID EnableSdio();
-	VOID WritePacket(WifiPacket* Packet);
-	ServiceMutex m_SdioMutex;
+	VOID WritePacket(WriteLock& Lock, WifiPacket* Packet);
+	ServiceMutex m_Mutex;
 
 private:
 	// Common
@@ -65,6 +66,7 @@ private:
 	VOID WriteBackplane(UINT Address, UINT const* Buffer, UINT Size);
 	SIZE_T WriteData(VOID const* Buffer, SIZE_T Size);
 	VOID WriteRegister(SDIO_REG const& Register, BYTE Value);
+	Signal m_OutputReady;
 	Handle<Task> m_ServiceTask;
 	UINT m_Window;
 };

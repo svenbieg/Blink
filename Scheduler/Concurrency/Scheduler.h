@@ -85,8 +85,11 @@ private:
 	static VOID CreateTasks()noexcept;
 	static VOID IdleTask();
 	static VOID MainTask();
+	static VOID ReleaseTasks(SpinLock& Lock);
 	static VOID Resume(Task* Resume)noexcept;
-	static VOID Suspend(UINT Core, Task* Suspend, UINT64 ResumeTime=0)noexcept;
+	static VOID Suspend(UINT Core, Task* Suspend)noexcept;
+	static VOID Suspend(UINT Core, Task* Suspend, UINT64 ResumeTime)noexcept;
+	static VOID WakeupTasks();
 	static AllList s_All;
 	static CreateList s_Create;
 	static CriticalSection s_CriticalSection;

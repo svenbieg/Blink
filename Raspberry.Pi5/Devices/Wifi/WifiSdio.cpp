@@ -87,21 +87,19 @@ m_ServiceTask->Cancel();
 WifiSdio::WifiSdio():
 EmmcHost(AXI_EMMC1_BASE, Irq::Wifi),
 m_Window(0)
-{}
+{
+m_ServiceTask=ServiceTask::Create(this, &WifiSdio::ServiceTask, "wifi_sdio");
+m_Mutex.SetOwner(m_ServiceTask);
+m_ServiceTask->Run();
+}
 
 
 //==================
 // Common Protected
 //==================
 
-VOID WifiSdio::EnableSdio()
+VOID WifiSdio::WritePacket(WriteLock& lock, WifiPacket* pkt)
 {
-m_ServiceTask=ServiceTask::Create(this, &WifiSdio::ServiceTask, "wifi");
-}
-
-VOID WifiSdio::WritePacket(WifiPacket* pkt)
-{
-WriteLock lock(m_SdioMutex);
 auto buf=pkt->Begin();
 UINT size=pkt->GetSize();
 WriteData(buf, size);
@@ -261,7 +259,7 @@ WriteBackplane(addr+COM_IOCTRL, &ioctrl, 1);
 
 VOID WifiSdio::ServiceTask()
 {
-WriteLock lock(m_SdioMutex);
+WriteLock lock(m_Mutex, WriteLockMode::Owner);
 GpioHelper::SetPinMode(GpioArmPin::WifiOn, GpioArmPinMode::Output);
 GpioHelper::DigitalWrite(GpioArmPin::WifiOn, true);
 Task::Sleep(150);
@@ -309,7 +307,6 @@ WriteRegister(CCCR_BLKSIZE_FN2_1, (BYTE)(block_size>>8));
 WriteRegister(CCCR_INT_EN, FN2_BIT|FN1_BIT|FN0_BIT);
 SetRegister(CCCR_IOENABLE, FN2_BIT);
 PollRegister(CCCR_IOREADY, FN2_BIT, FN2_BIT);
-lock.Unlock();
 SpinLock spin_lock(m_CriticalSection);
 IoHelper::Set(m_Device->IRQ_MASK, IRQF_CARD);
 while(1)
@@ -317,7 +314,7 @@ while(1)
 	IoHelper::Set(m_Device->IRQ_EN, IRQF_CARD);
 	m_CardIrq.Wait(spin_lock);
 	spin_lock.Unlock();
-	lock.Lock();
+	lock.SetLocked(true);
 	UINT pending=ReadRegister(CCCR_INT_PENDING);
 	if(!pending)
 		{
@@ -327,37 +324,28 @@ while(1)
 		}
 	UINT int_status=ReadBackplane(SDIO_INT_STATUS);
 	WriteBackplane(SDIO_INT_STATUS, int_status);
-	UINT host_flags=BitHelper::Get(int_status, SDIO_INT_HOST_MASK);
-	while(host_flags)
+	if(BitHelper::Get(int_status, SDIO_INT_FRAME))
 		{
-		UINT lsb=Cpu::CountTrailingZeros(host_flags);
-		UINT host_flag=1U<<lsb;
-		BitHelper::Clear(host_flags, host_flag);
-		switch(host_flag)
+		WIFI_HEADER header;
+		ReadData(&header, sizeof(WIFI_HEADER));
+		UINT len=header.Length;
+		UINT len_chk=header.LengthChk;
+		assert(len);
+		assert(len%sizeof(UINT)==0);
+		if(len_chk==(len^0xFFFF))
 			{
-			case SDIO_INT_FRAME:
-				{
-				WIFI_HEADER header;
-				ReadData(&header, sizeof(WIFI_HEADER));
-				UINT len=header.Length;
-				UINT len_chk=header.LengthChk;
-				if(!len)
-					break;
-				if(len_chk!=(len^0xFFFF))
-					break;
-				auto pkt=WifiPacket::Create(&header);
-				auto data=pkt->Data();
-				UINT writable=pkt->Writable();
-				ReadData(data, writable);
+			auto pkt=WifiPacket::Create(&header);
+			auto data=pkt->Data();
+			ReadData(data, len);
+			BOOL valid=pkt->TryValidate();
+			assert(valid);
+			if(valid)
 				OnPacketReceived(pkt);
-				//throw DeviceNotReadyException();
-				//WriteRegister(SB_FRAME_CTRL, FRAME_CTRL_RFHALT);
-				//PollRegister(SB_RFRM_CNT_1, 0xFF, 0);
-				//PollRegister(SB_RFRM_CNT_0, 0xFF, 0);
-				break;
-				}
 			}
 		}
+	BOOL output_ready=!BitHelper::Get(int_status, SDIO_INT_FCSTATE);
+	if(output_ready)
+		m_OutputReady.Trigger();
 	lock.Unlock();
 	spin_lock.Lock();
 	}

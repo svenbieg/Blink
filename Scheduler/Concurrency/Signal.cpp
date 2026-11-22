@@ -98,7 +98,6 @@ Task::ThrowIfFailed(current);
 VOID Signal::Trigger(Status status)noexcept
 {
 SpinLock lock(Scheduler::s_CriticalSection);
-UINT core=Cpu::GetId();
 auto resume=m_Waiting;
 while(resume)
 	{
@@ -144,7 +143,7 @@ auto current=Scheduler::s_CurrentTask[core];
 Scheduler::WaitingList::Append(&m_Waiting, current);
 current->m_Owner=&m_Waiting;
 current->m_SignalCount=1;
-Scheduler::Suspend(core, current);
+Scheduler::Suspend(core, current, 0);
 lock.Unlock();
 spin_lock.Lock();
 }

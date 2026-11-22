@@ -30,28 +30,28 @@ class ServiceTask
 {
 public:
 	// Con-/Destructors
-	static inline Handle<Task> Create(VOID (*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE)
+	static inline Handle<Task> Create(VOID (*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=Task::STACK_SIZE)
 		{
 		auto task=Task::Create(Procedure, Name, StackSize);
 		FlagHelper::Set(task->m_Flags, TaskFlags::Priority);
 		task->m_PriorityCount=1;
 		return task;
 		}
-	template <class _owner_t> static inline Handle<Task> Create(_owner_t* Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE)
+	template <class _owner_t> static inline Handle<Task> Create(_owner_t* Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=Task::STACK_SIZE)
 		{
 		auto task=Task::Create(Owner, Procedure, Name, StackSize);
 		FlagHelper::Set(task->m_Flags, TaskFlags::Priority);
 		task->m_PriorityCount=1;
 		return task;
 		}
-	template <class _owner_t> static inline Handle<Task> Create(Handle<_owner_t> const& Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE)
+	template <class _owner_t> static inline Handle<Task> Create(Handle<_owner_t> const& Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=Task::STACK_SIZE)
 		{
 		auto task=Task::Create(Owner, Procedure, Name, StackSize);
 		FlagHelper::Set(task->m_Flags, TaskFlags::Priority);
 		task->m_PriorityCount=1;
 		return task;
 		}
-	template <class _owner_t, class _lambda_t> static inline Handle<Task> Create(_owner_t* Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE)
+	template <class _owner_t, class _lambda_t> static inline Handle<Task> Create(_owner_t* Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=Task::STACK_SIZE)
 		{
 		auto task=Task::Create(Owner, std::forward<_lambda_t>(Lambda), Name, StackSize);
 		FlagHelper::Set(task->m_Flags, TaskFlags::Priority);
@@ -65,7 +65,7 @@ public:
 		task->m_PriorityCount=1;
 		return task;
 		}
-	template <class _lambda_t> static inline Handle<Task> Create(nullptr_t Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=MemoryHelper::PAGE_SIZE)
+	template <class _lambda_t> static inline Handle<Task> Create(nullptr_t Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=Task::STACK_SIZE)
 		{
 		auto task=Task::Create(Owner, std::forward<_lambda_t>(Lambda), Name, StackSize);
 		FlagHelper::Set(task->m_Flags, TaskFlags::Priority);

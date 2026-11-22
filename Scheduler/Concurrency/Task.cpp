@@ -74,6 +74,15 @@ auto current=Scheduler::GetCurrentTask();
 return current==Scheduler::s_MainTask;
 }
 
+VOID Task::Run()
+{
+assert(Task::Get()==m_Creator);
+SpinLock lock(Scheduler::s_CriticalSection);
+Scheduler::s_Create.Remove(this);
+m_Creator=nullptr;
+Scheduler::Resume(this);
+}
+
 VOID Task::Sleep(UINT ms)
 {
 assert(!Task::IsMainTask());
@@ -135,7 +144,7 @@ auto task=(Task*)param;
 Status status=Status::Success;
 try
 	{
-	task->Run();
+	task->Execute();
 	status=task->m_Status;
 	}
 catch(Exception e)

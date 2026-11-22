@@ -28,6 +28,11 @@ m_Mutex(&mutex)
 m_Mutex->Lock();
 }
 
+WriteLock::WriteLock(Mutex& mutex, WriteLockMode):
+m_Locked(true),
+m_Mutex(&mutex)
+{}
+
 WriteLock::~WriteLock()noexcept
 {
 if(m_Locked)
@@ -54,6 +59,21 @@ VOID WriteLock::Release()noexcept
 {
 m_Locked=false;
 m_Mutex=nullptr;
+}
+
+VOID WriteLock::SetLocked(BOOL locked)
+{
+if(m_Locked==locked)
+	return;
+if(m_Locked)
+	{
+	m_Mutex->Unlock();
+	}
+else
+	{
+	m_Mutex->Lock();
+	}
+m_Locked=locked;
 }
 
 VOID WriteLock::Unlock()noexcept

@@ -39,12 +39,12 @@ header->DataOffset=sizeof(WIFI_HEADER);
 return pkt;
 }
 
-Handle<WifiPacket> WifiPacket::Create(nullptr_t, UINT pkt_size)
+Handle<WifiPacket> WifiPacket::Create(nullptr_t, UINT pkt_len)
 {
-assert(pkt_size>0);
-assert(pkt_size%sizeof(UINT)==0);
-assert(pkt_size<=WIFI_PACKET_MAX);
-return Object::CreateEx<WifiPacket>(pkt_size);
+assert(pkt_len>0);
+assert(pkt_len%sizeof(UINT)==0);
+assert(pkt_len<=WIFI_PACKET_MAX);
+return Object::CreateEx<WifiPacket>(pkt_len);
 }
 
 Handle<WifiPacket> WifiPacket::Create(WIFI_HEADER* header)

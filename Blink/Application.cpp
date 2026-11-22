@@ -24,11 +24,8 @@ using namespace UI;
 
 VOID Main()
 {
-Task::Create(nullptr, []()
-	{
-	auto app=Application::Create();
-	app->Blink();
-	}, "app");
+auto app=Application::Create();
+app->Blink();
 DispatchedQueue::Enter();
 }
 

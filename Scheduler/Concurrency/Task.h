@@ -22,9 +22,7 @@
 #include "Concurrency/WriteLock.h"
 #include "Runtime/UnwindException.h"
 #include "FlagHelper.h"
-#include "MemoryHelper.h"
 #include "StringClass.h"
-#include <cassert>
 #include <utility>
 
 
@@ -102,6 +100,7 @@ public:
 	static BOOL IsMainTask()noexcept;
 	const LPCTSTR Name;
 	Handle<Object> Result;
+	VOID Run();
 	static VOID Sleep(UINT Milliseconds);
 	inline VOID Then(VOID (*Procedure)())
 		{
@@ -152,8 +151,8 @@ protected:
 	static Handle<Task> CreateInternal(VOID (*Procedure)(), Handle<String> Name, SIZE_T StackSize=STACK_SIZE);
 
 	// Common
+	virtual VOID Execute()=0;
 	static bool Priority(Task* First, Task* Second)noexcept;
-	virtual VOID Run()=0;
 	static VOID Schedule(Task* Task)noexcept;
 	static VOID TaskProc(VOID* Parameter);
 	static VOID ThrowIfFailed(Task* Task);
@@ -211,7 +210,7 @@ private:
 		}
 
 	// Common
-	VOID Run()override { m_Procedure(); }
+	VOID Execute()override { m_Procedure(); }
 	_proc_t m_Procedure;
 };
 
@@ -241,7 +240,7 @@ private:
 		}
 
 	// Common
-	VOID Run()override { (m_Owner->*m_Procedure)(); }
+	VOID Execute()override { (m_Owner->*m_Procedure)(); }
 	Handle<_owner_t> m_Owner;
 	_proc_t m_Procedure;
 };
@@ -269,7 +268,7 @@ private:
 		}
 
 	// Common
-	VOID Run()override { m_Lambda(); }
+	VOID Execute()override { m_Lambda(); }
 	_lambda_t m_Lambda;
 	Handle<_owner_t> m_Owner;
 };
@@ -291,7 +290,7 @@ private:
 		}
 
 	// Common
-	VOID Run()override { m_Lambda(); }
+	VOID Execute()override { m_Lambda(); }
 	_lambda_t m_Lambda;
 };
 

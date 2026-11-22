@@ -48,6 +48,41 @@ const WORD SPI_INSTR[]=
 const PIO_PROGRAM SPI_PROGRAM={ SPI_INSTR, TypeHelper::ArraySize(SPI_INSTR) };
 
 
+//========
+// Common
+//========
+
+VOID SpiEmulator::SpiBegin(UINT tx_size, UINT rx_size)
+{
+assert(tx_size%m_DataSize==0);
+assert(rx_size%m_DataSize==0);
+m_GpioHost->DigitalWrite(m_PinChipSelect, false);
+m_StateMachine->Restart();
+m_StateMachine->ClearBuffers();
+m_StateMachine->Output(PioOutput::X, tx_size*8-1, 32);
+m_StateMachine->Output(PioOutput::Y, rx_size*8-1, 32);
+m_StateMachine->Jump(0);
+m_StateMachine->Start();
+}
+
+VOID SpiEmulator::SpiEnd()
+{
+m_GpioHost->DigitalWrite(m_PinChipSelect, true);
+m_StateMachine->Stop();
+m_StateMachine->SetPins(0);
+}
+
+VOID SpiEmulator::SpiRead(VOID* buf, UINT size)
+{
+m_DmaChannel->Read(m_InputRequest, m_InputBuffer, buf, size);
+}
+
+VOID SpiEmulator::SpiWrite(VOID const* buf, UINT size)
+{
+m_DmaChannel->Write(m_OutputRequest, m_OutputBuffer, buf, size);
+}
+
+
 //============================
 // Con-/Destructors Protected
 //============================
@@ -95,41 +130,6 @@ m_InputBuffer=m_StateMachine->GetInputBuffer();
 m_InputRequest=m_StateMachine->GetInputRequest();
 m_OutputBuffer=m_StateMachine->GetOutputBuffer();
 m_OutputRequest=m_StateMachine->GetOutputRequest();
-}
-
-
-//==================
-// Common Protected
-//==================
-
-VOID SpiEmulator::SpiBegin(UINT tx_size, UINT rx_size)
-{
-assert(tx_size%m_DataSize==0);
-assert(rx_size%m_DataSize==0);
-m_GpioHost->DigitalWrite(m_PinChipSelect, false);
-m_StateMachine->Restart();
-m_StateMachine->ClearBuffers();
-m_StateMachine->Output(PioOutput::X, tx_size*8-1, 32);
-m_StateMachine->Output(PioOutput::Y, rx_size*8-1, 32);
-m_StateMachine->Jump(0);
-m_StateMachine->Start();
-}
-
-VOID SpiEmulator::SpiEnd()
-{
-m_GpioHost->DigitalWrite(m_PinChipSelect, true);
-m_StateMachine->Stop();
-m_StateMachine->SetPins(0);
-}
-
-VOID SpiEmulator::SpiRead(VOID* buf, UINT size)
-{
-m_DmaChannel->Read(m_InputRequest, m_InputBuffer, buf, size);
-}
-
-VOID SpiEmulator::SpiWrite(VOID const* buf, UINT size)
-{
-m_DmaChannel->Write(m_OutputRequest, m_OutputBuffer, buf, size);
 }
 
 }}
