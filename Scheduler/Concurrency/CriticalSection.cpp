@@ -2,7 +2,7 @@
 // CriticalSection.cpp
 //=====================
 
-// Interlocked variable with disabled interrupts and cache-invalidation.
+// Interlocked section with disabled interrupts and cache-synchronisation.
 
 // Copyright 2026, Sven Bieg (svenbieg@outlook.de)
 // https://github.com/svenbieg/Scheduler/wiki#critical-section
@@ -41,13 +41,14 @@ const UINT LOCKED=0x80000000;
 
 VOID CriticalSection::Lock()noexcept
 {
-Interrupts::Disable();
-UINT core=Cpu::GetId()|LOCKED;
-assert(m_Core!=core); // Deadlock
-while(!Cpu::CompareAndSet(&m_Core, 0, core))
+while(1)
 	{
-	Interrupts::Enable();
 	Interrupts::Disable();
+	UINT core=Cpu::GetId()|LOCKED;
+	assert(m_Core!=core); // Deadlock
+	if(Cpu::CompareAndSet(&m_Core, 0, core))
+		break;
+	Interrupts::Enable();
 	}
 }
 
