@@ -32,6 +32,23 @@ namespace Devices {
 const UINT EMMC_TIMEOUT=100;
 
 
+//=========
+// Devices
+//=========
+
+typedef struct
+{
+SIZE_T Address;
+Irq Interrupt;
+}EMMC_DEVICE;
+
+constexpr EMMC_DEVICE EMMC_DEVICES[]=
+	{
+	{ AXI_EMMC0_BASE, Irq::SdCard },
+	{ AXI_EMMC1_BASE, Irq::Wifi }
+	};
+
+
 //==================
 // Con-/Destructors
 //==================
@@ -55,7 +72,7 @@ return response[0];
 
 VOID EmmcHost::Command(EmmcCmd cmd, UINT arg, UINT* response, VOID* buf, UINT block_count, UINT block_size)
 {
-SpinLock lock(m_CriticalSection);
+WriteLock lock(m_Mutex);
 Command(lock, cmd, arg, response, buf, block_count, block_size);
 }
 
@@ -68,27 +85,28 @@ return response[0];
 
 VOID EmmcHost::Command(EmmcAppCmd cmd, UINT arg, UINT* response, VOID* buf, UINT block_count, UINT block_size)
 {
-SpinLock lock(m_CriticalSection);
+WriteLock lock(m_Mutex);
 Command(lock, EmmcCmd::AppCmd, m_RelativeCardAddress<<16, nullptr, nullptr, 0, 0);
 Command(lock, (EmmcCmd)cmd, arg, response, buf, block_size, block_count);
 }
 
 VOID EmmcHost::PowerOff()
 {
-SpinLock lock(m_CriticalSection);
+WriteLock lock(m_Mutex);
 Interrupts::SetHandler(m_Irq, nullptr);
 IoHelper::Set(m_Device->CTRL0, CTRL0_POWER, CTRL0_POWER_OFF);
 }
 
 VOID EmmcHost::SelectCard(UINT rca)
 {
-SpinLock lock(m_CriticalSection);
+WriteLock lock(m_Mutex);
 Command(lock, EmmcCmd::SelectCard, rca<<16, nullptr, nullptr, 0, 0);
 m_RelativeCardAddress=rca;
 }
 
 VOID EmmcHost::SetClockRate(UINT base_clock, UINT clock_rate)
 {
+WriteLock lock(m_Mutex);
 UINT ctrl1=IoHelper::Read(m_Device->CTRL1);
 if(BitHelper::Get(ctrl1, CTRL1_CLK_EN))
 	{
@@ -113,23 +131,17 @@ IoHelper::Set(m_Device->CTRL1, CTRL1_CLK_EN);
 // Con-/Destructors Private
 //==========================
 
-EmmcHost::EmmcHost(SIZE_T addr, Irq irq):
+EmmcHost::EmmcHost(EmmcDevice device):
 m_BlockSize(0),
 m_Buffer(nullptr),
-m_Device((EMMC_REGS*)addr),
-m_Irq(irq),
+m_Device((EMMC_REGS*)EMMC_DEVICES[(UINT)device].Address),
+m_Irq(EMMC_DEVICES[(UINT)device].Interrupt),
 m_RelativeCardAddress(0)
 {
-IoHelper::Write(m_Device->CTRL1, CTRL1_RESET_HOST);
-Task::Sleep(10);
-if(IoHelper::Read(m_Device->CTRL1, CTRL1_RESET_ALL))
-	throw DeviceNotReadyException();
-IoHelper::Set(m_Device->CTRL0, CTRL0_POWER, CTRL0_POWER_VDD1);
-Task::Sleep(10);
-Interrupts::SetHandler(m_Irq, this, &EmmcHost::HandleInterrupt);
-IoHelper::Write(m_Device->IRQ_MASK, IRQF_DEFAULT);
-IoHelper::Write(m_Device->IRQ_EN, IRQF_DEFAULT);
-IoHelper::Write(m_Device->IRQ, ~0U);
+auto name=String::Create("emmc%u", (UINT)device);
+m_ServiceTask=ServiceTask::Create(this, &EmmcHost::ServiceTask, name);
+m_Mutex.SetOwner(m_ServiceTask);
+m_ServiceTask->Run();
 }
 
 
@@ -137,7 +149,7 @@ IoHelper::Write(m_Device->IRQ, ~0U);
 // Common Private
 //================
 
-VOID EmmcHost::Command(SpinLock& lock, EmmcCmd cmd, UINT arg, UINT* response, VOID* buf, UINT block_count, UINT block_size)
+VOID EmmcHost::Command(WriteLock& lock, EmmcCmd cmd, UINT arg, UINT* response, VOID* buf, UINT block_count, UINT block_size)
 {
 assert(block_count<0x10000);
 assert((SIZE_T)buf%sizeof(UINT)==0);
@@ -179,52 +191,77 @@ if(m_Buffer)
 VOID EmmcHost::HandleInterrupt()
 {
 SpinLock lock(m_CriticalSection);
-UINT irq_flags=IoHelper::Read(m_Device->IRQ);
-UINT irq_ack=irq_flags;
-//BitHelper::Clear(irq_ack, IRQF_CARD);
-IoHelper::Write(m_Device->IRQ, irq_ack);
-UINT flags=irq_flags;
-while(flags)
+m_InterruptPending.Trigger();
+}
+
+VOID EmmcHost::ServiceTask()
+{
+WriteLock lock(m_Mutex, WriteLockMode::Owner);
+IoHelper::Write(m_Device->CTRL1, CTRL1_RESET_HOST);
+Task::Sleep(10);
+if(IoHelper::Read(m_Device->CTRL1, CTRL1_RESET_ALL))
+	throw DeviceNotReadyException();
+IoHelper::Set(m_Device->CTRL0, CTRL0_POWER, CTRL0_POWER_VDD1);
+Task::Sleep(10);
+Interrupts::SetHandler(m_Irq, this, &EmmcHost::HandleInterrupt);
+SpinLock spin_lock(m_CriticalSection);
+IoHelper::Write(m_Device->IRQ_MASK, IRQF_DEFAULT);
+IoHelper::Write(m_Device->IRQ_EN, IRQF_DEFAULT);
+IoHelper::Write(m_Device->IRQ, ~0U);
+lock.Unlock();
+while(1)
 	{
-	UINT lsb=Cpu::CountTrailingZeros(flags);
-	UINT flag=1<<lsb;
-	BitHelper::Clear(flags, flag);
-	switch(flag)
+	m_InterruptPending.Wait(spin_lock);
+	spin_lock.Unlock();
+	UINT irq_flags=IoHelper::Read(m_Device->IRQ);
+	UINT irq_ack=irq_flags;
+	//BitHelper::Clear(irq_ack, IRQF_CARD);
+	IoHelper::Write(m_Device->IRQ, irq_ack);
+	lock.Lock();
+	while(irq_flags)
 		{
-		case IRQF_CARD:
+		UINT lsb=Cpu::CountTrailingZeros(irq_flags);
+		UINT flag=1<<lsb;
+		BitHelper::Clear(irq_flags, flag);
+		switch(flag)
 			{
-			IoHelper::Clear(m_Device->IRQ_EN, IRQF_CARD);
-			m_CardIrq.Trigger();
-			break;
-			}
-		case IRQF_CMD_DONE:
-			{
-			m_CommandDone.Trigger();
-			break;
-			}
-		case IRQF_DATA_DONE:
-			{
-			m_Buffer=nullptr;
-			m_DataDone.Trigger();
-			break;
-			}
-		case IRQF_WRITE_RDY:
-			{
-			assert(m_Buffer);
-			auto end=&m_Buffer[m_BlockSize/sizeof(UINT)];
-			while(m_Buffer<end)
-				m_Device->DATA=*m_Buffer++;
-			break;
-			}
-		case IRQF_READ_RDY:
-			{
-			assert(m_Buffer);
-			auto end=&m_Buffer[m_BlockSize/sizeof(UINT)];
-			while(m_Buffer<end)
-				*m_Buffer++=m_Device->DATA;
-			break;
+			case IRQF_CARD:
+				{
+				IoHelper::Clear(m_Device->IRQ_EN, IRQF_CARD);
+				m_CardIrq.Trigger();
+				break;
+				}
+			case IRQF_CMD_DONE:
+				{
+				m_CommandDone.Trigger();
+				break;
+				}
+			case IRQF_DATA_DONE:
+				{
+				m_Buffer=nullptr;
+				m_DataDone.Trigger();
+				break;
+				}
+			case IRQF_WRITE_RDY:
+				{
+				assert(m_Buffer);
+				auto end=&m_Buffer[m_BlockSize/sizeof(UINT)];
+				while(m_Buffer<end)
+					m_Device->DATA=*m_Buffer++;
+				break;
+				}
+			case IRQF_READ_RDY:
+				{
+				assert(m_Buffer);
+				auto end=&m_Buffer[m_BlockSize/sizeof(UINT)];
+				while(m_Buffer<end)
+					*m_Buffer++=m_Device->DATA;
+				break;
+				}
 			}
 		}
+	lock.Unlock();
+	spin_lock.Lock();
 	}
 }
 

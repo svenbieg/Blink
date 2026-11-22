@@ -9,7 +9,9 @@
 // Using
 //=======
 
-#include "Concurrency/Scheduler.h"
+#include "Concurrency/ServiceMutex.h"
+#include "Concurrency/Signal.h"
+#include "Concurrency/Task.h"
 #include "Devices/Emmc/Emmc.h"
 #include "Devices/System/Interrupts.h"
 
@@ -22,6 +24,17 @@ namespace Devices {
 	namespace Emmc {
 
 
+//========
+// Device
+//========
+
+enum class EmmcDevice
+{
+SdCard,
+Wifi
+};
+
+
 //======
 // Host
 //======
@@ -32,17 +45,20 @@ public:
 	// Using
 	using CriticalSection=Concurrency::CriticalSection;
 	using Irq=Devices::System::Irq;
+	using ServiceMutex=Concurrency::ServiceMutex;
 	using Signal=Concurrency::Signal;
 	using SpinLock=Concurrency::SpinLock;
+	using Task=Concurrency::Task;
+	using WriteLock=Concurrency::WriteLock;
 
 	// Friends
 	friend Object;
 
 	// Con-/Destructors
 	~EmmcHost();
-	static inline Handle<EmmcHost> Create(SIZE_T Address, Irq Irq)
+	static inline Handle<EmmcHost> Create(EmmcDevice Device)
 		{
-		return Object::Create<EmmcHost>(Address, Irq);
+		return Object::Create<EmmcHost>(Device);
 		}
 
 	// Common
@@ -57,11 +73,12 @@ public:
 
 protected:
 	// Con-/Destructors
-	EmmcHost(SIZE_T Address, Irq Irq);
+	EmmcHost(EmmcDevice Device);
 
 	// Common
-	VOID Command(SpinLock& Lock, EmmcCmd Command, UINT Argument, UINT* Response=nullptr, VOID* Buffer=nullptr, UINT BlockCount=0, UINT BlockSize=0);
+	VOID Command(WriteLock& Lock, EmmcCmd Command, UINT Argument, UINT* Response=nullptr, VOID* Buffer=nullptr, UINT BlockCount=0, UINT BlockSize=0);
 	VOID HandleInterrupt();
+	VOID ServiceTask();
 	UINT m_BlockSize;
 	UINT* m_Buffer;
 	Signal m_CardIrq;
@@ -69,9 +86,12 @@ protected:
 	CriticalSection m_CriticalSection;
 	Signal m_DataDone;
 	EMMC_REGS* m_Device;
+	Signal m_InterruptPending;
 	Irq m_Irq;
+	ServiceMutex m_Mutex;
 	UINT m_OutputCount;
 	UINT m_RelativeCardAddress;
+	Handle<Task> m_ServiceTask;
 };
 
 }}
