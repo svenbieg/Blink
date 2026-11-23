@@ -40,7 +40,7 @@ BOOL Cpu::CompareAndSet(volatile UINT* value_ptr, UINT cmp, UINT set) noexcept
 {
 auto sio=(SIO_REGS*)SIO_BASE;
 SIZE_T addr=(SIZE_T)value_ptr;
-UINT lock=(UINT)(addr%32);
+UINT lock=(UINT)((addr>>2)&31);
 while(IoHelper::Read(sio->SPINLOCK[lock])==0);
 DataMemoryBarrier();
 BOOL success=false;
@@ -73,7 +73,7 @@ UINT Cpu::InterlockedDecrement(volatile UINT* value_ptr)noexcept
 {
 auto sio=(SIO_REGS*)SIO_BASE;
 SIZE_T addr=(SIZE_T)value_ptr;
-UINT lock=(UINT)(addr%32);
+UINT lock=(UINT)((addr>>2)&31);
 while(IoHelper::Read(sio->SPINLOCK[lock])==0);
 DataMemoryBarrier();
 UINT value=*value_ptr;
@@ -88,7 +88,7 @@ UINT Cpu::InterlockedIncrement(volatile UINT* value_ptr)noexcept
 {
 auto sio=(SIO_REGS*)SIO_BASE;
 SIZE_T addr=(SIZE_T)value_ptr;
-UINT lock=(UINT)(addr%32);
+UINT lock=(UINT)((addr>>2)&31);
 while(IoHelper::Read(sio->SPINLOCK[lock])==0);
 DataMemoryBarrier();
 UINT value=*value_ptr;
