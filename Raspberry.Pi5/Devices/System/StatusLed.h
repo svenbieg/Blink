@@ -29,6 +29,7 @@ class StatusLed: public Global<StatusLed>
 {
 public:
 	// Using
+	using Mutex=Concurrency::Mutex;
 	using Task=Concurrency::Task;
 
 	// Friends
@@ -42,7 +43,8 @@ public:
 	inline BOOL IsBlinking()const { return m_Period>0; }
 	inline BOOL IsOn()const { return m_On; }
 	VOID Set(BOOL On);
-	inline VOID Stop() { Blink(0); }
+	VOID Stop();
+	VOID Switch();
 
 private:
 	// Con-/Destructors
@@ -50,9 +52,10 @@ private:
 
 	// Common
 	VOID BlinkTask();
+	Handle<Task> m_BlinkTask;
+	Mutex m_Mutex;
 	BOOL m_On;
 	UINT m_Period;
-	Handle<Task> m_Task;
 };
 
 }}

@@ -28,30 +28,35 @@ namespace Devices {
 
 VOID StatusLed::Blink(UINT period)
 {
-if(m_Period==period)
-	return;
+WriteLock lock(m_Mutex);
 m_Period=period;
-if(m_Period)
-	{
-	if(!m_Task)
-		m_Task=Task::Create(this, &StatusLed::BlinkTask, "blink");
-	}
-else
-	{
-	if(m_Task)
-		{
-		m_Task->Cancel();
-		m_Task=nullptr;
-		}
-	}
+if(!m_BlinkTask)
+	m_BlinkTask=Task::Create(this, &StatusLed::BlinkTask, "blink");
 }
 
 VOID StatusLed::Set(BOOL on)
 {
-if(m_On==on)
-	return;
+WriteLock lock(m_Mutex);
 m_On=on;
-GpioHelper::DigitalWrite(GpioArmPin::ActivityLed, on);
+GpioHelper::DigitalWrite(GpioArmPin::ActivityLed, m_On);
+}
+
+VOID StatusLed::Stop()
+{
+WriteLock lock(m_Mutex);
+if(m_BlinkTask)
+	{
+	m_BlinkTask->Cancel();
+	m_BlinkTask=nullptr;
+	}
+m_Period=0;
+}
+
+VOID StatusLed::Switch()
+{
+WriteLock lock(m_Mutex);
+m_On=!m_On;
+GpioHelper::DigitalWrite(GpioArmPin::ActivityLed, m_On);
 }
 
 
@@ -77,7 +82,7 @@ VOID StatusLed::BlinkTask()
 while(1)
 	{
 	Task::Sleep(m_Period);
-	Set(!m_On);
+	Switch();
 	}
 }
 
