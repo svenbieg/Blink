@@ -57,7 +57,7 @@ s_MainTask=Task::CreateInternal(MainTask, "main");
 s_All.Append(s_MainTask);
 for(UINT core=0; core<CPU_COUNT; core++)
 	{
-	auto idle=Task::CreateInternal(IdleTask, String::Create("idle%u", core), 1024);
+	auto idle=Task::CreateInternal(IdleTask, String::Create("idle%u", core));
 	FlagHelper::Set(idle->m_Flags, TaskFlags::Idle);
 	s_All.Append(idle);
 	s_IdleTask[core]=idle;
