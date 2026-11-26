@@ -30,7 +30,14 @@ class ServiceTask
 {
 public:
 	// Con-/Destructors
-	static inline Handle<Task> Create(VOID (*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=Task::STACK_SIZE)
+	static inline Handle<Task> Create(VOID (*Procedure)(), LPCSTR Name="task", SIZE_T StackSize=Task::STACK_SIZE)
+		{
+		auto task=Task::Create(Procedure, Name, StackSize);
+		FlagHelper::Set(task->m_Flags, TaskFlags::Priority);
+		task->m_PriorityCount=1;
+		return task;
+		}
+	static inline Handle<Task> Create(VOID (*Procedure)(), Handle<String> Name, SIZE_T StackSize=Task::STACK_SIZE)
 		{
 		auto task=Task::Create(Procedure, Name, StackSize);
 		FlagHelper::Set(task->m_Flags, TaskFlags::Priority);

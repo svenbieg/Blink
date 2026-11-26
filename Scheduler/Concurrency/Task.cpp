@@ -40,6 +40,14 @@ if(m_Exception)
 	}
 }
 
+Handle<Task> Task::Create(VOID (*Procedure)(), LPCSTR Name, SIZE_T StackSize)
+{
+auto name=String::Create(Name);
+auto task=TaskProcedure::Create(Procedure, std::forward<Handle<String>>(name), StackSize);
+Scheduler::AddTask(task);
+return task;
+}
+
 Handle<Task> Task::Create(VOID (*Procedure)(), Handle<String> Name, SIZE_T StackSize)
 {
 auto task=TaskProcedure::Create(Procedure, std::forward<Handle<String>>(Name), StackSize);

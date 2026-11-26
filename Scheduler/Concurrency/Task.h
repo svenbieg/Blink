@@ -84,7 +84,8 @@ public:
 
 	// Con-/Destructors
 	~Task()noexcept;
-	static Handle<Task> Create(VOID (*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=STACK_SIZE);
+	static Handle<Task> Create(VOID (*Procedure)(), LPCSTR Name="task", SIZE_T StackSize=STACK_SIZE);
+	static Handle<Task> Create(VOID (*Procedure)(), Handle<String> Name, SIZE_T StackSize=STACK_SIZE);
 	template <class _owner_t> static Handle<Task> Create(_owner_t* Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=STACK_SIZE);
 	template <class _owner_t> static Handle<Task> Create(Handle<_owner_t> const& Owner, VOID (_owner_t::*Procedure)(), Handle<String> Name="task", SIZE_T StackSize=STACK_SIZE);
 	template <class _owner_t, class _lambda_t> static Handle<Task> Create(_owner_t* Owner, _lambda_t&& Lambda, Handle<String> Name="task", SIZE_T StackSize=STACK_SIZE);
@@ -141,8 +142,8 @@ public:
 
 protected:
 	// Using
-	static constexpr UINT STACK_SIZE=512*sizeof(SIZE_T);
-	static constexpr UINT STACK_HEADER=0xABCDEF;
+	static const UINT STACK_SIZE=512*sizeof(SIZE_T);
+	static const UINT STACK_HEADER=0xABCDEF;
 	template <class _item_t> using FwdLink=Collections::FwdLink<_item_t>;
 	template <class _item_t> using Link=Collections::Link<_item_t>;
 
