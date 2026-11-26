@@ -77,7 +77,7 @@ while(1)
 
 VOID SystemTimer::Start()
 {
-s_ServiceTask=ServiceTask::Create(ServiceTask, "systimer", 1024);
+s_ServiceTask=ServiceTask::Create(ServiceTask, "systimer");
 }
 
 Handle<Task> SystemTimer::s_ServiceTask;
