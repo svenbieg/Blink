@@ -78,6 +78,7 @@ public:
 			and %0, %0, #3": "=r" (id));
 		return id;
 		}
+	static UINT GetTemperature();
 	static __force_inline VOID InstructionSyncBarrier()noexcept
 		{
 		__asm inline volatile("isb"::: "memory");

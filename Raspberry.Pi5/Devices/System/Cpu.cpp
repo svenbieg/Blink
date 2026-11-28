@@ -10,6 +10,7 @@
 //=======
 
 #include "Concurrency/Scheduler.h"
+#include "Devices/System/MailBox.h"
 #include "Devices/Timers/SystemTimer.h"
 
 using namespace Devices::Timers;
@@ -60,6 +61,13 @@ VOID Cpu::Delay(UINT us)
 {
 UINT64 end=SystemTimer::Microseconds64()+us;
 while(SystemTimer::Microseconds64()<end);
+}
+
+UINT Cpu::GetTemperature()
+{
+UINT temp[2];
+MailBox::GetProperty(PropertyTag::GetTemperature, temp, sizeof(temp));
+return temp[1]/1000;
 }
 
 VOID Cpu::InvalidateDataCache(SIZE_T addr, SIZE_T size)noexcept
