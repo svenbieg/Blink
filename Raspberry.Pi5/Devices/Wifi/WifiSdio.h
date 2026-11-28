@@ -31,6 +31,7 @@ class WifiSdio: public Emmc::EmmcHost
 {
 public:
 	// Using
+	using CriticalSection=Concurrency::CriticalSection;
 	using ServiceMutex=Concurrency::ServiceMutex;
 	using Signal=Concurrency::Signal;
 	using Task=Concurrency::Task;
@@ -66,6 +67,7 @@ private:
 	VOID WriteBackplane(UINT Address, UINT const* Buffer, UINT Size);
 	SIZE_T WriteData(VOID const* Buffer, SIZE_T Size);
 	VOID WriteRegister(SDIO_REG const& Register, BYTE Value);
+	CriticalSection m_CriticalSection;
 	Signal m_OutputReady;
 	Handle<Task> m_ServiceTask;
 	UINT m_Window;

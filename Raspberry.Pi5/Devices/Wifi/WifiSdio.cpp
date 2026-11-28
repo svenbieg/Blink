@@ -13,19 +13,13 @@
 #include "Devices/Gpio/GpioHelper.h"
 #include "Devices/Timers/SystemTimer.h"
 #include "Devices/Wifi/Wifi.h"
+#include "Devices/Wifi/WifiFirmware.h"
 
 using namespace Concurrency;
 using namespace Devices::Emmc;
 using namespace Devices::Gpio;
 using namespace Devices::Sdio;
 using namespace Devices::Timers;
-
-extern UINT wifi_config;
-extern UINT wifi_config_size;
-extern UINT wifi_firmware;
-extern UINT wifi_firmware_size;
-extern UINT wifi_clm;
-extern UINT wifi_clm_size;
 
 
 //===========
@@ -131,7 +125,7 @@ while(size)
 		{
 		block_count=TypeHelper::Min(copy/block_size, IO_RW_COUNT_MAX);
 		copy=block_count*block_size;
-		BitHelper::Set(arg, IO_RW_BLK|IO_RW_INCR);
+		BitHelper::Set(arg, IO_RW_BLK);
 		BitHelper::Set(arg, IO_RW_COUNT, block_count);
 		Command(cmd_multi, arg, &response, buf, block_count, block_size);
 		}
@@ -140,7 +134,8 @@ while(size)
 		BitHelper::Set(arg, IO_RW_COUNT, copy);
 		Command(cmd_single, arg, &response, buf, 1, copy);
 		}
-	addr+=copy;
+	if(BitHelper::Get(arg, IO_RW_INCR))
+		addr+=copy;
 	buf+=copy;
 	size-=copy;
 	}
@@ -291,9 +286,10 @@ WriteRegister(CCCR_IOENABLE, FN1_BIT);
 PollRegister(CCCR_IOREADY, FN1_BIT, FN1_BIT);
 WriteRegister(SB_PULLUPS, 0);
 ResetDevice(WIFI_ARM_BASE, ARM_IOCTRL_HALT);
-WriteBackplane(ARM_RAM_BASE, &wifi_firmware, wifi_firmware_size);
-WriteBackplane(ARM_RAM_BASE+ARM_RAM_SIZE-wifi_config_size, &wifi_config, wifi_config_size);
-WriteBackplane(ARM_RESET_VECTOR, wifi_firmware);
+WIFI_FIRMWARE const& firmware=WifiFirmware::Get();
+WriteBackplane(ARM_RAM_BASE, firmware.Image, firmware.ImageSize);
+WriteBackplane(ARM_RAM_BASE+ARM_RAM_SIZE-firmware.ConfigSize, firmware.Config, firmware.ConfigSize);
+WriteBackplane(ARM_RESET_VECTOR, firmware.Image[0]);
 ResetDevice(WIFI_ARM_BASE, 0);
 PollRegister(SB_CLK_CSR, CLK_CSR_HT_AVAIL, CLK_CSR_HT_AVAIL);
 WriteRegister(SB_CLK_CSR, CLK_CSR_HT_FORCE);
@@ -307,44 +303,66 @@ WriteRegister(CCCR_INT_EN, FN2_BIT|FN1_BIT|FN0_BIT);
 SetRegister(CCCR_IOENABLE, FN2_BIT);
 PollRegister(CCCR_IOREADY, FN2_BIT, FN2_BIT);
 SpinLock spin_lock(m_CriticalSection);
-IoHelper::Set(m_Device->IRQ_MASK, IRQF_CARD);
 while(1)
 	{
+	IoHelper::Set(m_Device->IRQ_MASK, IRQF_CARD);
 	IoHelper::Set(m_Device->IRQ_EN, IRQF_CARD);
 	m_CardIrq.Wait(spin_lock);
 	spin_lock.Unlock();
 	lock.SetLocked(true);
 	UINT pending=ReadRegister(CCCR_INT_PENDING);
-	if(!pending)
-		{
-		lock.Unlock();
-		spin_lock.Lock();
-		continue;
-		}
+	assert(pending);
 	UINT int_status=ReadBackplane(SDIO_INT_STATUS);
+	assert(int_status);
 	WriteBackplane(SDIO_INT_STATUS, int_status);
-	if(BitHelper::Get(int_status, SDIO_INT_FRAME))
+	UINT flags=int_status;
+	while(flags)
 		{
-		WIFI_HEADER header;
-		ReadData(&header, sizeof(WIFI_HEADER));
-		UINT len=header.Length;
-		UINT len_chk=header.LengthChk;
-		assert(len);
-		assert(len%sizeof(UINT)==0);
-		if(len_chk==(len^0xFFFF))
+		UINT lsb=Cpu::CountTrailingZeros(flags);
+		UINT flag=1U<<lsb;
+		BitHelper::Clear(flags, flag);
+		switch(flag)
 			{
-			auto pkt=WifiPacket::Create(&header);
-			auto data=pkt->Data();
-			ReadData(data, len);
-			BOOL valid=pkt->TryValidate();
-			assert(valid);
-			if(valid)
-				OnPacketReceived(pkt);
+			case SDIO_INT_FCSTATE:
+				{
+				m_OutputReady.Trigger();
+				break;
+				}
+			case SDIO_INT_FRAME:
+				{
+				BYTE buf[16] alignas(UINT);
+				ReadData(buf, 16);
+				auto header=(WIFI_HEADER*)buf;
+				UINT len=header->Length;
+				UINT len_chk=header->LengthChk;
+				assert(len);
+				assert(len%sizeof(UINT)==0);
+				assert(len_chk==(len^0xFFFF));
+				auto pkt=WifiPacket::Create(header);
+				auto data=pkt->Data();
+				if(len>sizeof(WIFI_HEADER))
+					{
+					UINT copy=TypeHelper::Min(len, 16U);
+					copy-=sizeof(WIFI_HEADER);
+					MemoryHelper::Copy(data, &buf[sizeof(WIFI_HEADER)], copy);
+					data+=copy;
+					}
+				if(len>16)
+					ReadData(data, len-16);
+				BOOL valid=pkt->TryValidate();
+				assert(valid);
+				if(valid)
+					OnPacketReceived(pkt);
+				break;
+				}
+			case SDIO_INT_MAILBOX:
+				{
+				[[maybe_unused]] UINT mbox=ReadBackplane(SDIO_MBOX_DATA_IN);
+				WriteBackplane(SDIO_MBOX, MBOX_DATA_ACK);
+				break;
+				}
 			}
 		}
-	BOOL output_ready=!BitHelper::Get(int_status, SDIO_INT_FCSTATE);
-	if(output_ready)
-		m_OutputReady.Trigger();
 	lock.Unlock();
 	spin_lock.Lock();
 	}

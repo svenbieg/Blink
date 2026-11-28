@@ -13,9 +13,9 @@
 
 extern BYTE wifi_clm[];
 extern UINT wifi_clm_size;
-extern BYTE wifi_config[];
+extern UINT wifi_config[];
 extern UINT wifi_config_size;
-extern BYTE wifi_firmware[];
+extern UINT wifi_firmware[];
 extern UINT wifi_firmware_size;
 
 
@@ -126,17 +126,17 @@ while(pos<wifi_clm_size)
 	WORD cmd_size=sizeof(WIFI_CMD)+name_size+clm_size;
 	auto pkt=WifiPacket::Create(cmd_size);
 	auto cmd=pkt->Write<WIFI_CMD>();
-	MemoryHelper::Zero(cmd, sizeof(WIFI_CMD));
 	cmd->Command=WifiCommand::SetVariable;
 	cmd->Id=wifi->m_RequestId++;
 	cmd->Flags=WifiCmdFlags::Write;
 	cmd->Length=name_size+clm_size;
+	cmd->Status=0;
 	pkt->Write(name, name_size);
 	auto clm=pkt->Write<CLM_HEADER>();
-	MemoryHelper::Zero(clm, sizeof(CLM_HEADER));
 	clm->Flags=clm_flags;
-	clm->Size=copy;
 	clm->Type=CLM_TYPE;
+	clm->Size=copy;
+	clm->Crc=0;
 	pkt->Write(&wifi_clm[pos], copy);
 	auto response=wifi->Transfer(pkt);
 	cmd=response->Read<WIFI_CMD>();

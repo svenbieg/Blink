@@ -134,8 +134,10 @@ IoHelper::Set(m_Device->CTRL1, CTRL1_CLK_EN);
 EmmcHost::EmmcHost(EmmcDevice device):
 m_BlockSize(0),
 m_Buffer(nullptr),
+m_BufferEnd(nullptr),
 m_Device((EMMC_REGS*)EMMC_DEVICES[(UINT)device].Address),
 m_Irq(EMMC_DEVICES[(UINT)device].Interrupt),
+m_IrqFlags(0),
 m_RelativeCardAddress(0)
 {
 auto name=String::Create("emmc%u", (UINT)device);
@@ -155,8 +157,9 @@ assert(block_count<0x10000);
 assert((SIZE_T)buf%sizeof(UINT)==0);
 if(IoHelper::Read(m_Device->STATUS, STATUS_CMD_INHIBIT|STATUS_DAT_INHIBIT))
 	throw DeviceNotReadyException();
-m_Buffer=(UINT*)buf;
 m_BlockSize=block_size;
+m_Buffer=(UINT*)buf;
+m_BufferEnd=&m_Buffer[block_count*block_size/sizeof(UINT)];
 IoHelper::Write(m_Device->BLKSIZECNT, (block_count<<16)|block_size);
 IoHelper::Write(m_Device->ARG1, arg);
 IoHelper::Write(m_Device->CMD, (UINT)cmd);
@@ -191,6 +194,9 @@ if(m_Buffer)
 VOID EmmcHost::HandleInterrupt()
 {
 SpinLock lock(m_CriticalSection);
+UINT irq=IoHelper::Read(m_Device->IRQ);
+IoHelper::Write(m_Device->IRQ, irq);
+BitHelper::Set(m_IrqFlags, irq);
 m_InterruptPending.Trigger();
 }
 
@@ -211,22 +217,26 @@ IoHelper::Write(m_Device->IRQ, ~0U);
 lock.Unlock();
 while(1)
 	{
-	m_InterruptPending.Wait(spin_lock);
-	spin_lock.Unlock();
-	UINT irq_flags=IoHelper::Read(m_Device->IRQ);
-	UINT irq_ack=irq_flags;
-	//BitHelper::Clear(irq_ack, IRQF_CARD);
-	IoHelper::Write(m_Device->IRQ, irq_ack);
-	lock.Lock();
-	while(irq_flags)
+	UINT flags=m_IrqFlags;
+	if(!flags)
 		{
-		UINT lsb=Cpu::CountTrailingZeros(irq_flags);
+		m_InterruptPending.Wait(spin_lock);
+		continue;
+		}
+	m_IrqFlags=0;
+	spin_lock.Unlock();
+	assert(BitHelper::Get(flags, IRQF_ERR)==0);
+	lock.Lock();
+	while(flags)
+		{
+		UINT lsb=Cpu::CountTrailingZeros(flags);
 		UINT flag=1<<lsb;
-		BitHelper::Clear(irq_flags, flag);
+		BitHelper::Clear(flags, flag);
 		switch(flag)
 			{
 			case IRQF_CARD:
 				{
+				IoHelper::Clear(m_Device->IRQ_MASK, IRQF_CARD);
 				IoHelper::Clear(m_Device->IRQ_EN, IRQF_CARD);
 				m_CardIrq.Trigger();
 				break;
@@ -239,23 +249,32 @@ while(1)
 			case IRQF_DATA_DONE:
 				{
 				m_Buffer=nullptr;
+				m_BufferEnd=nullptr;
 				m_DataDone.Trigger();
 				break;
 				}
 			case IRQF_WRITE_RDY:
 				{
-				assert(m_Buffer);
-				auto end=&m_Buffer[m_BlockSize/sizeof(UINT)];
-				while(m_Buffer<end)
+				if(!m_Buffer)
+					break;
+				while(IoHelper::Read(m_Device->STATUS, STATUS_WRITE_AVAILABLE))
+					{
+					if(m_Buffer>=m_BufferEnd)
+						break;
 					m_Device->DATA=*m_Buffer++;
+					}
 				break;
 				}
 			case IRQF_READ_RDY:
 				{
-				assert(m_Buffer);
-				auto end=&m_Buffer[m_BlockSize/sizeof(UINT)];
-				while(m_Buffer<end)
+				if(!m_Buffer)
+					break;
+				while(IoHelper::Read(m_Device->STATUS, STATUS_READ_AVAILABLE))
+					{
+					if(m_Buffer>=m_BufferEnd)
+						break;
 					*m_Buffer++=m_Device->DATA;
+					}
 				break;
 				}
 			}

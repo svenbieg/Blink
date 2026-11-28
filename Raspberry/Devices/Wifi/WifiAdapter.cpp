@@ -49,8 +49,6 @@ if(FlagHelper::Get(m_Flags, WifiFlags::Enabled))
 WifiFirmware::UploadRegulatory(this);
 SetVariable(lock, "country", &WIFI_COUNTRY_DE, sizeof(WIFI_COUNTRY));
 Task::Sleep(50);
-WIFI_COUNTRY country;
-GetVariable(lock, "country", &country, sizeof(WIFI_COUNTRY));
 SetVariable(lock, "bus:txglom", 0);
 SetVariable(lock, "apsta", 1);
 Command(lock, WifiCommand::SetAntDiv, 0);

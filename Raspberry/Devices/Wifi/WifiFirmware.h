@@ -33,9 +33,9 @@ class WifiAdapter;
 
 typedef struct
 {
-BYTE* Config;
+UINT* Config;
 UINT ConfigSize;
-BYTE* Image;
+UINT* Image;
 UINT ImageSize;
 }WIFI_FIRMWARE;
 

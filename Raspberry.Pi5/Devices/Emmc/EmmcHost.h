@@ -45,7 +45,7 @@ public:
 	// Using
 	using CriticalSection=Concurrency::CriticalSection;
 	using Irq=Devices::System::Irq;
-	using ServiceMutex=Concurrency::ServiceMutex;
+	using Mutex=Concurrency::Mutex;
 	using Signal=Concurrency::Signal;
 	using SpinLock=Concurrency::SpinLock;
 	using Task=Concurrency::Task;
@@ -81,6 +81,7 @@ protected:
 	VOID ServiceTask();
 	UINT m_BlockSize;
 	UINT* m_Buffer;
+	UINT* m_BufferEnd;
 	Signal m_CardIrq;
 	Signal m_CommandDone;
 	CriticalSection m_CriticalSection;
@@ -88,7 +89,8 @@ protected:
 	EMMC_REGS* m_Device;
 	Signal m_InterruptPending;
 	Irq m_Irq;
-	ServiceMutex m_Mutex;
+	UINT m_IrqFlags;
+	Mutex m_Mutex;
 	UINT m_OutputCount;
 	UINT m_RelativeCardAddress;
 	Handle<Task> m_ServiceTask;
