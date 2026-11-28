@@ -330,25 +330,17 @@ while(1)
 				}
 			case SDIO_INT_FRAME:
 				{
-				BYTE buf[16] alignas(UINT);
-				ReadData(buf, 16);
-				auto header=(WIFI_HEADER*)buf;
-				UINT len=header->Length;
-				UINT len_chk=header->LengthChk;
+				WIFI_HEADER header;
+				ReadData(&header, sizeof(WIFI_HEADER));
+				UINT len=header.Length;
+				UINT len_chk=header.LengthChk;
 				assert(len);
 				assert(len%sizeof(UINT)==0);
 				assert(len_chk==(len^0xFFFF));
-				auto pkt=WifiPacket::Create(header);
+				auto pkt=WifiPacket::Create(&header);
 				auto data=pkt->Data();
 				if(len>sizeof(WIFI_HEADER))
-					{
-					UINT copy=TypeHelper::Min(len, 16U);
-					copy-=sizeof(WIFI_HEADER);
-					MemoryHelper::Copy(data, &buf[sizeof(WIFI_HEADER)], copy);
-					data+=copy;
-					}
-				if(len>16)
-					ReadData(data, len-16);
+					ReadData(data, len-sizeof(WIFI_HEADER));
 				BOOL valid=pkt->TryValidate();
 				assert(valid);
 				if(valid)
