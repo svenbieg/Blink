@@ -67,7 +67,6 @@ VOID CriticalSection::Unlock()noexcept
 {
 assert(m_Core==(Cpu::GetId()|LOCKED));
 Cpu::StoreAndRelease(&m_Core, 0);
-Cpu::DataMemoryBarrier();
 Interrupts::Enable();
 }
 
